@@ -42,8 +42,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GenshinTCG.cs" />
+    <Compile Include="TCGCard.Character.cs" />
+    <Compile Include="TCGCard.Effect.cs" />
+    <Compile Include="TCGCard.Skill.cs" />
+    <Compile Include="TCGCard.Summon.cs" />
+    <Compile Include="TCGGame.GameCharacter.cs" />
+    <Compile Include="TCGCard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TCGGame.cs" />
+    <Compile Include="TCGGame.GameRound.cs" />
+    <Compile Include="TCGInfo.Character.cs" />
+    <Compile Include="TCGInfo.cs" />
+    <Compile Include="TCGInfo.Effect.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
