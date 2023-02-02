@@ -15,13 +15,6 @@ namespace TCGGame
 
         After_Fight
     }
-    public enum RoundAction
-    {
-        Pass,
-        UseSkill,
-        PrepareSkill,
-        ChangeCharacter
-    }
     public interface IGameBase
     {
 

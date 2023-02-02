@@ -32,4 +32,21 @@ namespace TCGBase
         Pyro,
         Cyro
     }
+    /// <summary>
+    /// 某次行动的type
+    /// </summary>
+    public enum ActionType
+    {
+        None = 0,//什么也不做
+        Pass = 1,//空过
+        Blend = 2,//调和
+        Switch = 4,
+        UseAssistCard = 8,
+        UseNormalAttack = 16,
+        UseE = 32,
+        UseQ = 64,
+
+        GainDice = 128,
+        GainCard = 256,
+    }
 }

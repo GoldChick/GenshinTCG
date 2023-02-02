@@ -11,27 +11,18 @@ using System.Threading.Tasks;
 //################################################################
 namespace TCGBase
 {
-    public enum EventType
-    {
-        None,//什么也不做
-        Pass,//空过
-        Blend,//调和
-        Switch,
-        UseAssistCard,
-        UseNormalAttack,
-        UseE,
-        UseQ,
-
-        GainDice,
-        GainCard,
-    }
-
     public interface IEventBase
     {
         Side GetSide();//是哪一方触发的事件
-        EventType GetEventType();
+        ActionType GetEventType();
         bool IsFastAction();
+        void Work();
     }
+    /// <summary>
+    /// Event需要绑定的参数
+    /// 比如生效于某个角色/某个骰子等等
+    /// </summary>
+    /// <typeparam name="T">一个或者多个角色/骰子/卡牌等</typeparam>
     public interface IEvent<T> : IEventBase
     {
         T GetAdditionalValue();

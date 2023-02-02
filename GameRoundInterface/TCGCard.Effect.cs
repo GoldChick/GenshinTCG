@@ -8,7 +8,7 @@ namespace TCGCard
         Character,
         Team
     }
-    public interface IEffect
+    public interface ICardEffect
     {
         string GetEffectName();
         EffectType GetEffectType();

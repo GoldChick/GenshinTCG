@@ -7,7 +7,7 @@ namespace TCGBase
         int GetValue();
         bool DoPierce();
         ElementType GetElementType();
-        ICardCharacter GetTarget();
+        int GetTargetId();
         ICardBase GetSource();
     }
 }
