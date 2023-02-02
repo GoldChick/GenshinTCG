@@ -42,7 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TCGBase.Damage.cs" />
     <Compile Include="TCGBase.cs" />
+    <Compile Include="TCGBase.Dice.cs" />
     <Compile Include="TCGBase.Event.cs" />
     <Compile Include="TCGCard.Character.cs" />
     <Compile Include="TCGCard.Effect.cs" />

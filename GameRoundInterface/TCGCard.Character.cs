@@ -13,6 +13,8 @@ namespace TCGCard
     }
     public interface ICardCharacter : ICardBase
     {
+        int hp { get; set; }
+
         CharacterType GetCharacterType();//卡片角色类型
         int GetMaxHP();//最大生命值
         int GetMaxMP();//最大充能

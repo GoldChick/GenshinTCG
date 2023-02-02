@@ -16,4 +16,20 @@ namespace TCGBase
         Backward = 0,
         Front = 1,
     }
+    /// <summary>
+    /// 元素类型(实际上并不仅仅是元素)
+    /// 0为Trival，对应物理攻击/万能元素骰
+    /// 1-7为七元素
+    /// </summary>
+    public enum ElementType
+    {
+        Trival,
+        Anemo,
+        Geo,
+        Electro,
+        Dendro,
+        Hydro,
+        Pyro,
+        Cyro
+    }
 }

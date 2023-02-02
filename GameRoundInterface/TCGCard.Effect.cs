@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿//################################################################
+//Effect分为[个人效果]和[团队效果]两种
+//################################################################
 namespace TCGCard
 {
     public enum EffectType
@@ -18,6 +15,5 @@ namespace TCGCard
         int GetMaxUseTimes();
         void BeHurtEvent();
         void AttackEvent();
-        
     }
 }
