@@ -29,6 +29,7 @@ namespace TCGGame
         }
         public void Switch(int id)
         {
+            //Bus.Instance().Post(side);
             if (currCharacter != id)
             {
                 currCharacter = id;

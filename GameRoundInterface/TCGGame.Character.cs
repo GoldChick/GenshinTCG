@@ -6,15 +6,15 @@ namespace TCGGame
 {
     public class Character
     {
+        public ICardCharacter card;//对应的卡牌资源
+
+
         private int hp;
         private int mp;
 
         public bool isAlive;
         public List<Effect> effects;
         public ElementType element;
-
-
-        public ICardCharacter card;//对应的卡牌资源
 
         public int Hp
         {

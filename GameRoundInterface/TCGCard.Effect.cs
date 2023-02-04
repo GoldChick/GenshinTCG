@@ -1,6 +1,8 @@
 ﻿//################################################################
 //Effect分为[个人效果]和[团队效果]两种
 //################################################################
+using TCGInfo.InfoInterface;
+
 namespace TCGCard
 {
     public enum EffectType
@@ -8,12 +10,27 @@ namespace TCGCard
         Character,
         Team
     }
+    public enum EffectTriggerType
+    {
+        Instant = 0,
+        OnAttack = 1,
+        OnHurt = 2,
+        OnDead = 4,
+        Custom = 8
+    }
+    public enum EffectDurationType
+    {
+        Instant = 0,
+        Frequency = 1,
+        Round = 2,
+    }
     public interface ICardEffect
     {
         string GetEffectName();
         EffectType GetEffectType();
+        EffectTriggerType GetEffectTriggerType();
+        EffectDurationType GetEffectDurationType();
         int GetMaxUseTimes();
-        void BeHurtEvent();
-        void AttackEvent();
+        void Action(IInfoBase[] infos);//TODO
     }
 }

@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TCGGame.Bus.cs" />
+    <Compile Include="TCGGame.Character.cs" />
     <Compile Include="TCGBase.Damage.cs" />
     <Compile Include="TCGBase.cs" />
     <Compile Include="TCGBase.Dice.cs" />
@@ -51,11 +53,14 @@
     <Compile Include="TCGCard.Effect.cs" />
     <Compile Include="TCGCard.Skill.cs" />
     <Compile Include="TCGCard.Summon.cs" />
+    <Compile Include="TCGGame.Effect.cs" />
+    <Compile Include="TCGGame.Event.cs" />
     <Compile Include="TCGGame.GameCharacter.cs" />
     <Compile Include="TCGCard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCGGame.cs" />
     <Compile Include="TCGGame.GameRound.cs" />
+    <Compile Include="TCGGame.Team.cs" />
     <Compile Include="TCGInfo.Character.cs" />
     <Compile Include="TCGInfo.cs" />
     <Compile Include="TCGInfo.Effect.cs" />

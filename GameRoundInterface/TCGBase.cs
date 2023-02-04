@@ -48,5 +48,7 @@ namespace TCGBase
 
         GainDice = 128,
         GainCard = 256,
+
+        Others = 512//虽然但是，似乎没有什么其他行动了
     }
 }
