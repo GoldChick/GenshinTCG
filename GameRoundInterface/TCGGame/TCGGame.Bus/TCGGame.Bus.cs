@@ -20,6 +20,15 @@ namespace TCGGame
             return instance;
         }
         /// <summary>
+        /// 用于创建不同的模式
+        /// 比如[热斗模式-无限火力]给出8个万能骰子
+        /// </summary>
+        /// <param name="bus">Bus的子类的对象（DIY）</param>
+        public static void CreateInstance(Bus bus)
+        {
+            instance = bus;
+        }
+        /// <summary>
         /// 只读的属性
         /// </summary>
         public RoundStage RoundStage { get => roundStage; }

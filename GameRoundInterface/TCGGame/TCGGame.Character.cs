@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using TCGBase;
 using TCGCard;
-using TCGCard.CardInterface;
 
 namespace TCGGame
 {
@@ -19,6 +18,7 @@ namespace TCGGame
 
         public ICardWeapon weapon;
         public ICardAssist artifact;
+        public ICardNature nature;
         public int Hp
         {
             get => hp;

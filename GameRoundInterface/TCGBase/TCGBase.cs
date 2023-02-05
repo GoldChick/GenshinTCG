@@ -46,9 +46,12 @@ namespace TCGBase
         UseE = 32,
         UseQ = 64,
 
+
+
         GainDice = 128,
         GainCard = 256,
 
-        Others = 512//虽然但是，似乎没有什么其他行动了
+        Die = 512,
+        Others = 1024//虽然但是，似乎没有什么其他行动了
     }
 }

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TCGGame;
-
-namespace  TCGCard
+﻿using TCGGame;
+//################################################################
+//注意：这里的Assist卡打出后需要在对应区域召唤Effect卡才能生效
+//################################################################
+namespace TCGCard
 {
     public interface ICardAssist : ICardBase
     {

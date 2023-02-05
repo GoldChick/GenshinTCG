@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TCGBase;
-using TCGCard.CardInterface;
+using TCGCard;
 //################################################################
 //这里记录游戏自带的一些事件
 //如有需求可以制作自己的事件，或者重写这些事件
@@ -324,4 +324,31 @@ namespace TCGGame
         }
     }
 
+    public class DieEvent : IEvent<int>
+    {
+        public int GetAdditionalValue()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ActionType GetEventType()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Side GetSide()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsFastAction()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Work()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
