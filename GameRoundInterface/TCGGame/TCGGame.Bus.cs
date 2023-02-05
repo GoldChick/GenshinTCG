@@ -10,6 +10,7 @@ namespace TCGGame
     public class Bus
     {
         private static Bus instance;
+        private RoundStage roundStage;
         public static Bus Instance()
         {
             if (instance == null)
@@ -18,32 +19,40 @@ namespace TCGGame
             }
             return instance;
         }
+        /// <summary>
+        /// 只读的属性
+        /// </summary>
+        public RoundStage RoundStage { get => roundStage; }
 
-        public List<IEventBase> events;
+        public List<IEvent> events;
+        /// <summary>
+        /// 按照开局决定的Side排列的teams
+        /// </summary>
         public List<Team> teams;
 
+        public int currSide;
         /// <summary>
         /// 用来为team提供event的预览
         /// </summary>
         /// <param name="team"></param>
         /// <param name="eventBase"></param>
-        public void Post(Side teamSide, IEventBase eventBase)
+        public void Post(IEvent eventBase)
         {
-            teams[(int)teamSide].events.Enqueue(eventBase);
+            teams[(int)eventBase.GetSide()].events.Enqueue(eventBase);
         }
         /// <summary>
         /// 取消行动
         /// </summary>
-        public void Pop(Side teamSide, IEventBase eventBase)
+        public void Get(IEvent eventBase)
         {
-            teams[(int)teamSide].events.Clear();
+            teams[(int)eventBase.GetSide()].events.Clear();
         }
         /// <summary>
         /// 确认行动
         /// </summary>
         public void Action(Side teamSide)
         {
-            start: IEventBase eventBase = teams[(int)teamSide].events.Dequeue();
+        start: IEvent eventBase = teams[(int)teamSide].events.Dequeue();
             eventBase.Work();
             events.Add(eventBase);
             if (eventBase.IsFastAction())
@@ -58,7 +67,7 @@ namespace TCGGame
         {
             if (doSave)
             {
-                foreach (IEventBase eventBase in events)
+                foreach (IEvent eventBase in events)
                 {
                     //if(Array.Exists(eventBase.GetType().GetInterfaces(), t => t.GetGenericTypeDefinition() == typeof(IEvent<>)))
                     {

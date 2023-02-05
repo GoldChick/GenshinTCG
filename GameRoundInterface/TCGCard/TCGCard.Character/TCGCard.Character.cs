@@ -7,6 +7,16 @@ namespace TCGCard
         Human,
         Mob
     }
+    public enum CharacterRegion
+    {
+        Abyss,
+        Mondstadt,
+        Liyue,
+        Inazuma,
+        Sumeru,
+        Fontaine,
+        Natlan
+    }
     public interface ICardCharacter : ICardBase
     {
         CharacterType GetCharacterType();//卡片角色类型

@@ -17,7 +17,6 @@ namespace TCGGame
 
         //List<touzi> GetOurDices();//获取我方手上的骰子
 
-
         //List<ICardCharacterInfo> GetOurSummonInfo();//获取我方召唤物信息
 
         List<ICardCharacterInfo> GetTheirCharactersInfo();//获取对方角色信息

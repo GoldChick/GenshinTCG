@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TCGBase;
 using TCGCard.CardInterface;
 //################################################################
@@ -11,7 +12,7 @@ namespace TCGGame
     /// 什么也不做事件
     /// 可以理解为“准备一个行动轮”
     /// </summary>
-    public class NoneEvent : IEventBase
+    public class NoneEvent : IEvent
     {
         private Side side;
         public NoneEvent(Side side)
@@ -38,7 +39,10 @@ namespace TCGGame
             throw new System.NotImplementedException();
         }
     }
-    public class PassEvent : IEventBase
+    /// <summary>
+    /// 空过事件 结束回合
+    /// </summary>
+    public class PassEvent : IEvent
     {
         private Side side;
         public PassEvent(Side side)
@@ -65,6 +69,10 @@ namespace TCGGame
             throw new System.NotImplementedException();
         }
     }
+    /// <summary>
+    /// 调和事件
+    /// 消耗一张牌，将某个非当前角色元素骰子转化为当前角色颜色骰子
+    /// </summary>
     public class BlendEvent : IEvent<(int card, int diceOrigin, int diceToward)>
     {
         public (int card, int diceOrigin, int diceToward) GetAdditionalValue()
@@ -160,7 +168,6 @@ namespace TCGGame
             throw new System.NotImplementedException();
         }
     }
-
     public class UseNormalAttackEvent : IEvent<int[]>
     {
         public int[] GetAdditionalValue()
@@ -242,26 +249,42 @@ namespace TCGGame
             throw new System.NotImplementedException();
         }
     }
+    /// <summary>
+    /// 获得骰子事件
+    /// 可选参数为指定获得的骰子种类
+    /// </summary>
     public class GainDiceEvent : IEvent<ElementType>
     {
+        private ElementType elementType;
+        private Side side;
+        public GainDiceEvent(Side side)
+        {
+            elementType = Dice.RandomElementType();
+            this.side = side;
+        }
+        public GainDiceEvent(Side side, ElementType elementType)
+        {
+            this.elementType = elementType;
+            this.side = side;
+        }
         public ElementType GetAdditionalValue()
         {
-            throw new System.NotImplementedException();
+            return elementType;
         }
 
         public ActionType GetEventType()
         {
-            throw new System.NotImplementedException();
+            return ActionType.GainDice;
         }
 
         public Side GetSide()
         {
-            throw new System.NotImplementedException();
+            return side;
         }
 
         public bool IsFastAction()
         {
-            throw new System.NotImplementedException();
+            return true;
         }
 
         public void Work()
@@ -269,6 +292,10 @@ namespace TCGGame
             throw new System.NotImplementedException();
         }
     }
+    /// <summary>
+    /// 获得卡牌事件
+    /// 默认提供[抽卡]和[印卡]两种
+    /// </summary>
     public class GainCardEvent : IEvent<ICardAssist>
     {
         public ICardAssist GetAdditionalValue()

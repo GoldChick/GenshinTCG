@@ -24,13 +24,14 @@ namespace TCGCard
         Frequency = 1,
         Round = 2,
     }
-    public interface ICardEffect
+    public interface ICardEffect:ICardBase
     {
         string GetEffectName();
+        string GetEffectDescription();
         EffectType GetEffectType();
         EffectTriggerType GetEffectTriggerType();
         EffectDurationType GetEffectDurationType();
         int GetMaxUseTimes();
-        void Action(IInfoBase[] infos);//TODO
+        void Action(EffectTriggerType triggerType, IInfoBase[] infos);//TODO
     }
 }

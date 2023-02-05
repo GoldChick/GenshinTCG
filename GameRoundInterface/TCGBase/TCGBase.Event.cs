@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 //################################################################
 namespace TCGBase
 {
-    public interface IEventBase
+    public interface IEvent
     {
         Side GetSide();//是哪一方触发的事件
         ActionType GetEventType();
@@ -23,7 +23,7 @@ namespace TCGBase
     /// 比如生效于某个角色/某个骰子等等
     /// </summary>
     /// <typeparam name="T">一个或者多个角色/骰子/卡牌等</typeparam>
-    public interface IEvent<T> : IEventBase
+    public interface IEvent<T> : IEvent
     {
         T GetAdditionalValue();
     }

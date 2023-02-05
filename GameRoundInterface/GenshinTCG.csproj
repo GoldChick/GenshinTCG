@@ -53,6 +53,7 @@
     <Compile Include="TCGCard.Effect.cs" />
     <Compile Include="TCGCard.Skill.cs" />
     <Compile Include="TCGCard.Summon.cs" />
+    <Compile Include="TCGGame.Dice.cs" />
     <Compile Include="TCGGame.Effect.cs" />
     <Compile Include="TCGGame.Event.cs" />
     <Compile Include="TCGGame.GameCharacter.cs" />

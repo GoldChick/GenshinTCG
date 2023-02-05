@@ -15,10 +15,13 @@ namespace TCGGame
     {
         public Side side;
         public List<Effect> effects;
-        public Queue<IEventBase> events;
+        public Queue<IEvent> events;
 
         public List<Character> characters;
-
+        /// <summary>
+        /// 可读，可更改(获得/调和/使用等)
+        /// </summary>
+        public List<Dice> dices;
         private int currCharacter;
 
         public int CurrCharacter { get => currCharacter; set => currCharacter = value; }
@@ -29,11 +32,14 @@ namespace TCGGame
         }
         public void Switch(int id)
         {
-            //Bus.Instance().Post(side);
             if (currCharacter != id)
             {
-                currCharacter = id;
+                Bus.Instance().Post(new SwitchEvent(side, currCharacter, id));
             }
+        }
+        public void Pass()
+        {
+            Bus.Instance().Post(new PassEvent(side));
         }
     }
 }

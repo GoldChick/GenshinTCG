@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TCGBase;
 using TCGCard;
+using TCGCard.CardInterface;
 
 namespace TCGGame
 {
@@ -16,6 +17,8 @@ namespace TCGGame
         public List<Effect> effects;
         public ElementType element;
 
+        public ICardWeapon weapon;
+        public ICardAssist artifact;
         public int Hp
         {
             get => hp;
