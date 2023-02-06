@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TCGCard.CardInterface;
 using TCGCard;
 
 //################################################################
@@ -13,20 +12,32 @@ using TCGCard;
 //################################################################
 namespace TCGInfo
 {
+    public interface IInfo
+    {
+
+    }
+    public class IInfo<T>:IInfo
+    {
+        private T info;
+        public IInfo(T info)
+        {
+            this.info = info;
+        }
+
+        T GetValue()
+        {
+            return info;
+        }
+    }
+
     namespace InfoInterface
     {
-        public interface IInfoBase   {  }
 
-        public interface ICardInfo : IInfoBase
+        public interface ICardInfo : IInfo
         {
             ICardBase GetCard();
         }
-        public interface ICardAssistInfo : ICardInfo
-        {
-            int GetLeftTimes();
-        }
-
-        public interface ICardSummonInfo : ICardInfo
+        public interface ICardAssistInfo : IInfo
         {
             int GetLeftTimes();
         }

@@ -20,15 +20,6 @@ namespace TCGGame
             return instance;
         }
         /// <summary>
-        /// 用于创建不同的模式
-        /// 比如[热斗模式-无限火力]给出8个万能骰子
-        /// </summary>
-        /// <param name="bus">Bus的子类的对象（DIY）</param>
-        public static void CreateInstance(Bus bus)
-        {
-            instance = bus;
-        }
-        /// <summary>
         /// 只读的属性
         /// </summary>
         public RoundStage RoundStage { get => roundStage; }
@@ -40,6 +31,21 @@ namespace TCGGame
         public List<Team> teams;
 
         public int currSide;
+
+        /// <summary>
+        /// 用于创建不同的模式
+        /// 比如[热斗模式-无限火力]给出8个万能骰子
+        /// </summary>
+        /// <param name="bus">Bus的子类的对象（DIY）</param>
+        public static void CreateInstance(Bus bus)
+        {
+            instance = bus;
+        }
+        public void Init(Team team0, Team team1)
+        {
+            instance.teams.Add(team0);
+            instance.teams.Add(team1);
+        }
         /// <summary>
         /// 用来为team提供event的预览
         /// </summary>

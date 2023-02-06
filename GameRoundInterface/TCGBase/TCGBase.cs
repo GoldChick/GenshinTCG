@@ -42,16 +42,16 @@ namespace TCGBase
         Blend = 2,//调和
         Switch = 4,
         UseAssistCard = 8,
+
         UseNormalAttack = 16,
         UseE = 32,
         UseQ = 64,
-
-
 
         GainDice = 128,
         GainCard = 256,
 
         Die = 512,
+
         Others = 1024//虽然但是，似乎没有什么其他行动了
     }
 }

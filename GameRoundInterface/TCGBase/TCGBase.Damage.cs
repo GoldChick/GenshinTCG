@@ -4,13 +4,30 @@ using TCGGame;
 
 namespace TCGBase
 {
-    public interface IDamage
+    public enum TargetType
     {
-        int GetValue();
-        bool DoPierce();
-        List<Effect> GetEffects();
-        ElementType GetElementType();
-        int GetTargetId();
-        ICardBase GetSource();
+        Curr,
+        Left,
+        Right
+    }
+    public class Damage
+    {
+        private int damageNum;
+        private int targetId;
+
+        public bool pierce;
+        public ElementType elementType;
+        public List<Effect> effects;
+        public ICardBase card;
+        public int DamageNum
+        {
+            get => damageNum;
+            set
+            {
+                damageNum = value;
+            }
+        }
+
+        public int TargetId { get => targetId; set => targetId = value; }
     }
 }

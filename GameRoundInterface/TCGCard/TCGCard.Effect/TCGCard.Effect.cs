@@ -1,4 +1,5 @@
 ﻿using TCGBase;
+using TCGInfo;
 using TCGInfo.InfoInterface;
 //################################################################
 //Effect分为[个人效果]和[团队效果]两种
@@ -34,17 +35,17 @@ namespace TCGCard
         EffectType GetEffectType();
         EffectTriggerType GetEffectTriggerType();
         int GetMaxUseTimes();
-        void Work(EffectTriggerType triggerType, IInfoBase[] infos);//TODO
+        /// <summary>
+        /// 当type为OnAttack和OnHurt时infos为IInfo<IDamage>
+        /// </summary>
+        /// <param name="infos"></param>
+        void Work(EffectTriggerType triggerType, params IInfo[] infos);//TODO
     }
-    /// <summary>
-    /// 需要有额外
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
     public interface ICardEffect<T> : ICardEffect
     {
         T GetAdditionalValue();
     }
-    
+
     public interface ICardSummon : ICardEffect<(ElementType element, int damage)>
     {
 

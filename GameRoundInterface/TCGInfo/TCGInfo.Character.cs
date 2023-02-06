@@ -11,6 +11,6 @@ namespace TCGInfo
         ElementType GetCurrElement();
         ICardAssistInfo GetCurrWeapon();
         ICardAssistInfo GetCurrArtifact();
-        List<IEffectInfo> GetCurrEffects();
+        //List<IEffectInfo> GetCurrEffects();
     }
 }

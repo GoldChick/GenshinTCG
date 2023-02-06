@@ -1,4 +1,8 @@
-﻿using TCGCard;
+﻿using System;
+using System.Collections.Generic;
+using TCGBase;
+using TCGCard;
+using TCGInfo;
 
 namespace TCGGame
 {
@@ -19,6 +23,23 @@ namespace TCGGame
         public void Reset()
         {
             useTimes = effect.GetMaxUseTimes();
+        }
+        public static void Trigger(EffectTriggerType triggerType, Action<Effect> action, params List<Effect>[] multiple_effects)
+        {
+            foreach (List<Effect> effects in multiple_effects)
+            {
+                foreach (Effect effect in effects)
+                {
+                    if (effect.CanWork(triggerType))
+                    {
+                        action(effect);
+                    }
+                }
+            }
+        }
+        public bool CanWork(EffectTriggerType triggerType)
+        {
+            return ((int)effect.GetEffectTriggerType() & (int)triggerType) == (int)triggerType;
         }
     }
 }

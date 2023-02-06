@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TCGBase;
 using TCGCard;
+using TCGInfo;
 
 namespace TCGGame
 {
@@ -52,10 +53,12 @@ namespace TCGGame
         /// <summary>
         /// 优先结算本人格挡特效，再计算团队格挡特效
         /// </summary>
-        /// <param name="teamEffects"></param>
-        public void Hurt(List<Effect> teamEffects)
+        public void Hurt(List<Effect> teamEffects, Damage damage)
         {
+            Effect.Trigger(EffectTriggerType.OnHurt, p => p.effect.Work(EffectTriggerType.OnHurt, new IInfo<Damage>(damage)), effects, teamEffects);
 
+            //TODO:还没有元素反应扣血
+            Hp -= damage.DamageNum;
         }
         public void Reset()
         {
