@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TCGBase;
 using TCGCard;
+using TCGInfo;
 //################################################################
 //这里记录游戏自带的一些事件
 //如有需求可以制作自己的事件，或者重写这些事件
@@ -34,7 +35,7 @@ namespace TCGGame
             return false;
         }
 
-        public void Work()
+        public void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -64,7 +65,7 @@ namespace TCGGame
             return false;
         }
 
-        public void Work()
+        public void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -95,7 +96,7 @@ namespace TCGGame
             throw new System.NotImplementedException();
         }
 
-        public void Work()
+        public void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -136,7 +137,7 @@ namespace TCGGame
             return true;
         }
 
-        public virtual void Work()
+        public virtual void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -163,91 +164,48 @@ namespace TCGGame
             throw new System.NotImplementedException();
         }
 
-        public void Work()
+        public void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
     }
-    public class UseNormalAttackEvent : IEvent<int[]>
+    public class UseSkillEvent : IEvent<(ISkill skill, int[] dices)>
     {
-        public int[] GetAdditionalValue()
+        private Side side;
+        private ISkill skill;
+        private int[] dices;
+        public UseSkillEvent(Side side, ISkill skill, int[] dices)
         {
-            throw new System.NotImplementedException();
+            this.side = side;
+            this.skill = skill;
+            this.dices = dices;
+        }
+        public (ISkill skill, int[] dices) GetAdditionalValue()
+        {
+            return (skill, dices);
         }
 
         public ActionType GetEventType()
         {
-            throw new System.NotImplementedException();
+            return ActionType.UseSkill;
         }
 
         public Side GetSide()
         {
-            throw new System.NotImplementedException();
+            return side;
         }
 
         public bool IsFastAction()
         {
-            throw new System.NotImplementedException();
+            return false;
         }
 
-        public void Work()
+        public void Work(params IInfo[] infos)
         {
-            throw new System.NotImplementedException();
-        }
-    }
-    public class UseEEvent : IEvent<int[]>
-    {
-        public int[] GetAdditionalValue()
-        {
-            throw new System.NotImplementedException();
+            skill.OnUseAction(side);
         }
 
-        public ActionType GetEventType()
-        {
-            throw new System.NotImplementedException();
-        }
 
-        public Side GetSide()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool IsFastAction()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Work()
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-    public class UseQEvent : IEvent<int[]>
-    {
-        public int[] GetAdditionalValue()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public ActionType GetEventType()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Side GetSide()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool IsFastAction()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Work()
-        {
-            throw new System.NotImplementedException();
-        }
     }
     /// <summary>
     /// 获得骰子事件
@@ -287,7 +245,7 @@ namespace TCGGame
             return true;
         }
 
-        public void Work()
+        public void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -318,7 +276,7 @@ namespace TCGGame
             throw new System.NotImplementedException();
         }
 
-        public void Work()
+        public void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -346,7 +304,7 @@ namespace TCGGame
             throw new NotImplementedException();
         }
 
-        public void Work()
+        public void Work(params IInfo[] infos)
         {
             throw new NotImplementedException();
         }

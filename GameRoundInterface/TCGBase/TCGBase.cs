@@ -43,15 +43,13 @@ namespace TCGBase
         Switch = 4,
         UseAssistCard = 8,
 
-        UseNormalAttack = 16,
-        UseE = 32,
-        UseQ = 64,
+        UseSkill = 16,
 
-        GainDice = 128,
-        GainCard = 256,
+        GainDice = 32,
+        GainCard = 64,
 
-        Die = 512,
+        Die = 128,
 
-        Others = 1024//虽然但是，似乎没有什么其他行动了
+        Others = 256//虽然但是，似乎没有什么其他行动了
     }
 }

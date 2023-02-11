@@ -24,11 +24,11 @@ namespace TCGGame
         /// </summary>
         public RoundStage RoundStage { get => roundStage; }
 
-        public List<IEvent> events;
+        public List<IEvent> events=new();
         /// <summary>
         /// 按照开局决定的Side排列的teams
         /// </summary>
-        public List<Team> teams;
+        public List<Team> teams = new();
 
         public int currSide;
 

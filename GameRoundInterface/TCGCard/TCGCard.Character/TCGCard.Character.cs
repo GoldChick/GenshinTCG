@@ -19,10 +19,10 @@ namespace TCGCard
     }
     public interface ICardCharacter : ICardBase
     {
-        CharacterType GetCharacterType();
-        CharacterRegion GetCharacterRegion();
-        int GetMaxHP();//最大生命值
-        int GetMaxMP();//最大充能
+        public CharacterType CharacterType { get; }
+        public CharacterRegion CharacterRegion { get; }
+        public int MaxHP { get; }
+        public int MaxMP { get; }
         void GameStartAction();//游戏开始时候的事件
         List<ISkill> GetSkills();//各种技能
     }

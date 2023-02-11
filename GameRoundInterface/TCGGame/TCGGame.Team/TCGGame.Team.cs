@@ -15,23 +15,23 @@ namespace TCGGame
     public class Team
     {
         public Side side;
-        public List<Effect> effects;
-        public Queue<IEvent> events;
+        public List<Effect> effects = new();
+        public Queue<IEvent> events = new();
 
         /// <summary>
         /// 默认的所有30张牌，抽出后需要remove
         /// 在初始化时是被打乱的
         /// </summary>
-        public List<Assist> allCards;
+        public List<Assist> allCards = new();
 
 
-        public List<Assist> cardsInHand;
-        public List<Character> characters;
+        public List<Assist> cardsInHand = new();
+        public List<Character> characters = new();
         /// <summary>
         /// 可读，可更改(获得/调和/使用等)
         /// </summary>
-        public List<Dice> dices;
-        public List<ISkill> skillOptions;
+        public List<Dice> dices = new();
+        public List<ISkill> skillOptions = new();
         private int currCharacter;
 
         public int CurrCharacter
@@ -59,7 +59,17 @@ namespace TCGGame
 
         public void Hurt(Damage damage)
         {
-            characters[damage.TargetId].Hurt(effects, damage);
+            int pos = damage.TargetId + CurrCharacter;
+            if (pos == -1)
+            {
+                pos = 2;
+            }
+            else if (pos == 3)
+            {
+                pos = 0;
+            }
+            //绝对位置
+            characters[pos].Hurt(effects, damage);
         }
         public void Switch(int id)
         {

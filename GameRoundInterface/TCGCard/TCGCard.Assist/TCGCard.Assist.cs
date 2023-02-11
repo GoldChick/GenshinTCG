@@ -4,10 +4,21 @@
 //################################################################
 namespace TCGCard
 {
+    public enum CardAssistType
+    {
+        Nature,
+        Weapon,
+        Artifact,
+        Place,
+        Food,
+        Event,
+        Summon
+    }
     public interface ICardAssist : ICardBase
     {
-        int GetUseTimes();//能够使用的最大次数
-        bool CanBeMultiplyUsed();//是否能够多次使用，即每回合开始阶段刷新。否则次数耗尽后消失
+        public int MaxNumPermitted { get; }//允许携带的最大数量
+        public int MaxUseTimes { get; }
+        public bool CanBeMultiplyUsed { get; }//是否能够多次使用，即每回合开始阶段刷新。否则次数耗尽后消失
         int GetDiceNum();//骰子数量 
         bool IsSameDice();//是否需要相同的骰子
         bool CanBeArmed();//是否可以加入卡组里

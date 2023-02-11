@@ -19,8 +19,9 @@ namespace TCGCard
     }
     public interface ICardWeapon : ICardAssist
     {
-        WeaponType GetWeaponType();//武器的类型
-        int GetBaseDamage();//武器基础攻击
+        public WeaponType WeaponType { get; }
+        public int BaseDamage { get; }
+
         int GetAdditionalDamage(IGameBase[] igame);//一定条件下额外攻击
         void GetAdditonalEffect(IGameBase[] igame);//一定条件下触发的额外效果
     }

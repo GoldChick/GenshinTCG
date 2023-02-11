@@ -14,7 +14,7 @@ namespace TCGGame
         private int mp;
 
         public bool isAlive;
-        public List<Effect> effects;
+        public List<Effect> effects = new List<Effect>();
         public ElementType element;
 
         public ICardWeapon weapon;
@@ -63,7 +63,7 @@ namespace TCGGame
         public void Reset()
         {
             isAlive = true;
-            Hp = card.GetMaxHP();
+            Hp = card.MaxHP;
             Mp = 0;
             effects.Clear();
             element = ElementType.Trival;

@@ -32,9 +32,10 @@ namespace TCGCard
     }
     public interface ICardEffect : ICardBase
     {
-        EffectType GetEffectType();
+        public bool Stackable { get; }
+        public int MaxUseTimes { get; }
+        public EffectType EffectType { get; }
         EffectTriggerType GetEffectTriggerType();
-        int GetMaxUseTimes();
         /// <summary>
         /// 当type为OnAttack和OnHurt时infos为IInfo<IDamage>
         /// </summary>

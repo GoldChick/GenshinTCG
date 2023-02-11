@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TCGInfo;
 //################################################################
 //双方各有一个用来储存本局游戏所有[Event]的List<IEventBase>
 //同时又有一个储存当前[非快速行动]的Queue<IEventBase>
@@ -16,7 +17,7 @@ namespace TCGBase
         Side GetSide();//是哪一方触发的事件
         ActionType GetEventType();
         bool IsFastAction();
-        void Work();
+        void Work(params IInfo[] infos);
     }
     /// <summary>
     /// Event需要绑定的参数

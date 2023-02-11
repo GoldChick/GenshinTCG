@@ -23,25 +23,18 @@ namespace TCGCard
         Place,
         Food,
         Event,
-        Summon
+        Summon,
+
+        Effect
     }
-    public enum CardAssistType
-    {
-        Nature,
-        Weapon,
-        Artifact,
-        Place,
-        Food,
-        Event,
-        Summon
-    }
+
 
 
     public interface ICardBase
     {
-        string GetCardName();
-        string GetCardDiscription();
-        CardType GetCardType();
+        public string Name { get; }
+        public string Description { get; }
+        public CardType CardType { get; }
         Bitmap GetImageBmp();
     }
 }
