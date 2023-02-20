@@ -169,18 +169,18 @@ namespace TCGGame
             throw new System.NotImplementedException();
         }
     }
-    public class UseSkillEvent : IEvent<(ISkill skill, int[] dices)>
+    public class UseSkillEvent : IEvent<(ICardSkill skill, int[] dices)>
     {
         private Side side;
-        private ISkill skill;
+        private ICardSkill skill;
         private int[] dices;
-        public UseSkillEvent(Side side, ISkill skill, int[] dices)
+        public UseSkillEvent(Side side, ICardSkill skill, int[] dices)
         {
             this.side = side;
             this.skill = skill;
             this.dices = dices;
         }
-        public (ISkill skill, int[] dices) GetAdditionalValue()
+        public (ICardSkill skill, int[] dices) GetAdditionalValue()
         {
             return (skill, dices);
         }

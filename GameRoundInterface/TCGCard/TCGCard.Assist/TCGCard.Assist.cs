@@ -30,7 +30,7 @@ namespace TCGCard
     public interface ICardNature : ICardAssist
     {
         ICardCharacter GetCharacter();//所属的角色
-        ISkill GetSkill();//所强化的技能
+        ICardSkill GetSkill();//所强化的技能
         int GetAdditionalDamage(IGameBase[] igame);//一定条件下额外攻击
         void GetAdditonalEffect(IGameBase[] igame);//一定条件下触发的额外效果
     }

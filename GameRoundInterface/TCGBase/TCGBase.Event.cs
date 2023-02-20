@@ -12,6 +12,7 @@ using TCGInfo;
 //################################################################
 namespace TCGBase
 {
+    public delegate void TCGEventHandler();
     public interface IEvent
     {
         Side GetSide();//是哪一方触发的事件

@@ -22,7 +22,7 @@ namespace TCGGame
         }
         public void Reset()
         {
-            useTimes = effect.GetMaxUseTimes();
+            useTimes = effect.MaxUseTimes;
         }
         public static void Trigger(EffectTriggerType triggerType, Action<Effect> action, params List<Effect>[] multiple_effects)
         {
@@ -39,7 +39,7 @@ namespace TCGGame
         }
         public bool CanWork(EffectTriggerType triggerType)
         {
-            return ((int)effect.GetEffectTriggerType() & (int)triggerType) == (int)triggerType;
+            return ((int)effect.TriggerType & (int)triggerType) == (int)triggerType;
         }
     }
 }

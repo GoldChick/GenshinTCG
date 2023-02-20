@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// 游戏开始阶段会进行先后手判定，进行一次标号储存,
@@ -30,7 +24,7 @@ namespace TCGBase
         Dendro,
         Hydro,
         Pyro,
-        Cyro
+        Cryo
     }
     /// <summary>
     /// 某次行动的type

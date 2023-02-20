@@ -7,6 +7,13 @@ using TCGGame;
 //################################################################
 namespace TCGCard
 {
+    public interface IUtils
+    {
+        public string GetLibName();
+        public string GetLibVersion();
+        public string GetLibDescription();
+        public List<string> GetDepentdencies();
+    }
     /// <summary>
     /// 卡片类型
     ///总体分为[角色卡]和[辅助卡]
@@ -23,9 +30,12 @@ namespace TCGCard
         Place,
         Food,
         Event,
+
         Summon,
 
-        Effect
+        Effect,
+        Skill
+
     }
 
 

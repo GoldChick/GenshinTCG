@@ -49,6 +49,7 @@
     <Compile Include="TCGBase\TCGBase.Reaction.cs" />
     <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.cs" />
     <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.Weapon.cs" />
+    <Compile Include="TCGGame\TCGGame.AI\TCGGame.AI.cs" />
     <Compile Include="TCGGame\TCGGame.Assist.cs" />
     <Compile Include="TCGGame\TCGGame.Bus\TCGGame.Bus.cs" />
     <Compile Include="TCGGame\TCGGame.Character.cs" />

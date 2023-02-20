@@ -11,20 +11,22 @@ namespace TCGGame
     {
         private static Bus instance;
         private RoundStage roundStage;
-        public static Bus Instance()
+        public static Bus Instance
         {
-            if (instance == null)
+            get
             {
-                instance = new Bus();
+                instance ??= new Bus();
+                return instance;
             }
-            return instance;
         }
+        private int round;
+        public int Round { get => round; set => round = value; }
         /// <summary>
         /// 只读的属性
         /// </summary>
         public RoundStage RoundStage { get => roundStage; }
 
-        public List<IEvent> events=new();
+        public List<IEvent> events = new();
         /// <summary>
         /// 按照开局决定的Side排列的teams
         /// </summary>
@@ -41,10 +43,14 @@ namespace TCGGame
         {
             instance = bus;
         }
-        public void Init(Team team0, Team team1)
+        public void Init(Team teamMe, Team teamYou)
         {
-            instance.teams.Add(team0);
-            instance.teams.Add(team1);
+            instance.teams.Add(teamMe);
+            instance.teams.Add(teamYou);
+
+            Random rd = new();
+            currSide = rd.Next(2);
+            teams[currSide].side = Side.Front;
         }
         /// <summary>
         /// 用来为team提供event的预览
@@ -75,6 +81,8 @@ namespace TCGGame
                 goto start;
             }
         }
+
+
         /// <summary>
         /// 将游戏结束之后的events保存到本地
         /// </summary>

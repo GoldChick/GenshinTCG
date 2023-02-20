@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using TCGBase;
 using TCGCard;
 
@@ -14,8 +12,12 @@ namespace TCGGame
     /// </summary>
     public class Team
     {
+        public AIBase AI { get; protected set; }
+
+        private int currCharacter;
+
         public Side side;
-        public List<Effect> effects = new();
+        public List<Effect> teamEffects = new();
         public Queue<IEvent> events = new();
 
         /// <summary>
@@ -24,15 +26,12 @@ namespace TCGGame
         /// </summary>
         public List<Assist> allCards = new();
 
-
-        public List<Assist> cardsInHand = new();
         public List<Character> characters = new();
-        /// <summary>
-        /// 可读，可更改(获得/调和/使用等)
-        /// </summary>
-        public List<Dice> dices = new();
-        public List<ISkill> skillOptions = new();
-        private int currCharacter;
+
+        public ObservableCollection<Assist> cardsInHand = new();
+        public ObservableCollection<Dice> dices = new();//capped at 16
+        public List<ICardSkill> skillOptions = new();
+
 
         public int CurrCharacter
         {
@@ -46,8 +45,10 @@ namespace TCGGame
 
         public Team(List<Assist> cards, List<Character> characters)
         {
+            currCharacter = -1;
+
             characters.ForEach(cha => this.characters.Add(cha));
-            Random rd = new Random();
+            Random rd = new();
             while (cards.Count > 0)
             {
                 int r = rd.Next(0, cards.Count);
@@ -69,18 +70,28 @@ namespace TCGGame
                 pos = 0;
             }
             //绝对位置
-            characters[pos].Hurt(effects, damage);
+            characters[pos].Hurt(teamEffects, damage);
         }
-        public void Switch(int id)
+        public void Post()
         {
-            if (currCharacter != id)
+            events.Enqueue(AI.GetEvent(side));
+            if (!AI.NeedReconfirm())
             {
-                Bus.Instance().Post(new SwitchEvent(side, currCharacter, id));
+                Action();
             }
         }
-        public void Pass()
+        /// <summary>
+        /// 确认行动
+        /// </summary>
+        public void Action()
         {
-            Bus.Instance().Post(new PassEvent(side));
+        start: IEvent eventBase = events.Dequeue();
+            eventBase.Work();
+            //events.Add(eventBase);
+            if (eventBase.IsFastAction())
+            {
+                goto start;
+            }
         }
     }
 }

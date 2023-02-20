@@ -24,6 +24,6 @@ namespace TCGCard
         public int MaxHP { get; }
         public int MaxMP { get; }
         void GameStartAction();//游戏开始时候的事件
-        List<ISkill> GetSkills();//各种技能
+        List<ICardSkill> GetSkills();//各种技能
     }
 }

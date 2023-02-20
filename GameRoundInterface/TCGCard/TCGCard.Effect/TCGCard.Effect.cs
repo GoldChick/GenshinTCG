@@ -35,7 +35,7 @@ namespace TCGCard
         public bool Stackable { get; }
         public int MaxUseTimes { get; }
         public EffectType EffectType { get; }
-        EffectTriggerType GetEffectTriggerType();
+        public EffectTriggerType TriggerType { get; }
         /// <summary>
         /// 当type为OnAttack和OnHurt时infos为IInfo<IDamage>
         /// </summary>
