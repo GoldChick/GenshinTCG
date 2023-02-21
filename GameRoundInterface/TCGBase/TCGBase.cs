@@ -38,12 +38,13 @@
         UseAssistCard = 8,
 
         UseSkill = 16,
+        Hurt =32,
 
-        GainDice = 32,
-        GainCard = 64,
+        GainDice = 64,
+        GainCard = 128,
 
-        Die = 128,
+        Die = 256,
 
-        Others = 256//虽然但是，似乎没有什么其他行动了
+        Others = 512//虽然但是，似乎没有什么其他行动了
     }
 }

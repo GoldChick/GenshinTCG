@@ -18,7 +18,7 @@ namespace TCGGame
 
         public Side side;
         public List<Effect> teamEffects = new();
-        public Queue<IEvent> events = new();
+        public Stack<IEvent> events = new();
 
         /// <summary>
         /// 默认的所有30张牌，抽出后需要remove
@@ -74,24 +74,40 @@ namespace TCGGame
         }
         public void Post()
         {
-            events.Enqueue(AI.GetEvent(side));
+            IEvent e = AI.GetEvent(side);
+
+            events.Push(e);
             if (!AI.NeedReconfirm())
             {
                 Action();
             }
+        }
+        public void Post(IEvent e)
+        {
+            events.Push(e);
+            if (!AI.NeedReconfirm())
+            {
+                Action();
+            }
+        }
+        public void Action(IEvent e)
+        {
+            e.Work();
+            Bus.Instance.events.Add(e);
         }
         /// <summary>
         /// 确认行动
         /// </summary>
         public void Action()
         {
-        start: IEvent eventBase = events.Dequeue();
+        start: IEvent eventBase = events.Pop();
             eventBase.Work();
-            //events.Add(eventBase);
+            Bus.Instance.events.Add(eventBase);
             if (eventBase.IsFastAction())
             {
                 goto start;
             }
         }
+
     }
 }

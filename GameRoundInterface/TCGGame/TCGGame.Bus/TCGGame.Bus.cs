@@ -59,21 +59,21 @@ namespace TCGGame
         /// <param name="eventBase"></param>
         public void Post(IEvent eventBase)
         {
-            teams[(int)eventBase.GetSide()].events.Enqueue(eventBase);
+            teams[(int)eventBase.Side].events.Push(eventBase);
         }
         /// <summary>
         /// 取消行动
         /// </summary>
         public void Get(IEvent eventBase)
         {
-            teams[(int)eventBase.GetSide()].events.Clear();
+            teams[(int)eventBase.Side].events.Clear();
         }
         /// <summary>
         /// 确认行动
         /// </summary>
         public void Action(Side teamSide)
         {
-        start: IEvent eventBase = teams[(int)teamSide].events.Dequeue();
+        start: IEvent eventBase = teams[(int)teamSide].events.Pop();
             eventBase.Work();
             events.Add(eventBase);
             if (eventBase.IsFastAction())

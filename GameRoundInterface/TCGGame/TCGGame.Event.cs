@@ -15,27 +15,21 @@ namespace TCGGame
     /// </summary>
     public class NoneEvent : IEvent
     {
-        private Side side;
-        public NoneEvent(Side side)
+        public NoneEvent(Side side) : base(side)
         {
-            this.side = side;
         }
-        public ActionType GetEventType()
+
+        public override ActionType GetEventType()
         {
             return ActionType.None;
         }
 
-        public Side GetSide()
+        public override bool IsFastAction()
         {
-            return side;
+            return true;
         }
 
-        public virtual bool IsFastAction()
-        {
-            return false;
-        }
-
-        public void Work(params IInfo[] infos)
+        public override void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -45,27 +39,22 @@ namespace TCGGame
     /// </summary>
     public class PassEvent : IEvent
     {
-        private Side side;
-        public PassEvent(Side side)
+        public PassEvent(Side side) : base(side)
         {
-            this.side = side;
         }
-        public ActionType GetEventType()
+
+        public override ActionType GetEventType()
         {
             return ActionType.Pass;
         }
 
-        public Side GetSide()
-        {
-            return side;
-        }
 
-        public bool IsFastAction()
+        public override bool IsFastAction()
         {
             return false;
         }
 
-        public void Work(params IInfo[] infos)
+        public override void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -76,27 +65,26 @@ namespace TCGGame
     /// </summary>
     public class BlendEvent : IEvent<(int card, int diceOrigin, int diceToward)>
     {
-        public (int card, int diceOrigin, int diceToward) GetAdditionalValue()
+        public BlendEvent(Side side) : base(side)
+        {
+        }
+
+        public override (int card, int diceOrigin, int diceToward) GetAdditionalValue()
         {
             throw new System.NotImplementedException();
         }
 
-        public ActionType GetEventType()
+        public override ActionType GetEventType()
         {
             throw new System.NotImplementedException();
         }
 
-        public Side GetSide()
+        public override bool IsFastAction()
         {
             throw new System.NotImplementedException();
         }
 
-        public bool IsFastAction()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Work(params IInfo[] infos)
+        public override void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -107,105 +95,116 @@ namespace TCGGame
     /// </summary>
     public class SwitchEvent : IEvent<(int before, int after)>
     {
-        private Side side;
         private int before;
         private int after;
-        public SwitchEvent(Side side, int before, int after)
+        public SwitchEvent(Side side, int before, int after) : base(side)
         {
-            this.side = side;
             this.before = before;
             this.after = after;
         }
 
-        public (int before, int after) GetAdditionalValue()
+        public override (int before, int after) GetAdditionalValue()
         {
             return (this.before, this.after);
         }
 
-        public ActionType GetEventType()
+        public override ActionType GetEventType()
         {
             return ActionType.Switch;
         }
-
-        public Side GetSide()
-        {
-            return side;
-        }
-
-        public virtual bool IsFastAction()
+        public override bool IsFastAction()
         {
             return true;
         }
 
-        public virtual void Work(params IInfo[] infos)
+        public override void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
     }
     public class UseAssistCardEvent : IEvent<(int card, int[] dice)>
     {
-        public (int card, int[] dice) GetAdditionalValue()
+        public UseAssistCardEvent(Side side) : base(side)
+        {
+        }
+
+        public override (int card, int[] dice) GetAdditionalValue()
         {
             throw new System.NotImplementedException();
         }
 
-        public ActionType GetEventType()
+        public override ActionType GetEventType()
         {
             throw new System.NotImplementedException();
         }
 
-        public Side GetSide()
+
+        public override bool IsFastAction()
         {
             throw new System.NotImplementedException();
         }
 
-        public bool IsFastAction()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Work(params IInfo[] infos)
+        public override void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
     }
     public class UseSkillEvent : IEvent<(ICardSkill skill, int[] dices)>
     {
-        private Side side;
         private ICardSkill skill;
         private int[] dices;
-        public UseSkillEvent(Side side, ICardSkill skill, int[] dices)
+        public UseSkillEvent(Side side, ICardSkill skill, int[] dices) : base(side)
         {
-            this.side = side;
             this.skill = skill;
             this.dices = dices;
         }
-        public (ICardSkill skill, int[] dices) GetAdditionalValue()
+        public override (ICardSkill skill, int[] dices) GetAdditionalValue()
         {
             return (skill, dices);
         }
 
-        public ActionType GetEventType()
+        public override ActionType GetEventType()
         {
             return ActionType.UseSkill;
         }
 
-        public Side GetSide()
-        {
-            return side;
-        }
 
-        public bool IsFastAction()
+        public override bool IsFastAction()
         {
             return false;
         }
 
-        public void Work(params IInfo[] infos)
+        public override void Work(params IInfo[] infos)
         {
-            skill.OnUseAction(side);
+            skill.OnUseAction(Side);
+        }
+    }
+    public class HurtEvent : IEvent<Damage>
+    {
+        public HurtEvent(Side side) : base(side)
+        {
+        }
+
+        public override Damage GetAdditionalValue()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ActionType GetEventType()
+        {
+            throw new NotImplementedException();
         }
 
 
+        public override bool IsFastAction()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Work(params IInfo[] infos)
+        {
+            throw new NotImplementedException();
+        }
     }
     /// <summary>
     /// 获得骰子事件
@@ -214,38 +213,30 @@ namespace TCGGame
     public class GainDiceEvent : IEvent<ElementType>
     {
         private ElementType elementType;
-        private Side side;
-        public GainDiceEvent(Side side)
+        public GainDiceEvent(Side side) : base(side)
         {
-            elementType = Dice.RandomElementType();
-            this.side = side;
+            elementType = Dice.GetRandomElementType();
         }
-        public GainDiceEvent(Side side, ElementType elementType)
+        public GainDiceEvent(Side side, ElementType elementType) : base(side)
         {
             this.elementType = elementType;
-            this.side = side;
         }
-        public ElementType GetAdditionalValue()
+        public override ElementType GetAdditionalValue()
         {
             return elementType;
         }
 
-        public ActionType GetEventType()
+        public override ActionType GetEventType()
         {
             return ActionType.GainDice;
         }
 
-        public Side GetSide()
-        {
-            return side;
-        }
-
-        public bool IsFastAction()
+        public override bool IsFastAction()
         {
             return true;
         }
 
-        public void Work(params IInfo[] infos)
+        public override void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -256,27 +247,26 @@ namespace TCGGame
     /// </summary>
     public class GainCardEvent : IEvent<ICardAssist>
     {
-        public ICardAssist GetAdditionalValue()
+        public GainCardEvent(Side side) : base(side)
+        {
+        }
+
+        public override ICardAssist GetAdditionalValue()
         {
             throw new System.NotImplementedException();
         }
 
-        public ActionType GetEventType()
+        public override ActionType GetEventType()
         {
             throw new System.NotImplementedException();
         }
 
-        public Side GetSide()
+        public override bool IsFastAction()
         {
             throw new System.NotImplementedException();
         }
 
-        public bool IsFastAction()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Work(params IInfo[] infos)
+        public override void Work(params IInfo[] infos)
         {
             throw new System.NotImplementedException();
         }
@@ -284,27 +274,25 @@ namespace TCGGame
 
     public class DieEvent : IEvent<int>
     {
-        public int GetAdditionalValue()
+        public DieEvent(Side side) : base(side)
+        {
+        }
+
+        public override int GetAdditionalValue()
         {
             throw new NotImplementedException();
         }
 
-        public ActionType GetEventType()
+        public override ActionType GetEventType()
+        {
+            throw new NotImplementedException();
+        }
+        public override bool IsFastAction()
         {
             throw new NotImplementedException();
         }
 
-        public Side GetSide()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsFastAction()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Work(params IInfo[] infos)
+        public override void Work(params IInfo[] infos)
         {
             throw new NotImplementedException();
         }

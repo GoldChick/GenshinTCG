@@ -13,20 +13,31 @@ using TCGInfo;
 namespace TCGBase
 {
     public delegate void TCGEventHandler();
-    public interface IEvent
+    public abstract class IEvent
     {
-        Side GetSide();//是哪一方触发的事件
-        ActionType GetEventType();
-        bool IsFastAction();
-        void Work(params IInfo[] infos);
+        public Side Side { get; }//由哪一方触发，注意！并不是Bus中的索引！
+        public IEvent(Side side)
+        {
+            Side = side;
+        }
+
+        public virtual bool IsFastAction()
+        {
+            return true;
+        }
+        public abstract ActionType GetEventType();
+        public abstract void Work(params IInfo[] infos);
     }
     /// <summary>
     /// Event需要绑定的参数
     /// 比如生效于某个角色/某个骰子等等
     /// </summary>
     /// <typeparam name="T">一个或者多个角色/骰子/卡牌等</typeparam>
-    public interface IEvent<T> : IEvent
+    public abstract class IEvent<T> : IEvent
     {
-        T GetAdditionalValue();
+        public IEvent(Side side) : base(side)
+        {
+        }
+        public abstract T GetAdditionalValue();
     }
 }

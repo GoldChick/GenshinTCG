@@ -1,4 +1,5 @@
-﻿using TCGBase;
+﻿using System.Collections.Generic;
+using TCGBase;
 using TCGInfo;
 using TCGInfo.InfoInterface;
 //################################################################
@@ -22,20 +23,20 @@ namespace TCGCard
     /// </summary>
     public enum EffectTriggerType
     {
-        Instant = 0,
-        OnAttack = 1,
-        OnHurt = 2,
-        OnDead = 4,
-        OnRoundStart = 8,
-        OnRoundEnd = 16,
-        Custom = 32
+        Before = 0,
+        On = 1,
+        After = 2
     }
     public interface ICardEffect : ICardBase
     {
         public bool Stackable { get; }
         public int MaxUseTimes { get; }
+        public int Prior { get; }//值越大，越靠后触发，默认为0
         public EffectType EffectType { get; }
+        public Dictionary<EffectTriggerType, ActionType> EffectTriggers { get; }
+
         public EffectTriggerType TriggerType { get; }
+        public ActionType ActionType { get; }
         /// <summary>
         /// 当type为OnAttack和OnHurt时infos为IInfo<IDamage>
         /// </summary>

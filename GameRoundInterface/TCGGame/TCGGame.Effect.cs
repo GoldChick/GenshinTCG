@@ -39,7 +39,8 @@ namespace TCGGame
         }
         public bool CanWork(EffectTriggerType triggerType)
         {
-            return ((int)effect.TriggerType & (int)triggerType) == (int)triggerType;
+            // return ((int)effect.TriggerType & (int)triggerType) == (int)triggerType;
+            return true;
         }
     }
 }

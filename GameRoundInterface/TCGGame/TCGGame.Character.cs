@@ -55,7 +55,7 @@ namespace TCGGame
         /// </summary>
         public void Hurt(List<Effect> teamEffects, Damage damage)
         {
-            Effect.Trigger(EffectTriggerType.OnHurt, p => p.effect.Work(EffectTriggerType.OnHurt, new IInfo<Damage>(damage)), effects, teamEffects);
+            //Effect.Trigger(EffectTriggerType.OnHurt, p => p.effect.Work(EffectTriggerType.OnHurt, new IInfo<Damage>(damage)), effects, teamEffects);
 
             //TODO:还没有元素反应扣血
             Hp -= damage.DamageNum;
