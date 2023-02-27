@@ -27,6 +27,10 @@ namespace TCGCard
         On = 1,
         After = 2
     }
+    /// <summary>
+    /// 每个effect既有监听的触发方式（如监听释放普通攻击的行为）
+    /// 也有普通的触发方式（如护盾的抵挡伤害时自动调用）
+    /// </summary>
     public interface ICardEffect : ICardBase
     {
         public bool Stackable { get; }

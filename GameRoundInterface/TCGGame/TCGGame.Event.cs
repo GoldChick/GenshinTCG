@@ -207,9 +207,9 @@ namespace TCGGame
         {
             foreach (var info in infos)
             {
-                if (info is IInfo<Team> team)
+                //if (info is IInfo<Team> team)
                 {
-                    team.Info.Hurt(damage);
+                 //   team.Info.Hurt(damage);
                 }
             }
         }

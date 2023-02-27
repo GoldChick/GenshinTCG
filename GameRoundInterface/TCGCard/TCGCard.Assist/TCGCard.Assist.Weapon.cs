@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TCGBase;
 using TCGGame;
+using TCGInfo;
 
 namespace TCGCard
 {
@@ -22,7 +23,7 @@ namespace TCGCard
         public WeaponType WeaponType { get; }
         public int BaseDamage { get; }
 
-        int GetAdditionalDamage(IGameBase[] igame);//一定条件下额外攻击
-        void GetAdditonalEffect(IGameBase[] igame);//一定条件下触发的额外效果
+        int GetAdditionalDamage(IInfo[] igame);//一定条件下额外攻击
+        void GetAdditonalEffect(IInfo[] igame);//一定条件下触发的额外效果
     }
 }

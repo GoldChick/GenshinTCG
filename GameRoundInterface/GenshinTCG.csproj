@@ -46,12 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TCGBase\TCGBase.Exception.cs" />
+    <Compile Include="TCGBase\TCGBase.Logger.cs" />
     <Compile Include="TCGBase\TCGBase.Reaction.cs" />
     <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.cs" />
     <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.Weapon.cs" />
     <Compile Include="TCGGame\TCGGame.AI\TCGGame.AI.cs" />
     <Compile Include="TCGGame\TCGGame.Assist.cs" />
-    <Compile Include="TCGGame\TCGGame.Bus\TCGGame.Bus.cs" />
     <Compile Include="TCGGame\TCGGame.Character.cs" />
     <Compile Include="TCGBase\TCGBase.Damage.cs" />
     <Compile Include="TCGBase\TCGBase.cs" />
@@ -62,12 +62,8 @@
     <Compile Include="TCGBase\TCGBase.Dice.cs" />
     <Compile Include="TCGGame\TCGGame.Effect.cs" />
     <Compile Include="TCGGame\TCGGame.Event.cs" />
-    <Compile Include="TCGGame.GameCharacter.cs" />
     <Compile Include="TCGCard\TCGCard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TCGGame\TCGGame.cs" />
-    <Compile Include="TCGGame.GameRound.cs" />
-    <Compile Include="TCGGame\TCGGame.Team\TCGGame.Team.cs" />
     <Compile Include="TCGInfo\TCGInfo.Character.cs" />
     <Compile Include="TCGInfo\TCGInfo.cs" />
   </ItemGroup>
