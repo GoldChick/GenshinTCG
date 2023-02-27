@@ -3,29 +3,13 @@ using System.Collections.Generic;
 
 namespace TCGBase
 {
-    public class Dice
+    public static class Dice
     {
-        private ElementType elementType;
-
-        public Dice()
-        {
-            elementType = GetRandomElementType();
-        }
-        public Dice(ElementType elementType)
-        {
-            this.elementType = elementType;
-        }
-        public Dice(int element)
-        {
-            elementType = (ElementType)element;
-        }
-        public ElementType GetElementType() => elementType;
-
         //TODO:随机数产生问题
         //不能一次产生多个
         public static ElementType GetRandomElementType()
         {
-            Random rd = new Random();
+            Random rd = new();
             return (ElementType)rd.Next(0, 8);
         }
         /// <summary>
@@ -37,7 +21,7 @@ namespace TCGBase
         /// </summary>
         /// <param name="sameDice">控制need中的Trival骰子的要求</param>
         /// <param name="mine">传入的List需要已经排序过的(同种元素都排在一起)</param>
-        /// <returns>如果返回为null证明失败</returns>
+        /// <returns>如果返回为null证明失败,否则返回位置</returns>
         public static int[] AutoCheckExpense(List<ElementType> need, bool sameDice, List<ElementType> mine, ElementType currType)
         {
             if (need.Count > mine.Count)

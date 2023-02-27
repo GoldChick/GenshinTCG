@@ -11,6 +11,8 @@ namespace TCGGame
     {
         private static Bus instance;
         private RoundStage roundStage;
+        private int round;
+
         public static Bus Instance
         {
             get
@@ -19,7 +21,8 @@ namespace TCGGame
                 return instance;
             }
         }
-        private int round;
+        public static Logger logger;
+
         public int Round { get => round; set => round = value; }
         /// <summary>
         /// 只读的属性

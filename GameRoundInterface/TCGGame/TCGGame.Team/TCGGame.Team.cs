@@ -29,7 +29,7 @@ namespace TCGGame
         public List<Character> characters = new();
 
         public ObservableCollection<Assist> cardsInHand = new();
-        public ObservableCollection<Dice> dices = new();//capped at 16
+        public ObservableCollection<ElementType> dices = new();//capped at 16
         public List<ICardSkill> skillOptions = new();
 
 
@@ -70,7 +70,8 @@ namespace TCGGame
                 pos = 0;
             }
             //绝对位置
-            characters[pos].Hurt(teamEffects, damage);
+
+             characters[pos].Hurt(teamEffects, damage);
         }
         public void Post()
         {
@@ -100,12 +101,16 @@ namespace TCGGame
         /// </summary>
         public void Action()
         {
-        start: IEvent eventBase = events.Pop();
-            eventBase.Work();
-            Bus.Instance.events.Add(eventBase);
-            if (eventBase.IsFastAction())
+        start:
+            if (events.Count > 0)
             {
-                goto start;
+                IEvent eventBase = events.Pop();
+                eventBase.Work();
+                Bus.Instance.events.Add(eventBase);
+                if (eventBase.IsFastAction())
+                {
+                    goto start;
+                }
             }
         }
 

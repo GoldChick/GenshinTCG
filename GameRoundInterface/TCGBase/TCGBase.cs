@@ -31,20 +31,20 @@
     /// </summary>
     public enum ActionType
     {
-        None = 0,//什么也不做
-        Pass = 1,//空过
-        Blend = 2,//调和
-        Switch = 4,
-        UseAssistCard = 8,
+        None,//什么也不做
+        Pass,//空过
+        Blend,//调和
+        Switch,
+        UseAssistCard,
 
-        UseSkill = 16,
-        Hurt =32,
+        UseSkill,
+        Hurt,
 
-        GainDice = 64,
-        GainCard = 128,
+        GainDice,
+        GainCard,
 
-        Die = 256,
+        Die,
 
-        Others = 512//虽然但是，似乎没有什么其他行动了
+        Others//虽然但是，似乎没有什么其他行动了
     }
 }

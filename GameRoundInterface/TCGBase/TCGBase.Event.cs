@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TCGInfo;
+﻿using TCGInfo;
 //################################################################
-//双方各有一个用来储存本局游戏所有[Event]的List<IEventBase>
-//同时又有一个储存当前[非快速行动]的Queue<IEventBase>
-//各种行动会发送[Event],先储存到Queue中，二次确认之后Queue进行执行，并且储存到List中
+//各种行动会发送[Event],先储存到Stack中，二次确认之后进行执行，并且储存到List中
 //可以选择导出记录
 //################################################################
 namespace TCGBase

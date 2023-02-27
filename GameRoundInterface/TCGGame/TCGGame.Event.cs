@@ -181,29 +181,37 @@ namespace TCGGame
     }
     public class HurtEvent : IEvent<Damage>
     {
-        public HurtEvent(Side side) : base(side)
+        private Damage damage;
+        public HurtEvent(Damage damage, Side side) : base(side)
         {
+            this.damage = damage;
         }
 
         public override Damage GetAdditionalValue()
         {
-            throw new NotImplementedException();
+            return damage;
         }
 
         public override ActionType GetEventType()
         {
-            throw new NotImplementedException();
+            return ActionType.Hurt;
         }
 
 
         public override bool IsFastAction()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public override void Work(params IInfo[] infos)
         {
-            throw new NotImplementedException();
+            foreach (var info in infos)
+            {
+                if (info is IInfo<Team> team)
+                {
+                    team.Info.Hurt(damage);
+                }
+            }
         }
     }
     /// <summary>

@@ -37,6 +37,10 @@ namespace TCGCard
 
         public EffectTriggerType TriggerType { get; }
         public ActionType ActionType { get; }
+
+        //public void OnGain();
+        //public void OnLose();
+
         /// <summary>
         /// 当type为OnAttack和OnHurt时infos为IInfo<IDamage>
         /// </summary>

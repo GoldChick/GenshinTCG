@@ -24,20 +24,24 @@ namespace TCGGame
         {
             useTimes = effect.MaxUseTimes;
         }
-        public static void Trigger(EffectTriggerType triggerType, Action<Effect> action, params List<Effect>[] multiple_effects)
+        /// <summary>
+        /// 不同的effect需要的参数可能不同
+        /// 在action里预制
+        /// </summary>
+        public static void Trigger(EffectTriggerType triggerType, ActionType actionType, Action<Effect> action, params List<Effect>[] multiple_effects)
         {
             foreach (List<Effect> effects in multiple_effects)
             {
                 foreach (Effect effect in effects)
                 {
-                    if (effect.CanWork(triggerType))
+                    if (effect.CanWork(triggerType, actionType))
                     {
                         action(effect);
                     }
                 }
             }
         }
-        public bool CanWork(EffectTriggerType triggerType)
+        public bool CanWork(EffectTriggerType triggerType, ActionType actionType)
         {
             // return ((int)effect.TriggerType & (int)triggerType) == (int)triggerType;
             return true;
