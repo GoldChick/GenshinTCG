@@ -18,10 +18,9 @@ namespace TCGCard
         Fontaine,
         Natlan
     }
+
     public interface ICardCharacter : ICardBase
     {
-        public CharacterType CharacterType { get; }
-        public CharacterRegion CharacterRegion { get; }
         public int MaxHP { get; }
         public int MaxMP { get; }
         /// <summary>
@@ -29,5 +28,6 @@ namespace TCGCard
         /// </summary>
         public ICardEffect DefaultEffect { get; }
         public List<ICardSkill> Skills { get; }
+        //public List<>
     }
 }

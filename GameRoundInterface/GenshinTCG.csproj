@@ -27,13 +27,17 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release_Server\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>9.0</LangVersion>
+    <DocumentationFile>bin\Release_Server\GenshinTCG_Server.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GenshinTCG">
+      <HintPath>bin\Release\GenshinTCG.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
