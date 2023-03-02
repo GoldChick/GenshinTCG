@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Text.Json.Serialization;
 //################################################################
 //Server和Client都要使用的Lib
 //################################################################
@@ -29,7 +31,7 @@ namespace TCGCard
         /// 依赖项的namespace（作为某些mod的子mod时使用）
         /// 具体的呈现格式为"minecraft:keqing"中的"minecraft"
         /// </summary>
-        public List<string> Dependencies { get; }
+        public string[] Dependencies { get; }
     }
     public interface ICardBase
     {
@@ -57,10 +59,6 @@ namespace TCGCard
         /// </summary>
         public string Name { get; }
     }
-    public interface CardAttribute<T> : CardAttributeBase
-    {
-
-    }
     /// <summary>
     /// 提供一些默认的attribute
     /// 当然你也可以创建你自己的
@@ -80,13 +78,13 @@ namespace TCGCard
         }
         public enum CharacterRegion
         {
-            Abyss,
-            Mondstadt,
-            Liyue,
-            Inazuma,
-            Sumeru,
-            Fontaine,
-            Natlan
+            Abyss = 0,
+            Mondstadt = 1,
+            Liyue = 2,
+            Inazuma = 3,
+            Sumeru = 4,
+            Fontaine = 5,
+            Natlan = 6
         }
         public enum CardAssistType
         {
