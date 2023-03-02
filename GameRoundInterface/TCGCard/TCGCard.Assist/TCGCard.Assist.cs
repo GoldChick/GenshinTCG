@@ -5,16 +5,6 @@ using TCGInfo;
 //################################################################
 namespace TCGCard
 {
-    public enum CardAssistType
-    {
-        Nature,
-        Weapon,
-        Artifact,
-        Place,
-        Food,
-        Event,
-        Summon
-    }
     public interface ICardAssist : ICardBase
     {
         public int MaxNumPermitted { get; }//允许携带的最大数量

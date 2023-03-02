@@ -176,7 +176,7 @@ namespace TCGGame
 
         public override void Work(params IInfo[] infos)
         {
-            skill.OnUseAction(Side);
+            //skill.OnUseAction(Side);
         }
     }
     public class HurtEvent : IEvent<Damage>

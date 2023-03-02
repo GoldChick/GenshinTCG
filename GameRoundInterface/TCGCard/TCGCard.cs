@@ -31,6 +31,3 @@ namespace TCGCard
         public CardType CardType { get; }
     }
 }
-
-
-

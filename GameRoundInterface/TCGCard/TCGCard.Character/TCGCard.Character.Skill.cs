@@ -4,6 +4,7 @@ using TCGBase;
 
 namespace TCGCard
 {
+    /*
     public enum SkillType
     {
         Passive,
@@ -11,6 +12,7 @@ namespace TCGCard
         E,
         Q
     }
+    
     public interface ICardSkill : ICardBase
     {
         public SkillType SkillType { get; }
@@ -19,4 +21,5 @@ namespace TCGCard
         List<ElementType> GetCosts();//同时兼顾数量与种类
         void OnUseAction(Side side);
     }
+    */
 }

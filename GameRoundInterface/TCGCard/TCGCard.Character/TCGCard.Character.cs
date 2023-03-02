@@ -3,22 +3,6 @@ using System.Collections.Generic;
 
 namespace TCGCard
 {
-    public enum CharacterType
-    {
-        Human,
-        Mob
-    }
-    public enum CharacterRegion
-    {
-        Abyss,
-        Mondstadt,
-        Liyue,
-        Inazuma,
-        Sumeru,
-        Fontaine,
-        Natlan
-    }
-
     public interface ICardCharacter : ICardBase
     {
         public int MaxHP { get; }
@@ -28,6 +12,9 @@ namespace TCGCard
         /// </summary>
         public ICardEffect DefaultEffect { get; }
         public List<ICardSkill> Skills { get; }
-        //public List<>
+        /// <summary>
+        /// 默认携带的属性
+        /// </summary>
+        public Dictionary<string, Enum> Attributes { get; }
     }
 }
