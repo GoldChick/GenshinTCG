@@ -1,19 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using TCGGame;
-//################################################################
+﻿//################################################################
 //额外制作的卡牌dll实现这些接口
-//在Unity中调用查询信息
 //################################################################
 namespace TCGCard
 {
-    public interface IUtils
-    {
-        public string NameSpace { get;  }
-        public string Description { get; }
-        public string Author { get; }
-        public string DependenciesJson { get; }
-    }
     /// <summary>
     /// 卡片类型
     ///总体分为[角色卡]和[辅助卡]
@@ -37,9 +26,8 @@ namespace TCGCard
         Skill
     }
 
-    public interface ICardBase
+    public interface ICardServer : ICardBase
     {
-        public string Name { get; }
         public CardType CardType { get; }
     }
 }
