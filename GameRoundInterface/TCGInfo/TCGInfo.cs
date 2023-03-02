@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TCGCard;
+﻿using TCGCard;
 
 //################################################################
 //游戏本体实现这些接口

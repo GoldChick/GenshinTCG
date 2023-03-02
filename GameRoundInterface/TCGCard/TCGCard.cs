@@ -2,8 +2,8 @@
 using System.Drawing;
 using TCGGame;
 //################################################################
-//额外制作的卡牌dll实现这些接口
-//在Unity中调用查询信息
+//仅用于客户端使用
+//不含有任何游戏机制
 //################################################################
 namespace TCGCard
 {
@@ -37,8 +37,6 @@ namespace TCGCard
         Skill
 
     }
-
-
 
     public interface ICardBase
     {
