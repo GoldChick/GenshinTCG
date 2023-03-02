@@ -52,7 +52,6 @@
     <Compile Include="TCGBase\TCGBase.Reaction.cs" />
     <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.cs" />
     <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.Weapon.cs" />
-    <Compile Include="TCGGame\TCGGame.AI\TCGGame.AI.cs" />
     <Compile Include="TCGBase\TCGBase.Damage.cs" />
     <Compile Include="TCGBase\TCGBase.cs" />
     <Compile Include="TCGBase\TCGBase.Event.cs" />
