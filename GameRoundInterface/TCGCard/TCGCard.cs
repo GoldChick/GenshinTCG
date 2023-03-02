@@ -1,49 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using TCGGame;
+﻿using System.Drawing;
 //################################################################
 //仅用于客户端使用
 //不含有任何游戏机制
+//只提供游戏资源
 //################################################################
 namespace TCGCard
 {
-    public interface IUtils
+    public interface ICardClient : ICardBase
     {
-        public string GetLibName();
-        public string GetLibVersion();
-        public string GetLibDescription();
-        public List<string> GetDepentdencies();
-    }
-    /// <summary>
-    /// 卡片类型
-    ///总体分为[角色卡]和[辅助卡]
-    ///<para></para>
-    ///[辅助卡]包括[天赋卡][场地卡][武器卡][圣遗物卡][食物卡][事件卡][召唤物卡]等
-    /// </summary>
-    public enum CardType
-    {
-        Character,
-
-        Nature,
-        Weapon,
-        Artifact,
-        Place,
-        Food,
-        Event,
-
-        Summon,
-
-        Effect,
-        Skill
-
-    }
-
-    public interface ICardBase
-    {
+        /// <summary>
+        /// 显示的名字
+        /// </summary>
         public string Name { get; }
+        /// <summary>
+        /// 显示的卡牌说明
+        /// </summary>
         public string Description { get; }
-        public CardType CardType { get; }
-        Bitmap GetImageBmp();
+        /// <summary>
+        /// 卡牌的图像
+        /// </summary>
+        public Bitmap GetImageBmp();
     }
 }
 
