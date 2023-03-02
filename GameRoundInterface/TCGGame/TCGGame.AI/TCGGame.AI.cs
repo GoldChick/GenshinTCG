@@ -1,4 +1,5 @@
-﻿using TCGBase;
+﻿using System;
+using TCGBase;
 
 namespace TCGGame
 {
@@ -11,7 +12,7 @@ namespace TCGGame
         /// <returns>返回需要Post的IEvent</returns>
         public virtual IEvent GetEvent(Side side)
         {
-            return new PassEvent(side);
+            throw new NotImplementedException();
         }
         /// <summary>
         /// 是否需要再次确认才能做出行动
