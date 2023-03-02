@@ -44,10 +44,20 @@ namespace TCGCard
     /// 卡片具有的属性词条
     /// 如[地区][种类]
     /// </summary>
-    public class CardAttribute
+    public class CardAttributeBase
     {
-
+        /// <summary>
+        /// 属性词条的种类
+        /// 如[国家_璃月]中的国家
+        /// </summary>
+        public string NameSpace { get; }
+        /// <summary>
+        /// 词条名字
+        /// 如[国家_璃月]中的璃月
+        /// </summary>
+        public string Name { get; }
     }
+
 }
 
 
