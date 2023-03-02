@@ -5,7 +5,7 @@ using TCGInfo;
 //################################################################
 namespace TCGCard
 {
-    public interface ICardAssist : ICardBase
+    public interface ICardAssist : ICardServer
     {
         public int MaxNumPermitted { get; }//允许携带的最大数量
         public int MaxUseTimes { get; }

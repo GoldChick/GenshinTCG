@@ -1,6 +1,9 @@
 ﻿//################################################################
 //额外制作的卡牌dll实现这些接口
 //################################################################
+using System.Collections.Generic;
+using System;
+
 namespace TCGCard
 {
     /// <summary>
@@ -28,6 +31,13 @@ namespace TCGCard
 
     public interface ICardServer : ICardBase
     {
+        /// <summary>
+        /// 卡片的类型
+        /// </summary>
         public CardType CardType { get; }
+        /// <summary>
+        /// 默认携带的属性
+        /// </summary>
+        public Enum[] Attributes { get; }
     }
 }

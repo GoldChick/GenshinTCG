@@ -1,4 +1,4 @@
-﻿namespace TCGBase
+﻿namespace TCGBaseServer
 {
     /// <summary>
     /// 游戏开始阶段会进行先后手判定，进行一次标号储存,

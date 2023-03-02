@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TCGCard
 {
-    public interface ICardCharacter : ICardBase
+    public interface ICardCharacter : ICardServer
     {
         public int MaxHP { get; }
         public int MaxMP { get; }
@@ -12,9 +12,6 @@ namespace TCGCard
         /// </summary>
         public ICardEffect DefaultEffect { get; }
         public List<ICardSkill> Skills { get; }
-        /// <summary>
-        /// 默认携带的属性
-        /// </summary>
-        public Dictionary<string, Enum> Attributes { get; }
+
     }
 }
