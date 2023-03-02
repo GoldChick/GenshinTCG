@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("GenshinTCG")]
+[assembly: AssemblyTitle("GenshinTCG_Server")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gold_Chick")]
-[assembly: AssemblyProduct("GenshinTCG")]
+[assembly: AssemblyProduct("GenshinTCG_Server")]
 [assembly: AssemblyCopyright("Copyright © Gold_Chick 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -33,4 +32,4 @@ using System.Runtime.InteropServices;
 //通过使用 "*"，如下所示:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0")]
-[assembly: AssemblyFileVersion("0.0.2.8")]
+[assembly: AssemblyFileVersion("0.0.2.9")]

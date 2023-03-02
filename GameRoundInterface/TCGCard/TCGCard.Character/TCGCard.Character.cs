@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TCGCard
 {
@@ -23,7 +24,10 @@ namespace TCGCard
         public CharacterRegion CharacterRegion { get; }
         public int MaxHP { get; }
         public int MaxMP { get; }
-        void GameStartAction();//游戏开始时候的事件
-        List<ICardSkill> GetSkills();//各种技能
+        /// <summary>
+        /// Nullable
+        /// </summary>
+        public ICardEffect DefaultEffect { get; }
+        public List<ICardSkill> Skills { get; }
     }
 }

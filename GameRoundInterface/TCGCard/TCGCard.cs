@@ -9,10 +9,10 @@ namespace TCGCard
 {
     public interface IUtils
     {
-        public string GetLibName();
-        public string GetLibVersion();
-        public string GetLibDescription();
-        public List<string> GetDepentdencies();
+        public string NameSpace { get;  }
+        public string Description { get; }
+        public string Author { get; }
+        public string DependenciesJson { get; }
     }
     /// <summary>
     /// 卡片类型
@@ -35,17 +35,12 @@ namespace TCGCard
 
         Effect,
         Skill
-
     }
-
-
 
     public interface ICardBase
     {
         public string Name { get; }
-        public string Description { get; }
         public CardType CardType { get; }
-        Bitmap GetImageBmp();
     }
 }
 
