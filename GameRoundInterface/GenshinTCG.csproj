@@ -49,15 +49,12 @@
     <Compile Include="TCGBase\TCGBase.Exception.cs" />
     <Compile Include="TCGBase\TCGBase.Logger.cs" />
     <Compile Include="TCGBase\TCGBase.Reaction.cs" />
-    <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.cs" />
-    <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.Weapon.cs" />
     <Compile Include="TCGGame\TCGGame.AI\TCGGame.AI.cs" />
     <Compile Include="TCGGame\TCGGame.Assist.cs" />
     <Compile Include="TCGGame\TCGGame.Character.cs" />
     <Compile Include="TCGBase\TCGBase.Damage.cs" />
     <Compile Include="TCGBase\TCGBase.cs" />
     <Compile Include="TCGBase\TCGBase.Event.cs" />
-    <Compile Include="TCGCard\TCGCard.Character\TCGCard.Character.cs" />
     <Compile Include="TCGCard\TCGCard.Character\TCGCard.Character.Skill.cs" />
     <Compile Include="TCGBase\TCGBase.Dice.cs" />
     <Compile Include="TCGGame\TCGGame.Effect.cs" />

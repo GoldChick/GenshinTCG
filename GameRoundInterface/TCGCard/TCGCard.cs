@@ -44,7 +44,7 @@ namespace TCGCard
     /// 卡片具有的属性词条
     /// 如[地区][种类]
     /// </summary>
-    public class CardAttributeBase
+    public interface CardAttributeBase
     {
         /// <summary>
         /// 属性词条的种类
@@ -57,7 +57,57 @@ namespace TCGCard
         /// </summary>
         public string Name { get; }
     }
+    public interface CardAttribute<T> : CardAttributeBase
+    {
 
+    }
+    /// <summary>
+    /// 提供一些默认的attribute
+    /// 当然你也可以创建你自己的
+    /// 需要搭配枚举使用
+    /// </summary>
+    public static class CardAttributes
+    {
+        public static readonly string CHARACTER_TYPE = "character_type";
+        public static readonly string CHARACTER_REGION = "character_region";
+        public static readonly string CARDASSIST_TYPE = "cardassist_type";
+        public static readonly string WEAPON_TYPE = "weapon_type";
+
+        public enum CharacterType
+        {
+            Human,
+            Mob
+        }
+        public enum CharacterRegion
+        {
+            Abyss,
+            Mondstadt,
+            Liyue,
+            Inazuma,
+            Sumeru,
+            Fontaine,
+            Natlan
+        }
+        public enum CardAssistType
+        {
+            Nature,
+            Weapon,
+            Artifact,
+            Place,
+            Food,
+            Event,
+            Summon
+        }
+        public enum WeaponType
+        {
+            Other,
+            Sword,
+            BigSword,
+            LongWeapon,
+            Catalyst,
+            Bow
+        }
+    }
 }
 
 
