@@ -18,12 +18,4 @@ namespace TCGCard
         Catalyst,
         Bow
     }
-    public interface ICardWeapon : ICardAssist
-    {
-        public WeaponType WeaponType { get; }
-        public int BaseDamage { get; }
-
-        int GetAdditionalDamage(IInfo[] igame);//一定条件下额外攻击
-        void GetAdditonalEffect(IInfo[] igame);//一定条件下触发的额外效果
-    }
 }
