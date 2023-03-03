@@ -25,7 +25,11 @@ namespace TCGCard
         public bool SameDice { get; }
         /// <summary>
         /// 用8位无符号数作位运算取得元素种类
-        /// <see cref="TCGBase.ElementType"/>顺序即国家顺序 
+        /// <br/>
+        /// <see cref="TCGBase.ElementType"/>顺序即国家顺序，
+        /// 为了编写方便，继承这个类的卡牌可以按照<b>从左到右</b>的顺序表示骰子种类
+        /// <br/>
+        /// 一个例子：<b>"1001000"表示需要普通骰子和雷骰子</b>
         /// </summary>
         public byte DiceType { get; }
         /// <summary>
