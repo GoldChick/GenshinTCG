@@ -79,6 +79,7 @@
     <Compile Include="TCGCard\TCGCard.cs" />
     <Compile Include="TCGCard\TCGCard.Tag.cs" />
     <Compile Include="TCGInfo\TCGInfo.cs" />
+    <Compile Include="TCGInfo\TCGInfo.Readonly.cs" />
     <Compile Include="TCGInfo\TCGInfo.Team.cs" />
     <Compile Include="TCGInfo\TCGInfo.Effect.cs" />
     <Compile Include="TCGInfo\TCGInfo.Character.cs" />
