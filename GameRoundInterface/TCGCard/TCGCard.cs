@@ -46,7 +46,7 @@ namespace TCGCard
     /// 卡片具有的属性词条
     /// 如[地区][种类]
     /// </summary>
-    public interface CardAttributeBase
+    public interface CardTagBase
     {
         /// <summary>
         /// 属性词条的种类
@@ -60,11 +60,11 @@ namespace TCGCard
         public string Name { get; }
     }
     /// <summary>
-    /// 提供一些默认的attribute
+    /// 提供一些默认的tag
     /// 当然你也可以创建你自己的
     /// 需要搭配枚举使用
     /// </summary>
-    public static class CardAttributes
+    public static class CardTags
     {
         public static readonly string CHARACTER_TYPE = "character_type";
         public static readonly string CHARACTER_REGION = "character_region";
