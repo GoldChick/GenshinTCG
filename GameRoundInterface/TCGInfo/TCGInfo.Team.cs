@@ -33,6 +33,7 @@ namespace TCGInfo
         public int DiceNum { get; set; }
         public int CardsNum { get; set; }
         public int LeftCardsNum { get; set; }
+
     }
     /// <summary>
     /// 只有己方能看到的队伍信息
