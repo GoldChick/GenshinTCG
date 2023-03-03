@@ -19,17 +19,4 @@ namespace TCGInfo
             Info = info;
         }
     }
-
-    namespace InfoInterface
-    {
-
-        public interface ICardInfo : IInfo
-        {
-            ICardBase GetCard();
-        }
-        public interface ICardAssistInfo : IInfo
-        {
-            int GetLeftTimes();
-        }
-    }
 }

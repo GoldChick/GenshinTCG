@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TCGCard
+﻿namespace TCGCard
 {
     public interface ICardCharacter : ICardServer
     {
@@ -11,7 +8,6 @@ namespace TCGCard
         /// Nullable
         /// </summary>
         public ICardEffect DefaultEffect { get; }
-        public List<ICardSkill> Skills { get; }
-
+        public ICardSkill[] Skills { get; }
     }
 }
