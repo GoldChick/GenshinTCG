@@ -49,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TCGBase\TCGBase.Reaction.cs" />
     <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.cs" />
     <Compile Include="TCGCard\TCGCard.Assist\TCGCard.Assist.Weapon.cs" />
     <Compile Include="TCGBase\TCGBase.Damage.cs" />

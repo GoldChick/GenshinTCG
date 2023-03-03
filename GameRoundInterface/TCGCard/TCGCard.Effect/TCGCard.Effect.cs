@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using TCGBase;
 using TCGInfo;
-using TCGInfo.InfoInterface;
 //################################################################
 //Effect分为[个人效果]和[团队效果]两种
 //广义的Effect还包括左侧的辅助牌和右侧的召唤物牌

@@ -8,10 +8,10 @@ namespace TCGBase
     public delegate void TCGEventHandler();
     public abstract class IEvent
     {
-        public Side Side { get; }//由哪一方触发，注意！并不是Bus中的索引！
-        public IEvent(Side side)
+        public PlayerInfo Player { get; }
+        public IEvent(PlayerInfo player)
         {
-            Side = side;
+            Player = player;
         }
 
         public virtual bool IsFastAction()
@@ -28,7 +28,7 @@ namespace TCGBase
     /// <typeparam name="T">一个或者多个角色/骰子/卡牌等</typeparam>
     public abstract class IEvent<T> : IEvent
     {
-        public IEvent(Side side) : base(side)
+        public IEvent(PlayerInfo player) : base(player)
         {
         }
         public abstract T GetAdditionalValue();

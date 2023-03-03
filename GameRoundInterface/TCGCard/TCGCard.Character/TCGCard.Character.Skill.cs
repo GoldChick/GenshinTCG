@@ -1,4 +1,5 @@
 ﻿using TCGBase;
+using TCGInfo;
 
 namespace TCGCard
 {
@@ -33,6 +34,6 @@ namespace TCGCard
         /// </summary>
         public int[] DiceNum { get; }
 
-        void OnUseAction(Side side);
+        void OnUseAction(IInfo[] infos);
     }
 }

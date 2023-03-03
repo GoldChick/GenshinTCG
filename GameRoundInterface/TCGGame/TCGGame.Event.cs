@@ -15,7 +15,7 @@ namespace TCGGame
     /// </summary>
     public class NoneEvent : IEvent
     {
-        public NoneEvent(Side side) : base(side)
+        public NoneEvent(PlayerInfo player) : base(player)
         {
         }
 
@@ -39,7 +39,7 @@ namespace TCGGame
     /// </summary>
     public class PassEvent : IEvent
     {
-        public PassEvent(Side side) : base(side)
+        public PassEvent(PlayerInfo player) : base(player)
         {
         }
 
@@ -65,7 +65,7 @@ namespace TCGGame
     /// </summary>
     public class BlendEvent : IEvent<(int card, int diceOrigin, int diceToward)>
     {
-        public BlendEvent(Side side) : base(side)
+        public BlendEvent(PlayerInfo player) : base(player)
         {
         }
 
@@ -97,7 +97,7 @@ namespace TCGGame
     {
         private int before;
         private int after;
-        public SwitchEvent(Side side, int before, int after) : base(side)
+        public SwitchEvent(PlayerInfo player, int before, int after) : base(player)
         {
             this.before = before;
             this.after = after;
@@ -124,7 +124,7 @@ namespace TCGGame
     }
     public class UseAssistCardEvent : IEvent<(int card, int[] dice)>
     {
-        public UseAssistCardEvent(Side side) : base(side)
+        public UseAssistCardEvent(PlayerInfo player) : base(player)
         {
         }
 
@@ -153,7 +153,7 @@ namespace TCGGame
     {
         private ICardSkill skill;
         private int[] dices;
-        public UseSkillEvent(Side side, ICardSkill skill, int[] dices) : base(side)
+        public UseSkillEvent(PlayerInfo player, ICardSkill skill, int[] dices) : base(player)
         {
             this.skill = skill;
             this.dices = dices;
@@ -182,7 +182,7 @@ namespace TCGGame
     public class HurtEvent : IEvent<Damage>
     {
         private Damage damage;
-        public HurtEvent(Damage damage, Side side) : base(side)
+        public HurtEvent(Damage damage, PlayerInfo player) : base(player)
         {
             this.damage = damage;
         }
@@ -209,7 +209,7 @@ namespace TCGGame
             {
                 //if (info is IInfo<Team> team)
                 {
-                 //   team.Info.Hurt(damage);
+                    //   team.Info.Hurt(damage);
                 }
             }
         }
@@ -221,11 +221,11 @@ namespace TCGGame
     public class GainDiceEvent : IEvent<ElementType>
     {
         private ElementType elementType;
-        public GainDiceEvent(Side side) : base(side)
+        public GainDiceEvent(PlayerInfo player) : base(player)
         {
             elementType = Dice.GetRandomElementType();
         }
-        public GainDiceEvent(Side side, ElementType elementType) : base(side)
+        public GainDiceEvent(PlayerInfo player, ElementType elementType) : base(player)
         {
             this.elementType = elementType;
         }
@@ -255,7 +255,7 @@ namespace TCGGame
     /// </summary>
     public class GainCardEvent : IEvent<ICardAssist>
     {
-        public GainCardEvent(Side side) : base(side)
+        public GainCardEvent(PlayerInfo player) : base(player)
         {
         }
 
@@ -282,7 +282,7 @@ namespace TCGGame
 
     public class DieEvent : IEvent<int>
     {
-        public DieEvent(Side side) : base(side)
+        public DieEvent(PlayerInfo player) : base(player)
         {
         }
 
