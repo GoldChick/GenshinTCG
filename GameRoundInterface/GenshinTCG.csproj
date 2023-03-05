@@ -58,7 +58,6 @@
     <Compile Include="TCGCard\TCGCard.Effect\TCGCard.Effect.cs" />
     <Compile Include="TCGCard\TCGCard.Character\TCGCard.Character.Skill.cs" />
     <Compile Include="TCGBase\TCGBase.Dice.cs" />
-    <Compile Include="TCGGame\TCGGame.Effect.cs" />
     <Compile Include="TCGGame\TCGGame.Event.cs" />
     <Compile Include="TCGCard\TCGCard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -17,7 +17,7 @@ namespace TCGBase
 
         public bool pierce;
         public ElementType elementType;
-        public List<Effect> effects=new();
+       // public List<Effect> effects=new();
         public ICardBase origin;
         public int TargetId { get => targetId; }
 
@@ -26,7 +26,10 @@ namespace TCGBase
         /// </summary>
         /// <param name="targetId">相对位置，只能为-1,0,1</param>
         public Damage(int damageNum, TargetPos targetPos, ICardBase origin = null, bool pierce = false,
-            ElementType elementType = ElementType.Trival, List<Effect> effects = null)
+            ElementType elementType = ElementType.Trival
+            //, 
+           // List<Effect> effects = null
+            )
         {
             this.damageNum = damageNum;
             this.targetId = targetPos switch
@@ -38,7 +41,7 @@ namespace TCGBase
             };
             this.pierce = pierce;
             this.elementType = elementType;
-            this.effects = effects;
+          //  this.effects = effects;
             this.origin = origin;
         }
         public int DamageNum

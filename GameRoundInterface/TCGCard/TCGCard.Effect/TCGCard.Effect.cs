@@ -33,8 +33,10 @@ namespace TCGCard
     public interface ICardEffect : ICardBase
     {
         public bool Stackable { get; }
+        public bool Visible { get; }
         public int MaxUseTimes { get; }
         public int Prior { get; }//值越大，越靠后触发，默认为0
+
         public EffectType EffectType { get; }
         public Dictionary<EffectTriggerType, ActionType> EffectTriggers { get; }
 
