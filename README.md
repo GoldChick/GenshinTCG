@@ -1,0 +1,2 @@
+# GenshinTCG
+ TCG GAME
