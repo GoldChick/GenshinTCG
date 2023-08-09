@@ -1,0 +1,5 @@
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.csproj.AssemblyReference.cache
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.AssemblyInfoInputs.cache
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.AssemblyInfo.cs
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.csproj.CoreCompileInputs.cache
