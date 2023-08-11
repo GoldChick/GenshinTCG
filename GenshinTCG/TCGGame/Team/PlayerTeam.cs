@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using TCGBase;
 
 namespace TCGGame
 {
@@ -9,7 +10,8 @@ namespace TCGGame
         /// </summary>
         protected List<int> Dices { get; } = new();
 
-        public PlayerTeam()
+        /// <param name="cardset">经过处理确认正确的卡组</param>
+        public PlayerTeam(PlayerCardSet cardset)
         {
             UseDice= true;
 

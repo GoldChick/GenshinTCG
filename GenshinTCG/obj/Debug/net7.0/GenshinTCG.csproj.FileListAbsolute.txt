@@ -3,3 +3,13 @@ C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.Gener
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.AssemblyInfoInputs.cache
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.AssemblyInfo.cs
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.csproj.CoreCompileInputs.cache
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\bin\Debug\net7.0\GenshinTCG.exe
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\bin\Debug\net7.0\GenshinTCG.deps.json
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\bin\Debug\net7.0\GenshinTCG.runtimeconfig.json
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\bin\Debug\net7.0\GenshinTCG.dll
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\bin\Debug\net7.0\GenshinTCG.pdb
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.dll
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\refint\GenshinTCG.dll
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.pdb
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.genruntimeconfig.cache
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\ref\GenshinTCG.dll

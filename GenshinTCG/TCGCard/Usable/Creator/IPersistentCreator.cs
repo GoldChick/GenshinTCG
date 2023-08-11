@@ -18,7 +18,7 @@
         /// </summary>
         public int PersistentNum { get; }
     }
-    public interface IAssistCreator : IPersistentCreator<IAssist>
+    public interface IAssistCreator : IPersistentCreator<ISupport>
     {
     }
     public interface IEffectCreator : IPersistentCreator<IEffect>

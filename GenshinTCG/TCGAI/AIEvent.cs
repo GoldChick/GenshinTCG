@@ -8,7 +8,6 @@ namespace TCGAI
         ReRollDice,
         ReRollCard,
         ReplaceAssist,
-        ReplaceSummon,
         Switch,
         UseSKill,
         UseCard,
@@ -40,24 +39,4 @@ namespace TCGAI
             DiceArgs = subArgs;
         }
     }
-    /// <summary>
-    /// 供AI调用的产生事件<br/>
-    /// 只负责产生，校验由服务端计算
-    /// </summary>
-    public static class CreateEvent
-    {
-        /// <summary>
-        /// index为绝对位置<br/>
-        /// dices为选中的骰子
-        /// </summary>
-        public static AIEvent Switch(int index, params int[] dices) => new(AIEventType.Switch, index, dices);
-        /// <summary>
-        /// index为当前角色技能的索引<br/>
-        /// dices为选中的骰子<br/>
-        /// 默认技能作用的主体在对方的出战角色
-        /// </summary>
-        public static AIEvent UseSKill(int index, params int[] dices) => new(AIEventType.UseSKill, index, dices);
-        public static AIEvent Pass() => new(AIEventType.Pass, 0);
-    }
-
 }

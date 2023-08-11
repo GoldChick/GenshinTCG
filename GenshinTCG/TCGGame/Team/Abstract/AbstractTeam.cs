@@ -8,14 +8,13 @@ namespace TCGGame
         /// </summary>
         public bool UseDice { get; init; }
         
-        public AbstractAI AI { get; init; }
         /// <summary>
         /// 用于pvp模式仅限4个角色(NOTE:pve-很远的将来)
         /// </summary>
         public Character[] Characters { get; protected set; }
 
 
-        public Assist?[] Assists { get;  } = { null, null, null, null };
+        public Support?[] Supports { get;  } = { null, null, null, null };
         public Summon?[] Summons { get;  } = { null, null, null, null };
 
         /// <summary>
@@ -27,7 +26,7 @@ namespace TCGGame
         }
         public bool AddPersistent()
         {
-
+            return false;
         }
         
     }

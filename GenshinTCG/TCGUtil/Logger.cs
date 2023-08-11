@@ -28,9 +28,12 @@ namespace TCGUtil
             Console.ForegroundColor = ConsoleColor.White;
         }
         public static void Warning(string? m, bool debug = false) => Print(m, ConsoleColor.Yellow, "WARNING", debug);
-        public static void Error(string? m, bool condition = false, bool debug = false)
+        /// <summary>
+        /// bool为true时才输出
+        /// </summary>
+        public static void Error(string? m, bool print = false, bool debug = false)
         {
-            if (!condition)
+            if (print)
             {
                 Print(m, ConsoleColor.Red, "ERROR", debug);
             }

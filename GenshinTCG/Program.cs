@@ -1,10 +1,17 @@
-﻿namespace GenshinTCG
+﻿using TCGGame;
+
+namespace GenshinTCG
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            var now = DateTime.Now;
+            string gameid = $"{now.Year,4}{now.Hour,2}{now.Minute,2}{now.Second,2}{now.Microsecond,3}";
+
+
+            EVEGame game = new();
+            game.StartGame();
         }
     }
 }
