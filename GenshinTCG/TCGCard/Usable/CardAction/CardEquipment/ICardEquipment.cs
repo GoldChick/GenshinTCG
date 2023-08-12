@@ -5,7 +5,7 @@
     }
     public interface ICardWeapon : ICardEquipment
     {
-        public string WeaponCategory { get; }
+        public string WeaponType { get; }
     }
     public interface ICardArtifact:ICardEquipment
     {

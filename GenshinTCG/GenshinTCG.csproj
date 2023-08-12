@@ -7,4 +7,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="TCGMod\Genshin3_3\ActionCard\OtherCard\" />
+    <Folder Include="TCGMod\Genshin3_3\Persistent\Support\" />
+    <Folder Include="TCGMod\Genshin3_3\Persistent\Effect\" />
+    <Folder Include="TCGMod\Genshin3_3\Persistent\Summon\" />
+  </ItemGroup>
+
 </Project>

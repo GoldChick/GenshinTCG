@@ -18,7 +18,7 @@
         {
             Action = action;
         }
-        public void AddCost(params int[] cost) => TCGUtil.Cost.NormalizeCost(cost, out _costArgs);
+        public void AddCost(params int[] cost) => TCGUtil.Normalize.CostNormalize(cost, out _costArgs);
         public void AddTarget(params int[] target)=>TargetArgs=target;
     }
 }

@@ -1,8 +1,9 @@
 ﻿using TCGAI;
+using TCGBase;
 using TCGClient;
 using TCGRule;
 using TCGUtil;
-
+using System.Text.Json;
 namespace TCGGame
 {
     internal enum GameStage
@@ -19,8 +20,7 @@ namespace TCGGame
         /// <summary>
         /// 对战双方，暂无观战模式
         /// </summary>
-        internal AbstractClient[] Clients { get; } = { null, null };
-
+        internal AbstractClient[] Clients { get; init; } = { null, null };
 
         internal GameStage Stage { get; set; }
 
@@ -29,6 +29,10 @@ namespace TCGGame
         public AbstractGame()
         {
             Registry.Instance.LoadDlls(Directory.GetCurrentDirectory() + "/mods");
+
+            //TODO:正式启动不使用
+            Registry.Instance.DebugLoad();
+            Registry.Instance.Print();
         }
         /// <summary>
         /// 将clients设置完毕之后才能开启
@@ -43,11 +47,12 @@ namespace TCGGame
 
                     for (int i = 0; i < 2; i++)
                     {
-                        var cardset=Clients[i].RequestCardSet();
+                        var cardset = Clients[i].RequestCardSet() as ServerPlayerCardSet;
                         //TODO:检测是否合理
                         if (true)
                         {
-
+                            Logger.Print(cardset.CharacterCards.Length);
+                            Logger.Print(JsonSerializer.Serialize(cardset));
                         }
                     }
 
@@ -68,7 +73,7 @@ namespace TCGGame
             }
         }
 
-        protected void InitTeam()
+        protected void InitTeam(AbstractNetCardSet set0, AbstractNetCardSet set1)
         {
 
         }

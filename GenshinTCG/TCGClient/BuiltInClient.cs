@@ -8,7 +8,7 @@ namespace TCGClient
     /// <summary>
     /// 和服务端共生的AI客户端
     /// </summary>
-    public class BuiltInClient : AbstractClient
+    internal class BuiltInClient : AbstractClient
     {
         public override AIEvent RequestEvent(AIEventType demand, string help_txt = "Null")
         {
@@ -17,7 +17,20 @@ namespace TCGClient
 
         public override void InitServerSetting(ServerSetting setting)
         {
-            throw new NotImplementedException();
+            ClientSetting = new()
+            {
+                Name = "DefaultBuiltIn",
+                DefaultCardSet = new PlayerNetCardSet()
+                {
+                    Characters = new[] { "genshin3_3:keqing", "genshin3_3:keqing", "genshin3_3:keqing" },
+                    ActionCards = new[] { "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" ,
+                                                      "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" ,
+                                                      "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" ,
+                                                      "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" ,
+                                                      "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" ,
+                                                      "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" },
+                }
+            };
         }
 
         public override void UpdateTeam(AbstractTeam me, AbstractTeam enemy)
@@ -25,9 +38,9 @@ namespace TCGClient
             throw new NotImplementedException();
         }
 
-        public override AbstractCardSet RequestCardSet()
+        public override AbstractServerCardSet RequestCardSet()
         {
-            throw new NotImplementedException();
+            return new ServerPlayerCardSet(ClientSetting.DefaultCardSet as PlayerNetCardSet);
         }
     }
 }

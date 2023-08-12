@@ -7,7 +7,7 @@
         public int[] Dices { get => dices; }
         public DiceCostVariable(params int[] dices)
         {
-            TCGUtil.Cost.NormalizeCost(dices, out this.dices);
+            TCGUtil.Normalize.CostNormalize(dices, out this.dices);
         }
     }
 }

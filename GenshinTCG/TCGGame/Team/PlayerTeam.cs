@@ -11,7 +11,7 @@ namespace TCGGame
         protected List<int> Dices { get; } = new();
 
         /// <param name="cardset">经过处理确认正确的卡组</param>
-        public PlayerTeam(PlayerCardSet cardset)
+        public PlayerTeam(PlayerNetCardSet cardset)
         {
             UseDice= true;
 

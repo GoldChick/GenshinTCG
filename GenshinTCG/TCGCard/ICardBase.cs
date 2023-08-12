@@ -3,9 +3,9 @@
     public interface ICardBase
     {
         /// <summary>
-        /// 卡牌的名字(a-z+_+0-9)
+        /// 卡牌的nameID(a-z+_+0-9+:),如"minecraft:keqing"
         /// </summary>
-        public string Name { get; }
+        public string NameID { get; }
         /// <summary>
         /// 默认携带的各种tag<br/>
         /// 成员形如(minecraft:Nation,minecraft:Natlan)<br/>
