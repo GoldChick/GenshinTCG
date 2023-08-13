@@ -1,4 +1,5 @@
-﻿using TCGCard;
+﻿using System.Text.Json;
+using TCGCard;
 using TCGRule;
 using TCGUtil;
 
@@ -12,7 +13,7 @@ namespace TCGBase
     /// 通过客户端传递来的NetCardSet制作而成
     /// 使用前请确定是Valid的
     /// </summary>
-    public class ServerPlayerCardSet : AbstractServerCardSet
+    public class ServerPlayerCardSet : AbstractServerCardSet, IPrintable
     {
         public ICardCharacter[] CharacterCards { get; init; }
         public ICardAction[] ActionCards { get; init; }
@@ -33,6 +34,14 @@ namespace TCGBase
                 ActionCards = Array.Empty<ICardAction>();
                 Valid = false;
             }
+        }
+
+        public void Print()
+        {
+            Logger.Print("CharacterCards:");
+            Logger.Print(JsonSerializer.Serialize(CharacterCards.Select(c => c.NameID)));
+            Logger.Print("ActionCards:");
+            Logger.Print(JsonSerializer.Serialize(ActionCards.Select(ac => ac.NameID)));
         }
     }
 }

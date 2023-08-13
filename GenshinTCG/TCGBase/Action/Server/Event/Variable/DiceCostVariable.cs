@@ -3,7 +3,8 @@
     public class DiceCostVariable : AbstractVariable
     {
         private int[] dices;
-        public override string VariableName => Tags.VariableTags.DICECOST;
+
+        public override string VariableName => Tags.VariableTags.DICE_COST;
         public int[] Dices { get => dices; }
         public DiceCostVariable(params int[] dices)
         {

@@ -4,12 +4,17 @@
     {
         public override string SenderName => Tags.SenderTags.SWITCH;
         /// <summary>
+        /// 原先的index
+        /// </summary>
+        public int Initial { get; init; }
+        /// <summary>
         /// 切换到的角色在队伍中的index
         /// </summary>
         public int SwitchTarget { get; init; }
-        public SwitchSender(int target) 
+        public SwitchSender(int init, int target)
         {
-            SwitchTarget= target;
+            Initial = init;
+            SwitchTarget = target;
         }
     }
 }

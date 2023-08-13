@@ -2,23 +2,16 @@
 using TCGRule;
 using TCGUtil;
 
-namespace Genshin3_3
+namespace Sample
 {
     public class Sample_Register : AbstractRegister
     {
         public override void RegisterActionCard(IConsumer<ICardAction> consumer)
         {
-            consumer.Accept(new SacrificialSword());
-
-            consumer.Accept(new LeaveItToMe());
-
-            consumer.Accept(new Paimon());
-
         }
 
         public override void RegisterCharacter(IConsumer<ICardCharacter> consumer)
         {
-            consumer.Accept(new Keqing());
         }
 
         public override void RegisterEffect(IConsumer<IEffect> consumer)

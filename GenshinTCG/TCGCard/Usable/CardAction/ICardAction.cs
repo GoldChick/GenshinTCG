@@ -13,6 +13,9 @@ namespace TCGCard
         /// </summary>
         public int MaxNumPermitted { get; }
 
-        public bool CanBeArmed();//是否可以加入卡组里
+        public virtual bool CanBeArmed()//是否可以加入卡组里
+        {
+            return true;
+        }
     }
 }

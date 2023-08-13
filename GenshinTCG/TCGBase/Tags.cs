@@ -71,11 +71,26 @@
         }
         public static class SenderTags
         {
+            public static readonly string GAME_STAGE = "minecraft:game_stage";
+
+            /// <summary>
+            /// 投掷阶段
+            /// </summary>
+            public static readonly string ROLLING_START = "minecraft:roling_start";
+            /// <summary>
+            /// 行动阶段开始时
+            /// </summary>
+            public static readonly string ROUND_START = "minecraft:round_start";
+            /// <summary>
+            /// 结束阶段
+            /// </summary>
+            public static readonly string ROUND_OVER = "minecraft:round_over";
+
             public static readonly string SWITCH = "minecraft:switch";
 
             public static readonly string USE_SKILL = "minecraft:use_skill";
             public static readonly string HURT = "minecraft:hurt";
-            
+
             public static readonly string ELEMENT_ENCHANT = "minecraft:element_enchant";
             public static readonly string DAMAGE_ADD = "minecraft:damage_add";
             public static readonly string DAMAGE_MUL = "minecraft:damage_mul";
@@ -83,7 +98,9 @@
         }
         public static class VariableTags
         {
-            public static readonly string DICECOST = "minecraft:dicecost";
+            public static readonly string DICE_COST = "minecraft:dice_cost";
+            public static readonly string DICE_ROLLING = "minecraft:dice_rolling";
+
             public static readonly string DAMAGE = "minecraft:damage";
         }
     }

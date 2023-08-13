@@ -4,6 +4,7 @@ namespace TCGGame
 {
     public abstract partial class AbstractTeam
     {
+        //TODO
         public bool CheckEventRequire(NetEvent evtwithaction)
         {
             switch (evtwithaction.Action.Type)

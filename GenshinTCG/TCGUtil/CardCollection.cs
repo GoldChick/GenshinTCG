@@ -6,6 +6,9 @@ namespace TCGUtil
 {
     internal abstract class CardCollection
     {
+        /// <summary>
+        /// ONLY FOR REGISTRY
+        /// </summary>
         protected string _currModID = "minecraft";
         public void MoveModToNext(string next) => _currModID = Normalize.StringNormalize(next);
 

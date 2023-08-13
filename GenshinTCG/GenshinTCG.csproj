@@ -12,6 +12,15 @@
     <Folder Include="TCGMod\Genshin3_3\Persistent\Support\" />
     <Folder Include="TCGMod\Genshin3_3\Persistent\Effect\" />
     <Folder Include="TCGMod\Genshin3_3\Persistent\Summon\" />
+    <Folder Include="TCGMod\Minecraft\" />
+    <Folder Include="TCGMod\Sample\ActionCard\EquipmentCard\" />
+    <Folder Include="TCGMod\Sample\ActionCard\EventCard\" />
+    <Folder Include="TCGMod\Sample\ActionCard\OtherCard\" />
+    <Folder Include="TCGMod\Sample\ActionCard\SupportCard\" />
+    <Folder Include="TCGMod\Sample\CharacterCard\" />
+    <Folder Include="TCGMod\Sample\Persistent\Effect\" />
+    <Folder Include="TCGMod\Sample\Persistent\Summon\" />
+    <Folder Include="TCGMod\Sample\Persistent\Support\" />
   </ItemGroup>
 
 </Project>

@@ -1,20 +1,23 @@
-﻿using System.Text.Json;
-using TCGBase;
+﻿using TCGBase;
 
 namespace TCGGame
 {
-    public class PlayerTeam:AbstractTeam
+    public class PlayerTeam : AbstractTeam
     {
+        internal List<Card> LeftCards { get; init; }
+        public List<Card> CardsInHand { get; init; }
         /// <summary>
         /// max_size=16,默认顺序为 万能 冰水火雷岩草风(0-7)
         /// </summary>
         protected List<int> Dices { get; } = new();
 
         /// <param name="cardset">经过处理确认正确的卡组</param>
-        public PlayerTeam(PlayerNetCardSet cardset)
+        public PlayerTeam(ServerPlayerCardSet cardset)
         {
-            UseDice= true;
-
+            UseDice = true;
+            Characters = cardset.CharacterCards.Select(c => new Character(c)).ToArray();
+            LeftCards = cardset.ActionCards.Select(a => new Card(a)).ToList();
+            CardsInHand = new();
         }
 
         /// <summary>
@@ -54,6 +57,10 @@ namespace TCGGame
         public ReadonlyTeam ToReadonly()
         {
             return null;
+        }
+
+        public override void Print()
+        {
         }
     }
 

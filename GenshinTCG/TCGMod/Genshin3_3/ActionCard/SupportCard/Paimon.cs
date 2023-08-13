@@ -19,11 +19,6 @@ namespace Genshin3_3
             throw new NotImplementedException();
         }
 
-        public bool CanBeArmed()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool CanBeUsed()
         {
             throw new NotImplementedException();

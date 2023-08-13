@@ -1,11 +1,11 @@
 ﻿using TCGMod;
 using TCGRule;
 
-namespace Genshin3_3
+namespace Sample
 {
-    public class Genshin_3_3_Util : AbstractModUtil
+    public class Sample_Util : AbstractModUtil
     {
-        public override string NameSpace => "genshin3_3";
+        public override string NameSpace => "sample";
 
         public override string Description => throw new NotImplementedException();
 
