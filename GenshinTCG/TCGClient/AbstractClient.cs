@@ -12,6 +12,7 @@ namespace TCGClient
         public AbstractTeam Me { get; protected set; }
         public AbstractTeam Enemy { get; protected set; }
 
+
         /// <summary>
         /// 服务端=>客户端
         /// 客户端链接时更新Setting
@@ -28,7 +29,7 @@ namespace TCGClient
         /// 客户端=>服务端
         /// 游戏进行中传入行动
         /// </summary>
-        public abstract AIEvent RequestEvent(AIEventType demand,string help_txt="Null");
+        public abstract Task<NetAction> RequestEvent(ActionType demand,string help_txt="Null");
 
         /// <summary>
         /// 服务端=>客户端

@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using TCGUtil;
+
+namespace TCGBase
 {
     /// <summary>
     /// 用于客户端和服务端之间信息传输的Event
@@ -8,17 +10,15 @@
     public class NetEvent
     {
         private int[]? _costArgs;
-        public AbstractAction Action { get; private init; }
-        public int[]? CostArgs { get => _costArgs; }
+        public NetAction Action { get; private init; }
+        public int[]? CostArgs { get => _costArgs; set => Normalize.CostNormalize(value, out _costArgs); }
         /// <summary>
         /// Target对客户端的要求比较高,就不在服务端写逻辑了
         /// </summary>
-        public int[]? TargetArgs { get; private set; }
-        public NetEvent(AbstractAction action)
+        public int[]? TargetArgs { get;  set; }
+        public NetEvent(NetAction action)
         {
             Action = action;
         }
-        public void AddCost(params int[] cost) => TCGUtil.Normalize.CostNormalize(cost, out _costArgs);
-        public void AddTarget(params int[] target)=>TargetArgs=target;
     }
 }

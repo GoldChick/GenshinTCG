@@ -5,9 +5,6 @@
     /// </summary>
     public interface IEffect:IPersistent
     {
-        /// <summary>
-        /// 是否在客户端可见
-        /// </summary>
-        public bool Visible { get; }
+
     }
 }

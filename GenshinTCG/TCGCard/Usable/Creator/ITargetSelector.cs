@@ -2,10 +2,16 @@
 {
     public enum TargetEnum
     {
-        Character_Me,
+        Card,
         Character_Enemy,
+        Character_Me,
+        Dice,
+
+        MultiCard,
+        MultiDice,
+
         Summon,
-        Support
+        Support,
     }
     /// <summary>
     /// 实现这个接口的卡牌使用时除了骰子，还必须需要选择另外的目标

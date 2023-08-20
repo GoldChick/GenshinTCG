@@ -31,7 +31,7 @@ namespace TCGUtil
         /// <summary>
         /// bool为true时才输出
         /// </summary>
-        public static void Error(string? m, bool print = false, bool debug = false)
+        public static void Error(string? m, bool print = true, bool debug = false)
         {
             if (print)
             {

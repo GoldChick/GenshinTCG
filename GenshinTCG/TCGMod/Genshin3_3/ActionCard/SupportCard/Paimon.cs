@@ -1,4 +1,6 @@
-﻿using TCGCard;
+﻿using TCGBase;
+using TCGCard;
+using TCGGame;
 
 namespace Genshin3_3
 {
@@ -8,18 +10,18 @@ namespace Genshin3_3
 
         public string NameID => "paimon";
 
-        public HashSet<string> Tags => throw new NotImplementedException();
+        string[] ICardBase.Tags => throw new NotImplementedException();
 
-        public bool SameDice => throw new NotImplementedException();
+        int[] ICost.Costs => throw new NotImplementedException();
 
-        public Dictionary<string, int> Costs => throw new NotImplementedException();
+        bool ICost.CostSame => throw new NotImplementedException();
 
-        public void AfterUseAction()
+        void IUsable.AfterUseAction()
         {
             throw new NotImplementedException();
         }
 
-        public bool CanBeUsed()
+        bool IUsable.CanBeUsed(AbstractGame game, int meIndex)
         {
             throw new NotImplementedException();
         }

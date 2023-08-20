@@ -28,7 +28,7 @@ namespace TCGUtil
 
         public bool ContainsKey(string nameID) => _values.ContainsKey(nameID);
         public bool TryGetValue(string nameID, out T value) => _values.TryGetValue(nameID, out value);
-        public T GetValueOrDefault(string nameID) => ContainsKey(nameID) ? _values[nameID] : default(T);
+        public T? GetValueOrDefault(string nameID) => ContainsKey(nameID) ? _values[nameID] : default(T);
 
         public void Print()
         {

@@ -13,10 +13,10 @@ namespace Genshin3_3
 
         public IEffect? DefaultEffect => null;
 
-        public ICardSkill[] Skills => new ICardSkill[] {  };
+        public ICardSkill[] Skills => new ICardSkill[] { };
 
         public string NameID => "keqing";
 
-        public HashSet<string> Tags => null;
+        public string[] Tags => throw new NotImplementedException();
     }
 }

@@ -1,5 +1,4 @@
-﻿using TCGAI;
-using TCGBase;
+﻿using TCGBase;
 using TCGGame;
 using TCGUtil;
 
@@ -10,9 +9,11 @@ namespace TCGClient
     /// </summary>
     internal class BuiltInClient : AbstractClient
     {
-        public override AIEvent RequestEvent(AIEventType demand, string help_txt = "Null")
+        public async override Task<NetAction> RequestEvent(ActionType demand, string help_txt = "Null")
         {
-            throw new NotImplementedException();
+            //TODO 没写完
+            Console.WriteLine($"AI Demand For %:{help_txt}");
+            return null;
         }
 
         public override void InitServerSetting(ServerSetting setting)

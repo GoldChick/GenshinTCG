@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System.Diagnostics;
+
+namespace TCGBase
 {
     public static class Tags
     {
@@ -85,16 +87,33 @@
             /// 结束阶段
             /// </summary>
             public static readonly string ROUND_OVER = "minecraft:round_over";
-
+            #region player action
             public static readonly string SWITCH = "minecraft:switch";
+            public static readonly string BLEND = "minecraft:blend";
 
+            public static readonly string USE_CARD = "minecraft:use_card";
             public static readonly string USE_SKILL = "minecraft:use_skill";
+
+            public static readonly string PASS = "minecraft:pass";
+            #endregion
             public static readonly string HURT = "minecraft:hurt";
 
+            //附魔>增伤(火共鸣) 增伤>乘伤(护体岩铠)
             public static readonly string ELEMENT_ENCHANT = "minecraft:element_enchant";
             public static readonly string DAMAGE_ADD = "minecraft:damage_add";
             public static readonly string DAMAGE_MUL = "minecraft:damage_mul";
 
+            public static string ActionTypeToSenderTag(ActionType type) => type switch
+            {
+                //ActionType.ReplaceSupport
+                ActionType.Switch => SWITCH,
+                ActionType.UseSKill => USE_SKILL,
+                ActionType.UseCard => USE_CARD,
+                ActionType.Blend => BLEND,
+                ActionType.Pass => PASS,
+                //TODO: when wrong
+                _ => throw new Exception("Tags.ActionTypeToSenderTag():传入了未知的ActionType!")
+            };
         }
         public static class VariableTags
         {
@@ -102,6 +121,7 @@
             public static readonly string DICE_ROLLING = "minecraft:dice_rolling";
 
             public static readonly string DAMAGE = "minecraft:damage";
+            public static readonly string MULTI_DAMAGE = "minecraft:multi_damage";
         }
     }
 }

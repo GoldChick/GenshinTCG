@@ -3,7 +3,7 @@
     public interface ICardBase
     {
         /// <summary>
-        /// 卡牌的nameID(a-z+_+0-9+:),如"minecraft:keqing"
+        /// 卡牌的nameID(a-z+_+0-9),如"keqing"
         /// </summary>
         public string NameID { get; }
         /// <summary>
@@ -11,7 +11,7 @@
         /// 成员形如(minecraft:Nation,minecraft:Natlan)<br/>
         /// 或者(minecraft:)
         /// </summary>
-        public HashSet<string> Tags { get; }
+        public string[] Tags { get; }
     }
     /// <summary>
     /// 可能会有用的客户端服务端分离？

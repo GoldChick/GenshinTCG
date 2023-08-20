@@ -1,4 +1,5 @@
 ﻿using TCGCard;
+using TCGGame;
 
 namespace Genshin3_3
 {
@@ -10,11 +11,12 @@ namespace Genshin3_3
 
         public string NameID => "sacrificial_sword";
 
-        public HashSet<string> Tags => throw new NotImplementedException();
+        public string[] Tags => throw new NotImplementedException();
 
-        public bool SameDice => throw new NotImplementedException();
+        public int[] Costs => throw new NotImplementedException();
 
-        public Dictionary<string, int> Costs => throw new NotImplementedException();
+        public bool CostSame => throw new NotImplementedException();
+
 
         public void AfterUseAction()
         {
@@ -26,7 +28,7 @@ namespace Genshin3_3
             throw new NotImplementedException();
         }
 
-        public bool CanBeUsed()
+        public bool CanBeUsed(AbstractGame game, int meIndex)
         {
             throw new NotImplementedException();
         }

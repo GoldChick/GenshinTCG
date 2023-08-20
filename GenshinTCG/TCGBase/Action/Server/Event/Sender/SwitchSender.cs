@@ -1,5 +1,8 @@
 ﻿namespace TCGBase
 {
+    /// <summary>
+    /// 切换角色的sender，参数为起始index和切换到的index
+    /// </summary>
     public class SwitchSender : AbstractSender
     {
         public override string SenderName => Tags.SenderTags.SWITCH;

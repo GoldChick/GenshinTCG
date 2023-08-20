@@ -1,18 +1,26 @@
-﻿using TCGCard;
+﻿using TCGBase;
+using TCGCard;
+using TCGGame;
 
 namespace Genshin3_3
 {
     public class LeaveItToMe : ICardEvent
     {
+        public LeaveItToMe()
+        {
+        }
+
         public int MaxNumPermitted => throw new NotImplementedException();
 
         public string NameID => "leave_it_to_me";
 
-        public HashSet<string> Tags => throw new NotImplementedException();
-
         public bool SameDice => throw new NotImplementedException();
 
-        public Dictionary<string, int> Costs => throw new NotImplementedException();
+        public bool CostSame => throw new NotImplementedException();
+
+        public string[] Tags => throw new NotImplementedException();
+
+        public int[] Costs => throw new NotImplementedException();
 
         public void AfterUseAction()
         {
@@ -24,7 +32,7 @@ namespace Genshin3_3
             throw new NotImplementedException();
         }
 
-        public bool CanBeUsed()
+        public bool CanBeUsed(AbstractGame game, int meIndex)
         {
             throw new NotImplementedException();
         }

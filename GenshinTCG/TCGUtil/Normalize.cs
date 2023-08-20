@@ -9,8 +9,9 @@ namespace TCGUtil
         /// <summary>
         /// 将格式不明的Cost转换成int[8]
         /// </summary>
-        public static void CostNormalize(int[] input, out int[] destination)
+        public static void CostNormalize(int[]? input, out int[] destination)
         {
+            input ??= Array.Empty<int>();
             if (input.Length >= 8)
             {
                 destination = input[..8];
