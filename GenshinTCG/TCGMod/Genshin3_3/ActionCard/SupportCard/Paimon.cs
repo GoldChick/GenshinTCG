@@ -16,10 +16,11 @@ namespace Genshin3_3
 
         bool ICost.CostSame => throw new NotImplementedException();
 
-        void IUsable.AfterUseAction()
+        public void AfterUseAction(AbstractGame game, int meIndex)
         {
             throw new NotImplementedException();
         }
+
 
         bool IUsable.CanBeUsed(AbstractGame game, int meIndex)
         {

@@ -21,11 +21,14 @@ namespace TCGUtil
                 destination = new int[8];
                 input.CopyTo(destination, 0);
             }
+            for (int i = 0; i < 8; i++)
+                if (destination[i] < 0)
+                    destination[i] = 0;
         }
-        
+
         public static string StringNormalize(string? str, [NotNull] string defaultStr = "minecraft")
         => string.IsNullOrEmpty(str) ? defaultStr : Regex.Replace(str, @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)).ToLower();
-        
+
         public static string NameIDNormalize(string? nameID, [NotNull] string defaultNameSpace = "minecraft")
         {
             nameID ??= "minecraft:keqing";

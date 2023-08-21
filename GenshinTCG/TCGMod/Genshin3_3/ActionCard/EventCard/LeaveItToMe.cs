@@ -22,7 +22,7 @@ namespace Genshin3_3
 
         public int[] Costs => throw new NotImplementedException();
 
-        public void AfterUseAction()
+        public void AfterUseAction(AbstractGame game, int meIndex)
         {
             throw new NotImplementedException();
         }

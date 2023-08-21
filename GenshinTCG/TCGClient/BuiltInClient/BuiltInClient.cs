@@ -7,13 +7,14 @@ namespace TCGClient
     /// <summary>
     /// 和服务端共生的AI客户端
     /// </summary>
-    internal class BuiltInClient : AbstractClient
+    internal partial class BuiltInClient : AbstractClient
     {
-        public async override Task<NetAction> RequestEvent(ActionType demand, string help_txt = "Null")
+        //内置客户端无冷却
+        public override Task<NetEvent> RequestEvent(ActionType demand, string help_txt = "Null")
         {
             //TODO 没写完
             Console.WriteLine($"AI Demand For %:{help_txt}");
-            return null;
+            return new(() => Act(demand));
         }
 
         public override void InitServerSetting(ServerSetting setting)
@@ -34,10 +35,6 @@ namespace TCGClient
             };
         }
 
-        public override void UpdateTeam(AbstractTeam me, AbstractTeam enemy)
-        {
-            throw new NotImplementedException();
-        }
 
         public override AbstractServerCardSet RequestCardSet()
         {

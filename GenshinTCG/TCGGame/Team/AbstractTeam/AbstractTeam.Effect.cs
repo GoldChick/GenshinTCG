@@ -28,11 +28,6 @@ namespace TCGGame
             Summons.EffectTrigger(game, meIndex, sender, variable);
             Supports.EffectTrigger(game, meIndex, sender, variable);
 
-
-            //TODO:Summons & Supports
-            //Array.ForEach(Summons, s => s?.EffectTrigger(game, meIndex, sender, variable));
-            //Array.ForEach(Supports, s => s?.EffectTrigger(game, meIndex, sender, variable));
-
             Logger.Print($"清除了{EffectUpdate()}个耗尽的effect");
         }
     }

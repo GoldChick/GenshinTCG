@@ -1,4 +1,5 @@
-﻿using TCGBase;
+﻿using System.Text.Json;
+using TCGBase;
 using TCGClient;
 using TCGRule;
 using TCGUtil;
@@ -12,7 +13,7 @@ namespace TCGGame
         Gaming,
         Ending,
     }
-    public abstract class AbstractGame
+    public abstract partial class AbstractGame
     {
         public AbstractTeam[] Teams { get; init; }
         /// <summary>
@@ -63,43 +64,8 @@ namespace TCGGame
 
                     Logger.Print("开始了一局游戏!");
 
-                    while (!IsGameOver())
-                    {
-                        Round++;
-                        Logger.Print($"Round {Round}");
+                    Gaming();
 
-                        Array.ForEach(Teams, t => t.RoundStart());
-
-                        //wait until both ready
-
-                        Stage = GameStage.Rolling;
-                        Logger.Print($"投掷阶段");
-
-                        Thread.Sleep(1000);
-                        Stage = GameStage.Gaming;
-                        EffectTrigger(new SimpleSender(Tags.SenderTags.ROUND_START));
-                        Logger.Print($"行动阶段");
-
-                        while (!Teams.All(t => t.Pass))
-                        {
-                            //wait until both pass
-                            Thread.Sleep(1000);
-                            Logger.Print($"{CurrTeam}正在行动中");
-                            Array.ForEach(Teams, t =>
-                            {
-                                if (t is PlayerTeam pt)
-                                {
-                                    pt.Print();
-                                }
-                            }
-                            );
-                        }
-
-                        Stage = GameStage.Ending;
-                        Logger.Print($"结束阶段");
-                        EffectTrigger(new SimpleSender(Tags.SenderTags.ROUND_OVER));
-
-                    }
                     Logger.Warning($"Final Winner={GetWinner()}");
                 }
                 else
@@ -113,6 +79,60 @@ namespace TCGGame
             }
         }
 
+        public virtual void Gaming()
+        {
+            while (!IsGameOver())
+            {
+                Round++;
+                Logger.Print($"Round {Round}");
+                CurrTeam = 1 - CurrTeam;
+
+                Array.ForEach(Teams, t => t.RoundStart());
+
+                //wait until both ready
+
+                Stage = GameStage.Rolling;
+                Logger.Print($"投掷阶段");
+
+                Thread.Sleep(500);
+                Stage = GameStage.Gaming;
+                EffectTrigger(new SimpleSender(Tags.SenderTags.ROUND_START));
+                Logger.Print($"行动阶段");
+
+                Array.ForEach(Teams, t => t.Pass = false);
+                //TODO:先后手兑换
+
+                while (!Teams.All(t => t.Pass))
+                {
+                    //wait until both pass
+                    Thread.Sleep(500);
+                    Logger.Print($"{CurrTeam}正在行动中");
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Clients[i].UpdateTeam(Teams[i], Teams[1 - i]);
+                    }
+                    Logger.Print($"客户端已经更新Team！现在轮到{CurrTeam}行动！", ConsoleColor.DarkBlue);
+
+                    //TODO:Request!!!!
+                    var t = Clients[CurrTeam].RequestEvent(ActionType.Trival, "Your Turn");
+                    t.Start();
+                    var evt = t.Result;
+                    Logger.Warning($"Event Requirement:{JsonSerializer.Serialize(Teams[CurrTeam].GetEventRequirement(evt.Action))}");
+                    bool valid = Teams[CurrTeam].IsEventValid(evt);
+                    Logger.Warning($"Event Valid:{valid}");
+                    if (valid && HandleEvent(evt, CurrTeam))
+                    {
+                        CurrTeam = 1 - CurrTeam;
+                    }
+                }
+
+                Stage = GameStage.Ending;
+                Logger.Print($"结束阶段");
+                EffectTrigger(new SimpleSender(Tags.SenderTags.ROUND_OVER));
+
+                Array.ForEach(Teams, t => t.RoundEnd());
+            }
+        }
         protected void InitTeam(AbstractServerCardSet set0, AbstractServerCardSet set1)
         {
             //TODO:写的很不完善
@@ -132,12 +152,8 @@ namespace TCGGame
         public int GetWinner()
         {
             for (int i = 0; i < 2; i++)
-            {
                 if (Teams[1 - i].Characters.All(c => !c.Alive))
-                {
                     return i;
-                }
-            }
             return -1;
         }
         public void Step()

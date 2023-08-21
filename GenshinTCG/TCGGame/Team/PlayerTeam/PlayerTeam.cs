@@ -31,10 +31,15 @@ namespace TCGGame
             Roll(v);
 
         }
+        public override void RoundEnd()
+        {
+            Dices.Clear();
+        }
         public override void Print()
         {
             Logger.Print($"Dices:{JsonSerializer.Serialize(Dices)}");
-            Logger.Print("");
+            Array.ForEach(Characters, c => c.Print());
+            Logger.Print($"");
         }
     }
 

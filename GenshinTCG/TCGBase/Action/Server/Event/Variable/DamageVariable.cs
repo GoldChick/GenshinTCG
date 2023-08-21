@@ -1,25 +1,41 @@
 ﻿namespace TCGBase
 {
+    public enum DamageSource
+    {
+        NoWhere,
+        Character,
+        Summon
+    }
     public class DamageVariable : AbstractVariable
     {
         public override string VariableName => Tags.VariableTags.DAMAGE;
+        public int BaseDamage { get; init; }
+
         /// <summary>
-        /// 物理 冰水火雷岩草风
+        /// 0-7 物理 冰水火雷岩草风<br/>
+        /// -1 穿透
         /// </summary>
         public int Element { get; set; }
-        public int Damage { get; set; }
         /// <summary>
-        /// 穿透伤害
+        /// 供effect处理增伤或者减伤<br/>
+        /// 如果为穿透伤害，结算时不会加上这一项
         /// </summary>
-        public bool Impale { get; set; }
-        //TODO:Check it, Source Not Clear
-        public int Source { get; set; }
-        public int Target { get; set; }
-        public DamageVariable(int element, int damage, bool impale)
+        public int DamageModifier { get; set; }
+        /// <summary>
+        /// 伤害可以来源于[角色]、[召唤物]、[其他]
+        /// </summary>
+        public DamageSource Source { get; init; }
+        /// <summary>
+        /// 伤害的承受者总是[角色]
+        /// </summary>
+        public int TargetIndex { get; init; }
+        public DamageVariable(int element, int basedamage, DamageSource source, int target)
         {
-            Element = element;
-            Damage = damage;
-            Impale = impale;
+            Element = int.Clamp(element, -1, 7);
+            BaseDamage = int.Max(0, basedamage);
+            Source = source;
+            TargetIndex = target;
+            DamageModifier = 0;
         }
     }
 }

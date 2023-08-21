@@ -23,7 +23,7 @@ namespace TCGBase
         }
         public NetEventRequire()
         {
-            Cost = new Cost(false, 0);
+            Cost = new Cost(false, 128);
             TargetEnums = Array.Empty<TargetEnum>();
         }
     }

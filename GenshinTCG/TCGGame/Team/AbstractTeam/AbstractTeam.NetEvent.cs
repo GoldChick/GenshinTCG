@@ -1,71 +1,86 @@
-﻿using TCGBase;
+﻿using System.Text.Json;
+using TCGBase;
 using TCGCard;
+using TCGUtil;
 
 namespace TCGGame
 {
     public abstract partial class AbstractTeam
     {
-        //2023/8/14: IMPORTANT TODO:
-        //返回Target是有意义的吗?是不是都应该交给客户端???
-
         /// <summary>
-        /// 当action不合法时，返回需要dice和target都为empty的NetEventRequire
+        /// 当action不合法时，返回需要Cost非常多的NetEventRequire
         /// </summary>
-        public NetEventRequire CheckEventRequire(NetEvent evt)
+        public NetEventRequire GetEventRequirement(NetAction action)
         {
-            ActionType type = evt.Action.Type;
-            string? tag = Tags.SenderTags.ActionTypeToSenderTag(type);
-            if (tag == null)
-            {
-                //顺从你了
-                return new();
-            }
-            Cost? cost = null;
             List<TargetEnum> targets = new();
+            //TargetEnum & DefaultCost 
+            GetTargetRequirement(action, targets, out Cost defaultCost);
 
-            switch (type)
-            {
-                case ActionType.ReRollDice:
-                    targets.Add(TargetEnum.MultiDice);
-                    break;
-                case ActionType.ReRollCard:
-                    targets.Add(TargetEnum.MultiCard);
-                    break;
-                case ActionType.ReplaceSupport:
-                    targets.Add(TargetEnum.Support);
-                    break;
-                case ActionType.UseSKill:
-                    ICardSkill skill = Characters[CurrCharacter].Card.Skills[evt.Action.Index % Characters.Length];
-                    cost = new(skill.CostSame, skill.Costs);
+            DiceCostVariable c = new(defaultCost);
 
-                    if (skill is ITargetSelector selector)
-                    {
-                        //Special Target
-                        return new(cost, selector.TargetEnums);
-                    }
-                    break;
-                case ActionType.UseCard:
-                    //TODO: abstract没有Card呃呃呃呃
+            string? tag = Tags.SenderTags.ActionTypeToSenderTag(action.Type, true);
 
-                    //ICardAction card=
-                    break;
-                case ActionType.Blend:
-                    cost = new(false, 1);
-                    targets.Add(TargetEnum.Card);
-                    break;
-                default:
-                    break;
-            }
             if (tag != null)
-            {
-                var c = new DiceCostVariable(cost);
-                //TODO: WRONG SENDER
                 EffectTrigger(Game, TeamIndex, new SimpleSender(tag), c);
-                cost = c.Cost;
+
+            //NOTE: Forced ActionType
+            if (CurrCharacter < 0 || CurrCharacter >= Characters.Length || !Characters[CurrCharacter].Alive)
+            {
+                //TODO:自动？
+                if (action.Type == ActionType.Switch)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        c.Cost.Costs[i] = 0;
+                    }
+                }
+                else
+                {
+                    c.Cost.Costs[0] = 114514;
+                }
             }
-            //TODO:Effect Trigger
-            return new(cost, targets);
+            return new(c.Cost, targets);
+        }
+        public bool IsEventValid(NetEvent evt)
+        {
+            //TODO:Action.Index没有做范围限制
+            var require = GetEventRequirement(evt.Action);
+            return require.TargetEnums.Length == (evt.AdditionalTargetArgs?.Length ?? 0)
+                && require.TargetEnums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
+                && require.Cost.EqualTo(evt.CostArgs);
         }
 
+
+        protected virtual void GetTargetRequirement(NetAction action, List<TargetEnum> enums, out Cost defaultCost)
+        {
+            switch (action.Type)
+            {
+                case ActionType.Switch:
+                    defaultCost = new(false, 0);
+                    enums.Add(TargetEnum.Character_Me);
+                    break;
+                case ActionType.UseSKill:
+                    //TODO: bug: when CurrCharacter=-1
+                    ICardCharacter character = Characters[CurrCharacter].Card;
+                    ICardSkill skill = character.Skills[action.Index % character.Skills.Length];
+                    defaultCost = new(skill.CostSame, skill.Costs);
+                    if (skill is ITargetSelector selector)
+                        enums.AddRange(selector.TargetEnums);
+                    break;
+                default:
+                    defaultCost = new(false);
+                    break;
+            }
+        }
+        /// <summary>
+        /// 判断targetenum所需要的targetarg是否合理
+        /// </summary>
+        protected virtual bool IsTargetValid(TargetEnum e, int arg) => e switch
+        {
+            //No Card In AbstractTeam
+            TargetEnum.Character_Enemy => true,//TODO: no enemy check now
+            TargetEnum.Character_Me => arg >= 0 && arg < Characters.Length,
+            _ => false
+        };
     }
 }

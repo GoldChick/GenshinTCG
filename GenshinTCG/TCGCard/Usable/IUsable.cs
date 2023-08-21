@@ -17,6 +17,6 @@ namespace TCGCard
         /// <summary>
         /// 打出后发生什么
         /// </summary>
-        public void AfterUseAction();
+        public void AfterUseAction(AbstractGame game, int meIndex);
     }
 }

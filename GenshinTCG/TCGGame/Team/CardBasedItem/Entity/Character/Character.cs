@@ -1,9 +1,10 @@
 ﻿using TCGBase;
 using TCGCard;
+using TCGUtil;
 
 namespace TCGGame
 {
-    public class Character
+    public class Character : IPrintable
     {
         public ICardCharacter Card { get; protected set; }
         private int _hp;
@@ -12,7 +13,7 @@ namespace TCGGame
         public AbstractPersistent<IEffect>? Talent { get; internal set; }
 
         public PersistentSet<IEffect> Effects { get; init; }
-       
+
         public int HP
         {
             get { return _hp; }
@@ -20,6 +21,7 @@ namespace TCGGame
         }
         public int MP;
         public bool Alive;
+        public int Element;
         public Character(ICardCharacter character)
         {
             Card = character;
@@ -41,6 +43,17 @@ namespace TCGGame
 
 
             return true;
+        }
+
+        public void Print()
+        {
+            //TODO: card nameid not clear
+            Logger.Print(Card.NameID);
+            Logger.Print($"ALIVE:{Alive}");
+            if (Alive)
+            {
+                Logger.Print($"HP:{HP} MP:{MP} Element:{Element}");
+            }
         }
     }
 

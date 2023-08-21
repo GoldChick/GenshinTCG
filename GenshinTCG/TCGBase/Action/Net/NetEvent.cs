@@ -13,9 +13,9 @@ namespace TCGBase
         public NetAction Action { get; private init; }
         public int[]? CostArgs { get => _costArgs; set => Normalize.CostNormalize(value, out _costArgs); }
         /// <summary>
-        /// Target对客户端的要求比较高,就不在服务端写逻辑了
+        /// 并不在NetAction.Index中，而是额外一些的Target，如[送你一程]=>[Summon_Enemy]
         /// </summary>
-        public int[]? TargetArgs { get;  set; }
+        public int[]? AdditionalTargetArgs { get;  set; }
         public NetEvent(NetAction action)
         {
             Action = action;

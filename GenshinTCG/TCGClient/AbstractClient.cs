@@ -1,5 +1,4 @@
-﻿using TCGAI;
-using TCGGame;
+﻿using TCGGame;
 using TCGUtil;
 using TCGBase;
 namespace TCGClient
@@ -29,12 +28,16 @@ namespace TCGClient
         /// 客户端=>服务端
         /// 游戏进行中传入行动
         /// </summary>
-        public abstract Task<NetAction> RequestEvent(ActionType demand,string help_txt="Null");
+        public abstract Task<NetEvent> RequestEvent(ActionType demand, string help_txt = "Null");
 
         /// <summary>
         /// 服务端=>客户端
         /// 游戏进行中更新Team
         /// </summary>
-        public abstract void UpdateTeam(AbstractTeam me,AbstractTeam enemy);
+        public virtual void UpdateTeam(AbstractTeam me, AbstractTeam enemy)
+        {
+            Me = me;
+            Enemy = enemy;
+        }
     }
 }

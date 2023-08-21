@@ -7,7 +7,6 @@ namespace TCGGame
     {
         public Effect(string nameid) : base(nameid, Registry.Instance.Effects.GetValueOrDefault(nameid))
         {
-
         }
     }
 }

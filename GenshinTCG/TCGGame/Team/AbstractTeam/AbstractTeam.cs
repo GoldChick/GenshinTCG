@@ -12,6 +12,7 @@ namespace TCGGame
         /// 在Game.Teams中的index
         /// </summary>
         internal int TeamIndex { get; private init; }
+        internal AbstractTeam Enemy => Game.Teams[1 - TeamIndex];
         internal AbstractClient Client { get => Game.Clients[TeamIndex]; }
 
         /// <summary>
@@ -62,8 +63,14 @@ namespace TCGGame
             return false;
         }
 
-
+        /// <summary>
+        /// 回合开始时最先调用，如扔骰子等
+        /// </summary>
         public abstract void RoundStart();
+        /// <summary>
+        /// 回合结束时最后调用，如清理骰子等
+        /// </summary>
+        public abstract void RoundEnd();
         public abstract void Print();
     }
 }
