@@ -9,7 +9,9 @@
         ReRollCard,
 
         ReplaceSupport,
-        //Target:Character_Me
+        /// <summary>
+        /// Index:Target Character Index
+        /// </summary>
         Switch,
         /// <summary>
         /// Index:Skill Index 

@@ -29,7 +29,7 @@ namespace TCGBase
             Normalize.CostNormalize(costs, out _costs);
         }
         /// <summary>
-        /// 判断提供的dices是否能满足需要
+        /// 判断提供的dices是否能恰好满足需要
         /// </summary>
         /// <param name="supply">选中的元素骰，万能 冰水火雷岩草风</param>
         public bool EqualTo(int[]? supply)

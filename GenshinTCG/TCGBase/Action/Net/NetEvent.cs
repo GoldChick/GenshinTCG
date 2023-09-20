@@ -20,5 +20,11 @@ namespace TCGBase
         {
             Action = action;
         }
+        //TODO:4test
+        public NetEvent(NetAction action,params int[] cost)
+        {
+            Action = action;
+            _costArgs = cost;
+        }
     }
 }

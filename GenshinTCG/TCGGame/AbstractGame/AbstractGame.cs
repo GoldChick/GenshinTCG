@@ -81,6 +81,19 @@ namespace TCGGame
 
         public virtual void Gaming()
         {
+            UpdateTeam();
+            var t0 = Clients[0].RequestEvent(ActionType.Switch, "Game Start");
+            var t1 = Clients[1].RequestEvent(ActionType.Switch, "Game Start");
+            t0.Start();
+            t1.Start();
+            Task.WaitAll(t0, t1);
+
+            HandleEvent(t0.Result, 0);
+            HandleEvent(t1.Result, 1);
+            
+            UpdateTeam();
+
+            //TODO:出角色
             while (!IsGameOver())
             {
                 Round++;
@@ -107,19 +120,17 @@ namespace TCGGame
                     //wait until both pass
                     Thread.Sleep(500);
                     Logger.Print($"{CurrTeam}正在行动中");
-                    for (int i = 0; i < 2; i++)
-                    {
-                        Clients[i].UpdateTeam(Teams[i], Teams[1 - i]);
-                    }
-                    Logger.Print($"客户端已经更新Team！现在轮到{CurrTeam}行动！", ConsoleColor.DarkBlue);
 
-                    //TODO:Request!!!!
+                    UpdateTeam();
+                    //TODO:Request计时!!!!
                     var t = Clients[CurrTeam].RequestEvent(ActionType.Trival, "Your Turn");
                     t.Start();
                     var evt = t.Result;
+
                     Logger.Warning($"Event Requirement:{JsonSerializer.Serialize(Teams[CurrTeam].GetEventRequirement(evt.Action))}");
                     bool valid = Teams[CurrTeam].IsEventValid(evt);
                     Logger.Warning($"Event Valid:{valid}");
+
                     if (valid && HandleEvent(evt, CurrTeam))
                     {
                         CurrTeam = 1 - CurrTeam;
@@ -139,6 +150,15 @@ namespace TCGGame
             Logger.Warning("initing teams");
             Teams[0] = new PlayerTeam(set0 as ServerPlayerCardSet, this, 0);
             Teams[1] = new PlayerTeam(set1 as ServerPlayerCardSet, this, 1);
+
+        }
+        protected void UpdateTeam()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                Clients[i].UpdateTeam(Teams[i], Teams[1 - i]);
+            }
+            Logger.Print($"客户端已经更新Team！现在轮到{CurrTeam}行动！", ConsoleColor.DarkBlue);
 
         }
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)

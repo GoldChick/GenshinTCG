@@ -23,7 +23,7 @@ namespace TCGGame
             if (tag != null)
                 EffectTrigger(Game, TeamIndex, new SimpleSender(tag), c);
 
-            //NOTE: Forced ActionType
+            //NOTE: Forced ActionType: Died Or Init CurrCharacter
             if (CurrCharacter < 0 || CurrCharacter >= Characters.Length || !Characters[CurrCharacter].Alive)
             {
                 //TODO:自动？
@@ -41,10 +41,13 @@ namespace TCGGame
             }
             return new(c.Cost, targets);
         }
-        public bool IsEventValid(NetEvent evt)
+        public virtual bool IsEventValid(NetEvent evt)
         {
             //TODO:Action.Index没有做范围限制
+            //TODO:没有出牌、出骰功能的没必要检验
             var require = GetEventRequirement(evt.Action);
+
+            Logger.Error(JsonSerializer.Serialize(evt));
             return require.TargetEnums.Length == (evt.AdditionalTargetArgs?.Length ?? 0)
                 && require.TargetEnums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
                 && require.Cost.EqualTo(evt.CostArgs);
@@ -56,8 +59,8 @@ namespace TCGGame
             switch (action.Type)
             {
                 case ActionType.Switch:
+                    //TODO:forced switch?
                     defaultCost = new(false, 0);
-                    enums.Add(TargetEnum.Character_Me);
                     break;
                 case ActionType.UseSKill:
                     //TODO: bug: when CurrCharacter=-1

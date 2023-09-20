@@ -23,7 +23,7 @@ namespace TCGGame
         /// <summary>
         /// 返回int[8],第i个成员表示第i种元素骰的数量(默认顺序:万能 冰水火雷岩草风)
         /// </summary>
-        public int[] GetDiceNum()
+        public int[] GetDices()
         {
             int[] nums = { 0, 0, 0, 0, 0, 0, 0, 0 };
             foreach (int i in Dices)
@@ -31,6 +31,7 @@ namespace TCGGame
                     nums[i]++;
             return nums;
         }
+        public int GetDiceNum(int type = 0) => Dices.FindAll(p=>p==type).Count;
         /// <summary>
         /// 获得一个骰子,当骰子数量不满16个时才能获得成功
         /// </summary>
@@ -47,7 +48,19 @@ namespace TCGGame
             }
             return false;
         }
+        /// <summary>
+        /// 是否包含所需要的骰子
+        /// 此时index=0为万能骰
+        /// </summary>
+        /// <param name="require">以list形式输入的</param>
+        public bool ContainsDice(int[]? require) => require == null || require.GroupBy(n => int.Clamp(n, 0, 7)).All(g => g.Count() <= GetDiceNum(g.Key));
 
+        /// <summary>
+        /// 是否包含所需要的骰子
+        /// 此时index=0为万能骰
+        /// </summary>
+        /// <param name="supplier">以int[8]形式输入的</param>
+        public bool ContainsCost(int[]? supplier) => supplier == null || supplier.Select((value, index) => new { value, index }).All(p => p.value<=GetDiceNum(p.index));
     }
 
 }

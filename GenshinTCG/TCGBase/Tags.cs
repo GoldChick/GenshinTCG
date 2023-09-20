@@ -151,8 +151,14 @@ namespace TCGBase
             //受到伤害后
             public static readonly string AFTER_HURT = "minecraft:hurt";
             #endregion
-
-
+            /// <summary>
+            /// 击倒预处理，在此可以判定出一些“免于被击倒”之类的状态
+            /// </summary>
+            public static readonly string PRE_DIE = "minecraft:pre_die";
+            /// <summary>
+            /// 击倒处理，预处理后生命值为0才触发。
+            /// </summary>
+            public static readonly string DIE = "minecraft:die";
             /// <summary>
             /// 将actiontype转化成对应的tag，可以用来作为sender触发一些effect
             /// (注：此时仍然是可撤回阶段)

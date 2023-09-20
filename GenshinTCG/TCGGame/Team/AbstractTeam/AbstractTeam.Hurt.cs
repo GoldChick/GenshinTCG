@@ -1,4 +1,5 @@
 ﻿using TCGBase;
+using TCGUtil;
 
 namespace TCGGame
 {
@@ -26,6 +27,10 @@ namespace TCGGame
             EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_ADD), d);
             EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_MUL), d);
             EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_MUL), d);
+
+            //TODO: hurt 不完全
+            target.HP -= d.BaseDamage + (d.Element == -1 ? 0 : d.DamageModifier);
+            //TODO:元素反应
         }
         public static class Reaction
         {

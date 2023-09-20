@@ -37,7 +37,8 @@ namespace TCGGame
         }
         public override void Print()
         {
-            Logger.Print($"Dices:{JsonSerializer.Serialize(Dices)}");
+            Logger.Print($"DiceNum:{Dices.Count} Dices:{JsonSerializer.Serialize(Dices)}");
+            Logger.Print($"CurrCharacter:{CurrCharacter}");
             Array.ForEach(Characters, c => c.Print());
             Logger.Print($"");
         }

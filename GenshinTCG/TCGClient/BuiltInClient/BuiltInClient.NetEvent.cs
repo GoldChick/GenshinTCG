@@ -38,13 +38,20 @@ namespace TCGClient
                 }
 
                 Logger.Warning($"返回的actiontype={ac.Type}");
-                return new(ac);
+                return new(ac,1);
+            }else
+            {
+                return demand switch
+                {
+                    ActionType.Switch => new(Switch(true)),
+                    _ => throw new NotImplementedException("指定demand的还没做呃呃呃")
+                };
             }
-            throw new NotImplementedException("指定demand的还没做呃呃呃");
         }
-        public NetAction Switch()
+        /// <param name="forced">是否是要求的强制切人</param>
+        public NetAction Switch(bool forced=false)
         {
-            //TODO:默认切换到下一个角色
+            Logger.Print("BuiltInClient.Switch():默认切换到下一个角色!");
             return new NetAction(ActionType.Switch, (Me.CurrCharacter + 1) % Me.Characters.Length);
         }
         public NetAction UseCard()
@@ -87,8 +94,6 @@ namespace TCGClient
         {
             throw new NotImplementedException("NO REROLL NOW");
         }
-
-
 
         public NetAction? Print()
         {
