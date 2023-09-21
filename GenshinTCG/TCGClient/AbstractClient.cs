@@ -28,7 +28,7 @@ namespace TCGClient
         /// 客户端=>服务端
         /// 游戏进行中传入行动
         /// </summary>
-        public abstract Task<NetEvent> RequestEvent(ActionType demand, string help_txt = "Null");
+        public abstract NetEvent RequestEvent(ActionType demand, string help_txt = "Null");
 
         /// <summary>
         /// 服务端=>客户端

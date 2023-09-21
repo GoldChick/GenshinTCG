@@ -28,9 +28,22 @@ namespace TCGGame
             EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_MUL), d);
             EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_MUL), d);
 
-            //TODO: hurt 不完全
+            //TODO: hurt 不完全,还有防御等
             target.HP -= d.BaseDamage + (d.Element == -1 ? 0 : d.DamageModifier);
             //TODO:元素反应
+            if(target.HP==0)
+            {
+                EffectTrigger(Game, TeamIndex, new DieSender(curr,true),null);
+                if(target.HP==0)
+                {
+                    EffectTrigger(Game, TeamIndex, new DieSender(curr), null);
+                    target.Alive = false;
+                    //TODO:掉装备
+                    //TODO:全死了之后如何结束  
+                    //TODO:选择时间
+                    Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.Switch, "Character Died");
+                }
+            }
         }
         public static class Reaction
         {

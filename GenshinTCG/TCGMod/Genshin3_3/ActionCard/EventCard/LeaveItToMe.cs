@@ -1,40 +1,30 @@
 ﻿using TCGBase;
 using TCGCard;
 using TCGGame;
+using TCGUtil;
 
 namespace Genshin3_3
 {
     public class LeaveItToMe : ICardEvent
     {
-        public LeaveItToMe()
-        {
-        }
+        public int MaxNumPermitted => 2;
 
-        public int MaxNumPermitted => throw new NotImplementedException();
+        public string NameID => "leaveittome";
 
-        public string NameID => "leave_it_to_me";
+        public bool CostSame => false;
 
-        public bool SameDice => throw new NotImplementedException();
+        public string[] Tags => Array.Empty<string>();
 
-        public bool CostSame => throw new NotImplementedException();
-
-        public string[] Tags => throw new NotImplementedException();
-
-        public int[] Costs => throw new NotImplementedException();
+        public int[] Costs => Array.Empty<int>();
 
         public void AfterUseAction(AbstractGame game, int meIndex)
         {
-            throw new NotImplementedException();
+            game.Teams[meIndex].AddPersistent(new LeaveItToMeEffect());
+            Logger.Error("使用了交给我吧!");
         }
 
-        public bool CanBeArmed()
-        {
-            throw new NotImplementedException();
-        }
+        public bool CanBeArmed() => true;
 
-        public bool CanBeUsed(AbstractGame game, int meIndex)
-        {
-            throw new NotImplementedException();
-        }
+        public bool CanBeUsed(AbstractGame game, int meIndex) => true;
     }
 }

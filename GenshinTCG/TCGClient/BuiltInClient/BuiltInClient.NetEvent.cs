@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using TCGBase;
 using TCGUtil;
 
@@ -36,10 +38,13 @@ namespace TCGClient
                         _ => new NetAction(ActionType.Pass)
                     };
                 }
+                var req = MePt.GetEventRequirement(ac);
+                //TODO:没有target selector
 
                 Logger.Warning($"返回的actiontype={ac.Type}");
-                return new(ac,1);
-            }else
+                return new(ac, req.Cost.Costs.Sum() > 0 ? SelectDices(req.Cost.Costs) : null);
+            }
+            else
             {
                 return demand switch
                 {
@@ -49,25 +54,32 @@ namespace TCGClient
             }
         }
         /// <param name="forced">是否是要求的强制切人</param>
-        public NetAction Switch(bool forced=false)
+        public NetAction Switch(bool forced = false)
         {
             Logger.Print("BuiltInClient.Switch():默认切换到下一个角色!");
             return new NetAction(ActionType.Switch, (Me.CurrCharacter + 1) % Me.Characters.Length);
         }
         public NetAction UseCard()
         {
+            var cards = MePt.CardsInHand;
+            Logger.Print($"使用技能!输入0-{cards.Count - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
+            cards.ForEach(c => c.Print());
+            if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
+            {
+                input_num = 0;
+            }
             //TODO:默认使用第一张卡
-            return new NetAction(ActionType.UseCard, 0);
+            return new NetAction(ActionType.UseCard, int.Clamp(input_num, 0, cards.Count - 1));
         }
         public NetAction UseSkill()
         {
             //TODO:默认使用第一个技能
             var cha = Me.Characters[Me.CurrCharacter].Card;
             var skills = cha.Skills;
-            Logger.Print($"使用技能!输入0-{skills.Length}，不输入将视为0。", ConsoleColor.DarkCyan);
+            Logger.Print($"使用技能!输入0-{skills.Length - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
             for (int i = 0; i < skills.Length; i++)
             {
-                Logger.Print($"{i}: {cha.NameID}.{skills[i].NameID}");
+                Logger.Print($"{i}: {cha.NameID}.{skills[i].NameID} {JsonSerializer.Serialize(skills[i].Tags)}");
             }
             if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
             {
@@ -95,6 +107,24 @@ namespace TCGClient
             throw new NotImplementedException("NO REROLL NOW");
         }
 
+        public int[] SelectDices([NotNull] int[] req)
+        {
+            Logger.Print("----骰子种类----：万能冰水火雷岩草风");
+            Logger.Print($"现在拥有的骰子数： {JsonSerializer.Serialize(MePt.GetDices())}");
+            Logger.Print($"需要使用的骰子数： {JsonSerializer.Serialize(req)}");
+
+            int[] ints = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+            Logger.Print($"选择使用骰子!输入8个数字（空格分割），代表万能、冰水火雷岩草风的骰子。", ConsoleColor.DarkCyan);
+            for (int i = 0; i < 8; i++)
+            {
+                if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
+                {
+                    input_num = 0;
+                }
+                ints[i] = input_num;
+            }
+            return ints;
+        }
         public NetAction? Print()
         {
             Logger.Print("Team Me Info:", ConsoleColor.DarkCyan);

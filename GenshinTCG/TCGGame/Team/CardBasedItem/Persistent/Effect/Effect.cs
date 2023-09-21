@@ -8,5 +8,8 @@ namespace TCGGame
         public Effect(string nameid) : base(nameid, Registry.Instance.Effects.GetValueOrDefault(nameid))
         {
         }
+        public Effect(IEffect ef) : base(ef.NameID, ef)
+        {
+        }
     }
 }

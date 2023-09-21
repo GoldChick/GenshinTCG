@@ -1,4 +1,5 @@
-﻿using TCGBase;
+﻿using System.Text.Json;
+using TCGBase;
 using TCGCard;
 using TCGUtil;
 
@@ -48,7 +49,7 @@ namespace TCGGame
         public void Print()
         {
             //TODO: card nameid not clear
-            Logger.Print(Card.NameID);
+            Logger.Print($"{Card.NameID} {JsonSerializer.Serialize(Card.Tags)}");
             Logger.Print($"ALIVE:{Alive}");
             if (Alive)
             {

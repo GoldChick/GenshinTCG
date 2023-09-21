@@ -3,13 +3,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using TCGBase;
 using TCGCard;
+using TCGUtil;
 
 namespace TCGGame
 {
     public class PersistentSet
     {
     }
-    public class PersistentSet<T> : PersistentSet where T : IPersistent
+    public class PersistentSet<T> : PersistentSet, IPrintable where T : IPersistent
     {
         /// <summary>
         /// 为正代表最多x个，为负或0代表无限制
@@ -37,9 +38,15 @@ namespace TCGGame
                 if (!MultiSame && _data.Find(p => p.NameID == input.NameID) is AbstractPersistent<T> t)
                 {
                     //NOTE:按照最初的设计，在触发effect的时候不会改变effect（日后可能会导致一些bug）
-                    t.Active = true;
-                    t.AvailableTimes = t.Card.MaxUseTimes;
-                    t.Data = null;
+                    if (t.Active)
+                    {
+                        t.AvailableTimes = t.Card.MaxUseTimes;
+                        t.Data = null;
+                    }
+                    else
+                    {
+                        throw new NotImplementedException("PersistentSet.Add():更新了已经存在，但并非active的effect!");
+                    }
                 }
                 else
                 {
@@ -56,6 +63,14 @@ namespace TCGGame
                 //TODO:UNKNOWN GAME STEP
                 e.EffectTrigger(game, meIndex, sender, variable);
                 game.Step();
+            }
+        }
+
+        public void Print()
+        {
+            foreach (var e in _data)
+            {
+                Logger.Print($"{e.NameID} 可用次数{e.AvailableTimes}/{e.Card.MaxUseTimes} 可见{e.Card.Visible}");
             }
         }
     }

@@ -28,18 +28,25 @@ namespace TCGGame
             Logger.Print("team:start");
             DiceRollingVariable v = new(TeamIndex);
             Game.EffectTrigger(new SimpleSender(Tags.SenderTags.ROLLING_START), v);
-            Roll(v);
-
+            RollDice(v);
         }
         public override void RoundEnd()
         {
             Dices.Clear();
+            RollCard(2);
         }
         public override void Print()
         {
-            Logger.Print($"DiceNum:{Dices.Count} Dices:{JsonSerializer.Serialize(Dices)}");
+            Logger.Print($"Index:{TeamIndex}");
+            Logger.Print($"Pass:{Pass}");
+            Logger.Print($"DiceNum:{Dices.Count}");
+            Logger.Print("----骰子种类----：万能冰水火雷岩草风");
+            Logger.Print($"现在拥有的骰子数： {JsonSerializer.Serialize(GetDices())}");
             Logger.Print($"CurrCharacter:{CurrCharacter}");
             Array.ForEach(Characters, c => c.Print());
+            Logger.Print($"Team Effects:");
+            Effects.Print();
+            CardsInHand.ForEach( c => c.Print());
             Logger.Print($"");
         }
     }

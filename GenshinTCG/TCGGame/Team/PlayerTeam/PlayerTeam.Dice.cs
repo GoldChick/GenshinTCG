@@ -5,16 +5,16 @@ namespace TCGGame
 {
     public partial class PlayerTeam
     {
-        public void Roll(DiceRollingVariable rolling)
+        public void RollDice(DiceRollingVariable rolling)
         {
             Logger.Print($"{rolling.DiceNum}");
             int num = int.Max(0, rolling.DiceNum - rolling.InitialDices.Count);
             for (int i = 0; i < num; i++)
                 AddDice(Random.Next(8));
             for (int i = 0; i < rolling.RollingTimes; i++)
-                ReRoll();
+                ReRollDice();
         }
-        private void ReRoll()
+        private void ReRollDice()
         {
             Logger.Error("PlayerTeam:ReRoll还没做");
             //TODO:need request
@@ -47,6 +47,16 @@ namespace TCGGame
                 return true;
             }
             return false;
+        }
+        public void CostDices(params int[]? costs)
+        {
+            for (int i = 0; i < costs?.Length ; i++)
+            {
+                for (int j = 0; j < costs[i]; j++)
+                {
+                    Dices.Remove(i);
+                }
+            }
         }
         /// <summary>
         /// 是否包含所需要的骰子

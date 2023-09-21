@@ -57,8 +57,49 @@ namespace TCGGame
         {
             return false;
         }
-        public bool AddPersistent()
+
+        /// <summary>
+        /// 增加一个persistent类型的effect
+        /// IEffect -1:团队 0-(characters.count-1):个人
+        /// ISummon
+        /// ISupport: 0-3顶掉的场地
+        /// </summary>
+        /// <param name="per"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public bool AddPersistent(IPersistent per, int target = -1)
         {
+            if (per is IEffect ef)
+            {
+                if (target == -1)
+                {
+                    Effects.Add(new Effect(ef));
+                }
+                else
+                {
+                    var cha = Characters[int.Clamp(target, 0, Characters.Length - 1)];
+                    if (cha.Alive)
+                    {
+                        cha.Effects.Add(new Effect(ef));
+                    }
+                    else
+                    {
+                        Logger.Warning($"AbstractTeam.AddPersistent():添加名为{ef.NameID}的effect时出现问题：角色已经被击倒！");
+                    }
+                }
+            }
+            else if (per is ISupport sp)
+            {
+                throw new NotImplementedException();
+            }
+            else if (per is ISummon sm)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                throw new ArgumentException("AbstractTeam.AddPersistent():添加的Persistent类型不支持！");
+            }
             //TODO:replace
             return false;
         }

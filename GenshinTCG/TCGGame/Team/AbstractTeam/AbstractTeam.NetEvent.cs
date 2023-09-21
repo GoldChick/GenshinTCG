@@ -10,7 +10,7 @@ namespace TCGGame
         /// <summary>
         /// 当action不合法时，返回需要Cost非常多的NetEventRequire
         /// </summary>
-        public NetEventRequire GetEventRequirement(NetAction action)
+        public virtual NetEventRequire GetEventRequirement(NetAction action)
         {
             List<TargetEnum> targets = new();
             //TargetEnum & DefaultCost 
@@ -41,39 +41,12 @@ namespace TCGGame
             }
             return new(c.Cost, targets);
         }
-        public virtual bool IsEventValid(NetEvent evt)
-        {
-            //TODO:Action.Index没有做范围限制
-            //TODO:没有出牌、出骰功能的没必要检验
-            var require = GetEventRequirement(evt.Action);
+        public virtual bool IsEventValid(NetEvent evt) => true;
 
-            Logger.Error(JsonSerializer.Serialize(evt));
-            return require.TargetEnums.Length == (evt.AdditionalTargetArgs?.Length ?? 0)
-                && require.TargetEnums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
-                && require.Cost.EqualTo(evt.CostArgs);
-        }
-
-
+        /// <param name="defaultCost">其实只是这个action最初需要的骰子，不经过任何的减费加费</param>
         protected virtual void GetTargetRequirement(NetAction action, List<TargetEnum> enums, out Cost defaultCost)
         {
-            switch (action.Type)
-            {
-                case ActionType.Switch:
-                    //TODO:forced switch?
-                    defaultCost = new(false, 0);
-                    break;
-                case ActionType.UseSKill:
-                    //TODO: bug: when CurrCharacter=-1
-                    ICardCharacter character = Characters[CurrCharacter].Card;
-                    ICardSkill skill = character.Skills[action.Index % character.Skills.Length];
-                    defaultCost = new(skill.CostSame, skill.Costs);
-                    if (skill is ITargetSelector selector)
-                        enums.AddRange(selector.TargetEnums);
-                    break;
-                default:
-                    defaultCost = new(false);
-                    break;
-            }
+            throw new NotImplementedException();
         }
         /// <summary>
         /// 判断targetenum所需要的targetarg是否合理

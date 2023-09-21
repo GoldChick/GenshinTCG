@@ -1,6 +1,6 @@
-﻿using TCGBase;
-using TCGCard;
+﻿using TCGCard;
 using TCGGame;
+using TCGUtil;
 
 namespace Genshin3_3
 {
@@ -10,21 +10,17 @@ namespace Genshin3_3
 
         public string NameID => "paimon";
 
-        string[] ICardBase.Tags => throw new NotImplementedException();
+        public string[] Tags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
 
-        int[] ICost.Costs => throw new NotImplementedException();
+        public int[] Costs => new int[] { 3 };
 
-        bool ICost.CostSame => throw new NotImplementedException();
+        public bool CostSame => true;
 
         public void AfterUseAction(AbstractGame game, int meIndex)
         {
-            throw new NotImplementedException();
+            Logger.Print("打出了一张大pi!");
         }
 
-
-        bool IUsable.CanBeUsed(AbstractGame game, int meIndex)
-        {
-            throw new NotImplementedException();
-        }
+        public bool CanBeUsed(AbstractGame game, int meIndex) => true;
     }
 }

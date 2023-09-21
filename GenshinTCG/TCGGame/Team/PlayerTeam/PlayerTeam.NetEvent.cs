@@ -25,10 +25,53 @@ namespace TCGGame
             var require = GetEventRequirement(evt.Action);
 
             Logger.Error(JsonSerializer.Serialize(evt));
+
+            //Logger.Error((require.TargetEnums.Length == (evt.AdditionalTargetArgs?.Length ?? 0)).ToString());
+            //Logger.Error((require.TargetEnums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)).ToString());
+            //Logger.Error((require.Cost.EqualTo(evt.CostArgs)).ToString());
+            //Logger.Error((ContainsCost(evt.CostArgs)).ToString());
+
             return require.TargetEnums.Length == (evt.AdditionalTargetArgs?.Length ?? 0)
                 && require.TargetEnums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
                 && require.Cost.EqualTo(evt.CostArgs)
                 && ContainsCost(evt.CostArgs);
+        }
+        protected override void GetTargetRequirement(NetAction action, List<TargetEnum> enums, out Cost defaultCost)
+        {
+            switch (action.Type)
+            {
+                case ActionType.Switch:
+                    //TODO:forced switch?
+                    defaultCost = new(false);
+                    break;
+                case ActionType.UseSKill:
+                    //Assert CurrCharacter != -1
+                    //TODO:冰冻、石化效果？
+                    ICardCharacter character = Characters[CurrCharacter].Card;
+                    ICardSkill skill = character.Skills[action.Index % character.Skills.Length];
+                    defaultCost = new(skill.CostSame, skill.Costs);
+                    if (skill is ITargetSelector selector)
+                        enums.AddRange(selector.TargetEnums);
+                    break;
+                case ActionType.UseCard:
+                    if (CardsInHand.Count > 0)
+                    {
+                        ICardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
+                        defaultCost = new(card.CostSame, card.Costs);
+                        if (card is ITargetSelector se1)
+                        {
+                            enums.AddRange(se1.TargetEnums);
+                        }
+                    }
+                    else
+                    {
+                        defaultCost = new(false, 114514);
+                    }
+                    break;
+                default:
+                    defaultCost = new(false);
+                    break;
+            }
         }
     }
 }

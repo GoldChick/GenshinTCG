@@ -81,16 +81,23 @@ namespace TCGGame
 
         public virtual void Gaming()
         {
+            for (int i = 0; i < 2; i++)
+            {
+                if (Teams[i] is PlayerTeam pt)
+                {
+                    pt.RollCard(5);
+                }
+            }
             UpdateTeam();
-            var t0 = Clients[0].RequestEvent(ActionType.Switch, "Game Start");
-            var t1 = Clients[1].RequestEvent(ActionType.Switch, "Game Start");
+            var t0 = new Task<NetEvent>(() => Clients[0].RequestEvent(ActionType.Switch, "Game Start"));
+            var t1 = new Task<NetEvent>(() => Clients[1].RequestEvent(ActionType.Switch, "Game Start"));
             t0.Start();
             t1.Start();
             Task.WaitAll(t0, t1);
 
             HandleEvent(t0.Result, 0);
             HandleEvent(t1.Result, 1);
-            
+
             UpdateTeam();
 
             //TODO:出角色
@@ -123,18 +130,8 @@ namespace TCGGame
 
                     UpdateTeam();
                     //TODO:Request计时!!!!
-                    var t = Clients[CurrTeam].RequestEvent(ActionType.Trival, "Your Turn");
-                    t.Start();
-                    var evt = t.Result;
+                    RequestAndHandleEvent(CurrTeam,30000,ActionType.Trival,"Your Turn");
 
-                    Logger.Warning($"Event Requirement:{JsonSerializer.Serialize(Teams[CurrTeam].GetEventRequirement(evt.Action))}");
-                    bool valid = Teams[CurrTeam].IsEventValid(evt);
-                    Logger.Warning($"Event Valid:{valid}");
-
-                    if (valid && HandleEvent(evt, CurrTeam))
-                    {
-                        CurrTeam = 1 - CurrTeam;
-                    }
                 }
 
                 Stage = GameStage.Ending;
@@ -163,7 +160,7 @@ namespace TCGGame
         }
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
-            Logger.Warning($"Effect Triggering : sender {sender.SenderName}");
+            Logger.Warning($"Global Effect Triggering : sender {sender.SenderName}");
 
             Teams[CurrTeam].EffectTrigger(this, CurrTeam, sender, variable);
             Teams[1 - CurrTeam].EffectTrigger(this, 1 - CurrTeam, sender, variable);

@@ -45,6 +45,11 @@ namespace TCGGame
                         _availableTimes = 0;
                         Active = false;
                     }
+                    else
+                    {
+                        _availableTimes = value;
+                        Active = true;
+                    }
                 }
                 else
                 {
