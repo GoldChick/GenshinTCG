@@ -46,6 +46,10 @@ namespace TCGGame
             Array.ForEach(Characters, c => c.Print());
             Logger.Print($"Team Effects:");
             Effects.Print();
+            Logger.Print($"Supports:");
+            Supports.Print();
+            Logger.Print($"Summons:");
+            Summons.Print();
             CardsInHand.ForEach( c => c.Print());
             Logger.Print($"");
         }

@@ -95,12 +95,11 @@ namespace TCGGame
             t1.Start();
             Task.WaitAll(t0, t1);
 
-            HandleEvent(t0.Result, 0);
-            HandleEvent(t1.Result, 1);
+            HandleEvent(t0.Result, 0, true);
+            HandleEvent(t1.Result, 1, true);
 
             UpdateTeam();
 
-            //TODO:出角色
             while (!IsGameOver())
             {
                 Round++;
@@ -117,25 +116,23 @@ namespace TCGGame
                 Thread.Sleep(500);
                 Stage = GameStage.Gaming;
                 EffectTrigger(new SimpleSender(Tags.SenderTags.ROUND_START));
-                Logger.Print($"行动阶段");
+                //Logger.Print($"行动阶段");
 
                 Array.ForEach(Teams, t => t.Pass = false);
-                //TODO:先后手兑换
 
                 while (!Teams.All(t => t.Pass))
                 {
                     //wait until both pass
                     Thread.Sleep(500);
-                    Logger.Print($"{CurrTeam}正在行动中");
+                    Teams[CurrTeam].EffectTrigger(this, CurrTeam, new SimpleSender(Tags.SenderTags.ROUND_ME_START));
+                    Logger.Print($"Team{CurrTeam}正在行动中");
 
                     UpdateTeam();
-                    //TODO:Request计时!!!!
-                    RequestAndHandleEvent(CurrTeam,30000,ActionType.Trival,"Your Turn");
-
+                    RequestAndHandleEvent(CurrTeam, 30000, ActionType.Trival, "Your Turn");
                 }
 
                 Stage = GameStage.Ending;
-                Logger.Print($"结束阶段");
+                //Logger.Print($"结束阶段");
                 EffectTrigger(new SimpleSender(Tags.SenderTags.ROUND_OVER));
 
                 Array.ForEach(Teams, t => t.RoundEnd());

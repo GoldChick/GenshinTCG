@@ -68,6 +68,7 @@ namespace TCGGame
         }
         public override void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
+            //TODO:弃置
             Card?.EffectTrigger(game.Teams[meIndex], game.Teams[1 - meIndex], this, sender, variable);
             game.Step();
         }

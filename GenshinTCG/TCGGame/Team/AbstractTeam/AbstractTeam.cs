@@ -90,7 +90,11 @@ namespace TCGGame
             }
             else if (per is ISupport sp)
             {
-                throw new NotImplementedException();
+                //TODO:场地弃置
+                if (!Supports.Full)
+                {
+                    Supports.Add(new Support(sp));
+                }
             }
             else if (per is ISummon sm)
             {

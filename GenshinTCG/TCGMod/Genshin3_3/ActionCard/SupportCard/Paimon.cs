@@ -19,6 +19,7 @@ namespace Genshin3_3
         public void AfterUseAction(AbstractGame game, int meIndex)
         {
             Logger.Print("打出了一张大pi!");
+            game.Teams[meIndex].AddPersistent(new PaimonSupport());
         }
 
         public bool CanBeUsed(AbstractGame game, int meIndex) => true;

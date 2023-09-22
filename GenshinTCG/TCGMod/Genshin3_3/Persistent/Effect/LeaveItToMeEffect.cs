@@ -5,7 +5,7 @@ using TCGUtil;
 
 namespace Genshin3_3
 {
-    internal class LeaveItToMeEffect : IEffect
+    public class LeaveItToMeEffect : IEffect
     {
         public bool Stackable => false;
 
@@ -19,14 +19,17 @@ namespace Genshin3_3
 
         public string[] Tags => new string[] { };
 
-        public bool EffectTrigger(AbstractTeam me, AbstractTeam enemy, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public void EffectTrigger(AbstractTeam me, AbstractTeam enemy, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
-            if (sender is SwitchSender)
+            if (sender is SwitchSender ss && variable is FastActionVariable fav)
             {
-                Logger.Error("switchsender 触发了 交给我吧！");
-                return true;
+                Logger.Error("SwitchSender 用 FastActionVariable 触发了 交给我吧！");
+                if (!fav.Fast)
+                {
+                    fav.Fast = true;
+                    persitent.AvailableTimes--;
+                }
             }
-            return false;
         }
     }
 }

@@ -23,18 +23,17 @@ namespace TCGGame
             DamageVariable d = new(element, baseDamage, source, curr);
 
             EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.ELEMENT_ENCHANT), d);
-            EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_ADD), d);
+            Game.Teams[1 - TeamIndex].EffectTrigger(Game, 1 - TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_ADD), d);
             EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_ADD), d);
-            EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_MUL), d);
+            Game.Teams[1 - TeamIndex].EffectTrigger(Game, 1 - TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_MUL), d);
             EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_MUL), d);
 
-            //TODO: hurt 不完全,还有防御等
             target.HP -= d.BaseDamage + (d.Element == -1 ? 0 : d.DamageModifier);
             //TODO:元素反应
-            if(target.HP==0)
+            if (target.HP == 0)
             {
-                EffectTrigger(Game, TeamIndex, new DieSender(curr,true),null);
-                if(target.HP==0)
+                EffectTrigger(Game, TeamIndex, new DieSender(curr, true), null);
+                if (target.HP == 0)
                 {
                     EffectTrigger(Game, TeamIndex, new DieSender(curr), null);
                     target.Alive = false;

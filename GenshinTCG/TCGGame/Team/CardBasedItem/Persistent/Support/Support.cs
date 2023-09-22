@@ -8,5 +8,8 @@ namespace TCGGame
         public Support(string nameid) : base(nameid, Registry.Instance.Supports.GetValueOrDefault(nameid))
         {
         }
+        public Support(ISupport ef) : base(ef.NameID, ef)
+        {
+        }
     }
 }

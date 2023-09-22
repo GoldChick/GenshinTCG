@@ -24,7 +24,7 @@ namespace TCGGame
             //TODO:Action.Index没有做范围限制
             var require = GetEventRequirement(evt.Action);
 
-            Logger.Error(JsonSerializer.Serialize(evt));
+            //Logger.Error(JsonSerializer.Serialize(evt));
 
             //Logger.Error((require.TargetEnums.Length == (evt.AdditionalTargetArgs?.Length ?? 0)).ToString());
             //Logger.Error((require.TargetEnums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)).ToString());

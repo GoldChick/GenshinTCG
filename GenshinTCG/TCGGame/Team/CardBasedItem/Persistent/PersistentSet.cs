@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text.Json;
 using TCGBase;
 using TCGCard;
 using TCGUtil;
@@ -23,6 +24,7 @@ namespace TCGGame
 
         private readonly List<AbstractPersistent<T>> _data;
         public int Count => _data.Count;
+        public bool Full => MaxSize > 0 && MaxSize <= Count;
 
         public PersistentSet(int size = 0, bool multisame = false, List<AbstractPersistent<T>>? data = null)
         {
@@ -70,7 +72,7 @@ namespace TCGGame
         {
             foreach (var e in _data)
             {
-                Logger.Print($"{e.NameID} 可用次数{e.AvailableTimes}/{e.Card.MaxUseTimes} 可见{e.Card.Visible}");
+                Logger.Print($"{e.NameID} 可用次数{e.AvailableTimes}/{e.Card.MaxUseTimes} {JsonSerializer.Serialize(e.Card.Tags)}");
             }
         }
     }

@@ -20,7 +20,7 @@ namespace TCGGame
         /// <summary>
         /// effect按照 0-N角色=>团队=>召唤物=>支援区 的顺序结算
         /// </summary>
-        public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
+        public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable = null)
         {
             Array.ForEach(Characters, c => c.EffectTrigger(game, meIndex, sender, variable));
 

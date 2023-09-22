@@ -18,10 +18,6 @@ namespace TCGCard
         /// </summary>
         public int MaxUseTimes { get; }
         /// <summary>
-        /// 是否在角色/团队effect中可见
-        /// </summary>
-        public bool Visible { get; }
-        /// <summary>
         /// 结算或预结算一次效果
         /// 
         /// 注意：加费、减费的效果和增伤、减伤的效果分开写
@@ -30,7 +26,7 @@ namespace TCGCard
         /// <param name="sender">信息的发送者,如打出的[牌],使用的[技能]</param>
         /// <param name="variable">可以被改写的东西,如[消耗的骰子们],[伤害] <b>(不应改变类型)</b></param>
         /// <returns>是否弃置</returns>
-        public bool EffectTrigger(AbstractTeam me, AbstractTeam enemy,AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable);
+        public void EffectTrigger(AbstractTeam me, AbstractTeam enemy,AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable);
         
     }
 }

@@ -20,6 +20,7 @@ namespace TCGGame
 
             string? tag = Tags.SenderTags.ActionTypeToSenderTag(action.Type, true);
 
+            //TODO:减费
             if (tag != null)
                 EffectTrigger(Game, TeamIndex, new SimpleSender(tag), c);
 
@@ -44,10 +45,8 @@ namespace TCGGame
         public virtual bool IsEventValid(NetEvent evt) => true;
 
         /// <param name="defaultCost">其实只是这个action最初需要的骰子，不经过任何的减费加费</param>
-        protected virtual void GetTargetRequirement(NetAction action, List<TargetEnum> enums, out Cost defaultCost)
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract void GetTargetRequirement(NetAction action, List<TargetEnum> enums, out Cost defaultCost);
+
         /// <summary>
         /// 判断targetenum所需要的targetarg是否合理
         /// </summary>
