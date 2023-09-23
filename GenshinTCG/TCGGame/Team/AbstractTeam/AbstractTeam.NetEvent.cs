@@ -10,7 +10,7 @@ namespace TCGGame
         /// <summary>
         /// 当action不合法时，返回需要Cost非常多的NetEventRequire
         /// </summary>
-        public virtual NetEventRequire GetEventRequirement(NetAction action)
+        public virtual NetEventRequire GetEventRequirement(NetAction action, bool forced = false)
         {
             List<TargetEnum> targets = new();
             //TargetEnum & DefaultCost 
@@ -18,27 +18,11 @@ namespace TCGGame
 
             DiceCostVariable c = new(defaultCost);
 
-            string? tag = Tags.SenderTags.ActionTypeToSenderTag(action.Type, true);
+            string tag = Tags.SenderTags.ActionTypeToSenderTag(action.Type, true);
 
-            //TODO:减费
-            if (tag != null)
-                EffectTrigger(Game, TeamIndex, new SimpleSender(tag), c);
-
-            //NOTE: Forced ActionType: Died Or Init CurrCharacter
-            if (CurrCharacter < 0 || CurrCharacter >= Characters.Length || !Characters[CurrCharacter].Alive)
+            if (action.Type!=ActionType.SwitchForced)
             {
-                //TODO:自动？
-                if (action.Type == ActionType.Switch)
-                {
-                    for (int i = 0; i < 8; i++)
-                    {
-                        c.Cost.Costs[i] = 0;
-                    }
-                }
-                else
-                {
-                    c.Cost.Costs[0] = 114514;
-                }
+                EffectTrigger(Game, TeamIndex, new SimpleSender(tag), c);
             }
             return new(c.Cost, targets);
         }

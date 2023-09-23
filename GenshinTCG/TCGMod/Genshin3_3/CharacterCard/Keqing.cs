@@ -5,6 +5,68 @@ using TCGUtil;
 
 namespace Genshin3_3
 {
+    public class 雷楔 : ICardAction
+    {
+        public int MaxNumPermitted => 1;
+
+        public string NameID => "雷楔";
+
+        public string[] Tags => new string[] { "战斗行动" };
+
+        public int[] Costs => new int[] { 0, 0, 0, 0, 1 };
+
+        public bool CostSame => false;
+
+        public void AfterUseAction(AbstractGame game, int meIndex)
+        {
+            Logger.Error("打出了一张雷楔！但是什么都没有发生！");
+            var tm = game.Teams[meIndex] as PlayerTeam;
+            for (int i = 0; i < tm.Characters.Length; i++)
+            {
+                if (tm.Characters[i].Card.NameID == "keqing")
+                {
+                    if (i != tm.CurrCharacter)
+                    {
+                        game.Teams[meIndex].AddPersistent(new 雷楔_Effect());
+                        game.HandleEvent(new(new(ActionType.SwitchForced, i)), meIndex);
+                    }
+                    break;
+                }
+            }
+        }
+
+        public bool CanBeUsed(AbstractGame game, int meIndex) => true;
+        public class 雷楔_Effect : IEffect
+        {
+            public bool Visible => false;
+
+            public bool Stackable => false;
+
+            public bool DeleteWhenUsedUp => true;
+
+            public int MaxUseTimes => 1;
+
+            public string NameID => "雷楔_effect";
+
+            public string[] Tags => Array.Empty<string>();
+
+            public void EffectTrigger(AbstractTeam me, AbstractTeam enemy, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            {
+                if (sender.SenderName == TCGBase.Tags.SenderTags.ROUND_ME_START)
+                {
+                    Logger.Print("雷楔effect发力了！");
+                    me.Game.HandleEvent(new(new(ActionType.UseSKill, 1)), me.TeamIndex);
+                }
+                else if (sender.SenderName == TCGBase.Tags.SenderTags.AFTER_USE_SKILL)
+                {
+                    Logger.Print("雷楔effect:after_use_skill");
+                    persitent.AvailableTimes--;
+                    //GREAT TODO:重叠了，会出现迭代器bug
+                }
+            }
+        }
+    }
+
     public class Keqing : ICardCharacter
     {
         public string MainElement => TCGBase.Tags.ElementTags.ELECTRO;
@@ -26,10 +88,9 @@ namespace Genshin3_3
         {
             public string NameID => "yunlai_sword";
 
-            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
+            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.NORMAL_ATTACK };
 
             public int[] Costs => new int[] { 1 };
-            //TODO: for test: any dice
             public bool CostSame => false;
 
             public void AfterUseAction(AbstractGame game, int meIndex)
@@ -50,13 +111,36 @@ namespace Genshin3_3
             public void AfterUseAction(AbstractGame game, int meIndex)
             {
                 game.Teams[1 - meIndex].Hurt(0, 3, DamageSource.Character, 0);
-                Logger.Warning("刻请使用了星斗归位！并且产生了一张雷楔！(暂时用交给我吧代替)");
+                Logger.Warning("刻请使用了星斗归位！并且产生了一张雷楔！");
                 var me = game.Teams[meIndex];
                 if (me is PlayerTeam pt)
                 {
-                    //TODO:生成雷楔
-                    pt.GainCard(new LeaveItToMe());
+                    var c = pt.CardsInHand.Find(p => p.Card.NameID == "雷楔");
+                    if (c != null)
+                    {
+                        pt.CardsInHand.Remove(c);
+                    }
+                    else if (!game.Teams[meIndex].Effects.Contains("雷楔_effect"))
+                    {
+                        Logger.Warning("由于使用雷楔出来，所以不会产生雷楔！");
+                        pt.GainCard(new 雷楔());
+                    }
                 }
+            }
+
+            public bool CanBeUsed(AbstractGame game, int meIndex) => true;
+        }
+        public class TianJieXunYou : ICardSkill
+        {
+            public string NameID => "天街巡游";
+            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
+            public int[] Costs => new int[] { 0, 0, 0, 0, 1 };
+            public bool CostSame => false;
+
+            public void AfterUseAction(AbstractGame game, int meIndex)
+            {
+                game.Teams[1 - meIndex].Hurt(0, 3, DamageSource.Character, 0);
+                Logger.Warning("刻请使用了天街巡游！");
             }
 
             public bool CanBeUsed(AbstractGame game, int meIndex) => true;

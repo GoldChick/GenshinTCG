@@ -48,7 +48,8 @@ namespace TCGClient
             {
                 return demand switch
                 {
-                    ActionType.Switch => new(Switch(true)),
+                    ActionType.Switch => new(Switch()),
+                    ActionType.SwitchForced => new(Switch(true)),
                     _ => throw new NotImplementedException("指定demand的还没做呃呃呃")
                 };
             }
@@ -57,7 +58,7 @@ namespace TCGClient
         public NetAction Switch(bool forced = false)
         {
             Logger.Print("BuiltInClient.Switch():默认切换到下一个角色!");
-            return new NetAction(ActionType.Switch, (Me.CurrCharacter + 1) % Me.Characters.Length);
+            return new NetAction(forced ? ActionType.SwitchForced : ActionType.Switch, (Me.CurrCharacter + 1) % Me.Characters.Length);
         }
         public NetAction UseCard()
         {

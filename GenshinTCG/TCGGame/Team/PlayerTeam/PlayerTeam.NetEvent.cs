@@ -41,26 +41,49 @@ namespace TCGGame
             switch (action.Type)
             {
                 case ActionType.Switch:
-                    //TODO:forced switch?
-                    defaultCost = new(false);
+                case ActionType.SwitchForced:
+                    var a = action.Index % Characters.Length;
+                    if (a != CurrCharacter && Characters[a].Alive)
+                    {
+                        defaultCost = new(false, action.Type == ActionType.Switch ? 1 : 0);
+                    }
+                    else
+                    {
+                        defaultCost = new(false, 114514);
+                    }
                     break;
                 case ActionType.UseSKill:
                     //Assert CurrCharacter != -1
                     //TODO:冰冻、石化效果？
-                    ICardCharacter character = Characters[CurrCharacter].Card;
-                    ICardSkill skill = character.Skills[action.Index % character.Skills.Length];
-                    defaultCost = new(skill.CostSame, skill.Costs);
-                    if (skill is ITargetSelector selector)
-                        enums.AddRange(selector.TargetEnums);
+                    Character character = Characters[CurrCharacter];
+                    ICardCharacter chaCard = Characters[CurrCharacter].Card;
+                    ICardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
+                    if (skill.Tags.Contains(Tags.SkillTags.Q) && character.MP != chaCard.MaxMP)
+                    {
+                        defaultCost = new(false, 114514);
+                    }
+                    else
+                    {
+                        defaultCost = new(skill.CostSame, skill.Costs);
+                        if (skill is ITargetSelector selector)
+                            enums.AddRange(selector.TargetEnums);
+                    }
                     break;
                 case ActionType.UseCard:
                     if (CardsInHand.Count > 0)
                     {
                         ICardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
-                        defaultCost = new(card.CostSame, card.Costs);
-                        if (card is ITargetSelector se1)
+                        if (card.CanBeUsed(Game, TeamIndex))
                         {
-                            enums.AddRange(se1.TargetEnums);
+                            defaultCost = new(card.CostSame, card.Costs);
+                            if (card is ITargetSelector se1)
+                            {
+                                enums.AddRange(se1.TargetEnums);
+                            }
+                        }
+                        else
+                        {
+                            defaultCost = new(false, 114514);
                         }
                     }
                     else

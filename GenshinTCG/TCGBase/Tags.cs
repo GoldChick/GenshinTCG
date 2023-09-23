@@ -176,12 +176,18 @@ namespace TCGBase
             /// before_sendertag:
             /// <br/>
             /// 若带有Variable为<see cref="DiceCostVariable"/>则说明为减费
+            /// 若带有Variable为<see cref="CanActionVariable"/>则说明为能否行动
             /// 若不带有任何Variable，说明只是通知一次xx行动要开始了
+            /// <br/>
+            /// after_sendertag:
+            /// <br/>
+            /// 若带有Variable为<see cref="FastActionVariable"/>则说明为是否快速行动
             /// </summary>
             public static string ActionTypeToSenderTag(ActionType type, bool before = false) => type switch
             {
                 //ActionType.ReplaceSupport
-                ActionType.Switch => before ? BEFORE_SWITCH : AFTER_SWITCH,
+                ActionType.Switch  => before ? BEFORE_SWITCH : AFTER_SWITCH,
+                ActionType.SwitchForced  => before ? BEFORE_SWITCH : AFTER_SWITCH,
                 ActionType.UseSKill => before ? BEFORE_USE_SKILL : AFTER_USE_SKILL,
                 ActionType.UseCard => before ? BEFORE_USE_CARD : AFTER_USE_CARD,
                 ActionType.Blend => before ? BEFORE_BLEND : AFTER_BLEND,
@@ -196,6 +202,7 @@ namespace TCGBase
             public static readonly string DICE_ROLLING = "minecraft:dice_rolling";
 
             public static readonly string DAMAGE = "minecraft:damage";
+            public static readonly string CAN_ACTION = "minecraft:can_action";
             public static readonly string FAST_ACTION = "minecraft:fast_action";
             public static readonly string MULTI_DAMAGE = "minecraft:multi_damage";
         }

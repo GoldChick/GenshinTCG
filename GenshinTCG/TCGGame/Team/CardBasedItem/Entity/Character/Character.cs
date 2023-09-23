@@ -9,6 +9,7 @@ namespace TCGGame
     {
         public ICardCharacter Card { get; protected set; }
         private int _hp;
+        private int _mp;
         public AbstractPersistent<IEffect>? Weapon { get; internal set; }
         public AbstractPersistent<IEffect>? Artifact { get; internal set; }
         public AbstractPersistent<IEffect>? Talent { get; internal set; }
@@ -20,7 +21,7 @@ namespace TCGGame
             get { return _hp; }
             set { _hp = int.Clamp(value, 0, Card.MaxHP); }
         }
-        public int MP;
+        public int MP { get => _mp; set => _mp = int.Clamp(value, 0, Card.MaxMP); }
         public bool Alive;
         public int Element;
         public Character(ICardCharacter character)
@@ -53,7 +54,7 @@ namespace TCGGame
             Logger.Print($"ALIVE:{Alive}");
             if (Alive)
             {
-                Logger.Print($"HP:{HP} MP:{MP} Element:{Element}");
+                Logger.Print($"HP:{HP}/{Card.MaxHP} MP:{MP}/{Card.MaxMP} Element:{Element}");
             }
         }
     }

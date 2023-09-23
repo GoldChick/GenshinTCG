@@ -89,14 +89,14 @@ namespace TCGGame
                 }
             }
             UpdateTeam();
-            var t0 = new Task<NetEvent>(() => Clients[0].RequestEvent(ActionType.Switch, "Game Start"));
-            var t1 = new Task<NetEvent>(() => Clients[1].RequestEvent(ActionType.Switch, "Game Start"));
+            var t0 = new Task<NetEvent>(() => Clients[0].RequestEvent(ActionType.SwitchForced, "Game Start"));
+            var t1 = new Task<NetEvent>(() => Clients[1].RequestEvent(ActionType.SwitchForced, "Game Start"));
             t0.Start();
             t1.Start();
             Task.WaitAll(t0, t1);
 
-            HandleEvent(t0.Result, 0, true);
-            HandleEvent(t1.Result, 1, true);
+            HandleEvent(t0.Result, 0);
+            HandleEvent(t1.Result, 1);
 
             UpdateTeam();
 
@@ -124,11 +124,18 @@ namespace TCGGame
                 {
                     //wait until both pass
                     Thread.Sleep(500);
+                    var old_currteam = CurrTeam;
                     Teams[CurrTeam].EffectTrigger(this, CurrTeam, new SimpleSender(Tags.SenderTags.ROUND_ME_START));
-                    Logger.Print($"Team{CurrTeam}正在行动中");
 
                     UpdateTeam();
-                    RequestAndHandleEvent(CurrTeam, 30000, ActionType.Trival, "Your Turn");
+                    if (old_currteam == CurrTeam)
+                    {
+                        Logger.Print($"Team{CurrTeam}正在行动中");
+                        RequestAndHandleEvent(CurrTeam, 30000, ActionType.Trival, "Your Turn");
+                    }else
+                    {
+                        Logger.Error("TEAM CURRTEAM 发生了变化");
+                    }
                 }
 
                 Stage = GameStage.Ending;

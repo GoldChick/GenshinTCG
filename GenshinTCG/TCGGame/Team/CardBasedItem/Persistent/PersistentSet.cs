@@ -23,6 +23,10 @@ namespace TCGGame
         public bool MultiSame { get; init; }
 
         private readonly List<AbstractPersistent<T>> _data;
+        /// <summary>
+        /// 正在遍历
+        /// </summary>
+        private bool _during;
         public int Count => _data.Count;
         public bool Full => MaxSize > 0 && MaxSize <= Count;
 
@@ -57,14 +61,33 @@ namespace TCGGame
             }
         }
         public void RemoveAt(int index) => _data.RemoveAt(index);
-        public int Update() => _data.RemoveAll(p => !p.Active);
+        public int Update() => _during ? 0 : _data.RemoveAll(p => !p.Active);
+        public bool Contains(string nameid) => _data.Exists(e => e.NameID == nameid);
         public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
-            foreach (var e in _data)
+            if (_during)
             {
-                //TODO:UNKNOWN GAME STEP
-                e.EffectTrigger(game, meIndex, sender, variable);
-                game.Step();
+                foreach (var e in _data)
+                {
+                    //TODO:UNKNOWN GAME STEP
+                    if (e.Active)
+                    {
+                        e.EffectTrigger(game, meIndex, sender, variable);
+                    }
+                }
+            }
+            else
+            {
+                _during = true;
+                foreach (var e in _data)
+                {
+                    //TODO:UNKNOWN GAME STEP
+                    if (e.Active)
+                    {
+                        e.EffectTrigger(game, meIndex, sender, variable);
+                    }
+                }
+                _during = false;
             }
         }
 

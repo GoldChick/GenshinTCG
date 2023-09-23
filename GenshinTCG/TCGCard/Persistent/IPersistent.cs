@@ -10,9 +10,9 @@ namespace TCGCard
         /// </summary>
         public bool Stackable { get; }
         /// <summary>
-        /// 是否每回合（开始时）刷新可用次数
+        /// 可用次数为0时是否立即删除
         /// </summary>
-        public bool Update { get; }
+        public bool DeleteWhenUsedUp { get; }
         /// <summary>
         /// 最大使用次数，需要Stackable为true才有意义
         /// </summary>

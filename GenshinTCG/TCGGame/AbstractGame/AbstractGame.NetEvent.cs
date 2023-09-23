@@ -24,33 +24,34 @@ namespace TCGGame
                     //Logger.Warning($"AbstractGame.RequestEvent()::{JsonSerializer.Serialize(Teams[CurrTeam].GetEventRequirement(t.Result.Action))}");
                     return t.Result;
                 }
-                Logger.Warning("AbstractGame.RequestEvent():无效的NetEvent!");
+                //Logger.Warning("AbstractGame.RequestEvent():无效的NetEvent!");
             }
             Logger.Warning($"AbstractGame.RequestEvent():请求NetEvent超时或者无效，使用默认值！");
             ts.Cancel();
-            //TODO:default result
+
+            if (demand == ActionType.SwitchForced)
+            {
+                var chas = Teams[teamid].Characters;
+                for (int i = 0; i < chas.Length; i++)
+                {
+                    if (chas[i].Alive)
+                    {
+                        return new NetEvent(new NetAction(ActionType.SwitchForced, i));
+                    }
+                }
+                throw new Exception("AbstractGame.NetEvent.RequestEvent():demand=SwitchForced时出现错误！角色全部死亡！");
+            }
             return new NetEvent(new NetAction(ActionType.Pass));
         }
         public void RequestAndHandleEvent(int teamid, int millisecondsTimeout, ActionType demand, string help_txt = "Null")
-        {
-            NetEvent ne = RequestEvent(teamid, millisecondsTimeout, demand, help_txt);
-            if (HandleEvent(ne, teamid, demand != ActionType.Trival) && CurrTeam == teamid)
-            {
-                //必须是当前行动的队伍才有意义做出战斗行动
-                if (!Teams[1 - CurrTeam].Pass)
-                {
-                    CurrTeam = 1 - CurrTeam;
-                    Logger.Print($"更换了CurrTeam!", ConsoleColor.Cyan);
-                }
-                else
-                {
-                    Logger.Print($"{1 - teamid}已经空过，{teamid}继续行动！");
-                }
-            }
-        }
+          => HandleEvent(RequestEvent(teamid, millisecondsTimeout, demand, help_txt), teamid);
+        ///<summary>
+        /// 这里处理的事件全都是已经确定valid的
+        /// 所以不会进行任何检测
+        /// </summary>
         /// <param name="evt">已经证明是valid的NetEvent</param>
         /// <returns>是否是战斗行动</returns>
-        public virtual bool HandleEvent(NetEvent evt, int currTeam, bool forced)
+        public void HandleEvent(NetEvent evt, int currTeam)
         {
             var t = Teams[currTeam];
 
@@ -71,18 +72,24 @@ namespace TCGGame
             switch (evt.Action.Type)
             {
                 case ActionType.Switch:
+                case ActionType.SwitchForced:
                     var initial = t.CurrCharacter;
                     t.CurrCharacter = evt.Action.Index % t.Characters.Length;
-                    //TODO:Check Alive!
                     afterEventSender = new SwitchSender(initial, t.CurrCharacter);
-                    if (!forced)
-                    {
-                        afterEventVariable = new FastActionVariable(false);
-                    }
+                    afterEventVariable = new FastActionVariable(evt.Action.Type == ActionType.SwitchForced);
                     break;
                 case ActionType.UseSKill:
                     var skis = t.Characters[t.CurrCharacter].Card.Skills;
-                    skis[evt.Action.Index % skis.Length].AfterUseAction(this, currTeam);
+                    var ski = skis[evt.Action.Index % skis.Length];
+                    ski.AfterUseAction(this, currTeam);
+                    if (ski.Tags.Contains(Tags.SkillTags.Q))
+                    {
+                        t.Characters[t.CurrCharacter].MP = 0;
+                    }
+                    else
+                    {
+                        t.Characters[t.CurrCharacter].MP++;
+                    }
                     afterEventVariable = new FastActionVariable(false);
                     break;
                 case ActionType.UseCard:
@@ -104,12 +111,23 @@ namespace TCGGame
             }
             //after_xx 在这里结算是否是战斗行动
             t.EffectTrigger(this, currTeam, afterEventSender, afterEventVariable);
-            return !(afterEventVariable?.Fast ?? false);
-        }
-        public virtual bool IsFastAction(NetAction action)
-        {
-            //蒙德共鸣怎样实现?
-            return true;
+
+            bool fight_action = !(afterEventVariable?.Fast ?? false);
+
+            if (fight_action && CurrTeam == currTeam)
+            {
+                //必须是当前行动的队伍才有意义做出战斗行动
+                if (!Teams[1 - CurrTeam].Pass)
+                {
+                    CurrTeam = 1 - CurrTeam;
+                    Logger.Print($"更换了CurrTeam!", ConsoleColor.Cyan);
+                }
+                else
+                {
+                    Logger.Print($"{1 - currTeam}已经空过，{currTeam}继续行动！");
+                }
+            }
+
         }
     }
 }

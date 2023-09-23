@@ -38,7 +38,7 @@ namespace TCGGame
             get => _availableTimes;
             set
             {
-                if (!Card.Update)
+                if (Card.DeleteWhenUsedUp)
                 {
                     if (value <= 0)
                     {

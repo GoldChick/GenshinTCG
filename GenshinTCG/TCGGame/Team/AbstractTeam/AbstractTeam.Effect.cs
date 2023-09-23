@@ -28,7 +28,9 @@ namespace TCGGame
             Summons.EffectTrigger(game, meIndex, sender, variable);
             Supports.EffectTrigger(game, meIndex, sender, variable);
 
-            Logger.Print($"Team{TeamIndex}清除了{EffectUpdate()}个耗尽的effect！此时的sender为{sender.SenderName}");
+            EffectUpdate();
+            //TODO:test
+            //Logger.Print($"Team{TeamIndex}清除了{EffectUpdate()}个耗尽的effect！此时的sender为{sender.SenderName}");
         }
     }
 }

@@ -5,6 +5,16 @@ namespace TCGGame
 {
     public abstract partial class AbstractTeam
     {
+        /// <param name="action">伤害结算后，死亡结算前结算的东西</param>
+        public void MultiHurt(DamageVariable[] dvs, Action? action = null)
+        {
+
+        }
+        /// <param name="action">伤害结算后，死亡结算前结算的东西</param>
+        public void Hurt(DamageVariable dv, Action? action = null)
+        {
+
+        }
         public void Hurt(int element, int baseDamage, DamageSource source, int relativeIndex)
         {
             if (Characters.All(c => !c.Alive))
@@ -40,7 +50,7 @@ namespace TCGGame
                     //TODO:掉装备
                     //TODO:全死了之后如何结束  
                     //TODO:选择时间
-                    Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.Switch, "Character Died");
+                    Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced, "Character Died");
                 }
             }
         }

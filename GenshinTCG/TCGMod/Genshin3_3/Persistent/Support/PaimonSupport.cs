@@ -9,7 +9,7 @@ namespace Genshin3_3
     {
         public bool Stackable => true;
 
-        public bool Update => false;
+        public bool DeleteWhenUsedUp => true;
 
         public int MaxUseTimes => 2;
 
