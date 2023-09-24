@@ -22,21 +22,46 @@ namespace TCGGame
         public override bool IsEventValid(NetEvent evt)
         {
             //TODO:Action.Index没有做范围限制
-            var require = GetEventRequirement(evt.Action);
+            var require = GetEventDiceRequirement(evt.Action);
+
+            var enums = GetTargetEnums(evt.Action);
 
             //Logger.Error(JsonSerializer.Serialize(evt));
-
             //Logger.Error((require.TargetEnums.Length == (evt.AdditionalTargetArgs?.Length ?? 0)).ToString());
             //Logger.Error((require.TargetEnums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)).ToString());
             //Logger.Error((require.Cost.EqualTo(evt.CostArgs)).ToString());
             //Logger.Error((ContainsCost(evt.CostArgs)).ToString());
 
-            return require.TargetEnums.Length == (evt.AdditionalTargetArgs?.Length ?? 0)
-                && require.TargetEnums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
+            return enums.Count == (evt.Action.AdditionalTargetArgs?.Length ?? 0)
+                && enums.Select((e, index) => IsTargetValid(e, evt.Action.AdditionalTargetArgs[index])).All(e => e)
                 && require.Cost.EqualTo(evt.CostArgs)
                 && ContainsCost(evt.CostArgs);
         }
-        protected override void GetTargetRequirement(NetAction action, List<TargetEnum> enums, out Cost defaultCost)
+        public List<TargetEnum> GetTargetEnums(NetAction action)
+        {
+            List<TargetEnum> enums = new();
+            switch (action.Type)
+            {
+                case ActionType.UseSKill:
+                    ICardCharacter chaCard = Characters[CurrCharacter].Card;
+                    ICardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
+                    if (skill is ITargetSelector selector)
+                        enums.AddRange(selector.TargetEnums);
+                    break;
+                case ActionType.UseCard:
+                    if (CardsInHand.Count > 0)
+                    {
+                        ICardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
+                        if (card is ITargetSelector se1)
+                        {
+                            enums.AddRange(se1.TargetEnums);
+                        }
+                    }
+                    break;
+            }
+            return enums;
+        }
+        protected override void GetEventInitialDiceRequirement(NetAction action, out Cost defaultCost)
         {
             switch (action.Type)
             {
@@ -65,8 +90,6 @@ namespace TCGGame
                     else
                     {
                         defaultCost = new(skill.CostSame, skill.Costs);
-                        if (skill is ITargetSelector selector)
-                            enums.AddRange(selector.TargetEnums);
                     }
                     break;
                 case ActionType.UseCard:
@@ -76,10 +99,6 @@ namespace TCGGame
                         if (card.CanBeUsed(Game, TeamIndex))
                         {
                             defaultCost = new(card.CostSame, card.Costs);
-                            if (card is ITargetSelector se1)
-                            {
-                                enums.AddRange(se1.TargetEnums);
-                            }
                         }
                         else
                         {

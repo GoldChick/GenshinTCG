@@ -82,7 +82,8 @@ namespace Genshin3_3
         public string NameID => "keqing";
 
         public string[] Tags => new string[] { TCGBase.Tags.CardTags.RegionTags.LIYUE,
-         TCGBase.Tags.CardTags.CharacterTags.HUMAN, TCGBase.Tags.ElementTags.ELECTRO
+         TCGBase.Tags.CardTags.CharacterTags.HUMAN, TCGBase.Tags.ElementTags.ELECTRO,
+         TCGBase.Tags.CardTags.WeaponTags.SWORD
         };
         public class YunLaiSword : ICardSkill
         {
@@ -99,7 +100,6 @@ namespace Genshin3_3
                 Logger.Warning("刻请使用了原来剑法");
             }
 
-            public bool CanBeUsed(AbstractGame game, int meIndex) => true;
         }
         public class XingDouGuiWei : ICardSkill
         {
@@ -127,8 +127,6 @@ namespace Genshin3_3
                     }
                 }
             }
-
-            public bool CanBeUsed(AbstractGame game, int meIndex) => true;
         }
         public class TianJieXunYou : ICardSkill
         {
@@ -143,7 +141,6 @@ namespace Genshin3_3
                 Logger.Warning("刻请使用了天街巡游！");
             }
 
-            public bool CanBeUsed(AbstractGame game, int meIndex) => true;
         }
     }
 }

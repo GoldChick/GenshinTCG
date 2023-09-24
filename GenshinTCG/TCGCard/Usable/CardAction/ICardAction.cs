@@ -1,4 +1,5 @@
 ﻿using TCGBase;
+using TCGGame;
 
 namespace TCGCard
 {
@@ -17,5 +18,10 @@ namespace TCGCard
         {
             return true;
         }
+        /// <summary>
+        /// 是否满足额外的打出条件（不包括骰子条件）
+        /// </summary>
+        /// <returns></returns>
+        public bool CanBeUsed(AbstractGame game, int meIndex);
     }
 }

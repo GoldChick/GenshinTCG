@@ -38,7 +38,7 @@ namespace TCGClient
                         _ => new NetAction(ActionType.Pass)
                     };
                 }
-                var req = MePt.GetEventRequirement(ac);
+                var req = MePt.GetEventDiceRequirement(ac);
                 //TODO:没有target selector
 
                 Logger.Warning($"返回的actiontype={ac.Type}");

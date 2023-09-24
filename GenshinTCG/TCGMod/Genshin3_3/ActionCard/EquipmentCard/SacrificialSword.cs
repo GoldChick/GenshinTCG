@@ -3,7 +3,7 @@ using TCGGame;
 
 namespace Genshin3_3
 {
-    public class SacrificialSword : ICardWeapon
+    public class SacrificialSword : ICardWeapon, ITargetSelector
     {
         public string WeaponType => TCGBase.Tags.CardTags.WeaponTags.SWORD;
 
@@ -11,26 +11,21 @@ namespace Genshin3_3
 
         public string NameID => "sacrificial_sword";
 
-        public string[] Tags => throw new NotImplementedException();
+        public string[] Tags => new string[] { WeaponType };
 
-        public int[] Costs => throw new NotImplementedException();
+        public int[] Costs => new int[] { 1 };
 
-        public bool CostSame => throw new NotImplementedException();
+        public bool CostSame => false;
 
+        public TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
 
         public void AfterUseAction(AbstractGame game, int meIndex)
         {
             throw new NotImplementedException();
         }
 
-        public bool CanBeArmed()
-        {
-            throw new NotImplementedException();
-        }
+        public bool CanBeArmed() => true;
 
-        public bool CanBeUsed(AbstractGame game, int meIndex)
-        {
-            throw new NotImplementedException();
-        }
+        public bool CanBeUsed(AbstractGame game, int meIndex) => true;
     }
 }
