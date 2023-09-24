@@ -1,6 +1,9 @@
-﻿namespace TCGCard
+﻿using TCGBase;
+using TCGGame;
+
+namespace TCGCard
 {
-    public interface ICardSkill : ICardServer, IUsable
+    public interface ICardSkill : ICardServer, IUsable<AbstractTeam>
     {
     }
 }

@@ -37,10 +37,7 @@
         /// 某Action对应的Index含义见其注释(没有就是没有)
         /// </summary>
         public int Index { get; }
-        /// <summary>
-        /// 并不在NetAction.Index中，而是额外一些的Target，如[送你一程]=>[Summon_Enemy]
-        /// </summary>
-        public int[]? AdditionalTargetArgs { get;  set; }
+
         public NetAction(ActionType type, int index = 0)
         {
             Type = type;

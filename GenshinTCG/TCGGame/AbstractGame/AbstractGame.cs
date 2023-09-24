@@ -164,7 +164,7 @@ namespace TCGGame
         }
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
-            Logger.Warning($"Global Effect Triggering : sender {sender.SenderName}");
+            //Logger.Warning($"Global Effect Triggering : sender {sender.SenderName}");
 
             Teams[CurrTeam].EffectTrigger(this, CurrTeam, sender, variable);
             Teams[1 - CurrTeam].EffectTrigger(this, 1 - CurrTeam, sender, variable);
@@ -179,7 +179,7 @@ namespace TCGGame
         }
         public void Step()
         {
-            Logger.Print("step once");
+            //Logger.Print("step once");
         }
         public string GetState()
         {

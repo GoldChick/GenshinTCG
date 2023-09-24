@@ -74,14 +74,16 @@ namespace TCGGame
                 case ActionType.Switch:
                 case ActionType.SwitchForced:
                     var initial = t.CurrCharacter;
-                    t.CurrCharacter = evt.Action.Index % t.Characters.Length;
+                    t.CurrCharacter = evt.Action.Index;
                     afterEventSender = new SwitchSender(initial, t.CurrCharacter);
                     afterEventVariable = new FastActionVariable(evt.Action.Type == ActionType.SwitchForced);
                     break;
                 case ActionType.UseSKill:
                     var skis = t.Characters[t.CurrCharacter].Card.Skills;
-                    var ski = skis[evt.Action.Index % skis.Length];
-                    ski.AfterUseAction(this, currTeam);
+                    var ski = skis[evt.Action.Index];
+                    //考虑AfterUseAction中可能让角色位置改变的
+                    afterEventSender = new UseSkillSender(t.CurrCharacter, ski, evt.AdditionalTargetArgs);
+                    ski.AfterUseAction(t, evt.AdditionalTargetArgs);
                     if (ski.Tags.Contains(Tags.SkillTags.Q))
                     {
                         t.Characters[t.CurrCharacter].MP = 0;
@@ -96,7 +98,7 @@ namespace TCGGame
                     Debug.Assert(pt != null, "AbstractGame.NetEvent:不应该拥有行动牌的Team尝试打出卡牌！");
                     ActionCard c = pt.CardsInHand[evt.Action.Index % pt.CardsInHand.Count];
                     pt.CardsInHand.Remove(c);
-                    c.Card.AfterUseAction(this, currTeam);
+                    c.Card.AfterUseAction(pt, evt.AdditionalTargetArgs);
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Pass://空过

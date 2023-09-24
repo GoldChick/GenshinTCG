@@ -186,8 +186,7 @@ namespace TCGBase
             public static string ActionTypeToSenderTag(ActionType type, bool before = false) => type switch
             {
                 //ActionType.ReplaceSupport
-                ActionType.Switch  => before ? BEFORE_SWITCH : AFTER_SWITCH,
-                ActionType.SwitchForced  => before ? BEFORE_SWITCH : AFTER_SWITCH,
+                ActionType.Switch or ActionType.SwitchForced => before ? BEFORE_SWITCH : AFTER_SWITCH,
                 ActionType.UseSKill => before ? BEFORE_USE_SKILL : AFTER_USE_SKILL,
                 ActionType.UseCard => before ? BEFORE_USE_CARD : AFTER_USE_CARD,
                 ActionType.Blend => before ? BEFORE_BLEND : AFTER_BLEND,

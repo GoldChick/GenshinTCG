@@ -1,7 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using TCGBase;
+using TCGCard;
+using TCGGame;
 using TCGUtil;
 
 namespace TCGClient
@@ -38,11 +41,14 @@ namespace TCGClient
                         _ => new NetAction(ActionType.Pass)
                     };
                 }
-                var req = MePt.GetEventDiceRequirement(ac);
-                //TODO:没有target selector
+                var dicereq = MePt.GetEventFinalDiceRequirement(ac);
 
                 Logger.Warning($"返回的actiontype={ac.Type}");
-                return new(ac, req.Cost.Costs.Sum() > 0 ? SelectDices(req.Cost.Costs) : null);
+                NetEvent nevt = new(ac, dicereq.Cost.Costs.Sum() > 0 ? SelectDices(dicereq.Cost.Costs) : null)
+                {
+                    AdditionalTargetArgs = SelectTargets(MePt, ac)
+                };
+                return nevt;
             }
             else
             {
@@ -69,12 +75,10 @@ namespace TCGClient
             {
                 input_num = 0;
             }
-            //TODO:默认使用第一张卡
             return new NetAction(ActionType.UseCard, int.Clamp(input_num, 0, cards.Count - 1));
         }
         public NetAction UseSkill()
         {
-            //TODO:默认使用第一个技能
             var cha = Me.Characters[Me.CurrCharacter].Card;
             var skills = cha.Skills;
             Logger.Print($"使用技能!输入0-{skills.Length - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
@@ -125,6 +129,49 @@ namespace TCGClient
                 ints[i] = input_num;
             }
             return ints;
+        }
+        public int[] SelectTargets(PlayerTeam me, NetAction action)
+        {
+            List<TargetEnum> enums = new();
+            switch (action.Type)
+            {
+                case ActionType.UseSKill:
+                    if (me.Characters[me.CurrCharacter].Card.Skills[action.Index] is ITargetSelector selector)
+                    {
+                        enums.AddRange(selector.TargetEnums);
+                    }
+                    break;
+                case ActionType.UseCard:
+                    if (me.CardsInHand[action.Index].Card is ITargetSelector se1)
+                    {
+                        enums.AddRange(se1.TargetEnums);
+                    }
+                    break;
+            }
+            Func<TargetEnum, int> input_target = (e) =>
+            {
+                IEnumerable<string> values = e switch
+                {
+                    TargetEnum.Card_Me => me.CardsInHand.Select(c => c.Card.NameID),
+                    TargetEnum.Character_Enemy => me.Enemy.Characters.Select(c => c.Card.NameID),
+                    TargetEnum.Character_Me => me.Characters.Select(c => c.Card.NameID),
+                    _ => throw new Exception("没有实现的target")
+                };
+                int cnt = values.Count();
+                Logger.Print($"选择{e}目标!输入1个0-{cnt}数字，代表目标的ID。", ConsoleColor.DarkCyan);
+                for (int i = 0; i < cnt; i++)
+                {
+                    Logger.Print($"{i}:{values.ElementAt(i)}");
+                }
+
+                if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
+                {
+                    input_num = 0;
+                }
+                return int.Clamp(input_num, 0, cnt - 1);
+            };
+
+            return enums.Select(input_target).ToArray();
         }
         public NetAction? Print()
         {

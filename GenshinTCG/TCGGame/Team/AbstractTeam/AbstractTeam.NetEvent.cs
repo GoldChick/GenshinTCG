@@ -10,7 +10,7 @@ namespace TCGGame
         /// <summary>
         /// 当action不合法时，返回需要Cost非常多的NetEventRequire
         /// </summary>
-        public virtual NetEventRequire GetEventDiceRequirement(NetAction action, bool forced = false)
+        public virtual NetEventRequire GetEventFinalDiceRequirement(NetAction action, bool forced = false)
         {
             // DefaultCost 
             GetEventInitialDiceRequirement(action, out Cost defaultCost);

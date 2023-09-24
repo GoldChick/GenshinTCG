@@ -22,7 +22,12 @@ namespace TCGGame
             set { _hp = int.Clamp(value, 0, Card.MaxHP); }
         }
         public int MP { get => _mp; set => _mp = int.Clamp(value, 0, Card.MaxMP); }
+
         public bool Alive;
+        /// <summary>
+        /// 为active时可以使用技能
+        /// </summary>
+        public bool Active;
         public int Element;
         public Character(ICardCharacter character)
         {
@@ -33,9 +38,10 @@ namespace TCGGame
             HP = Card.MaxHP;
             HP = Card.MaxMP;
             Alive = true;
+            Active = true;
         }
         ///<returns>没用</returns>
-        public bool EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
+        public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
             Weapon?.EffectTrigger(game, meIndex, sender, variable);
 
@@ -43,8 +49,7 @@ namespace TCGGame
 
             Talent?.EffectTrigger(game, meIndex, sender, variable);
 
-
-            return true;
+            Effects.EffectTrigger(game, meIndex, sender, variable);
         }
 
         public void Print()

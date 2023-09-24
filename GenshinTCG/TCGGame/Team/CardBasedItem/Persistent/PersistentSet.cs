@@ -67,6 +67,7 @@ namespace TCGGame
         {
             if (_during)
             {
+                Logger.Error($"PersistentSet.EffectTrigger():结算sendertype={sender.SenderName}进入了嵌套的buff结算！");
                 foreach (var e in _data)
                 {
                     //TODO:UNKNOWN GAME STEP

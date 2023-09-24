@@ -1,5 +1,7 @@
-﻿using TCGCard;
+﻿using TCGBase;
+using TCGCard;
 using TCGGame;
+using TCGUtil;
 
 namespace Genshin3_3
 {
@@ -19,13 +21,38 @@ namespace Genshin3_3
 
         public TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
 
-        public void AfterUseAction(AbstractGame game, int meIndex)
+
+        public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
-            throw new NotImplementedException();
+            Logger.Print($"给{targetArgs[0]}号角色装备了一张祭礼剑！");
+            me.Characters[targetArgs[0]].Weapon = new Effect(new 祭礼剑_effect());
         }
 
         public bool CanBeArmed() => true;
 
-        public bool CanBeUsed(AbstractGame game, int meIndex) => true;
+        public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null)
+                => me.Characters[targetArgs[0]].Card.Tags.Contains(TCGBase.Tags.CardTags.WeaponTags.SWORD);
+        public class 祭礼剑_effect : IEffect
+        {
+            public bool Visible => true;
+
+            public bool Stackable => false;
+
+            public bool DeleteWhenUsedUp => false;
+
+            public int MaxUseTimes => 1;
+
+            public string NameID => "祭礼剑_effect";
+
+            public string[] Tags => new string[] { };
+
+            public void EffectTrigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            {
+                if (sender is UseSkillSender sks && sks.Skill.Tags.Contains(TCGBase.Tags.SkillTags.E))
+                {
+                    Logger.Error("使用了E，触发了祭礼剑的效果!");
+                }
+            }
+        }
     }
 }

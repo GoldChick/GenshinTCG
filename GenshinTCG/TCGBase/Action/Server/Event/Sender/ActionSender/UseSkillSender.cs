@@ -8,11 +8,15 @@ namespace TCGBase
     public class UseSkillSender : AbstractAfterActionSender
     {
         public override string SenderName => Tags.SenderTags.AFTER_USE_SKILL;
+        public int CharIndex { get; set; }
         public ICardSkill Skill { get; set; }
+        public int[]? AdditionalTargetArgs { get; set; }
 
-        public UseSkillSender(ICardSkill skill)
+        public UseSkillSender(int charIndex, ICardSkill skill, int[]? targetArgs = null)
         {
+            CharIndex = charIndex;
             Skill = skill;
+            AdditionalTargetArgs = targetArgs;
         }
     }
 }

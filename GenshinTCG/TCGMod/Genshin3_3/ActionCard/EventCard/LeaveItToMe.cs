@@ -1,4 +1,5 @@
-﻿using TCGBase;
+﻿using System;
+using TCGBase;
 using TCGCard;
 using TCGGame;
 using TCGUtil;
@@ -17,15 +18,14 @@ namespace Genshin3_3
 
         public int[] Costs => Array.Empty<int>();
 
-        public void AfterUseAction(AbstractGame game, int meIndex)
+
+        public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
-            game.Teams[meIndex].AddPersistent(new LeaveItToMeEffect());
+            me.AddPersistent(new LeaveItToMeEffect());
             Logger.Error("使用了交给我吧!");
         }
 
-        public bool CanBeArmed() => true;
-
-        public bool CanBeUsed(AbstractGame game, int meIndex) => true;
+        public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
 
         public class LeaveItToMeEffect : IEffect
         {
@@ -41,7 +41,7 @@ namespace Genshin3_3
 
             public string[] Tags => new string[] { };
 
-            public void EffectTrigger(AbstractTeam me, AbstractTeam enemy, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            public void EffectTrigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
             {
                 if (sender is SwitchSender ss && variable is FastActionVariable fav)
                 {

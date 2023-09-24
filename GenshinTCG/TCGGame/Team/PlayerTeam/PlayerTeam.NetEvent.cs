@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using TCGBase;
+﻿using TCGBase;
 using TCGCard;
 using TCGUtil;
 
@@ -21,65 +20,62 @@ namespace TCGGame
         };
         public override bool IsEventValid(NetEvent evt)
         {
-            //TODO:Action.Index没有做范围限制
-            var require = GetEventDiceRequirement(evt.Action);
-
-            var enums = GetTargetEnums(evt.Action);
-
-            //Logger.Error(JsonSerializer.Serialize(evt));
-            //Logger.Error((require.TargetEnums.Length == (evt.AdditionalTargetArgs?.Length ?? 0)).ToString());
-            //Logger.Error((require.TargetEnums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)).ToString());
-            //Logger.Error((require.Cost.EqualTo(evt.CostArgs)).ToString());
-            //Logger.Error((ContainsCost(evt.CostArgs)).ToString());
-
-            return enums.Count == (evt.Action.AdditionalTargetArgs?.Length ?? 0)
-                && enums.Select((e, index) => IsTargetValid(e, evt.Action.AdditionalTargetArgs[index])).All(e => e)
-                && require.Cost.EqualTo(evt.CostArgs)
-                && ContainsCost(evt.CostArgs);
+            ////Logger.Error(JsonSerializer.Serialize(evt));
+            //Logger.Error($"limit:{IsLimitValid(evt.Action)}");
+            //Logger.Error($"target:{IsTargetValid(evt)}");
+            //Logger.Error($"dice:{IsDiceValid(evt)}");
+            return IsLimitValid(evt.Action)
+                && IsTargetValid(evt)
+                && IsDiceValid(evt);
         }
-        public List<TargetEnum> GetTargetEnums(NetAction action)
+
+        public bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
+        {
+            ActionType.Switch or ActionType.SwitchForced =>
+                action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
+            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length,
+            ActionType.UseCard => action.Index < CardsInHand.Count,
+            //ActionType.Blend =>,
+            ActionType.Pass => true,
+            _ => false
+        };
+        public bool IsTargetValid(NetEvent evt)
         {
             List<TargetEnum> enums = new();
-            switch (action.Type)
+            switch (evt.Action.Type)
             {
                 case ActionType.UseSKill:
-                    ICardCharacter chaCard = Characters[CurrCharacter].Card;
-                    ICardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
-                    if (skill is ITargetSelector selector)
+                    if (Characters[CurrCharacter].Card.Skills[evt.Action.Index] is ITargetSelector selector)
+                    {
                         enums.AddRange(selector.TargetEnums);
+                    }
                     break;
                 case ActionType.UseCard:
-                    if (CardsInHand.Count > 0)
+                    if (CardsInHand[evt.Action.Index].Card is ITargetSelector se1)
                     {
-                        ICardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
-                        if (card is ITargetSelector se1)
-                        {
-                            enums.AddRange(se1.TargetEnums);
-                        }
+                        enums.AddRange(se1.TargetEnums);
                     }
                     break;
             }
-            return enums;
+            //Logger.Error($"enums={enums}");
+            //Logger.Error($"0={evt.AdditionalTargetArgs}");
+            //Logger.Error($"1={enums.Count == (evt.AdditionalTargetArgs?.Length ?? 0)}");
+            //Logger.Error($"2={enums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)}");
+
+            return enums.Count == (evt.AdditionalTargetArgs?.Length ?? 0)
+            && enums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
+            && (!(evt.Action.Type == ActionType.UseCard) || CardsInHand[evt.Action.Index].Card.CanBeUsed(this, evt.AdditionalTargetArgs));
         }
+        public bool IsDiceValid(NetEvent evt) => GetEventFinalDiceRequirement(evt.Action).Cost.EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
         protected override void GetEventInitialDiceRequirement(NetAction action, out Cost defaultCost)
         {
             switch (action.Type)
             {
                 case ActionType.Switch:
                 case ActionType.SwitchForced:
-                    var a = action.Index % Characters.Length;
-                    if (a != CurrCharacter && Characters[a].Alive)
-                    {
-                        defaultCost = new(false, action.Type == ActionType.Switch ? 1 : 0);
-                    }
-                    else
-                    {
-                        defaultCost = new(false, 114514);
-                    }
+                    defaultCost = new(false, action.Type == ActionType.Switch ? 1 : 0);
                     break;
                 case ActionType.UseSKill:
-                    //Assert CurrCharacter != -1
-                    //TODO:冰冻、石化效果？
                     Character character = Characters[CurrCharacter];
                     ICardCharacter chaCard = Characters[CurrCharacter].Card;
                     ICardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
@@ -93,26 +89,14 @@ namespace TCGGame
                     }
                     break;
                 case ActionType.UseCard:
-                    if (CardsInHand.Count > 0)
-                    {
-                        ICardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
-                        if (card.CanBeUsed(Game, TeamIndex))
-                        {
-                            defaultCost = new(card.CostSame, card.Costs);
-                        }
-                        else
-                        {
-                            defaultCost = new(false, 114514);
-                        }
-                    }
-                    else
-                    {
-                        defaultCost = new(false, 114514);
-                    }
+                    ICardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
+                    defaultCost = new(card.CostSame, card.Costs);
                     break;
-                default:
+                case ActionType.Pass:
                     defaultCost = new(false);
                     break;
+                default:
+                    throw new NotImplementedException($"PlayerTeam.NetEvent.GetEventInitialDiceRequirement():还没有实现{action.Type}的情况！");
             }
         }
     }

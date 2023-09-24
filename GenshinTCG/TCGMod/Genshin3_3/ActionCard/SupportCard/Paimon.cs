@@ -1,4 +1,5 @@
-﻿using TCGBase;
+﻿using System;
+using TCGBase;
 using TCGCard;
 using TCGGame;
 using TCGUtil;
@@ -17,13 +18,14 @@ namespace Genshin3_3
 
         public bool CostSame => true;
 
-        public void AfterUseAction(AbstractGame game, int meIndex)
+        public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             Logger.Print("打出了一张大pi!");
-            game.Teams[meIndex].AddPersistent(new PaimonSupport());
+            me.AddPersistent(new PaimonSupport());
         }
 
-        public bool CanBeUsed(AbstractGame game, int meIndex) => true;
+        public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
+
         public class PaimonSupport : ISupport
         {
             public bool Stackable => true;
@@ -36,7 +38,7 @@ namespace Genshin3_3
 
             public string[] Tags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
 
-            public void EffectTrigger(AbstractTeam me, AbstractTeam enemy, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            public void EffectTrigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
             {
                 if (sender.SenderName == TCGBase.Tags.SenderTags.ROUND_START)
                 {
