@@ -38,9 +38,11 @@ namespace Genshin3_3
 
             public string[] Tags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
 
-            public void EffectTrigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            public Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.ROUND_START, new PaimonTrigger() } };
+
+            private class PaimonTrigger : IPersistentTrigger
             {
-                if (sender.SenderName == TCGBase.Tags.SenderTags.ROUND_START)
+                public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
                     persitent.AvailableTimes--;
                     Logger.Warning("大派触发了！");
@@ -55,6 +57,8 @@ namespace Genshin3_3
                     }
                 }
             }
+
+
         }
 
     }

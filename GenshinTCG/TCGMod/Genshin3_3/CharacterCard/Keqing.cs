@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using TCGBase;
 using TCGCard;
 using TCGGame;
+using TCGMod;
 using TCGUtil;
 
 namespace Genshin3_3
@@ -52,19 +54,20 @@ namespace Genshin3_3
 
             public string[] Tags => Array.Empty<string>();
 
-            public void EffectTrigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            public Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+                { TCGBase.Tags.SenderTags.ROUND_ME_START,new 雷楔_Trigger() },
+                { TCGBase.Tags.SenderTags.AFTER_USE_SKILL, new PersistentConsume() }
+            };
+            private class 雷楔_Trigger : IPersistentTrigger
             {
-                if (sender.SenderName == TCGBase.Tags.SenderTags.ROUND_ME_START)
+                public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
                     Logger.Print("雷楔effect发力了！");
                     me.Game.HandleEvent(new(new(ActionType.UseSKill, 1)), me.TeamIndex);
                 }
-                else if (sender.SenderName == TCGBase.Tags.SenderTags.AFTER_USE_SKILL)
-                {
-                    Logger.Print("雷楔effect:after_use_skill");
-                    persitent.AvailableTimes--;
-                }
             }
+
+
         }
     }
 

@@ -41,15 +41,20 @@ namespace Genshin3_3
 
             public string[] Tags => new string[] { };
 
-            public void EffectTrigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            public Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.AFTER_SWITCH, new FastSwitchTrigger() } };
+
+            private class FastSwitchTrigger : IPersistentTrigger
             {
-                if (sender is SwitchSender ss && variable is FastActionVariable fav)
+                public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
-                    Logger.Error("SwitchSender 用 FastActionVariable 触发了 交给我吧！");
-                    if (!fav.Fast)
+                    if (variable is FastActionVariable fav)
                     {
-                        fav.Fast = true;
-                        persitent.AvailableTimes--;
+                        Logger.Error("SwitchSender 用 FastActionVariable 触发了 交给我吧！");
+                        if (!fav.Fast)
+                        {
+                            fav.Fast = true;
+                            persitent.AvailableTimes--;
+                        }
                     }
                 }
             }

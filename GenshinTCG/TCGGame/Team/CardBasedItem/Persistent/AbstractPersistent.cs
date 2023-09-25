@@ -7,7 +7,7 @@ namespace TCGGame
     {
         protected int _availableTimes;
 
-        public abstract ICardBase CardBase { get; }
+        public abstract IPersistent CardBase { get; }
         public abstract int AvailableTimes { get; set; }
         /// <summary>
         /// 是否处于激活状态，默认为True，当某次行动结算结束之后会清除未激活的effect
@@ -31,7 +31,7 @@ namespace TCGGame
     }
     public abstract class AbstractPersistent<T> : AbstractPersistent where T : IPersistent
     {
-        public override ICardBase CardBase => Card;
+        public override IPersistent CardBase => Card;
         public T Card { get; protected set; }
         public override int AvailableTimes
         {
@@ -69,7 +69,10 @@ namespace TCGGame
         public override void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
             //TODO:这是好的吗
-            Card?.EffectTrigger(game.Teams[meIndex],  this, sender, variable);
+            if (Card != null && Card.TriggerDic.TryGetValue(sender.SenderName, out var trigger))
+            {
+                trigger?.Trigger(game.Teams[meIndex], this, sender, variable);
+            }
             //game.Step();
         }
     }

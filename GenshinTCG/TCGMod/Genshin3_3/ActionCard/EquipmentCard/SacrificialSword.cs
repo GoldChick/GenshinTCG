@@ -46,13 +46,20 @@ namespace Genshin3_3
 
             public string[] Tags => new string[] { };
 
-            public void EffectTrigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            public Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.AFTER_USE_SKILL, new 祭礼剑_Trigger() } };
+
+            private class 祭礼剑_Trigger : IPersistentTrigger
             {
-                if (sender is UseSkillSender sks && sks.Skill.Tags.Contains(TCGBase.Tags.SkillTags.E))
+                public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
-                    Logger.Error("使用了E，触发了祭礼剑的效果!");
+                    if (sender is UseSkillSender sks && sks.Skill.Tags.Contains(TCGBase.Tags.SkillTags.E))
+                    {
+                        Logger.Error("使用了E，触发了祭礼剑的效果!");
+                    }
                 }
             }
+
+
         }
     }
 }
