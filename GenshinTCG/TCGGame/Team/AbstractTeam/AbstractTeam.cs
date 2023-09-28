@@ -58,6 +58,28 @@ namespace TCGGame
             return false;
         }
 
+        public bool TryAddSummon(ISummonProvider provider)
+        {
+            var a = provider.PersistentPool.Where(s => !Summons.Contains(s.NameID)).ToList();
+            if (a.Count == 0)
+            {
+                //刷新
+            }
+            else
+            {
+            }
+
+            if (Summons.Full)
+            {
+
+            }
+            else
+            {
+
+            }
+            //TODO:没做好
+            return false;
+        }
         /// <summary>
         /// 增加一个persistent类型的effect
         /// IEffect -1:团队 0-(characters.count-1):个人

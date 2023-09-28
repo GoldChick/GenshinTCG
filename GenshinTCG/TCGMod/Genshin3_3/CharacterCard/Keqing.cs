@@ -24,12 +24,11 @@ namespace Genshin3_3
         public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             Logger.Error("打出了一张雷楔！但是什么都没有发生！");
-            var tm = me as PlayerTeam;
-            for (int i = 0; i < tm.Characters.Length; i++)
+            for (int i = 0; i < me.Characters.Length; i++)
             {
-                if (tm.Characters[i].Card.NameID == "keqing")
+                if (me.Characters[i].Card.NameID == "keqing")
                 {
-                    if (i != tm.CurrCharacter)
+                    if (i != me.CurrCharacter)
                     {
                         me.AddPersistent(new 雷楔_Effect());
                         me.Game.HandleEvent(new(new(ActionType.SwitchForced, i)), me.TeamIndex);

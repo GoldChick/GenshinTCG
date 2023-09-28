@@ -1,9 +1,9 @@
 ﻿namespace TCGCard
 {
-    public interface IPersistentCreator
+    public interface IPersistentProvider
     {
     }
-    public interface IPersistentCreator<T>:IPersistentCreator where T: IPersistent
+    public interface IPersistentProvider<T>:IPersistentProvider where T: IPersistent
     {
         /// <summary>
         /// 可供生成的IPersistent种类,如召唤物:[纯水:蛙+飞鸢+花鼠],[菲谢尔:奥兹]
@@ -18,13 +18,13 @@
         /// </summary>
         public int PersistentNum { get; }
     }
-    public interface IAssistCreator : IPersistentCreator<ISupport>
+    public interface IAssistProvider : IPersistentProvider<ISupport>
     {
     }
-    public interface IEffectCreator : IPersistentCreator<IEffect>
+    public interface IEffectProvider : IPersistentProvider<IEffect>
     {
     }
-    public interface ISummonCreator : IPersistentCreator<ISummon>
+    public interface ISummonProvider : IPersistentProvider<ISummon>
     {
     }
     

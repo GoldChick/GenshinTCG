@@ -10,6 +10,10 @@
         /// 带有namespace的senderName,如"minecraft:switch"
         /// </summary>
         public abstract string SenderName { get; }
+        public int TeamID { get; }
+
+        //@deprecated
+        //似乎没有什么用.....
         /// <summary>
         /// 除了名字以外的动态可添加信息(如[重击]、[下落攻击]),
         /// 可以动态添加

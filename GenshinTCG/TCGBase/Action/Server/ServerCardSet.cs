@@ -29,10 +29,10 @@ namespace TCGBase
             }
             catch (Exception e)
             {
-                Logger.Print($"ex:{e.Message}");
-                CharacterCards = Array.Empty<ICardCharacter>();
-                ActionCards = Array.Empty<ICardAction>();
-                Valid = false;
+                throw new ArgumentException($"ex:{e.Message}");
+                //CharacterCards = Array.Empty<ICardCharacter>();
+                //ActionCards = Array.Empty<ICardAction>();
+                //Valid = false;
             }
         }
 

@@ -13,7 +13,7 @@ namespace Genshin3_3
 
         public string NameID => "sacrificial_sword";
 
-        public string[] Tags => new string[] { WeaponType };
+        public string[] Tags => new string[] { WeaponType, TCGBase.Tags.CardTags.EquipmentTags.WEAPON };
 
         public int[] Costs => new int[] { 1 };
 
@@ -27,8 +27,6 @@ namespace Genshin3_3
             Logger.Print($"给{targetArgs[0]}号角色装备了一张祭礼剑！");
             me.Characters[targetArgs[0]].Weapon = new Effect(new 祭礼剑_effect());
         }
-
-        public bool CanBeArmed() => true;
 
         public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null)
                 => me.Characters[targetArgs[0]].Card.Tags.Contains(TCGBase.Tags.CardTags.WeaponTags.SWORD);

@@ -54,10 +54,10 @@ namespace TCGGame
                     {
                         c[i] = Clients[i].RequestCardSet() as ServerPlayerCardSet;
                         //TODO:检测是否合理
-                        if (true)
+                        //if (true)
                         {
-                            Logger.Print(c[i].CharacterCards.Length);
-                            c[i].Print();
+                            //Logger.Print(c[i].CharacterCards.Length);
+                            //c[i].Print();
                         }
                     }
                     InitTeam(c[0], c[1]);

@@ -15,8 +15,8 @@ namespace TCGMod
             {
                 if (dv.Element >= 0)
                 {
-                    int a = int.Min(persitent.AvailableTimes, dv.BaseDamage + dv.DamageModifier);
-                    dv.DamageModifier -= a;
+                    int a = int.Min(persitent.AvailableTimes, dv.Damage );
+                    dv.Damage -= a;
                     persitent.AvailableTimes -= a;
                 }
             }

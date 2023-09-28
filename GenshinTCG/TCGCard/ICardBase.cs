@@ -12,6 +12,8 @@
         /// 或者(minecraft:)
         /// </summary>
         public string[] Tags { get; }
+        //TODO:@deprecated
+        //并不是所有卡牌都需要这些tag
     }
     /// <summary>
     /// 可能会有用的客户端服务端分离？

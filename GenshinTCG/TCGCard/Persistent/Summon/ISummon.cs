@@ -18,15 +18,18 @@
     /// <summary>
     /// 召唤物区的召唤物<br/>
     /// [回合末]结算后若可用次数为0，立即弃置<br/>
-    /// 没有可用次数(Stackable=false)在召唤物区域视为可用次数为1
     /// </summary>
     public interface ISummon : IPersistent
     {
-        public SummonCategory Category { get; }
         /// <summary>
-        /// 为true则可用次数为0时立即弃置<br/>
-        /// 为false则可用次数为0时不弃置，坚持到回合末结算效果
+        /// 4 decoration only<br/>
+        /// may got deprecated
         /// </summary>
-        public bool MustPossitive { get; }
+        //public SummonCategory Category { get; }
+
+        ///<summary>
+        ///起初的使用次数，比如[杀生樱]
+        /// </summary>
+        public int InitialUseTimes { get; }
     }
 }

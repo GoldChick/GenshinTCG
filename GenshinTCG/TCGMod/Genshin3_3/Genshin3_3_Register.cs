@@ -1,4 +1,5 @@
 ﻿using TCGCard;
+using TCGMod;
 using TCGRule;
 using TCGUtil;
 
@@ -13,12 +14,14 @@ namespace Genshin3_3
             consumer.Accept(new LeaveItToMe());
 
             consumer.Accept(new Paimon());
+            consumer.Accept(new 赌徒());
 
         }
 
         public override void RegisterCharacter(IConsumer<ICardCharacter> consumer)
         {
             consumer.Accept(new Keqing());
+            consumer.Accept(new Mona());
         }
 
         public override void RegisterEffect(IConsumer<IEffect> consumer)

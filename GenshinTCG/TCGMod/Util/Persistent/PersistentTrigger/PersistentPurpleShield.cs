@@ -24,9 +24,9 @@ namespace TCGMod
             {
                 if(dv.Element>=0)
                 {
-                    if (dv.BaseDamage+dv.DamageModifier>=_line)
+                    if (dv.Damage>=_line)
                     {
-                        dv.DamageModifier -= _protect;
+                        dv.Damage -= _protect;
                         persitent.AvailableTimes--;
                     }
                 }
