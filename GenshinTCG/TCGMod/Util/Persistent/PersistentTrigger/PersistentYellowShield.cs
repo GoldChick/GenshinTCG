@@ -11,13 +11,16 @@ namespace TCGMod
     {
         public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
-            if (variable is DamageVariable dv)
+            if (persitent.AvailableTimes > 0 && variable is DamageVariable dv)
             {
-                if (dv.Element >= 0)
+                if (persitent is not PersonalEffect pe || me.CurrCharacter == pe.Owner)
                 {
-                    int a = int.Min(persitent.AvailableTimes, dv.Damage );
-                    dv.Damage -= a;
-                    persitent.AvailableTimes -= a;
+                    if (dv.Element >= 0)
+                    {
+                        int a = int.Min(persitent.AvailableTimes, dv.Damage);
+                        dv.Damage -= a;
+                        persitent.AvailableTimes -= a;
+                    }
                 }
             }
         }

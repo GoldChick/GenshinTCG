@@ -1,6 +1,7 @@
 ﻿using TCGBase;
 using TCGCard;
 using TCGGame;
+using TCGUtil;
 
 namespace TCGMod
 {
@@ -20,14 +21,19 @@ namespace TCGMod
         }
         public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
-            if (variable is DamageVariable dv)
+            if (persitent.AvailableTimes > 0 && variable is DamageVariable dv)
             {
-                if(dv.Element>=0)
+                if (persitent is not PersonalEffect pe || me.CurrCharacter == pe.Owner)
                 {
-                    if (dv.Damage>=_line)
+                    if (dv.Element >= 0)
                     {
-                        dv.Damage -= _protect;
-                        persitent.AvailableTimes--;
+                        if (dv.Damage >= _line)
+                        {
+                            dv.Damage -= _protect;
+                            persitent.AvailableTimes--;
+
+                            Logger.Error("紫盾抵挡了一点伤害!");
+                        }
                     }
                 }
             }

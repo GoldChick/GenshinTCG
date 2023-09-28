@@ -58,27 +58,35 @@ namespace TCGGame
             return false;
         }
 
-        public bool TryAddSummon(ISummonProvider provider)
+        //TODO:找到地方调用这个东西
+
+        public void TryAddSummon(ISummonProvider provider)
         {
-            var a = provider.PersistentPool.Where(s => !Summons.Contains(s.NameID)).ToList();
-            if (a.Count == 0)
+            var left = provider.PersistentPool.Where(s => !Summons.Contains(s.NameID)).ToList();
+            if (left.Count == 0)//全都召唤了，刷新
             {
-                //刷新
+                var pool = provider.PersistentPool.Select(p => p).ToList();
+                if (provider.PersistentOrdered)
+                {
+                    for (int i = 0; i < int.Min(provider.PersistentNum, pool.Count); i++)
+                    {
+                        Summons.Add(new Summon(pool[i]));
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < provider.PersistentNum && pool.Count > 0; i++)
+                    {
+                        int j = Random.Next(pool.Count);
+                        pool.RemoveAt(j);
+                        Summons.Add(new Summon(pool[j]));
+                    }
+                }
             }
-            else
+            else if (!Summons.Full)
             {
+                Summons.Add(new Summon(left[Random.Next(left.Count)]));
             }
-
-            if (Summons.Full)
-            {
-
-            }
-            else
-            {
-
-            }
-            //TODO:没做好
-            return false;
         }
         /// <summary>
         /// 增加一个persistent类型的effect
@@ -99,10 +107,11 @@ namespace TCGGame
                 }
                 else
                 {
-                    var cha = Characters[int.Clamp(target, 0, Characters.Length - 1)];
+                    int i = int.Clamp(target, 0, Characters.Length - 1);
+                    var cha = Characters[i];
                     if (cha.Alive)
                     {
-                        cha.Effects.Add(new Effect(ef));
+                        cha.Effects.Add(new PersonalEffect(i, ef));
                     }
                     else
                     {

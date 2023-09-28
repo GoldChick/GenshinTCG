@@ -9,5 +9,8 @@ namespace TCGGame
         {
 
         }
+        public Summon(ISummon ef) : base(ef.NameID, ef)
+        {
+        }
     }
 }
