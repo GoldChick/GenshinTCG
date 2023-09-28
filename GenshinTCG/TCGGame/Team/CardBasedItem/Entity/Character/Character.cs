@@ -36,7 +36,6 @@ namespace TCGGame
             Effects = new();
 
             HP = Card.MaxHP;
-            HP = Card.MaxMP;
             Alive = true;
             Active = true;
         }

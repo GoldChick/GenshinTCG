@@ -38,7 +38,6 @@ namespace Genshin3_3
             }
         }
         public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
-
         public class 雷楔_Effect : IEffect
         {
             public bool Visible => false;
@@ -80,7 +79,7 @@ namespace Genshin3_3
 
         public IEffect? DefaultEffect => null;
 
-        public ICardSkill[] Skills => new ICardSkill[] { new YunLaiSword(), new XingDouGuiWei() };
+        public ICardSkill[] Skills => new ICardSkill[] { new YunLaiSword(), new XingDouGuiWei(), new TianJieXunYou() };
 
         public string NameID => "keqing";
 
@@ -99,8 +98,8 @@ namespace Genshin3_3
 
             public void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
-                me.Enemy.Hurt(0, 2, DamageSource.Character, 0);
-                Logger.Warning("刻请使用了原来剑法");
+                me.Enemy.Hurt(new(0, 2, DamageSource.Character, 0));
+                Logger.Warning("刻请使用了原来剑法，为了测试方便为水元素伤害");
             }
 
         }
@@ -113,7 +112,7 @@ namespace Genshin3_3
 
             public void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
-                me.Enemy.Hurt(0, 3, DamageSource.Character, 0);
+                me.Enemy.Hurt(new(4, 3, DamageSource.Character, 0));
                 Logger.Warning("刻请使用了星斗归位！并且产生了一张雷楔！");
                 if (me is PlayerTeam pt)
                 {
@@ -121,10 +120,11 @@ namespace Genshin3_3
                     if (c != null)
                     {
                         pt.CardsInHand.Remove(c);
+                        pt.AddPersistent(new 雷楔_Enchant());
                     }
                     else if (me.Effects.Contains("雷楔_effect"))
                     {
-                        Logger.Warning("由于使用雷楔出来，所以不会产生雷楔！");
+                        Logger.Warning("由于使用雷楔出来，所以不会产生雷楔，！");
                     }
                     else
                     {
@@ -132,17 +132,41 @@ namespace Genshin3_3
                     }
                 }
             }
+            public class 雷楔_Enchant : IEffect
+            {
+                //使用雷楔后的雷附魔
+                public bool Visible => true;
+
+                public bool Stackable => false;
+
+                public bool DeleteWhenUsedUp => true;
+
+                public int MaxUseTimes => 2;
+
+                public string NameID => "雷楔_enchant";
+
+                public string[] Tags => Array.Empty<string>();
+
+                public Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+                { TCGBase.Tags.SenderTags.ROUND_OVER,new PersistentConsume() },
+                { TCGBase.Tags.SenderTags.ELEMENT_ENCHANT, new PersistentElementEnchant(4) }
+            };
+            }
         }
         public class TianJieXunYou : ICardSkill
         {
             public string NameID => "天街巡游";
-            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
+            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.Q };
             public int[] Costs => new int[] { 0, 0, 0, 0, 1 };
             public bool CostSame => false;
 
             public void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
-                me.Enemy.Hurt(0, 3, DamageSource.Character, 0);
+                me.Enemy.MultiHurt(new DamageVariable[]
+                {
+                new(4, 4, DamageSource.Character, 0) ,
+                new(-1, 3, DamageSource.Character, 0,true)
+                });
                 Logger.Warning("刻请使用了天街巡游！");
             }
 

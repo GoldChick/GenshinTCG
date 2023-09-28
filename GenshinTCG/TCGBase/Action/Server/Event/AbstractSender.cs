@@ -20,5 +20,9 @@
         /// </summary>
         /// <remarks>TODO:将来实现mod可添加</remarks>
         public List<string> DynamicTags { get; } = new();
+        public AbstractSender(int teamID)
+        {
+            TeamID = teamID;
+        }
     }
 }

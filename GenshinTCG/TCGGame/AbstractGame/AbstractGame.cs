@@ -125,14 +125,15 @@ namespace TCGGame
                     //wait until both pass
                     Thread.Sleep(500);
                     var old_currteam = CurrTeam;
-                    Teams[CurrTeam].EffectTrigger(this, CurrTeam, new SimpleSender(Tags.SenderTags.ROUND_ME_START));
+                    EffectTrigger(new SimpleSender(CurrTeam, Tags.SenderTags.ROUND_ME_START));
 
                     UpdateTeam();
                     if (old_currteam == CurrTeam)
                     {
                         Logger.Print($"Team{CurrTeam}正在行动中");
                         RequestAndHandleEvent(CurrTeam, 30000, ActionType.Trival, "Your Turn");
-                    }else
+                    }
+                    else
                     {
                         Logger.Error("TEAM CURRTEAM 发生了变化");
                     }

@@ -14,7 +14,7 @@
         /// 切换到的角色在队伍中的index
         /// </summary>
         public int SwitchTarget { get; init; }
-        public SwitchSender(int init, int target)
+        public SwitchSender(int teamID, int init, int target) : base(teamID)
         {
             Initial = init;
             SwitchTarget = target;

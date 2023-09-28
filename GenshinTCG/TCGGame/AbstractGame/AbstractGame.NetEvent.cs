@@ -56,10 +56,10 @@ namespace TCGGame
             var t = Teams[currTeam];
 
             //before_xx 通知要发生一个xx事件，[常九爷]等可以开始检测，检测到after_xx之后判定
-            t.EffectTrigger(this, currTeam, new SimpleSender(Tags.SenderTags.ActionTypeToSenderTag(evt.Action.Type, true)));
+            EffectTrigger(new SimpleSender(currTeam, Tags.SenderTags.ActionTypeToSenderTag(evt.Action.Type, true)));
 
             PlayerTeam? pt = null;
-            AbstractSender afterEventSender = new SimpleSender(Tags.SenderTags.ActionTypeToSenderTag(evt.Action.Type));
+            AbstractSender afterEventSender = new SimpleSender(currTeam,Tags.SenderTags.ActionTypeToSenderTag(evt.Action.Type));
             FastActionVariable? afterEventVariable = null;
 
             if (t is PlayerTeam)
@@ -75,14 +75,14 @@ namespace TCGGame
                 case ActionType.SwitchForced:
                     var initial = t.CurrCharacter;
                     t.CurrCharacter = evt.Action.Index;
-                    afterEventSender = new SwitchSender(initial, t.CurrCharacter);
+                    afterEventSender = new SwitchSender(currTeam, initial, t.CurrCharacter);
                     afterEventVariable = new FastActionVariable(evt.Action.Type == ActionType.SwitchForced);
                     break;
                 case ActionType.UseSKill:
                     var skis = t.Characters[t.CurrCharacter].Card.Skills;
                     var ski = skis[evt.Action.Index];
                     //考虑AfterUseAction中可能让角色位置改变的
-                    afterEventSender = new UseSkillSender(t.CurrCharacter, ski, evt.AdditionalTargetArgs);
+                    afterEventSender = new UseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
                     ski.AfterUseAction(t, evt.AdditionalTargetArgs);
                     if (ski.Tags.Contains(Tags.SkillTags.Q))
                     {
@@ -112,7 +112,7 @@ namespace TCGGame
                     break;
             }
             //after_xx 在这里结算是否是战斗行动
-            t.EffectTrigger(this, currTeam, afterEventSender, afterEventVariable);
+            EffectTrigger( afterEventSender, afterEventVariable);
 
             bool fight_action = !(afterEventVariable?.Fast ?? false);
 

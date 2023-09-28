@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using TCGBase;
+using TCGUtil;
 
 namespace TCGGame
 {
@@ -17,11 +20,11 @@ namespace TCGGame
             overload = false;
             if (d.Element != -1)
             {
-                EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.ELEMENT_ENCHANT), d);
-                Game.Teams[1 - TeamIndex].EffectTrigger(Game, 1 - TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_ADD), d);
-                EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_ADD), d);
-                Game.Teams[1 - TeamIndex].EffectTrigger(Game, 1 - TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_MUL), d);
-                EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_MUL), d);
+                Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.ELEMENT_ENCHANT), d);
+                Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.DAMAGE_ADD), d);
+                Game.EffectTrigger(new SimpleSender(TeamIndex, Tags.SenderTags.HURT_ADD), d);
+                Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.DAMAGE_MUL), d);
+                Game.EffectTrigger(new SimpleSender(TeamIndex, Tags.SenderTags.HURT_MUL), d);
             }
             if (d.TargetExcept)
             {
@@ -31,7 +34,7 @@ namespace TCGGame
                     int index = (i + CurrCharacter) % Characters.Length;
                     if (index != d.TargetIndex)
                     {
-                        DamageVariable dv_person = new(d.Source, d.Element, d.Damage, d.TargetIndex);
+                        DamageVariable dv_person = new(d.Source, d.Element, d.Damage, index);
                         hss.AddRange(Hurt(out bool one_overload, dv_person));
                         overload = overload || one_overload;
                     }
@@ -42,7 +45,7 @@ namespace TCGGame
                 //only one target
                 string? reaction = GetReaction(d, out DamageVariable? mul);
                 overload = reaction == Tags.ReactionTags.OVERLOADED && d.TargetIndex == CurrCharacter;
-                hss.Add(new(d, reaction));
+                hss.Add(new(TeamIndex, d, reaction));
                 if (mul != null)
                 {
                     hss.AddRange(Hurt(out bool one_overload, mul));
@@ -81,34 +84,33 @@ namespace TCGGame
         {
             for (int i = 0; i < Characters.Length; i++)
             {
-                int curr=(i+CurrCharacter)
-            }
-            
-        }
-        private void CheckDie(int curr)
-        {
-            Character target = Characters[curr];
-            if (target.HP == 0)
-            {
-                EffectTrigger(Game, TeamIndex, new DieSender(curr, true), null);
+                int curr = (i + CurrCharacter) % Characters.Length;
+                Character target = Characters[curr];
                 if (target.HP == 0)
                 {
-                    EffectTrigger(Game, TeamIndex, new DieSender(curr), null);
-                    target.Alive = false;
-                    //TODO:掉装备
-                    if (Characters.All(p => !p.Alive))
+                    EffectTrigger(Game, TeamIndex, new DieSender(TeamIndex, curr, true), null);
+                    if (target.HP == 0)
                     {
-                        //TODO:全死了之后如何结束  
-                        throw new Exception("所有角色都死亡了，游戏结束！");
+                        EffectTrigger(Game, TeamIndex, new DieSender(TeamIndex, curr), null);
+                        target.Alive = false;
+                        //TODO:掉装备
                     }
-                    Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced, "Character Died");
                 }
+            }
+            if (Characters.All(p => !p.Alive))
+            {
+                //TODO:全死了之后如何结束  
+                throw new Exception("所有角色都死亡了，游戏结束！");
+            }
+            if (!Characters[CurrCharacter].Alive)
+            {
+                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced, "Character Died");
             }
         }
         /// <param name="action">伤害结算后，死亡结算前结算的东西，如[风压剑]</param>
         public void MultiHurt(DamageVariable[] dvs, Action? action = null)
         {
-            DamageVariable[] dvs_person = dvs.Select(p => p.TargetRelative ? new(p.Source, p.Element, p.Damage, (p.TargetIndex + CurrCharacter) % Characters.Length) : p).ToArray();
+            DamageVariable[] dvs_person = dvs.Select(p => p.TargetRelative ? new(p.Source, p.Element, p.Damage, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept) : p).ToArray();
             List<HurtSender> hss = MultiHurt(out bool overload, dvs_person);
             foreach (var hs in hss)
             {
@@ -119,77 +121,14 @@ namespace TCGGame
             {
                 SwitchToNext();
             }
+            CheckDie();
             foreach (var hs in hss)
             {
                 Game.EffectTrigger(hs, null);
             }
         }
         /// <param name="action">伤害结算后，死亡结算前结算的东西</param>
-        public void Hurt(DamageVariable dv, Action? action = null)
-        {
-            Debug.Assert(dv.TargetRelative, "AbstractTeam.Hurt():输入的dv(直接来源于角色技能、卡牌等)的targetRelative为false!");
-            Character target;
-            int curr = CurrCharacter;
-            do
-            {
-                curr = (curr + dv.TargetIndex) % Characters.Length;
-                target = Characters[curr];
-            } while (!target.Alive);
-            DamageVariable d = new(dv.Source, dv.Element, dv.Damage, curr, dv.TargetExcept);
-            if (d.Element != -1)
-            {
-                EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.ELEMENT_ENCHANT), d);
-                Game.Teams[1 - TeamIndex].EffectTrigger(Game, 1 - TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_ADD), d);
-                EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_ADD), d);
-                Game.Teams[1 - TeamIndex].EffectTrigger(Game, 1 - TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_MUL), d);
-                EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_MUL), d);
-            }
-            string? reaction = GetReaction(d, out DamageVariable? mul);
-
-            target.HP -= d.Damage;
-
-            action?.Invoke();
-
-        }
-        public void Hurt(int element, int baseDamage, DamageSource source, int relativeIndex)
-        {
-            if (Characters.All(c => !c.Alive))
-            {
-                throw new Exception($"AbstractTeam.Hurt(): All Characters Died");
-            }
-            Character target;
-            int curr = CurrCharacter;
-            do
-            {
-                curr = (curr + relativeIndex) % Characters.Length;
-                target = Characters[curr];
-            } while (!target.Alive);
-
-            //element damage经过normalize
-            DamageVariable d = new(element, baseDamage, source, curr);
-
-            EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.ELEMENT_ENCHANT), d);
-            Game.Teams[1 - TeamIndex].EffectTrigger(Game, 1 - TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_ADD), d);
-            EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_ADD), d);
-            Game.Teams[1 - TeamIndex].EffectTrigger(Game, 1 - TeamIndex, new SimpleSender(Tags.SenderTags.DAMAGE_MUL), d);
-            EffectTrigger(Game, TeamIndex, new SimpleSender(Tags.SenderTags.HURT_MUL), d);
-            //TODO:穿透无增伤
-            target.HP -= d.Damage;
-            //TODO:元素反应
-            if (target.HP == 0)
-            {
-                EffectTrigger(Game, TeamIndex, new DieSender(curr, true), null);
-                if (target.HP == 0)
-                {
-                    EffectTrigger(Game, TeamIndex, new DieSender(curr), null);
-                    target.Alive = false;
-                    //TODO:掉装备
-                    //TODO:全死了之后如何结束  
-                    //TODO:选择时间
-                    Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced, "Character Died");
-                }
-            }
-        }
+        public void Hurt(DamageVariable dv, Action? action = null) => MultiHurt(new DamageVariable[] { dv }, action);
         ///<summary>
         /// mul : targetRelative=false;<br/>
         /// 注意：调用此方法将改变角色头上的元素!

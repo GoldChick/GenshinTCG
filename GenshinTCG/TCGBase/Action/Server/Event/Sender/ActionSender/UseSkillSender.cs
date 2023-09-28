@@ -12,7 +12,7 @@ namespace TCGBase
         public ICardSkill Skill { get; set; }
         public int[]? AdditionalTargetArgs { get; set; }
 
-        public UseSkillSender(int charIndex, ICardSkill skill, int[]? targetArgs = null)
+        public UseSkillSender(int teamID, int charIndex, ICardSkill skill, int[]? targetArgs = null) : base(teamID)
         {
             CharIndex = charIndex;
             Skill = skill;

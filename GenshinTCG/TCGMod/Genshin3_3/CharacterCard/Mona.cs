@@ -32,7 +32,7 @@ namespace Genshin3_3
 
             public void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
-                Logger.Error("莫娜使用了因果点破(还没做)");
+                me.Enemy.Hurt(new(2, 1, TCGBase.DamageSource.Character, 0));
             }
         }
     }

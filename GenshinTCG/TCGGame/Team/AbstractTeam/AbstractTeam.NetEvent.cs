@@ -21,7 +21,7 @@ namespace TCGGame
 
             if (action.Type != ActionType.SwitchForced)
             {
-                EffectTrigger(Game, TeamIndex, new SimpleSender(tag), c);
+                EffectTrigger(Game, TeamIndex, new SimpleSender(TeamIndex, tag), c);
             }
             return new(c.Cost);
         }

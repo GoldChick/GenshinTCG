@@ -7,7 +7,11 @@
     {
         public override string SenderName { get; }
 
-        public SimpleSender(string sender)
+        public SimpleSender(int teamID, string sender) : base(teamID)
+        {
+            SenderName = sender;
+        }
+        public SimpleSender(string sender) : base(-1)
         {
             SenderName = sender;
         }

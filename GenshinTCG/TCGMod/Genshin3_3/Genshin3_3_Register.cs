@@ -12,6 +12,7 @@ namespace Genshin3_3
             consumer.Accept(new SacrificialSword());
 
             consumer.Accept(new LeaveItToMe());
+            consumer.Accept(new XingTianZhiZhao());
 
             consumer.Accept(new Paimon());
             consumer.Accept(new 赌徒());
