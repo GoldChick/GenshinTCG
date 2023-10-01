@@ -27,21 +27,13 @@ namespace Genshin3_3
 
         public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
 
-        public class LeaveItToMeEffect : IEffect
+        public class LeaveItToMeEffect : AbstractCardEffect
         {
-            public bool Stackable => false;
+            public override int MaxUseTimes => 1;
 
-            public bool DeleteWhenUsedUp => true;
+            public override string NameID => "leaveittome_effect";
 
-            public int MaxUseTimes => 1;
-
-            public bool Visible => true;
-
-            public string NameID => "leaveittome_effect";
-
-            public string[] Tags => new string[] { };
-
-            public Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.AFTER_SWITCH, new FastSwitchTrigger() } };
+            public override Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.AFTER_SWITCH, new FastSwitchTrigger() } };
 
             private class FastSwitchTrigger : IPersistentTrigger
             {

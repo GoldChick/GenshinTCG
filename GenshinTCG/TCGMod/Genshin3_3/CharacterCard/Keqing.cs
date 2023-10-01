@@ -38,23 +38,17 @@ namespace Genshin3_3
             }
         }
         public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
-        public class 雷楔_Effect : IEffect
+        public class 雷楔_Effect : AbstractCardEffect
         {
-            public bool Visible => false;
+            public override bool Visible => false;
 
-            public bool Stackable => false;
+            public override int MaxUseTimes => 1;
 
-            public bool DeleteWhenUsedUp => true;
+            public override string NameID => "雷楔_effect";
 
-            public int MaxUseTimes => 1;
-
-            public string NameID => "雷楔_effect";
-
-            public string[] Tags => Array.Empty<string>();
-
-            public Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+            public override Dictionary<string, IPersistentTrigger> TriggerDic => new() {
                 { TCGBase.Tags.SenderTags.ROUND_ME_START,new 雷楔_Trigger() },
-                { TCGBase.Tags.SenderTags.AFTER_USE_SKILL, new PersistentConsume() }
+                { TCGBase.Tags.SenderTags.AFTER_USE_SKILL, new PersistentSimpleConsume() }
             };
             private class 雷楔_Trigger : IPersistentTrigger
             {
@@ -77,7 +71,7 @@ namespace Genshin3_3
 
         public int MaxMP => 3;
 
-        public IEffect? DefaultEffect => null;
+        public AbstractCardEffect? DefaultEffect => null;
 
         public ICardSkill[] Skills => new ICardSkill[] { new YunLaiSword(), new XingDouGuiWei(), new TianJieXunYou() };
 
@@ -132,23 +126,13 @@ namespace Genshin3_3
                     }
                 }
             }
-            public class 雷楔_Enchant : IEffect
+            public class 雷楔_Enchant : AbstractCardEffect
             {
                 //使用雷楔后的雷附魔
-                public bool Visible => true;
-
-                public bool Stackable => false;
-
-                public bool DeleteWhenUsedUp => true;
-
-                public int MaxUseTimes => 2;
-
-                public string NameID => "雷楔_enchant";
-
-                public string[] Tags => Array.Empty<string>();
-
-                public Dictionary<string, IPersistentTrigger> TriggerDic => new() {
-                { TCGBase.Tags.SenderTags.ROUND_OVER,new PersistentConsume() },
+                public override int MaxUseTimes => 2;
+                public override string NameID => "雷楔_enchant";
+                public override Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+                { TCGBase.Tags.SenderTags.ROUND_OVER,new PersistentSimpleConsume() },
                 { TCGBase.Tags.SenderTags.ELEMENT_ENCHANT, new PersistentElementEnchant(4) }
             };
             }

@@ -10,11 +10,11 @@ namespace TCGGame
         public ICardCharacter Card { get; protected set; }
         private int _hp;
         private int _mp;
-        public AbstractPersistent<IEffect>? Weapon { get; internal set; }
-        public AbstractPersistent<IEffect>? Artifact { get; internal set; }
-        public AbstractPersistent<IEffect>? Talent { get; internal set; }
+        public AbstractPersistent<AbstractCardEffect>? Weapon { get; internal set; }
+        public AbstractPersistent<AbstractCardEffect>? Artifact { get; internal set; }
+        public AbstractPersistent<AbstractCardEffect>? Talent { get; internal set; }
 
-        public PersistentSet<IEffect> Effects { get; init; }
+        public PersistentSet<AbstractCardEffect> Effects { get; init; }
 
         public int HP
         {
@@ -54,12 +54,13 @@ namespace TCGGame
         public void Print()
         {
             //TODO: card nameid not clear
-            Logger.Print($"{Card.NameID} {JsonSerializer.Serialize(Card.Tags)}");
+            Logger.Print($"{Card.NameID} {JsonSerializer.Serialize(Card.Tags)}", ConsoleColor.Cyan);
             Logger.Print($"ALIVE:{Alive}");
             if (Alive)
             {
                 Logger.Print($"HP:{HP}/{Card.MaxHP} MP:{MP}/{Card.MaxMP} Element:{Element}");
             }
+            Effects.Print();
         }
     }
 

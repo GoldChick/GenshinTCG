@@ -29,9 +29,9 @@ namespace TCGGame
         public Character[] Characters { get; protected init; }
 
 
-        public PersistentSet<ISupport> Supports { get; init; }
-        public PersistentSet<ISummon> Summons { get; init; }
-        public PersistentSet<IEffect> Effects { get; init; }
+        public PersistentSet<AbstractCardSupport> Supports { get; init; }
+        public PersistentSet<AbstractCardSummon> Summons { get; init; }
+        public PersistentSet<AbstractCardEffect> Effects { get; init; }
 
         public int CurrCharacter { get; internal set; }
         public bool Pass { get; internal set; }
@@ -97,9 +97,9 @@ namespace TCGGame
         /// <param name="per"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        public bool AddPersistent(IPersistent per, int target = -1)
+        public bool AddPersistent(AbstractCardPersistent per, int target = -1)
         {
-            if (per is IEffect ef)
+            if (per is AbstractCardEffect ef)
             {
                 if (target == -1)
                 {
@@ -119,7 +119,7 @@ namespace TCGGame
                     }
                 }
             }
-            else if (per is ISupport sp)
+            else if (per is AbstractCardSupport sp)
             {
                 //TODO:场地弃置
                 if (!Supports.Full)
@@ -127,7 +127,7 @@ namespace TCGGame
                     Supports.Add(new Support(sp));
                 }
             }
-            else if (per is ISummon sm)
+            else if (per is AbstractCardSummon sm)
             {
                 throw new NotImplementedException();
             }

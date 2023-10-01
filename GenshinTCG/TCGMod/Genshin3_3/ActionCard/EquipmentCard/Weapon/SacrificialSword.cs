@@ -30,21 +30,14 @@ namespace Genshin3_3
 
         public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null)
                 => me.Characters[targetArgs[0]].Card.Tags.Contains(TCGBase.Tags.CardTags.WeaponTags.SWORD);
-        public class 祭礼剑_effect : IEffect
+        public class 祭礼剑_effect : AbstractCardEffect
         {
-            public bool Visible => true;
 
-            public bool Stackable => false;
+            public override int MaxUseTimes => 1;
 
-            public bool DeleteWhenUsedUp => false;
+            public override string NameID => "祭礼剑_effect";
 
-            public int MaxUseTimes => 1;
-
-            public string NameID => "祭礼剑_effect";
-
-            public string[] Tags => new string[] { };
-
-            public Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.AFTER_USE_SKILL, new 祭礼剑_Trigger() } };
+            public override Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.AFTER_USE_SKILL, new 祭礼剑_Trigger() } };
 
             private class 祭礼剑_Trigger : IPersistentTrigger
             {

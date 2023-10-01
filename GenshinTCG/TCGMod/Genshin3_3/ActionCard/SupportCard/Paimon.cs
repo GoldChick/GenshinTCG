@@ -26,19 +26,15 @@ namespace Genshin3_3
 
         public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
 
-        public class PaimonSupport : ISupport
+        public class PaimonSupport : AbstractCardSupport
         {
-            public bool Stackable => true;
+            public override int MaxUseTimes => 2;
 
-            public bool DeleteWhenUsedUp => true;
+            public override string NameID => "paimon_support";
 
-            public int MaxUseTimes => 2;
+            public override string[] Tags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
 
-            public string NameID => "paimon_support";
-
-            public string[] Tags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
-
-            public Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.ROUND_START, new PaimonTrigger() } };
+            public override Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.ROUND_START, new PaimonTrigger() } };
 
             private class PaimonTrigger : IPersistentTrigger
             {

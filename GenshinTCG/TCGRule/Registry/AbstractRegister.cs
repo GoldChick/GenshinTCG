@@ -10,8 +10,8 @@ namespace TCGRule
 
         /// TODO:以下三个可能是不需要注册的(?)
 
-        public abstract void RegisterSupport(IConsumer<ISupport> consumer);
-        public abstract void RegisterEffect(IConsumer<IEffect> consumer);
-        public abstract void RegisterSummon(IConsumer<ISummon> consumer);
+        public abstract void RegisterSupport(IConsumer<AbstractCardSupport> consumer);
+        public abstract void RegisterEffect(IConsumer<AbstractCardEffect> consumer);
+        public abstract void RegisterSummon(IConsumer<AbstractCardSummon> consumer);
     }
 }

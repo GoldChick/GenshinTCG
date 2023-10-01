@@ -14,7 +14,7 @@ namespace Genshin3_3
 
         public int MaxMP => 3;
 
-        public IEffect? DefaultEffect => null;
+        public AbstractCardEffect? DefaultEffect => null;
 
         public ICardSkill[] Skills => new ICardSkill[] { new 因果点破(), new 水中幻愿() };
 
@@ -47,7 +47,7 @@ namespace Genshin3_3
 
             public bool CostSame => false;
 
-            public ISummon[] PersistentPool => new[] { new 虚影() };
+            public AbstractCardSummon[] PersistentPool => new[] { new 虚影() };
 
             public bool PersistentOrdered => true;
 
@@ -59,21 +59,21 @@ namespace Genshin3_3
                 me.Enemy.Hurt(new(2, 1, DamageSource.Character, 0));
                 me.TryAddSummon(this);
             }
-            private class 虚影 : ISummon
+            private class 虚影 : AbstractCardSummon
             {
-                public int InitialUseTimes => 1;
+                public override int InitialUseTimes => 1;
 
-                public bool DeleteWhenUsedUp => false;
+                public override bool DeleteWhenUsedUp => false;
 
-                public int MaxUseTimes => 1;
+                public override int MaxUseTimes => 1;
 
-                public Dictionary<string, IPersistentTrigger> TriggerDic => new()
+                public override Dictionary<string, IPersistentTrigger> TriggerDic => new()
                 { { TCGBase.Tags.SenderTags.HURT_ADD, new PersistentPurpleShield(1, 1) },
                   { TCGBase.Tags.SenderTags.ROUND_OVER, new 虚影_Trigger()} };
 
-                public string NameID => "虚影";
+                public override string NameID => "虚影";
 
-                public string[] Tags => Array.Empty<string>();
+                public override string[] Tags => Array.Empty<string>();
                 private class 虚影_Trigger : IPersistentTrigger
                 {
                     public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)

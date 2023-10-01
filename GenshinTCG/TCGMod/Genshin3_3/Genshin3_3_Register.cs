@@ -25,15 +25,15 @@ namespace Genshin3_3
             consumer.Accept(new Mona());
         }
 
-        public override void RegisterEffect(IConsumer<IEffect> consumer)
+        public override void RegisterEffect(IConsumer<AbstractCardEffect> consumer)
         {
         }
 
-        public override void RegisterSummon(IConsumer<ISummon> consumer)
+        public override void RegisterSummon(IConsumer<AbstractCardSummon> consumer)
         {
         }
 
-        public override void RegisterSupport(IConsumer<ISupport> consumer)
+        public override void RegisterSupport(IConsumer<AbstractCardSupport> consumer)
         {
         }
     }

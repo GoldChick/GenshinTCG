@@ -11,7 +11,7 @@
         /// <summary>
         /// @Nullable
         /// </summary>
-        public IEffect? DefaultEffect { get; }
+        public AbstractCardEffect? DefaultEffect { get; }
         /// <summary>
         ///  @NonNull
         /// </summary>

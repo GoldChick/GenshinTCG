@@ -3,7 +3,7 @@
     public interface IPersistentProvider
     {
     }
-    public interface IPersistentProvider<T>:IPersistentProvider where T: IPersistent
+    public interface IPersistentProvider<T>:IPersistentProvider where T: AbstractCardPersistent
     {
         /// <summary>
         /// 可供生成的IPersistent种类,如召唤物:[纯水:蛙+飞鸢+花鼠],[菲谢尔:奥兹]
@@ -18,13 +18,13 @@
         /// </summary>
         public int PersistentNum { get; }
     }
-    public interface IAssistProvider : IPersistentProvider<ISupport>
+    public interface IAssistProvider : IPersistentProvider<AbstractCardSupport>
     {
     }
-    public interface IEffectProvider : IPersistentProvider<IEffect>
+    public interface IEffectProvider : IPersistentProvider<AbstractCardEffect>
     {
     }
-    public interface ISummonProvider : IPersistentProvider<ISummon>
+    public interface ISummonProvider : IPersistentProvider<AbstractCardSummon>
     {
     }
     

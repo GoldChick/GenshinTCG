@@ -25,21 +25,14 @@ namespace Genshin3_3
         }
 
         public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
-        public class 赌徒_Effect : IEffect
+        public class 赌徒_Effect : AbstractCardEffect
         {
-            public bool Visible => true;
+            public override int MaxUseTimes => 3;
 
-            public bool Stackable => true;
+            public override Dictionary<string, IPersistentTrigger> TriggerDic => throw new NotImplementedException();
 
-            public bool DeleteWhenUsedUp => false;
+            public override string NameID => "赌徒_effect";
 
-            public int MaxUseTimes => 3;
-
-            public Dictionary<string, IPersistentTrigger> TriggerDic => throw new NotImplementedException();
-
-            public string NameID => "赌徒_effect";
-
-            public string[] Tags => new string[] { };
             private class 赌徒_Trigger : IPersistentTrigger
             {
                 public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)

@@ -41,9 +41,9 @@ namespace TCGRule
         public CardCollection<ICardCharacter> CharacterCards { get; } = new();
         public CardCollection<ICardAction> ActionCards { get; } = new();
 
-        public CardCollection<ISupport> Supports { get; } = new();
-        public CardCollection<IEffect> Effects { get; } = new();
-        public CardCollection<ISummon> Summons { get; } = new();
+        public CardCollection<AbstractCardSupport> Supports { get; } = new();
+        public CardCollection<AbstractCardEffect> Effects { get; } = new();
+        public CardCollection<AbstractCardSummon> Summons { get; } = new();
 
         public CardCollection[] CardCollections { get; }
 

@@ -3,7 +3,7 @@ using TCGRule;
 
 namespace TCGGame
 {
-    public class PersonalEffect : AbstractPersistent<IEffect>
+    public class PersonalEffect : AbstractPersistent<AbstractCardEffect>
     {
         /// <summary>
         /// 在team中的characters对应的id
@@ -13,7 +13,7 @@ namespace TCGGame
         {
             Owner = owner;
         }
-        public PersonalEffect(int owner, IEffect ef) : base(ef.NameID, ef)
+        public PersonalEffect(int owner, AbstractCardEffect ef) : base(ef.NameID, ef)
         {
             Owner = owner;
         }

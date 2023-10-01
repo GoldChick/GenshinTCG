@@ -11,7 +11,7 @@ namespace TCGGame
     public class PersistentSet
     {
     }
-    public class PersistentSet<T> : PersistentSet, IPrintable where T : IPersistent
+    public class PersistentSet<T> : PersistentSet, IPrintable where T : AbstractCardPersistent
     {
         /// <summary>
         /// 为正代表最多x个，为负或0代表无限制

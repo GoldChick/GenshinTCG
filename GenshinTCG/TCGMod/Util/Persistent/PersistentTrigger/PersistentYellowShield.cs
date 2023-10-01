@@ -11,7 +11,7 @@ namespace TCGMod
     {
         public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
-            if (persitent.AvailableTimes > 0 && variable is DamageVariable dv)
+            if (persitent.AvailableTimes > 0 && variable is DamageVariable dv && sender.TeamID == me.TeamIndex)
             {
                 if (persitent is not PersonalEffect pe || me.CurrCharacter == pe.Owner)
                 {
