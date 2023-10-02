@@ -39,5 +39,9 @@ namespace TCGClient
             Me = me;
             Enemy = enemy;
         }
+        public void Update(ClientUpdatePacket packet)
+        {
+
+        }
     }
 }

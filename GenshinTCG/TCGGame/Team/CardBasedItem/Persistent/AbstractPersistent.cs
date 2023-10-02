@@ -68,12 +68,11 @@ namespace TCGGame
         }
         public override void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
-            //TODO:这是好的吗
             if (Card != null && Card.TriggerDic.TryGetValue(sender.SenderName, out var trigger))
             {
+            //TODO:game.Step(), such as shining?
                 trigger?.Trigger(game.Teams[meIndex], this, sender, variable);
             }
-            //game.Step();
         }
     }
 }
