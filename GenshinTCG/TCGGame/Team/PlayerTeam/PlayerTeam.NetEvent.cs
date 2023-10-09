@@ -77,8 +77,8 @@ namespace TCGGame
                     break;
                 case ActionType.UseSKill:
                     Character character = Characters[CurrCharacter];
-                    ICardCharacter chaCard = Characters[CurrCharacter].Card;
-                    ICardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
+                    AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
+                    AbstractCardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
                     if (skill.Tags.Contains(Tags.SkillTags.Q) && character.MP != chaCard.MaxMP)
                     {
                         defaultCost = new(false, 114514);
@@ -89,7 +89,7 @@ namespace TCGGame
                     }
                     break;
                 case ActionType.UseCard:
-                    ICardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
+                    AbstractCardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
                     defaultCost = new(card.CostSame, card.Costs);
                     break;
                 case ActionType.Pass:

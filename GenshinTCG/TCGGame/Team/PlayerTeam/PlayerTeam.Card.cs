@@ -33,6 +33,6 @@ namespace TCGGame
                 //TODO: sort?
             }
         }
-        public void GainCard(ICardAction card)=>GainCard(new ActionCard(card));
+        public void GainCard(AbstractCardAction card)=>GainCard(new ActionCard(card));
     }
 }

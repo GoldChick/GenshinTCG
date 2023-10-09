@@ -6,26 +6,24 @@ using TCGUtil;
 
 namespace Genshin3_3
 {
-    public class XingTianZhiZhao : ICardEvent
+    public class XingTianZhiZhao : AbstractCardEvent
     {
-        public int MaxNumPermitted => 2;
+        public override string NameID => "xingtianzhizhao";
 
-        public string NameID => "xingtianzhizhao";
+        public override bool CostSame => false;
 
-        public bool CostSame => false;
+        public override string[] Tags => Array.Empty<string>();
 
-        public string[] Tags => Array.Empty<string>();
-
-        public int[] Costs => Array.Empty<int>();
+        public override int[] Costs => Array.Empty<int>();
 
 
-        public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             Logger.Error("使用了星天之兆!");
             me.Characters[me.CurrCharacter].MP++;
         }
 
-        public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null)
+        public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null)
         {
             var c = me.Characters[me.CurrCharacter];
             return c.MP < c.Card.MaxMP;

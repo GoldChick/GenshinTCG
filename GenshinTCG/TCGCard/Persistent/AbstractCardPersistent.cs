@@ -9,9 +9,8 @@ namespace TCGCard
     /// 服务端不需要
     /// </summary>
 
-    public abstract class AbstractCardPersistent : ICardServer
+    public abstract class AbstractCardPersistent : AbstractCardServer
     {
-        public abstract string NameID { get; }
         public abstract int MaxUseTimes { get; }
         /// <summary>
         /// string: SenderTag names<br/>
@@ -25,7 +24,6 @@ namespace TCGCard
         /// 为false时，需要自己手动控制AbstractPersistent.Active，每次结算(update())会清除所有deactive的effect
         /// </summary>
         public virtual bool DeleteWhenUsedUp { get => true; }
-        public virtual string[] Tags { get => Array.Empty<string>(); }
         /// <summary>
         /// 用来给客户端提供使用的表现参数<br/>
         /// 默认为可用次数，TODO:将来可能会删除？

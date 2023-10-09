@@ -5,30 +5,28 @@ using TCGUtil;
 
 namespace Genshin3_3
 {
-    public class SacrificialSword : ICardWeapon, ITargetSelector
+    public class SacrificialSword : AbstractCardWeapon, ITargetSelector
     {
-        public string WeaponType => TCGBase.Tags.CardTags.WeaponTags.SWORD;
+        public override string WeaponType => TCGBase.Tags.CardTags.WeaponTags.SWORD;
+        
+        public override string NameID => "sacrificial_sword";
 
-        public int MaxNumPermitted => 2;
+        public override string[] Tags => new string[] { WeaponType, TCGBase.Tags.CardTags.EquipmentTags.WEAPON };
 
-        public string NameID => "sacrificial_sword";
+        public override int[] Costs => new int[] { 1 };
 
-        public string[] Tags => new string[] { WeaponType, TCGBase.Tags.CardTags.EquipmentTags.WEAPON };
-
-        public int[] Costs => new int[] { 1 };
-
-        public bool CostSame => false;
+        public override bool CostSame => false;
 
         public TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
 
 
-        public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             Logger.Print($"给{targetArgs[0]}号角色装备了一张祭礼剑！");
             me.Characters[targetArgs[0]].Weapon = new Effect(new 祭礼剑_effect());
         }
 
-        public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null)
+        public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null)
                 => me.Characters[targetArgs[0]].Card.Tags.Contains(TCGBase.Tags.CardTags.WeaponTags.SWORD);
         public class 祭礼剑_effect : AbstractCardEffect
         {

@@ -6,27 +6,22 @@ using TCGUtil;
 
 namespace Genshin3_3
 {
-    public class LeaveItToMe : ICardEvent
+    public class LeaveItToMe : AbstractCardEvent
     {
-        public int MaxNumPermitted => 2;
+        public override string NameID => "leaveittome";
 
-        public string NameID => "leaveittome";
+        public override bool CostSame => false;
 
-        public bool CostSame => false;
+        public override string[] Tags => Array.Empty<string>();
 
-        public string[] Tags => Array.Empty<string>();
-
-        public int[] Costs => Array.Empty<int>();
+        public override int[] Costs => Array.Empty<int>();
 
 
-        public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             me.AddPersistent(new LeaveItToMeEffect());
             Logger.Error("使用了交给我吧!");
         }
-
-        public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
-
         public class LeaveItToMeEffect : AbstractCardEffect
         {
             public override int MaxUseTimes => 1;

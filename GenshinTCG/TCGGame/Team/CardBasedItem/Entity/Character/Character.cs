@@ -7,7 +7,7 @@ namespace TCGGame
 {
     public class Character : IPrintable
     {
-        public ICardCharacter Card { get; protected set; }
+        public AbstractCardCharacter Card { get; protected set; }
         private int _hp;
         private int _mp;
         public AbstractPersistent<AbstractCardEffect>? Weapon { get; internal set; }
@@ -29,7 +29,7 @@ namespace TCGGame
         /// </summary>
         public bool Active;
         public int Element;
-        public Character(ICardCharacter character)
+        public Character(AbstractCardCharacter character)
         {
             Card = character;
 

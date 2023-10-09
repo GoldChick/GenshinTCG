@@ -7,24 +7,22 @@ namespace Genshin3_3
 {
     public class 赌徒 : ICardArtifact, ITargetSelector
     {
-        public int MaxNumPermitted => 2;
+        public override string NameID => "赌徒的耳环";
 
-        public string NameID => "赌徒的耳环";
+        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.EquipmentTags.ARTIFACT };
 
-        public string[] Tags => new string[] { TCGBase.Tags.CardTags.EquipmentTags.ARTIFACT };
+        public override int[] Costs => new int[] { 1 };
 
-        public int[] Costs => new int[] { 1 };
-
-        public bool CostSame => false;
+        public override bool CostSame => false;
 
         public TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
 
-        public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             Logger.Print($"对着{targetArgs[0]}号角色使用了赌徒的耳环!");
         }
 
-        public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
+        public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
         public class 赌徒_Effect : AbstractCardEffect
         {
             public override int MaxUseTimes => 3;

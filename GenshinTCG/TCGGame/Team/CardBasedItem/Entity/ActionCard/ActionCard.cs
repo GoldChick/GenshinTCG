@@ -7,9 +7,9 @@ namespace TCGGame
 {
     public class ActionCard:IPrintable
     {
-        public ICardAction Card { get; protected set; }
+        public AbstractCardAction Card { get; protected set; }
 
-        public ActionCard(ICardAction card)
+        public ActionCard(AbstractCardAction card)
         {
             Card = card;
         }

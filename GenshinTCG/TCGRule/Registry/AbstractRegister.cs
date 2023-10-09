@@ -5,8 +5,8 @@ namespace TCGRule
 {
     public abstract class AbstractRegister
     {
-        public abstract void RegisterCharacter(IConsumer<ICardCharacter> consumer);
-        public abstract void RegisterActionCard(IConsumer<ICardAction> consumer);
+        public abstract void RegisterCharacter(IConsumer<AbstractCardCharacter> consumer);
+        public abstract void RegisterActionCard(IConsumer<AbstractCardAction> consumer);
 
         /// TODO:以下三个可能是不需要注册的(?)
 

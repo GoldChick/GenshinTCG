@@ -38,8 +38,8 @@ namespace TCGRule
         }
 
         public List<string> Mods { get; } = new();
-        public CardCollection<ICardCharacter> CharacterCards { get; } = new();
-        public CardCollection<ICardAction> ActionCards { get; } = new();
+        public CardCollection<AbstractCardCharacter> CharacterCards { get; } = new();
+        public CardCollection<AbstractCardAction> ActionCards { get; } = new();
 
         public CardCollection<AbstractCardSupport> Supports { get; } = new();
         public CardCollection<AbstractCardEffect> Effects { get; } = new();
@@ -149,7 +149,7 @@ namespace TCGRule
             Print("Effects", Effects);
             Print("Summons", Summons);
         }
-        private static void Print<T>(string name, CardCollection<T> dic) where T : ICardBase
+        private static void Print<T>(string name, CardCollection<T> dic) where T : AbstractCardBase
         {
             Logger.Print($"{name}:");
             dic.Print();

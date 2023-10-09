@@ -9,10 +9,10 @@ namespace TCGBase
     {
         public override string SenderName => Tags.SenderTags.AFTER_USE_SKILL;
         public int CharIndex { get; set; }
-        public ICardSkill Skill { get; set; }
+        public AbstractCardSkill Skill { get; set; }
         public int[]? AdditionalTargetArgs { get; set; }
 
-        public UseSkillSender(int teamID, int charIndex, ICardSkill skill, int[]? targetArgs = null) : base(teamID)
+        public UseSkillSender(int teamID, int charIndex, AbstractCardSkill skill, int[]? targetArgs = null) : base(teamID)
         {
             CharIndex = charIndex;
             Skill = skill;

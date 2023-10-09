@@ -6,11 +6,11 @@ namespace Sample
 {
     public class Sample_Register : AbstractRegister
     {
-        public override void RegisterActionCard(IConsumer<ICardAction> consumer)
+        public override void RegisterActionCard(IConsumer<AbstractCardAction> consumer)
         {
         }
 
-        public override void RegisterCharacter(IConsumer<ICardCharacter> consumer)
+        public override void RegisterCharacter(IConsumer<AbstractCardCharacter> consumer)
         {
         }
 

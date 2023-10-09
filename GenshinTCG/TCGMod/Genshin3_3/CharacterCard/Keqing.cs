@@ -8,20 +8,18 @@ using TCGUtil;
 
 namespace Genshin3_3
 {
-    public class 雷楔 : ICardAction
+    public class 雷楔 : AbstractCardAction
     {
-        public int MaxNumPermitted => 1;
+        public override string NameID => "雷楔";
 
-        public string NameID => "雷楔";
+        public override string[] Tags => new string[] { "战斗行动" };
 
-        public string[] Tags => new string[] { "战斗行动" };
+        public override int[] Costs => new int[] { 0, 0, 0, 0, 1 };
 
-        public int[] Costs => new int[] { 0, 0, 0, 0, 1 };
-
-        public bool CostSame => false;
+        public override bool CostSame => false;
 
 
-        public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             Logger.Error("打出了一张雷楔！但是什么都没有发生！");
             for (int i = 0; i < me.Characters.Length; i++)
@@ -37,7 +35,6 @@ namespace Genshin3_3
                 }
             }
         }
-        public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
         public class 雷楔_Effect : AbstractCardEffect
         {
             public override bool Visible => false;
@@ -63,48 +60,44 @@ namespace Genshin3_3
         }
     }
 
-    public class Keqing : ICardCharacter
+    public class Keqing : AbstractCardCharacter
     {
-        public string MainElement => TCGBase.Tags.ElementTags.ELECTRO;
+        public override string MainElement => TCGBase.Tags.ElementTags.ELECTRO;
 
-        public int MaxHP => 10;
+        public override int MaxMP => 3;
 
-        public int MaxMP => 3;
+        public override AbstractCardSkill[] Skills => new AbstractCardSkill[] { new YunLaiSword(), new XingDouGuiWei(), new TianJieXunYou() };
 
-        public AbstractCardEffect? DefaultEffect => null;
+        public override string NameID => "keqing";
 
-        public ICardSkill[] Skills => new ICardSkill[] { new YunLaiSword(), new XingDouGuiWei(), new TianJieXunYou() };
-
-        public string NameID => "keqing";
-
-        public string[] Tags => new string[] { TCGBase.Tags.CardTags.RegionTags.LIYUE,
+        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.RegionTags.LIYUE,
          TCGBase.Tags.CardTags.CharacterTags.HUMAN, TCGBase.Tags.ElementTags.ELECTRO,
          TCGBase.Tags.CardTags.WeaponTags.SWORD
         };
-        public class YunLaiSword : ICardSkill
+        public class YunLaiSword : AbstractCardSkill
         {
-            public string NameID => "yunlai_sword";
+            public override string NameID => "yunlai_sword";
 
-            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.NORMAL_ATTACK };
+            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.NORMAL_ATTACK };
 
-            public int[] Costs => new int[] { 1 };
-            public bool CostSame => false;
+            public override int[] Costs => new int[] { 1 };
+            public override bool CostSame => false;
 
-            public void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
                 me.Enemy.Hurt(new(0, 2, DamageSource.Character, 0));
                 Logger.Warning("刻请使用了原来剑法，为了测试方便为水元素伤害");
             }
 
         }
-        public class XingDouGuiWei : ICardSkill
+        public class XingDouGuiWei : AbstractCardSkill
         {
-            public string NameID => "xingdouguiwei";
-            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
-            public int[] Costs => new int[] { 0, 0, 0, 0, 1 };
-            public bool CostSame => false;
+            public override string NameID => "xingdouguiwei";
+            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
+            public override int[] Costs => new int[] { 0, 0, 0, 0, 1 };
+            public override bool CostSame => false;
 
-            public void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
                 me.Enemy.Hurt(new(4, 3, DamageSource.Character, 0));
                 Logger.Warning("刻请使用了星斗归位！并且产生了一张雷楔！");
@@ -137,14 +130,14 @@ namespace Genshin3_3
             };
             }
         }
-        public class TianJieXunYou : ICardSkill
+        public class TianJieXunYou : AbstractCardSkill
         {
-            public string NameID => "天街巡游";
-            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.Q };
-            public int[] Costs => new int[] { 0, 0, 0, 0, 1 };
-            public bool CostSame => false;
+            public override string NameID => "天街巡游";
+            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.Q };
+            public override int[] Costs => new int[] { 0, 0, 0, 0, 1 };
+            public override bool CostSame => false;
 
-            public void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
                 me.Enemy.MultiHurt(new DamageVariable[]
                 {

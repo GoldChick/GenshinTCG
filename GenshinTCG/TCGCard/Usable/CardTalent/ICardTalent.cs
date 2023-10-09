@@ -1,5 +1,7 @@
 ﻿namespace TCGCard
 {
+    //TODO:check it
+
     /// <summary>
     /// 仅表明为天赋牌，具体的Category还是需要继承其他的类<br/>
     /// 以此实现普通天赋牌和无相之雷天赋牌这种差异

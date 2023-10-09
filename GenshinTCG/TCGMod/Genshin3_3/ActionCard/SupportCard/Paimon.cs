@@ -6,25 +6,21 @@ using TCGUtil;
 
 namespace Genshin3_3
 {
-    public class Paimon : ICardSupport
+    public class Paimon : AbstractCardAction
     {
-        public int MaxNumPermitted => 2;
+        public override string NameID => "paimon";
 
-        public string NameID => "paimon";
+        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
 
-        public string[] Tags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
+        public override int[] Costs => new int[] { 3 };
 
-        public int[] Costs => new int[] { 3 };
+        public override bool CostSame => true;
 
-        public bool CostSame => true;
-
-        public void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             Logger.Print("打出了一张大pi!");
             me.AddPersistent(new PaimonSupport());
         }
-
-        public bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
 
         public class PaimonSupport : AbstractCardSupport
         {

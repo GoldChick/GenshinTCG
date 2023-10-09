@@ -7,7 +7,7 @@ namespace Genshin3_3
 {
     public class Sample_Register : AbstractRegister
     {
-        public override void RegisterActionCard(IConsumer<ICardAction> consumer)
+        public override void RegisterActionCard(IConsumer<AbstractCardAction> consumer)
         {
             consumer.Accept(new SacrificialSword());
 
@@ -19,7 +19,7 @@ namespace Genshin3_3
 
         }
 
-        public override void RegisterCharacter(IConsumer<ICardCharacter> consumer)
+        public override void RegisterCharacter(IConsumer<AbstractCardCharacter> consumer)
         {
             consumer.Accept(new Keqing());
             consumer.Accept(new Mona());

@@ -15,8 +15,8 @@ namespace TCGBase
     /// </summary>
     public class ServerPlayerCardSet : AbstractServerCardSet, IPrintable
     {
-        public ICardCharacter[] CharacterCards { get; init; }
-        public ICardAction[] ActionCards { get; init; }
+        public AbstractCardCharacter[] CharacterCards { get; init; }
+        public AbstractCardAction[] ActionCards { get; init; }
         public ServerPlayerCardSet(PlayerNetCardSet input)
         {
             try

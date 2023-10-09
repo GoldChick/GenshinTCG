@@ -6,46 +6,42 @@ using TCGBase;
 
 namespace Genshin3_3
 {
-    public class Mona : ICardCharacter
+    public class Mona : AbstractCardCharacter
     {
-        public string MainElement => TCGBase.Tags.ElementTags.HYDRO;
+        public override string MainElement => TCGBase.Tags.ElementTags.HYDRO;
 
-        public int MaxHP => 10;
+        public override int MaxMP => 3;
 
-        public int MaxMP => 3;
+        public override AbstractCardSkill[] Skills => new AbstractCardSkill[] { new 因果点破(), new 水中幻愿() };
 
-        public AbstractCardEffect? DefaultEffect => null;
+        public override string NameID => "mona";
 
-        public ICardSkill[] Skills => new ICardSkill[] { new 因果点破(), new 水中幻愿() };
-
-        public string NameID => "mona";
-
-        public string[] Tags => new string[] { TCGBase.Tags.CardTags.RegionTags.MONDSTADT,
+        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.RegionTags.MONDSTADT,
         TCGBase.Tags.CardTags.WeaponTags.CATALYST,TCGBase.Tags.CardTags.CharacterTags.HUMAN};
-        private class 因果点破 : ICardSkill
+        private class 因果点破 : AbstractCardSkill
         {
-            public string NameID => "yinguodianpo";
+            public override string NameID => "yinguodianpo";
 
-            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.NORMAL_ATTACK };
+            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.NORMAL_ATTACK };
 
-            public int[] Costs => new int[] { 1 };
+            public override int[] Costs => new int[] { 1 };
 
-            public bool CostSame => false;
+            public override bool CostSame => false;
 
-            public void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
                 me.Enemy.Hurt(new(2, 1, DamageSource.Character, 0));
             }
         }
-        private class 水中幻愿 : ICardSkill, ISummonProvider
+        private class 水中幻愿 : AbstractCardSkill, ISummonProvider
         {
-            public string NameID => "水中幻愿";
+            public override string NameID => "水中幻愿";
 
-            public string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
+            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
 
-            public int[] Costs => new int[] { 1 };
+            public override int[] Costs => new int[] { 1 };
 
-            public bool CostSame => false;
+            public override bool CostSame => false;
 
             public AbstractCardSummon[] PersistentPool => new[] { new 虚影() };
 
@@ -53,7 +49,7 @@ namespace Genshin3_3
 
             public int PersistentNum => 1;
 
-            public void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
                 Logger.Warning("莫娜使用了水中幻愿!");
                 me.Enemy.Hurt(new(2, 1, DamageSource.Character, 0));

@@ -13,7 +13,7 @@ namespace TCGUtil
         public void MoveModToNext(string next) => _currModID = Normalize.StringNormalize(next);
 
     }
-    internal class CardCollection<T> : CardCollection, IConsumer<T>, IPrintable where T : ICardBase
+    internal class CardCollection<T> : CardCollection, IConsumer<T>, IPrintable where T : AbstractCardBase
     {
         private readonly Dictionary<string, T> _values;
 
