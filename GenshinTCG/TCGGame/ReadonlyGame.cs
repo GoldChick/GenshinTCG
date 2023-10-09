@@ -150,13 +150,22 @@ namespace TCGGame
         {
         }
     }
-    public class ReadonlyCharacter
+    public class ReadonlyCharacter : AbstractReadonlyObject
     {
-
+        public int HP { get; set; }
+        public int MP { get; set; }
+        public int Element { get; set; }
+        public ReadonlyCharacter(string name) : base(name)
+        {
+        }
     }
-    public class ReadonlyPersistent
+    public class ReadonlyPersistent : AbstractReadonlyObject
     {
-
+        //TODO: get a name?
+        public int[] Ints { get; set; }
+        public ReadonlyPersistent(string name) : base(name)
+        {
+        }
     }
 
 }

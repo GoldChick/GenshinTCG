@@ -59,19 +59,22 @@ namespace TCGGame
         }
         protected AbstractPersistent(string nameid, T card) : base(nameid)
         {
-            if (card == null)
-            {
-                throw new Exception($"AbstractPersistent<T>:找不到nameid={nameid}的类型为{typeof(T)}的ICardBase!");
-            }
-            Card = card;
+            Card = card ?? throw new Exception($"AbstractPersistent<T>:找不到nameid={nameid}的类型为{typeof(T)}的ICardBase!");
             AvailableTimes = Card.MaxUseTimes;
         }
         public override void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
-            if (Card != null && Card.TriggerDic.TryGetValue(sender.SenderName, out var trigger))
+            if (Card != null)
             {
-            //TODO:game.Step(), such as shining?
-                trigger?.Trigger(game.Teams[meIndex], this, sender, variable);
+                if (Card.TriggerDic.TryGetValue(sender.SenderName, out var trigger))
+                {
+                    trigger?.Trigger(game.Teams[meIndex], this, sender, variable);
+                }
+                else if (Card.TriggerDic.TryGetValue(Tags.SenderTags.AFTER_ANY_ACTION, out var trigger_any))
+                {
+                    trigger_any?.Trigger(game.Teams[meIndex], this, sender, variable);
+                }
+                //TODO:game.Step(), such as shining?
             }
         }
     }

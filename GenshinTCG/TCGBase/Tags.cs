@@ -156,6 +156,10 @@ namespace TCGBase
 
             public static readonly string AFTER_PASS = "minecraft:after_pass";
 
+            /// <summary>
+            /// 仅用于触发effect，而且仅在其他都不触发的时候触发
+            /// </summary>
+            public static readonly string AFTER_ANY_ACTION = "minecraft:after_any_action";
             //受到伤害后
             public static readonly string AFTER_HURT = "minecraft:hurt";
             #endregion

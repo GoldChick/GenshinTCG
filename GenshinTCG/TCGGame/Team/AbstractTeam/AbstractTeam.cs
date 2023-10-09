@@ -141,7 +141,7 @@ namespace TCGGame
             //TODO:replace
             return false;
         }
-
+        public virtual int GetDiceNum(int type = 0) => 0;
         /// <summary>
         /// 回合开始时最先调用，如扔骰子等
         /// </summary>

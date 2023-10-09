@@ -31,7 +31,7 @@ namespace TCGGame
                     nums[i]++;
             return nums;
         }
-        public int GetDiceNum(int type = 0) => Dices.FindAll(p=>p==type).Count;
+        public override int GetDiceNum(int type = 0) => Dices.FindAll(p=>p==type).Count;
         /// <summary>
         /// 获得一个骰子,当骰子数量不满16个时才能获得成功
         /// </summary>
