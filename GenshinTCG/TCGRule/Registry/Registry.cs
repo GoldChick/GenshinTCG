@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using System.Text.Json;
+﻿using System.Reflection;
 using TCGCard;
 using TCGMod;
 using TCGUtil;
@@ -26,7 +24,7 @@ namespace TCGRule
             Supports = new();
             Effects = new();
             Summons = new();
-            CardCollections = new CardCollection[] { CharacterCards, ActionCards, Supports, Effects, Summons };
+            CardCollections = new RegistryCardCollection[] { CharacterCards, ActionCards, Supports, Effects, Summons };
         }
         public static Registry Instance
         {
@@ -38,14 +36,14 @@ namespace TCGRule
         }
 
         public List<string> Mods { get; } = new();
-        public CardCollection<AbstractCardCharacter> CharacterCards { get; } = new();
-        public CardCollection<AbstractCardAction> ActionCards { get; } = new();
+        internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; } = new();
+        internal RegistryCardCollection<AbstractCardAction> ActionCards { get; } = new();
 
-        public CardCollection<AbstractCardSupport> Supports { get; } = new();
-        public CardCollection<AbstractCardEffect> Effects { get; } = new();
-        public CardCollection<AbstractCardSummon> Summons { get; } = new();
+        internal RegistryCardCollection<AbstractCardSupport> Supports { get; } = new();
+        internal RegistryCardCollection<AbstractCardEffect> Effects { get; } = new();
+        internal RegistryCardCollection<AbstractCardSummon> Summons { get; } = new();
 
-        public CardCollection[] CardCollections { get; }
+        private RegistryCardCollection[] CardCollections { get; }
 
         public bool Contains(RegistryType type, string nameID)
         {
@@ -149,7 +147,7 @@ namespace TCGRule
             Print("Effects", Effects);
             Print("Summons", Summons);
         }
-        private static void Print<T>(string name, CardCollection<T> dic) where T : AbstractCardBase
+        private static void Print<T>(string name, RegistryCardCollection<T> dic) where T : AbstractCardBase
         {
             Logger.Print($"{name}:");
             dic.Print();

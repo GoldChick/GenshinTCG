@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using TCGBase;
+﻿using TCGBase;
 using TCGCard;
 using TCGGame;
 using TCGMod;

@@ -96,7 +96,7 @@ namespace TCGGame
         {
             foreach (var e in _data)
             {
-                Logger.Print($"{e.NameID} 可用次数{e.AvailableTimes}/{e.Card.MaxUseTimes} {JsonSerializer.Serialize(e.Card.Tags)}");
+                Logger.Print($"{e.NameID} 可用次数{e.AvailableTimes}/{e.Card.MaxUseTimes}");
             }
         }
     }

@@ -5,13 +5,13 @@ namespace TCGRule
 {
     public abstract class AbstractRegister
     {
-        public abstract void RegisterCharacter(IConsumer<AbstractCardCharacter> consumer);
-        public abstract void RegisterActionCard(IConsumer<AbstractCardAction> consumer);
+        public abstract void RegisterCharacter(IRegistryConsumer<AbstractCardCharacter> consumer);
+        public abstract void RegisterActionCard(IRegistryConsumer<AbstractCardAction> consumer);
 
         /// TODO:以下三个可能是不需要注册的(?)
 
-        public abstract void RegisterSupport(IConsumer<AbstractCardSupport> consumer);
-        public abstract void RegisterEffect(IConsumer<AbstractCardEffect> consumer);
-        public abstract void RegisterSummon(IConsumer<AbstractCardSummon> consumer);
+        public virtual void RegisterSupport(IRegistryConsumer<AbstractCardSupport> consumer) { }
+        public virtual void RegisterEffect(IRegistryConsumer<AbstractCardEffect> consumer) { }
+        public virtual void RegisterSummon(IRegistryConsumer<AbstractCardSummon> consumer) { }
     }
 }
