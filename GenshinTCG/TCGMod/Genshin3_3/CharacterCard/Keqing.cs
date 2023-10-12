@@ -64,7 +64,10 @@ namespace Genshin3_3
 
         public override int MaxMP => 3;
 
-        public override AbstractCardSkill[] Skills => new AbstractCardSkill[] { new YunLaiSword(), new XingDouGuiWei(), new TianJieXunYou() };
+        public override AbstractCardSkill[] Skills => new AbstractCardSkill[] { 
+            new CharacterTrivalNormalAttack("云来剑法",0,2,4), 
+            new XingDouGuiWei(), 
+            new TianJieXunYou() };
 
         public override string NameID => "keqing";
 
@@ -72,25 +75,9 @@ namespace Genshin3_3
          TCGBase.Tags.CardTags.CharacterTags.HUMAN, TCGBase.Tags.ElementTags.ELECTRO,
          TCGBase.Tags.CardTags.WeaponTags.SWORD
         };
-        public class YunLaiSword : AbstractCardSkill
-        {
-            public override string NameID => "yunlai_sword";
-
-            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.NORMAL_ATTACK };
-
-            public override int[] Costs => new int[] { 1 };
-            public override bool CostSame => false;
-
-            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
-            {
-                me.Enemy.Hurt(new(0, 2, DamageSource.Character, 0));
-                Logger.Warning("刻请使用了原来剑法，为了测试方便为水元素伤害");
-            }
-
-        }
         public class XingDouGuiWei : AbstractCardSkill
         {
-            public override string NameID => "xingdouguiwei";
+            public override string NameID => "星斗归位";
             public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
             public override int[] Costs => new int[] { 0, 0, 0, 0, 1 };
             public override bool CostSame => false;

@@ -21,14 +21,16 @@ namespace TCGGame
             _ => false
         };
         public override bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Action) && IsTargetValid(evt) && IsDiceValid(evt);
-
+        /// <summary>
+        /// 判断action.Index是否在合适范围
+        /// </summary>
         public bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
         {
             ActionType.Switch or ActionType.SwitchForced =>
                 action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
             ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length,
             ActionType.UseCard => action.Index < CardsInHand.Count,
-            //ActionType.Blend =>,
+            ActionType.Blend => action.Index < CardsInHand.Count,
             ActionType.Pass => true,
             _ => false
         };
@@ -45,13 +47,22 @@ namespace TCGGame
             && enums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
             && (!(evt.Action.Type == ActionType.UseCard) || CardsInHand[evt.Action.Index].Card.CanBeUsed(this, evt.AdditionalTargetArgs));
         }
-        public bool IsDiceValid(NetEvent evt) => GetEventFinalDiceRequirement(evt.Action).Cost.EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
-        /// <summary>
-        /// 返回经过处理的targetenums们<br/>
-        /// 不过有效的处理似乎只有场地满了
-        /// </summary>
-        /// <param name="evt"></param>
-        /// <returns></returns>
+        public bool IsDiceValid(NetEvent evt)
+        {
+            if (evt.Action.Type == ActionType.Blend)
+            {
+                return evt.CostArgs != null && evt.CostArgs.Sum() == 1 && evt.CostArgs[Element.ElementStringToInt(Characters[CurrCharacter].Card.MainElement)] == 0 && ContainsCost(evt.CostArgs);
+            }
+            else
+            {
+                return GetEventFinalDiceRequirement(evt.Action).Cost.EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
+            }
+        }/// <summary>
+         /// 返回经过处理的targetenums们<br/>
+         /// 不过有效的处理似乎只有场地满了
+         /// </summary>
+         /// <param name="evt"></param>
+         /// <returns></returns>
         public List<TargetEnum> GetTargetEnums(NetAction action)
         {
             List<TargetEnum> enums = new();
@@ -101,6 +112,12 @@ namespace TCGGame
                 case ActionType.UseCard:
                     AbstractCardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
                     defaultCost = new(card.CostSame, card.Costs);
+                    break;
+                case ActionType.Blend:
+                    int[] ints = new int[8];
+                    ints[Element.ElementStringToInt(Characters[CurrCharacter].Card.MainElement)] = 1;
+                    //对于Blend并不是需要该种元素，而是不能是该种元素
+                    defaultCost = new(false, ints);
                     break;
                 case ActionType.Pass:
                     defaultCost = new(false);

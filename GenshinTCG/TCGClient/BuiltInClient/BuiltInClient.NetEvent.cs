@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -37,6 +38,7 @@ namespace TCGClient
                         1 => UseSkill(),
                         2 => Switch(),
                         3 => UseCard(),
+                        4 => Blend(),
                         5 => Print(),
                         _ => new NetAction(ActionType.Pass)
                     };
@@ -63,13 +65,23 @@ namespace TCGClient
         /// <param name="forced">是否是要求的强制切人</param>
         public NetAction Switch(bool forced = false)
         {
-            Logger.Print("BuiltInClient.Switch():默认切换到下一个角色!");
-            return new NetAction(forced ? ActionType.SwitchForced : ActionType.Switch, (Me.CurrCharacter + 1) % Me.Characters.Length);
+            var chars = MePt.Characters;
+            Logger.Print($"选择要切到的角色!输入0-{chars.Length - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
+            for (int i = 0; i < chars.Length; i++)
+            {
+                var cha = chars[i];
+                Logger.Print($"{i}: {cha.Card.NameID} Alive:{chars[i].Alive} ");
+            }
+            if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
+            {
+                input_num = 0;
+            }
+            return new NetAction(forced ? ActionType.SwitchForced : ActionType.Switch, input_num % Me.Characters.Length);
         }
         public NetAction UseCard()
         {
             var cards = MePt.CardsInHand;
-            Logger.Print($"使用技能!输入0-{cards.Count - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
+            Logger.Print($"使用卡牌!输入0-{cards.Count - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
             cards.ForEach(c => c.Print());
             if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
             {
@@ -84,7 +96,7 @@ namespace TCGClient
             Logger.Print($"使用技能!输入0-{skills.Length - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
             for (int i = 0; i < skills.Length; i++)
             {
-                Logger.Print($"{i}: {cha.NameID}.{skills[i].NameID} {JsonSerializer.Serialize(skills[i].Tags)}");
+                Logger.Print($"{i}: {cha.NameID}_{skills[i].NameID} {JsonSerializer.Serialize(skills[i].Tags)}");
             }
             if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
             {
@@ -92,9 +104,16 @@ namespace TCGClient
             }
             return new NetAction(ActionType.UseSKill, int.Clamp(input_num, 0, skills.Length - 1));
         }
-        public NetEvent Blend()
+        public NetAction Blend()
         {
-            throw new NotImplementedException("NO BLEND NOW");
+            var cards = MePt.CardsInHand;
+            Logger.Print($"选择要消耗的卡牌!输入0-{cards.Count - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
+            cards.ForEach(c => c.Print());
+            if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
+            {
+                input_num = 0;
+            }
+            return new NetAction(ActionType.Blend, int.Clamp(input_num, 0, cards.Count - 1));
         }
 
         public NetEvent ReplaceAssist()

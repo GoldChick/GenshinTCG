@@ -104,7 +104,6 @@ namespace TCGGame
             {
                 Round++;
                 Logger.Print($"Round {Round}");
-                CurrTeam = 1 - CurrTeam;
 
                 Array.ForEach(Teams, t => t.RoundStart());
 
@@ -140,7 +139,7 @@ namespace TCGGame
                 }
 
                 Stage = GameStage.Ending;
-                //Logger.Print($"结束阶段");
+                CurrTeam = 1 - CurrTeam;
                 EffectTrigger(new SimpleSender(Tags.SenderTags.ROUND_OVER));
 
                 Array.ForEach(Teams, t => t.RoundEnd());

@@ -26,7 +26,10 @@
         /// Index:Card Index
         /// </summary>
         UseCard,
-        //Target:Card
+        /// <summary>
+        /// Index:Card Index<br/>
+        /// CostArg in NetEvent:Dice Cost(only one)
+        /// </summary>
         Blend,
         Pass,
     }

@@ -17,7 +17,10 @@ namespace Genshin3_3
 
         public override string NameID => "xiangling";
 
-        public override string[] Tags => new string[] { "not curr" };
+        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.RegionTags.LIYUE,
+         TCGBase.Tags.CardTags.CharacterTags.HUMAN, TCGBase.Tags.ElementTags.PYRO,
+         TCGBase.Tags.CardTags.WeaponTags.LONGWEAPON
+        };
 
         private class 旋火轮 : AbstractCardSkill
         {
@@ -28,7 +31,7 @@ namespace Genshin3_3
 
             public override string NameID => "旋火轮";
 
-            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.NORMAL_ATTACK };
+            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.Q };
 
             public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {

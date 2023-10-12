@@ -1,6 +1,5 @@
 ﻿using TCGCard;
 using TCGGame;
-using TCGUtil;
 using TCGMod;
 using TCGBase;
 
@@ -12,68 +11,36 @@ namespace Genshin3_3
 
         public override int MaxMP => 3;
 
-        public override AbstractCardSkill[] Skills => new AbstractCardSkill[] { new 因果点破(), new 水中幻愿() };
+        public override AbstractCardSkill[] Skills => new AbstractCardSkill[] {
+            new CharacterTrivalNormalAttack("因果点破",2,1),
+            new CharacterSingleSummonE("水中幻愿",2,1,new 虚影()) };
 
         public override string NameID => "mona";
 
-        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.RegionTags.MONDSTADT,
-        TCGBase.Tags.CardTags.WeaponTags.CATALYST,TCGBase.Tags.CardTags.CharacterTags.HUMAN};
-        private class 因果点破 : AbstractCardSkill
+        public override string[] Tags => new string[] { 
+            TCGBase.Tags.CardTags.RegionTags.MONDSTADT,
+            TCGBase.Tags.CardTags.WeaponTags.CATALYST,
+            TCGBase.Tags.CardTags.CharacterTags.HUMAN};
+        private class 虚影 : AbstractCardPersistentSummon
         {
-            public override string NameID => "yinguodianpo";
-
-            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.NORMAL_ATTACK };
-
-            public override int[] Costs => new int[] { 1 };
-
-            public override bool CostSame => false;
-
-            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
-            {
-                me.Enemy.Hurt(new(2, 1, DamageSource.Character, 0));
-            }
-        }
-        private class 水中幻愿 : AbstractCardSkill, ISinglePersistentProvider<AbstractCardPersistentSummon>
-        {
-            public override string NameID => "水中幻愿";
-
-            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
-
-            public override int[] Costs => new int[] { 1 };
-
-            public override bool CostSame => false;
-
-            public AbstractCardPersistentSummon PersistentPool => new 虚影();
-
-            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
-            {
-                Logger.Warning("莫娜使用了水中幻愿!");
-                me.Enemy.Hurt(new(2, 1, DamageSource.Character, 0));
-            }
-            private class 虚影 : AbstractCardPersistentSummon
-            {
-                public override int InitialUseTimes => 1;
-
-                public override bool DeleteWhenUsedUp => false;
-
-                public override int MaxUseTimes => 1;
-
-                public override Dictionary<string, IPersistentTrigger> TriggerDic => new()
+            public override int InitialUseTimes => 1;
+            public override bool DeleteWhenUsedUp => false;
+            public override int MaxUseTimes => 1;
+            public override Dictionary<string, IPersistentTrigger> TriggerDic => new()
                 { { TCGBase.Tags.SenderTags.HURT_ADD, new PersistentPurpleShield(1, 1) },
                   { TCGBase.Tags.SenderTags.ROUND_OVER, new 虚影_Trigger()} };
 
-                public override string NameID => "虚影";
-
-                public override string[] Tags => Array.Empty<string>();
-                private class 虚影_Trigger : IPersistentTrigger
+            public override string NameID => "虚影";
+            public override string[] Tags => Array.Empty<string>();
+            private class 虚影_Trigger : IPersistentTrigger
+            {
+                public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
-                    public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
-                    {
-                        persitent.Active = false;
-                        me.Enemy.Hurt(new(2, 1, DamageSource.Summon, 0));
-                    }
+                    persitent.Active = false;
+                    me.Enemy.Hurt(new(2, 1, DamageSource.Summon, 0));
                 }
             }
         }
+
     }
 }

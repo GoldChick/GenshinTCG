@@ -31,8 +31,6 @@ namespace TCGMod
                         {
                             dv.Damage -= _protect;
                             persitent.AvailableTimes--;
-
-                            Logger.Error("紫盾抵挡了一点伤害!");
                         }
                     }
                 }

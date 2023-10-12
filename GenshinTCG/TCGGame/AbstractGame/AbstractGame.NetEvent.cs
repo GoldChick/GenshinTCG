@@ -52,7 +52,7 @@ namespace TCGGame
         /// </summary>
         /// <param name="evt">已经证明是valid的NetEvent</param>
         /// <returns>是否是战斗行动</returns>
-        public void HandleEvent(NetEvent evt, int currTeam)
+        public virtual void HandleEvent(NetEvent evt, int currTeam)
         {
             var t = Teams[currTeam];
 
@@ -112,11 +112,17 @@ namespace TCGGame
                     }
                     afterEventVariable = new FastActionVariable(true);
                     break;
+                case ActionType.Blend://调和
+                    Debug.Assert(pt != null, "AbstractGame.NetEvent:不应该拥有行动牌的Team尝试调和卡牌！");
+                    ActionCard c1 = pt.CardsInHand[evt.Action.Index % pt.CardsInHand.Count];
+                    pt.CardsInHand.Remove(c1);
+                    pt.AddDice(Element.ElementStringToInt(Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.MainElement));
+                    afterEventVariable = new FastActionVariable(true);
+                    break;
                 case ActionType.Pass://空过
                     Logger.Warning($"玩家{currTeam}选择了空过！");
                     t.Pass = true;
                     break;
-
                 default:
                     Logger.Warning($"玩家{currTeam}选择了没有NotImplement的Action！");
                     t.Pass = true;
