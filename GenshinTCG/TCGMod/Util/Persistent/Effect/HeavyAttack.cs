@@ -7,7 +7,7 @@ namespace TCGMod
     /// <summary>
     /// 游戏开始时，为双方附属
     /// </summary>
-    public class HeavyAttack : AbstractCardEffect
+    public class HeavyAttack : AbstractCardPersistentEffect
     {
         public override string NameID => "heavy_attack";
 

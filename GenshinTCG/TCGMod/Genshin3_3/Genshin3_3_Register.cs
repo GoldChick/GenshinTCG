@@ -23,17 +23,18 @@ namespace Genshin3_3
         {
             consumer.Accept(new Keqing());
             consumer.Accept(new Mona());
+            consumer.Accept(new XiangLing());
         }
 
-        public override void RegisterEffect(IRegistryConsumer<AbstractCardEffect> consumer)
+        public override void RegisterEffect(IRegistryConsumer<AbstractCardPersistentEffect> consumer)
         {
         }
 
-        public override void RegisterSummon(IRegistryConsumer<AbstractCardSummon> consumer)
+        public override void RegisterSummon(IRegistryConsumer<AbstractCardPersistentSummon> consumer)
         {
         }
 
-        public override void RegisterSupport(IRegistryConsumer<AbstractCardSupport> consumer)
+        public override void RegisterSupport(IRegistryConsumer<AbstractCardPersistentSupport> consumer)
         {
         }
     }

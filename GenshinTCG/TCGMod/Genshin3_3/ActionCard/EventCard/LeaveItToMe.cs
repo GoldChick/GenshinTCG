@@ -22,7 +22,7 @@ namespace Genshin3_3
             me.AddPersistent(new LeaveItToMeEffect());
             Logger.Error("使用了交给我吧!");
         }
-        public class LeaveItToMeEffect : AbstractCardEffect
+        public class LeaveItToMeEffect : AbstractCardPersistentEffect
         {
             public override int MaxUseTimes => 1;
 

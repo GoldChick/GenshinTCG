@@ -1,4 +1,5 @@
-﻿using TCGBase;
+﻿using System.Diagnostics;
+using TCGBase;
 using TCGCard;
 using TCGRule;
 using TCGUtil;
@@ -7,7 +8,11 @@ namespace TCGGame
 {
     public abstract partial class AbstractTeam
     {
-        public bool AddEffect(RegistryObject<AbstractCardEffect> effect, int target = -1) => AddPersistent(effect.Value, target);
+        /// <summary>
+        /// TODO: 为了修改注册机制而做的<br/>
+        /// 但是感觉没什么必要？就放在这里吧
+        /// </summary>
+        public bool AddEffect(RegistryObject<AbstractCardPersistentEffect> effect, int target = -1) => AddPersistent(effect.Value, target);
         /// <summary>
         /// 增加一个persistent类型的effect
         /// IEffect -1:团队 0-(characters.count-1):个人
@@ -18,7 +23,7 @@ namespace TCGGame
         /// <returns></returns>
         public bool AddPersistent(AbstractCardPersistent per, int target = -1)
         {
-            if (per is AbstractCardEffect ef)
+            if (per is AbstractCardPersistentEffect ef)
             {
                 if (target == -1)
                 {
@@ -38,17 +43,18 @@ namespace TCGGame
                     }
                 }
             }
-            else if (per is AbstractCardSupport sp)
+            else if (per is AbstractCardPersistentSupport sp)
             {
-                //TODO:场地弃置
                 if (!Supports.Full)
                 {
                     Supports.Add(new Support(sp));
                 }
-            }
-            else if (per is AbstractCardSummon sm)
-            {
-                throw new NotImplementedException();
+                else
+                {
+                    Debug.Assert(target >= 0 && target < Supports.MaxSize, "AbstractTeam.Persistent.AddPersistent:场地区已满，但是未给出正确的将弃置场地index!");
+                    Supports.RemoveAt(target);
+                    Supports.Add(new Support(sp));
+                }
             }
             else
             {
@@ -57,35 +63,48 @@ namespace TCGGame
             //TODO:replace
             return false;
         }
-        //TODO:找到地方调用这个东西
-
-        public void TryAddSummon(ISummonProvider provider)
+        /// <summary>
+        /// 尝试在我方场上添加召唤物<br/>
+        /// 当我方召唤物满场时，仅在provider的召唤物全在场时会进行更新
+        /// </summary>
+        /// <param name="provider"></param>
+        public void TryAddSummon(IPersistentProvider<AbstractCardPersistentSummon> provider)
         {
-            var left = provider.PersistentPool.Where(s => !Summons.Contains(s.NameID)).ToList();
-            if (left.Count == 0)//全都召唤了，刷新
+            if (provider is ISinglePersistentProvider<AbstractCardPersistentSummon> single)
             {
-                var pool = provider.PersistentPool.Select(p => p).ToList();
-                if (provider.PersistentOrdered)
+                Summons.Add(new Summon(single.PersistentPool));
+            }
+            else if (provider is IMultiPersistentProvider<AbstractCardPersistentSummon> mul)
+            {
+                var left = mul.PersistentPool.Where(s => !Summons.Contains(s.NameID)).ToList();
+                int num = mul.PersistentNum;
+                while (num > 0)
                 {
-                    for (int i = 0; i < int.Min(provider.PersistentNum, pool.Count); i++)
+                    if (left.Count == 0)//全都召唤了，刷新
                     {
-                        Summons.Add(new Summon(pool[i]));
+                        var pool = mul.PersistentPool.Select(p => p).ToList();
+                        for (int i = 0; i < num && pool.Count > 0; i++)
+                        {
+                            int j = Random.Next(pool.Count);
+                            Summons.Add(new Summon(pool[j]));
+                            pool.RemoveAt(j);
+                        }
+                        break;
                     }
-                }
-                else
-                {
-                    for (int i = 0; i < provider.PersistentNum && pool.Count > 0; i++)
+                    else if (!Summons.Full)
                     {
-                        int j = Random.Next(pool.Count);
-                        pool.RemoveAt(j);
-                        Summons.Add(new Summon(pool[j]));
+                        var choose = Random.Next(left.Count);
+                        Summons.Add(new Summon(left[choose]));
+                        left.RemoveAt(choose);
+                        num--;
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
             }
-            else if (!Summons.Full)
-            {
-                Summons.Add(new Summon(left[Random.Next(left.Count)]));
-            }
+
         }
         /// <summary>
         /// 在某一次所有的结算之后，清除not active的effect

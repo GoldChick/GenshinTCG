@@ -5,7 +5,7 @@ namespace TCGMod
     /// <summary>
     /// 游戏开始时，为双方附属
     /// </summary>
-    public class Floating : AbstractCardEffect
+    public class Floating : AbstractCardPersistentEffect
     {
         public override string NameID => "floating";
         public override int MaxUseTimes => 1;

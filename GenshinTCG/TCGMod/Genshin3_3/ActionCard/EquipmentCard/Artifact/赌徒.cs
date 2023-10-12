@@ -23,7 +23,7 @@ namespace Genshin3_3
         }
 
         public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
-        public class 赌徒_Effect : AbstractCardEffect
+        public class 赌徒_Effect : AbstractCardPersistentEffect
         {
             public override int MaxUseTimes => 3;
 

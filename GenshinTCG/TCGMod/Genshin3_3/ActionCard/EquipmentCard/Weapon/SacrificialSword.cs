@@ -28,7 +28,7 @@ namespace Genshin3_3
 
         public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null)
                 => me.Characters[targetArgs[0]].Card.Tags.Contains(TCGBase.Tags.CardTags.WeaponTags.SWORD);
-        public class 祭礼剑_effect : AbstractCardEffect
+        public class 祭礼剑_effect : AbstractCardPersistentEffect
         {
 
             public override int MaxUseTimes => 1;

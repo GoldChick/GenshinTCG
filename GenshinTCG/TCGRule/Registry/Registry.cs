@@ -39,9 +39,9 @@ namespace TCGRule
         internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; } = new();
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; } = new();
 
-        internal RegistryCardCollection<AbstractCardSupport> Supports { get; } = new();
-        internal RegistryCardCollection<AbstractCardEffect> Effects { get; } = new();
-        internal RegistryCardCollection<AbstractCardSummon> Summons { get; } = new();
+        internal RegistryCardCollection<AbstractCardPersistentSupport> Supports { get; } = new();
+        internal RegistryCardCollection<AbstractCardPersistentEffect> Effects { get; } = new();
+        internal RegistryCardCollection<AbstractCardPersistentSummon> Summons { get; } = new();
 
         private RegistryCardCollection[] CardCollections { get; }
 

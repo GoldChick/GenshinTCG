@@ -132,22 +132,8 @@ namespace TCGClient
         }
         public int[] SelectTargets(PlayerTeam me, NetAction action)
         {
-            List<TargetEnum> enums = new();
-            switch (action.Type)
-            {
-                case ActionType.UseSKill:
-                    if (me.Characters[me.CurrCharacter].Card.Skills[action.Index] is ITargetSelector selector)
-                    {
-                        enums.AddRange(selector.TargetEnums);
-                    }
-                    break;
-                case ActionType.UseCard:
-                    if (me.CardsInHand[action.Index].Card is ITargetSelector se1)
-                    {
-                        enums.AddRange(se1.TargetEnums);
-                    }
-                    break;
-            }
+            List<TargetEnum> enums = me.GetTargetEnums(action);
+
             Func<TargetEnum, int> input_target = (e) =>
             {
                 IEnumerable<string> values = e switch

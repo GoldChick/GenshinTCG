@@ -12,7 +12,7 @@
         /// @Nullable
         /// TODO: check it?
         /// </summary>
-        public virtual AbstractCardEffect? DefaultEffect { get=>null; }
+        public virtual AbstractCardPersistentEffect? DefaultEffect { get=>null; }
         /// <summary>
         ///  @NonNull
         /// </summary>

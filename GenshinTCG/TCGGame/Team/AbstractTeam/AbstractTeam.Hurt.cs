@@ -115,6 +115,7 @@ namespace TCGGame
             foreach (var hs in hss)
             {
                 Characters[hs.TargetIndex].HP -= hs.Damage;
+                Logger.Print($"{hs.TargetIndex}受伤了{hs.Damage}");
             }
             action?.Invoke();
             if (overload)

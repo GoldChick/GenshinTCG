@@ -33,7 +33,7 @@ namespace Genshin3_3
                 me.Enemy.Hurt(new(2, 1, DamageSource.Character, 0));
             }
         }
-        private class 水中幻愿 : AbstractCardSkill, ISummonProvider
+        private class 水中幻愿 : AbstractCardSkill, ISinglePersistentProvider<AbstractCardPersistentSummon>
         {
             public override string NameID => "水中幻愿";
 
@@ -43,19 +43,14 @@ namespace Genshin3_3
 
             public override bool CostSame => false;
 
-            public AbstractCardSummon[] PersistentPool => new[] { new 虚影() };
-
-            public bool PersistentOrdered => true;
-
-            public int PersistentNum => 1;
+            public AbstractCardPersistentSummon PersistentPool => new 虚影();
 
             public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
                 Logger.Warning("莫娜使用了水中幻愿!");
                 me.Enemy.Hurt(new(2, 1, DamageSource.Character, 0));
-                me.TryAddSummon(this);
             }
-            private class 虚影 : AbstractCardSummon
+            private class 虚影 : AbstractCardPersistentSummon
             {
                 public override int InitialUseTimes => 1;
 

@@ -9,25 +9,18 @@ namespace TCGGame
         protected override bool IsTargetValid(TargetEnum e, int arg) => e switch
         {
             TargetEnum.Card_Me => arg >= 0 && arg < CardsInHand.Count,
-            TargetEnum.Character_Enemy => arg >= 0, //TODO: no enemy check now
             TargetEnum.Character_Me => arg >= 0 && arg < Characters.Length,
+            TargetEnum.Character_Enemy => arg >= 0 && arg < Enemy.Characters.Length,
             //TargetEnum.Dice => arg >= 0 && arg < Characters.Length,
-            TargetEnum.MultiCard => arg >= 0,
+            //TargetEnum.MultiCard => arg >= 0,
             //TargetEnum.MultiDice => arg >= 0 && arg < Characters.Length,
-            TargetEnum.Summon_Enemy => arg >= 0 && arg < Summons.Count,
-            TargetEnum.Support_Enemy => arg >= 0 && arg < Supports.Count,
+            TargetEnum.Summon_Me => arg >= 0 && arg < Summons.Count,
+            TargetEnum.Summon_Enemy => arg >= 0 && arg < Enemy.Summons.Count,
+            TargetEnum.Support_Me => arg >= 0 && arg < Supports.Count,
+            TargetEnum.Support_Enemy => arg >= 0 && arg < Enemy.Supports.Count,
             _ => false
         };
-        public override bool IsEventValid(NetEvent evt)
-        {
-            ////Logger.Error(JsonSerializer.Serialize(evt));
-            //Logger.Error($"limit:{IsLimitValid(evt.Action)}");
-            //Logger.Error($"target:{IsTargetValid(evt)}");
-            //Logger.Error($"dice:{IsDiceValid(evt)}");
-            return IsLimitValid(evt.Action)
-                && IsTargetValid(evt)
-                && IsDiceValid(evt);
-        }
+        public override bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Action) && IsTargetValid(evt) && IsDiceValid(evt);
 
         public bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
         {
@@ -41,22 +34,8 @@ namespace TCGGame
         };
         public bool IsTargetValid(NetEvent evt)
         {
-            List<TargetEnum> enums = new();
-            switch (evt.Action.Type)
-            {
-                case ActionType.UseSKill:
-                    if (Characters[CurrCharacter].Card.Skills[evt.Action.Index] is ITargetSelector selector)
-                    {
-                        enums.AddRange(selector.TargetEnums);
-                    }
-                    break;
-                case ActionType.UseCard:
-                    if (CardsInHand[evt.Action.Index].Card is ITargetSelector se1)
-                    {
-                        enums.AddRange(se1.TargetEnums);
-                    }
-                    break;
-            }
+            List<TargetEnum> enums = GetTargetEnums(evt.Action);
+
             //Logger.Error($"enums={enums}");
             //Logger.Error($"0={evt.AdditionalTargetArgs}");
             //Logger.Error($"1={enums.Count == (evt.AdditionalTargetArgs?.Length ?? 0)}");
@@ -67,6 +46,37 @@ namespace TCGGame
             && (!(evt.Action.Type == ActionType.UseCard) || CardsInHand[evt.Action.Index].Card.CanBeUsed(this, evt.AdditionalTargetArgs));
         }
         public bool IsDiceValid(NetEvent evt) => GetEventFinalDiceRequirement(evt.Action).Cost.EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
+        /// <summary>
+        /// 返回经过处理的targetenums们<br/>
+        /// 不过有效的处理似乎只有场地满了
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <returns></returns>
+        public List<TargetEnum> GetTargetEnums(NetAction action)
+        {
+            List<TargetEnum> enums = new();
+            switch (action.Type)
+            {
+                case ActionType.UseSKill:
+                    if (Characters[CurrCharacter].Card.Skills[action.Index] is ITargetSelector selector)
+                    {
+                        enums.AddRange(selector.TargetEnums);
+                    }
+                    break;
+                case ActionType.UseCard:
+                    var actioncard = CardsInHand[action.Index].Card;
+                    if (actioncard is ITargetSelector se1)
+                    {
+                        enums.AddRange(se1.TargetEnums);
+                    }
+                    if (actioncard is AbstractCardSupport && Supports.Full)
+                    {
+                        enums.Add(TargetEnum.Support_Me);
+                    }
+                    break;
+            }
+            return enums;
+        }
         protected override void GetEventInitialDiceRequirement(NetAction action, out Cost defaultCost)
         {
             switch (action.Type)

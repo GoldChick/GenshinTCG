@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using TCGBase;
+using TCGCard;
 using TCGUtil;
 
 namespace TCGGame
@@ -59,7 +60,7 @@ namespace TCGGame
             EffectTrigger(new SimpleSender(currTeam, Tags.SenderTags.ActionTypeToSenderTag(evt.Action.Type, true)));
 
             PlayerTeam? pt = null;
-            AbstractSender afterEventSender = new SimpleSender(currTeam,Tags.SenderTags.ActionTypeToSenderTag(evt.Action.Type));
+            AbstractSender afterEventSender = new SimpleSender(currTeam, Tags.SenderTags.ActionTypeToSenderTag(evt.Action.Type));
             FastActionVariable? afterEventVariable = null;
 
             if (t is PlayerTeam)
@@ -92,6 +93,11 @@ namespace TCGGame
                     {
                         t.Characters[t.CurrCharacter].MP++;
                     }
+                    if (ski is IPersistentProvider<AbstractCardPersistentSummon> su)
+                    {
+                        //auto summon
+                        Teams[currTeam].TryAddSummon(su);
+                    }
                     afterEventVariable = new FastActionVariable(false);
                     break;
                 case ActionType.UseCard:
@@ -99,6 +105,11 @@ namespace TCGGame
                     ActionCard c = pt.CardsInHand[evt.Action.Index % pt.CardsInHand.Count];
                     pt.CardsInHand.Remove(c);
                     c.Card.AfterUseAction(pt, evt.AdditionalTargetArgs);
+                    if (c.Card is AbstractCardSupport sp)
+                    {
+                        //auto support
+                        Teams[currTeam].AddPersistent(sp.PersistentPool, evt.AdditionalTargetArgs?.LastOrDefault() ?? -1);
+                    }
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Pass://空过
@@ -112,7 +123,7 @@ namespace TCGGame
                     break;
             }
             //after_xx 在这里结算是否是战斗行动
-            EffectTrigger( afterEventSender, afterEventVariable);
+            EffectTrigger(afterEventSender, afterEventVariable);
 
             bool fight_action = !(afterEventVariable?.Fast ?? false);
 

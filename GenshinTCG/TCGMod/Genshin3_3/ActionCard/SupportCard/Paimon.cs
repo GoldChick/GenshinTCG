@@ -6,7 +6,7 @@ using TCGUtil;
 
 namespace Genshin3_3
 {
-    public class Paimon : AbstractCardAction
+    public class Paimon : AbstractCardSupport
     {
         public override string NameID => "paimon";
 
@@ -16,13 +16,9 @@ namespace Genshin3_3
 
         public override bool CostSame => true;
 
-        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
-        {
-            Logger.Print("打出了一张大pi!");
-            me.AddPersistent(new PaimonSupport());
-        }
+        public override AbstractCardPersistentSupport PersistentPool => new PaimonSupport();
 
-        public class PaimonSupport : AbstractCardSupport
+        public class PaimonSupport : AbstractCardPersistentSupport
         {
             public override int MaxUseTimes => 2;
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
 using TCGBase;
 using TCGCard;
 using TCGUtil;
@@ -37,6 +34,9 @@ namespace TCGGame
             MultiSame = multisame;
         }
         public AbstractPersistent<T> this[int i] => _data[i];
+        /// <summary>
+        /// 无则加入（未满），有则刷新
+        /// </summary>
         public void Add([NotNull] AbstractPersistent<T> input)
         {
             if (MaxSize <= 0 || _data.Count < MaxSize)

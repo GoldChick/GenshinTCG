@@ -9,7 +9,7 @@ namespace TCGCard
     {
         /// <summary>
         /// 允许携带的最大数量<br/>
-        /// @deprecated 锁定在2
+        /// 默认为2
         /// </summary>
         public virtual int MaxNumPermitted { get => 2; }
         public abstract int[] Costs { get; }

@@ -14,15 +14,15 @@ namespace Sample
         {
         }
 
-        public override void RegisterEffect(IRegistryConsumer<AbstractCardEffect> consumer)
+        public override void RegisterEffect(IRegistryConsumer<AbstractCardPersistentEffect> consumer)
         {
         }
 
-        public override void RegisterSummon(IRegistryConsumer<AbstractCardSummon> consumer)
+        public override void RegisterSummon(IRegistryConsumer<AbstractCardPersistentSummon> consumer)
         {
         }
 
-        public override void RegisterSupport(IRegistryConsumer<AbstractCardSupport> consumer)
+        public override void RegisterSupport(IRegistryConsumer<AbstractCardPersistentSupport> consumer)
         {
         }
     }

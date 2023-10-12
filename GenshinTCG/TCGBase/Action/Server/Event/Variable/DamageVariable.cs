@@ -2,9 +2,22 @@
 {
     public enum DamageSource
     {
+        /// <summary>
+        /// 来源不明的伤害，如[轰轰火花]\[愚人众伏兵]
+        /// </summary>
         NoWhere,
+        /// <summary>
+        /// 直接由[对方]的[角色技能]造成的伤害
+        /// </summary>
         Character,
-        Summon
+        /// <summary>
+        /// 直接由[对方]的[召唤物]造成的伤害
+        /// </summary>
+        Summon,
+        /// <summary>
+        /// 对方造成的，但不属于以上两种来源的伤害，如[扩散]\[旋火轮]
+        /// </summary>
+        Addition
     }
     public class DamageVariable : AbstractVariable
     {

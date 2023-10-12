@@ -10,11 +10,11 @@ namespace TCGGame
         public AbstractCardCharacter Card { get; protected set; }
         private int _hp;
         private int _mp;
-        public AbstractPersistent<AbstractCardEffect>? Weapon { get; internal set; }
-        public AbstractPersistent<AbstractCardEffect>? Artifact { get; internal set; }
-        public AbstractPersistent<AbstractCardEffect>? Talent { get; internal set; }
+        public AbstractPersistent<AbstractCardPersistentEffect>? Weapon { get; internal set; }
+        public AbstractPersistent<AbstractCardPersistentEffect>? Artifact { get; internal set; }
+        public AbstractPersistent<AbstractCardPersistentEffect>? Talent { get; internal set; }
 
-        public PersistentSet<AbstractCardEffect> Effects { get; init; }
+        public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
 
         public int HP
         {

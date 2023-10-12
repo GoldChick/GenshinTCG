@@ -3,12 +3,12 @@ using TCGRule;
 
 namespace TCGGame
 {
-    public class Effect : AbstractPersistent<AbstractCardEffect>
+    public class Effect : AbstractPersistent<AbstractCardPersistentEffect>
     {
         public Effect(string nameid) : base(nameid, Registry.Instance.Effects.GetValueOrDefault(nameid))
         {
         }
-        public Effect(AbstractCardEffect ef) : base(ef.NameID, ef)
+        public Effect(AbstractCardPersistentEffect ef) : base(ef.NameID, ef)
         {
         }
     }

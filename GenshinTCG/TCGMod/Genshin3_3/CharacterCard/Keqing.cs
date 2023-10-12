@@ -33,7 +33,7 @@ namespace Genshin3_3
                 }
             }
         }
-        public class 雷楔_Effect : AbstractCardEffect
+        public class 雷楔_Effect : AbstractCardPersistentEffect
         {
             public override bool Visible => false;
 
@@ -117,7 +117,7 @@ namespace Genshin3_3
                     }
                 }
             }
-            public class 雷楔_Enchant : AbstractCardEffect
+            public class 雷楔_Enchant : AbstractCardPersistentEffect
             {
                 //使用雷楔后的雷附魔
                 public override int MaxUseTimes => 2;

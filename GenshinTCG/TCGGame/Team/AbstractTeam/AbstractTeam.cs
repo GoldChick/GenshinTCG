@@ -32,9 +32,9 @@ namespace TCGGame
         public Character[] Characters { get; protected init; }
 
 
-        public PersistentSet<AbstractCardSupport> Supports { get; init; }
-        public PersistentSet<AbstractCardSummon> Summons { get; init; }
-        public PersistentSet<AbstractCardEffect> Effects { get; init; }
+        public PersistentSet<AbstractCardPersistentSupport> Supports { get; init; }
+        public PersistentSet<AbstractCardPersistentSummon> Summons { get; init; }
+        public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
 
         public int CurrCharacter { get; internal set; }
         public bool Pass { get; internal set; }
@@ -60,9 +60,6 @@ namespace TCGGame
         {
             return false;
         }
-
-
-
         public virtual int GetDiceNum(int type = 0) => 0;
         /// <summary>
         /// 回合开始时最先调用，如扔骰子等
