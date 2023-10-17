@@ -103,9 +103,6 @@ namespace TCGBase
             public static readonly string NORMAL_ATTACK = "minecraft:normal_attack";
             public static readonly string E = "minecraft:e";
             public static readonly string Q = "minecraft:q";
-
-            public static readonly string HEAVY_ATTACK = "minecraft:heavy_attack";
-            public static readonly string DOWN_ATTACK = "minecraft:down_attack";
         }
         public static class SenderTags
         {

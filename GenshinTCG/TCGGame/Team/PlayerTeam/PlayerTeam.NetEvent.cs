@@ -51,7 +51,7 @@ namespace TCGGame
         {
             if (evt.Action.Type == ActionType.Blend)
             {
-                return evt.CostArgs != null && evt.CostArgs.Sum() == 1 && evt.CostArgs[Element.ElementStringToInt(Characters[CurrCharacter].Card.MainElement)] == 0 && ContainsCost(evt.CostArgs);
+                return evt.CostArgs != null && evt.CostArgs.Sum() == 1 && evt.CostArgs[(int)Characters[CurrCharacter].Card.CharacterElement] == 0 && ContainsCost(evt.CostArgs);
             }
             else
             {
@@ -100,7 +100,7 @@ namespace TCGGame
                     Character character = Characters[CurrCharacter];
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
                     AbstractCardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
-                    if (skill.Tags.Contains(Tags.SkillTags.Q) && character.MP != chaCard.MaxMP)
+                    if (skill.SpecialTags.Contains(Tags.SkillTags.Q) && character.MP != chaCard.MaxMP)
                     {
                         defaultCost = new(false, 114514);
                     }
@@ -115,7 +115,7 @@ namespace TCGGame
                     break;
                 case ActionType.Blend:
                     int[] ints = new int[8];
-                    ints[Element.ElementStringToInt(Characters[CurrCharacter].Card.MainElement)] = 1;
+                    ints[(int)Characters[CurrCharacter].Card.CharacterElement] = 1;
                     //对于Blend并不是需要该种元素，而是不能是该种元素
                     defaultCost = new(false, ints);
                     break;

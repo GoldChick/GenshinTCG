@@ -8,7 +8,7 @@ namespace TCGMod
     /// only for Element_Enchant<br/>
     /// 元素附魔，如果是a，则变为b
     /// </summary>
-    public class PersistentElementEnchant : IPersistentTrigger
+    public class PersistentElementEnchant : PersistentTrigger
     {
         private int _before;
         private int _toward;
@@ -29,7 +29,7 @@ namespace TCGMod
             _toward = int.Clamp(toward, 0, 7);
             _counter = counter;
         }
-        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public override void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             if (persitent.AvailableTimes > 0 && variable is DamageVariable dv && sender.TeamID == me.TeamIndex)
             {

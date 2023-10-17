@@ -8,7 +8,7 @@ namespace TCGMod
     /// <summary>
     /// only for Hurt_Add
     /// </summary>
-    public class PersistentPurpleShield : IPersistentTrigger
+    public class PersistentPurpleShield : PersistentTrigger
     {
         private int _line;
         private int _protect;
@@ -19,7 +19,7 @@ namespace TCGMod
             _line = line;
             _protect = protect;
         }
-        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public override void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             if (persitent.AvailableTimes > 0 && variable is DamageVariable dv && sender.TeamID == me.TeamIndex)
             {

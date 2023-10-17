@@ -14,7 +14,8 @@ namespace TCGBase
         /// </summary>
         public int[] Costs { get; }
         /// <summary>
-        /// 为True时，仅考虑Cost[0]，即消耗Cost[0]个同色骰
+        /// 为True时，仅考虑Cost[0]，即消耗Cost[0]个同色骰<br/>
+        /// 一般没有实现默认为false
         /// </summary>
         public bool CostSame { get; }
     }

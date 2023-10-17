@@ -11,7 +11,7 @@ namespace TCGMod
         public override int MaxUseTimes => 1;
         public override bool DeleteWhenUsedUp => false;
 
-        public override Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+        public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
             {TCGBase.Tags.SenderTags.AFTER_ANY_ACTION, new PersistentSimpleConsume()} ,
             {TCGBase.Tags.SenderTags.AFTER_SWITCH, new PersistentSimpleUpdate()}
              };

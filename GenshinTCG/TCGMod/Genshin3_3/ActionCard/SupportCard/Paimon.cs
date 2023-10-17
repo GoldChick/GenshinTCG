@@ -10,7 +10,7 @@ namespace Genshin3_3
     {
         public override string NameID => "paimon";
 
-        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
+        public override string[] SpecialTags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
 
         public override int[] Costs => new int[] { 3 };
 
@@ -24,11 +24,11 @@ namespace Genshin3_3
 
             public override string NameID => "paimon_support";
 
-            public override string[] Tags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
+            public override string[] SpecialTags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
 
-            public override Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.ROUND_START, new PaimonTrigger() } };
+            public override Dictionary<string, PersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.ROUND_START, new PaimonTrigger() } };
 
-            private class PaimonTrigger : IPersistentTrigger
+            private class PaimonTrigger : PersistentTrigger
             {
                 public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {

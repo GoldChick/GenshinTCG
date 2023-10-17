@@ -85,7 +85,7 @@ namespace TCGGame
                     //考虑AfterUseAction中可能让角色位置改变的
                     afterEventSender = new UseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
                     ski.AfterUseAction(t, evt.AdditionalTargetArgs);
-                    if (ski.Tags.Contains(Tags.SkillTags.Q))
+                    if (ski.SpecialTags.Contains(Tags.SkillTags.Q))
                     {
                         t.Characters[t.CurrCharacter].MP = 0;
                     }
@@ -108,6 +108,7 @@ namespace TCGGame
                     if (c.Card is AbstractCardSupport sp)
                     {
                         //auto support
+                        Logger.Error($"adding {sp.PersistentPool} for {currTeam}");
                         Teams[currTeam].AddPersistent(sp.PersistentPool, evt.AdditionalTargetArgs?.LastOrDefault() ?? -1);
                     }
                     afterEventVariable = new FastActionVariable(true);
@@ -116,7 +117,7 @@ namespace TCGGame
                     Debug.Assert(pt != null, "AbstractGame.NetEvent:不应该拥有行动牌的Team尝试调和卡牌！");
                     ActionCard c1 = pt.CardsInHand[evt.Action.Index % pt.CardsInHand.Count];
                     pt.CardsInHand.Remove(c1);
-                    pt.AddDice(Element.ElementStringToInt(Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.MainElement));
+                    pt.AddDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Pass://空过

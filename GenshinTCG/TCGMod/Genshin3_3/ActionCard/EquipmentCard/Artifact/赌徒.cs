@@ -9,7 +9,7 @@ namespace Genshin3_3
     {
         public override string NameID => "赌徒的耳环";
 
-        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.EquipmentTags.ARTIFACT };
+        public override string[] SpecialTags => new string[] { TCGBase.Tags.CardTags.EquipmentTags.ARTIFACT };
 
         public override int[] Costs => new int[] { 1 };
 
@@ -27,11 +27,11 @@ namespace Genshin3_3
         {
             public override int MaxUseTimes => 3;
 
-            public override Dictionary<string, IPersistentTrigger> TriggerDic => throw new NotImplementedException();
+            public override Dictionary<string, PersistentTrigger> TriggerDic => throw new NotImplementedException();
 
             public override string NameID => "赌徒_effect";
 
-            private class 赌徒_Trigger : IPersistentTrigger
+            private class 赌徒_Trigger : PersistentTrigger
             {
                 public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {

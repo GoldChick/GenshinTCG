@@ -4,14 +4,14 @@ using TCGGame;
 
 namespace TCGMod
 {
-    public class PersistentSimpleUpdate : IPersistentTrigger
+    public class PersistentSimpleUpdate : PersistentTrigger
     {
         private Func<AbstractTeam, AbstractPersistent, AbstractSender, AbstractVariable?, bool>? _condition;
         public PersistentSimpleUpdate(Func<AbstractTeam, AbstractPersistent, AbstractSender, AbstractVariable?, bool>? condition = null)
         {
             _condition = condition;
         }
-        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public override void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             if (_condition == null || _condition.Invoke(me, persitent, sender, variable))
             {

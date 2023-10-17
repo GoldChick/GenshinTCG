@@ -17,7 +17,7 @@ namespace TCGGame
         public PlayerTeam(ServerPlayerCardSet cardset, AbstractGame game, int index) : base(game, index)
         {
             UseDice = true;
-            Characters = cardset.CharacterCards.Select(c => new Character(c)).ToArray();
+            Characters = cardset.CharacterCards.Select((c,i) => new Character(c,i)).ToArray();
             LeftCards = cardset.ActionCards.Select(a => new ActionCard(a)).ToList();
             CardsInHand = new();
         }

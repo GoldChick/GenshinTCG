@@ -10,7 +10,7 @@ namespace Genshin3_3
     {
         public override string NameID => "雷楔";
 
-        public override string[] Tags => new string[] { "战斗行动" };
+        public override string[] SpecialTags => new string[] { "战斗行动" };
 
         public override int[] Costs => new int[] { 0, 0, 0, 0, 1 };
 
@@ -41,11 +41,11 @@ namespace Genshin3_3
 
             public override string NameID => "雷楔_effect";
 
-            public override Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+            public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
                 { TCGBase.Tags.SenderTags.ROUND_ME_START,new 雷楔_Trigger() },
                 { TCGBase.Tags.SenderTags.AFTER_USE_SKILL, new PersistentSimpleConsume() }
             };
-            private class 雷楔_Trigger : IPersistentTrigger
+            private class 雷楔_Trigger : PersistentTrigger
             {
                 public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
@@ -60,8 +60,6 @@ namespace Genshin3_3
 
     public class Keqing : AbstractCardCharacter
     {
-        public override string MainElement => TCGBase.Tags.ElementTags.ELECTRO;
-
         public override int MaxMP => 3;
 
         public override AbstractCardSkill[] Skills => new AbstractCardSkill[] { 
@@ -71,14 +69,18 @@ namespace Genshin3_3
 
         public override string NameID => "keqing";
 
-        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.RegionTags.LIYUE,
-         TCGBase.Tags.CardTags.CharacterTags.HUMAN, TCGBase.Tags.ElementTags.ELECTRO,
-         TCGBase.Tags.CardTags.WeaponTags.SWORD
-        };
+        public override ElementCategory CharacterElement =>ElementCategory.ELECTRO;
+
+        public override CharacterCategory CharacterCategory => CharacterCategory.HUMAN;
+
+        public override CharacterRegion CharacterRegion => CharacterRegion.LIYUE;
+
+        public override WeaponCategory WeaponCategory => throw new NotImplementedException();
+
         public class XingDouGuiWei : AbstractCardSkill
         {
             public override string NameID => "星斗归位";
-            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
+            public override string[] SpecialTags => new string[] { TCGBase.Tags.SkillTags.E };
             public override int[] Costs => new int[] { 0, 0, 0, 0, 1 };
             public override bool CostSame => false;
 
@@ -109,7 +111,7 @@ namespace Genshin3_3
                 //使用雷楔后的雷附魔
                 public override int MaxUseTimes => 2;
                 public override string NameID => "雷楔_enchant";
-                public override Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+                public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
                 { TCGBase.Tags.SenderTags.ROUND_OVER,new PersistentSimpleConsume() },
                 { TCGBase.Tags.SenderTags.ELEMENT_ENCHANT, new PersistentElementEnchant(4) }
             };
@@ -118,7 +120,7 @@ namespace Genshin3_3
         public class TianJieXunYou : AbstractCardSkill
         {
             public override string NameID => "天街巡游";
-            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.Q };
+            public override string[] SpecialTags => new string[] { TCGBase.Tags.SkillTags.Q };
             public override int[] Costs => new int[] { 0, 0, 0, 0, 1 };
             public override bool CostSame => false;
 

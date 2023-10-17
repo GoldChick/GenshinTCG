@@ -29,11 +29,11 @@ namespace TCGGame
         /// </summary>
         public bool Active;
         public int Element;
-        public Character(AbstractCardCharacter character)
+        public Character(AbstractCardCharacter character,int index)
         {
             Card = character;
 
-            Effects = new();
+            Effects = new(index);
 
             HP = Card.MaxHP;
             Alive = true;
@@ -54,7 +54,7 @@ namespace TCGGame
         public void Print()
         {
             //TODO: card nameid not clear
-            Logger.Print($"{Card.NameID} {JsonSerializer.Serialize(Card.Tags)}", ConsoleColor.Cyan);
+            Logger.Print($"{Card.NameID} {JsonSerializer.Serialize(Card.SpecialTags)}", ConsoleColor.Cyan);
             Logger.Print($"ALIVE:{Alive}");
             if (Alive)
             {

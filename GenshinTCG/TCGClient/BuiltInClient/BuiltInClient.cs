@@ -28,15 +28,53 @@ namespace TCGClient
                 {
                     Characters = new[] { "genshin3_3:xiangling", "genshin3_3:mona", "genshin3_3:keqing" },
                     ActionCards = new[] { "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" ,
-                                                      "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao" ,
-                                                      "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao" ,
+                                                      "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪" ,
+                                                      "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪" ,
                                                       "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao" ,
                                                       "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword" ,
                                                       "genshin3_3:leaveittome", "genshin3_3:leaveittome", "genshin3_3:leaveittome", "genshin3_3:leaveittome", "genshin3_3:leaveittome" },
                 }
             };
         }
+        public  void InitServerSetting(ServerSetting setting,int preset)
+        {
+            switch (preset)
+            {
+                case 1:
+                    ClientSetting = new()
+                    {
+                        Name = "DefaultBuiltIn",
+                        DefaultCardSet = new PlayerNetCardSet()
+                        {
+                            Characters = new[] { "genshin3_3:nahida", "genshin3_3:qiqi", "genshin3_3:yaemiko" },
+                            ActionCards = new[] { "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" ,
+                                                      "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪" ,
+                                                      "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪" ,
+                                                      "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao" ,
+                                                      "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword" ,
+                                                      "genshin3_3:leaveittome", "genshin3_3:leaveittome", "genshin3_3:leaveittome", "genshin3_3:leaveittome", "genshin3_3:leaveittome" },
+                        }
+                    };
+                    break;
+                default:
+                    ClientSetting = new()
+                    {
+                        Name = "DefaultBuiltIn",
+                        DefaultCardSet = new PlayerNetCardSet()
+                        {
+                            Characters = new[] { "genshin3_3:xiangling", "genshin3_3:mona", "genshin3_3:keqing" },
+                            ActionCards = new[] { "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" ,
+                                                      "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪" ,
+                                                      "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪" ,
+                                                      "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao", "genshin3_3:xingtianzhizhao" ,
+                                                      "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword", "genshin3_3:sacrificial_sword" ,
+                                                      "genshin3_3:leaveittome", "genshin3_3:leaveittome", "genshin3_3:leaveittome", "genshin3_3:leaveittome", "genshin3_3:leaveittome" },
+                        }
+                    };
+                    break;
+            }
 
+        }
         public override void UpdateTeam(AbstractTeam me, AbstractTeam enemy)
         {
             if(me is PlayerTeam pt)

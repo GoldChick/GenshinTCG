@@ -31,6 +31,11 @@ namespace TCGGame
                     nums[i]++;
             return nums;
         }
+        /// <summary>
+        /// 获得某一种骰子的数量
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public override int GetDiceNum(int type = 0) => Dices.FindAll(p=>p==type).Count;
         /// <summary>
         /// 获得一个骰子,当骰子数量不满16个时才能获得成功

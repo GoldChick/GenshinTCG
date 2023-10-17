@@ -41,14 +41,13 @@ namespace TCGGame
 
         public AbstractTeam(AbstractGame game, int index)
         {
-            Effects = new();
             CurrCharacter = -1;
             Pass = false;
             Random = new();//TODO:SEED
 
-            Supports = new(4, true);
-            Summons = new(4);
-            Effects = new();
+            Supports = new(12,4, true);
+            Summons = new(11,4);
+            Effects = new(-1);
 
             Game = game;
             TeamIndex = index;

@@ -12,7 +12,7 @@ namespace Genshin3_3
 
         public override bool CostSame => false;
 
-        public override string[] Tags => Array.Empty<string>();
+        public override string[] SpecialTags => Array.Empty<string>();
 
         public override int[] Costs => Array.Empty<int>();
 
@@ -28,9 +28,11 @@ namespace Genshin3_3
 
             public override string NameID => "leaveittome_effect";
 
-            public override Dictionary<string, IPersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.AFTER_SWITCH, new FastSwitchTrigger() } };
+            public override Dictionary<string, PersistentTrigger> TriggerDic => new() { 
+                { TCGBase.Tags.SenderTags.AFTER_SWITCH, new FastSwitchTrigger() }
+            };
 
-            private class FastSwitchTrigger : IPersistentTrigger
+            private class FastSwitchTrigger : PersistentTrigger
             {
                 public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {

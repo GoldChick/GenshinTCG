@@ -8,8 +8,6 @@ namespace Genshin3_3
 {
     public class XiangLing : AbstractCardCharacter
     {
-        public override string MainElement => TCGBase.Tags.ElementTags.PYRO;
-
         public override AbstractCardSkill[] Skills => new AbstractCardSkill[] {
         new CharacterTrivalNormalAttack("白案功夫",0,2,3),
         new CharacterSingleSummonE("锅巴出击",new 锅巴(),3),
@@ -17,10 +15,11 @@ namespace Genshin3_3
 
         public override string NameID => "xiangling";
 
-        public override string[] Tags => new string[] { TCGBase.Tags.CardTags.RegionTags.LIYUE,
-         TCGBase.Tags.CardTags.CharacterTags.HUMAN, TCGBase.Tags.ElementTags.PYRO,
-         TCGBase.Tags.CardTags.WeaponTags.LONGWEAPON
-        };
+        public override ElementCategory CharacterElement => ElementCategory.PYRO;
+
+        public override WeaponCategory WeaponCategory => WeaponCategory.LONGWEAPON;
+
+        public override CharacterRegion CharacterRegion => CharacterRegion.LIYUE;
 
         private class 旋火轮 : AbstractCardSkill
         {
@@ -31,7 +30,7 @@ namespace Genshin3_3
 
             public override string NameID => "旋火轮";
 
-            public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.Q };
+            public override string[] SpecialTags => new string[] { TCGBase.Tags.SkillTags.Q };
 
             public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
@@ -42,11 +41,11 @@ namespace Genshin3_3
             {
                 public override int MaxUseTimes => 2;
 
-                public override Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+                public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
                     { TCGBase.Tags.SenderTags.AFTER_USE_SKILL,new 火轮_Trigger()} };
 
                 public override string NameID => "火轮";
-                private class 火轮_Trigger : IPersistentTrigger
+                private class 火轮_Trigger : PersistentTrigger
                 {
                     public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                     {
@@ -68,13 +67,11 @@ namespace Genshin3_3
     {
         public override int MaxUseTimes => 2;
 
-        public override Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+        public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
             { TCGBase.Tags.SenderTags.ROUND_OVER,new 虚影_Trigger()} };
 
         public override string NameID => "guoba";
-
-        public override string[] Tags => new string[] { "i dont know" };
-        private class 虚影_Trigger : IPersistentTrigger
+        private class 虚影_Trigger : PersistentTrigger
         {
             public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
             {

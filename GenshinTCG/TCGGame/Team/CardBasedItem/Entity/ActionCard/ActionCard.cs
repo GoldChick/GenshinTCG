@@ -21,7 +21,7 @@ namespace TCGGame
 
         public void Print()
         {
-            Logger.Print($"{Card.NameID} {JsonSerializer.Serialize(Card.Tags)}");
+            Logger.Print($"{Card.NameID} {JsonSerializer.Serialize(Card.SpecialTags)}");
         }
     }
 }

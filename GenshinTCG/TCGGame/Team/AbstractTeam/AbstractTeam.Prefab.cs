@@ -22,5 +22,16 @@ namespace TCGGame
             while (!Characters[curr].Alive);
             Game.HandleEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
         }
+        public void SwitchToLast()
+        {
+            Debug.Assert(Characters.Any(c => c.Alive), "AbstractTeam.Prefab.SwitchToLast():所有角色都已经死亡!");
+            int curr = CurrCharacter;
+            do
+            {
+                curr = (curr - 1) % Characters.Length;
+            }
+            while (!Characters[curr].Alive);
+            Game.HandleEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
+        }
     }
 }

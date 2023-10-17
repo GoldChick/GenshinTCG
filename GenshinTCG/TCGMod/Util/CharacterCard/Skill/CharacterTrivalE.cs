@@ -37,7 +37,7 @@ namespace TCGMod
 
         public override string NameID => _name;
 
-        public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.E};
+        public override string[] SpecialTags => new string[] { TCGBase.Tags.SkillTags.E};
 
         public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
         {

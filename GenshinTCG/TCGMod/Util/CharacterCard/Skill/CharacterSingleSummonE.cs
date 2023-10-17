@@ -13,7 +13,7 @@ namespace TCGMod
         private readonly int[] _costs;
         private readonly int _damage;
         private readonly int _element;
-        /// <param name="diceElement">默认普通攻击会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
+        /// <param name="diceElement">默认E会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
         public CharacterSingleSummonE(string nameID, AbstractCardPersistentSummon summon, int diceElement = -1)
         {
             _name = nameID;
@@ -30,7 +30,7 @@ namespace TCGMod
                 _costs[0] = 3;
             }
         }
-        /// <param name="diceElement">默认普通攻击会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
+        /// <param name="diceElement">默认E会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
         public CharacterSingleSummonE(string nameID, int element, int damage, AbstractCardPersistentSummon summon, int diceElement = -1)
         {
             _name = nameID;
@@ -58,7 +58,7 @@ namespace TCGMod
 
         public override string NameID => _name;
 
-        public override string[] Tags => new string[] { TCGBase.Tags.SkillTags.E };
+        public override string[] SpecialTags => new string[] { TCGBase.Tags.SkillTags.E };
 
         public AbstractCardPersistentSummon PersistentPool => _summon;
 

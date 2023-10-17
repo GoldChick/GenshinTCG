@@ -7,9 +7,9 @@ namespace TCGMod
     /// <summary>
     /// 把可用次数设为0
     /// </summary>
-    public class PersistentSimpleReset : IPersistentTrigger
+    public class PersistentSimpleReset : PersistentTrigger
     {
-        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public override void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             persitent.AvailableTimes = 0;
         }

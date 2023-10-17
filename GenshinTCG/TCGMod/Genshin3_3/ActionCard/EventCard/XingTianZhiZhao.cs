@@ -12,7 +12,7 @@ namespace Genshin3_3
 
         public override bool CostSame => false;
 
-        public override string[] Tags => Array.Empty<string>();
+        public override string[] SpecialTags => Array.Empty<string>();
 
         public override int[] Costs => Array.Empty<int>();
 

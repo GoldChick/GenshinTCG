@@ -6,8 +6,12 @@ namespace TCGGame
     {
         public PVPGame() : base()
         {
-            Clients = new[] { new BuiltInClient(), new BuiltInClient() };
-            Array.ForEach(Clients, c => c.InitServerSetting(null));
-        }
+            var c0 = new BuiltInClient();
+            var c1 = new BuiltInClient();
+
+            c0.InitServerSetting(null);
+            c1.InitServerSetting(null, 1);
+
+            Clients = new[] { c0, c1 };}
     }
 }

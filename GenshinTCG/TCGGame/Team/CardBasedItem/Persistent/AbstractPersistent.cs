@@ -10,6 +10,11 @@ namespace TCGGame
         public abstract AbstractCardPersistent CardBase { get; }
         public abstract int AvailableTimes { get; set; }
         /// <summary>
+        /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
+        /// -1=团队 0-5=角色 11=召唤物 12=支援区
+        /// </summary>
+        public int PersistentRegion { get; internal set; }
+        /// <summary>
         /// 是否处于激活状态，默认为True，当某次行动结算结束之后会清除未激活的effect
         /// </summary>
         public bool Active { get; set; }
@@ -60,7 +65,15 @@ namespace TCGGame
         protected AbstractPersistent(string nameid, T card) : base(nameid)
         {
             Card = card ?? throw new Exception($"AbstractPersistent<T>:找不到nameid={nameid}的类型为{typeof(T)}的ICardBase!");
-            AvailableTimes = Card.MaxUseTimes;
+            //TODO:不好看，以后改改
+            if (Card is AbstractCardPersistentSummon cs)
+            {
+                AvailableTimes = cs.InitialUseTimes;
+            }
+            else
+            {
+                AvailableTimes = Card.MaxUseTimes;
+            }
         }
         public override void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {

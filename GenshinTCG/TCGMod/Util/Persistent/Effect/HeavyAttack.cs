@@ -14,13 +14,14 @@ namespace TCGMod
         public override int MaxUseTimes => 1;
 
         public override bool DeleteWhenUsedUp => false;
-        public override Dictionary<string, IPersistentTrigger> TriggerDic => new() {
+        public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
             {TCGBase.Tags.SenderTags.AFTER_ANY_ACTION, new HeavyAttackTrigger()} ,
              };
-        public class HeavyAttackTrigger : IPersistentTrigger
+        public class HeavyAttackTrigger : PersistentTrigger
         {
             public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
             {
+                //TODO:调用错误
                 if (me.GetDiceNum() % 2 == 0)
                 {
                     persitent.AvailableTimes = 1;

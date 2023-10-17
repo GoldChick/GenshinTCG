@@ -7,9 +7,9 @@ namespace TCGMod
     /// <summary>
     /// only for Hurt_Add
     /// </summary>
-    public class PersistentYellowShield : IPersistentTrigger
+    public class PersistentYellowShield : PersistentTrigger
     {
-        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public override void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             if (persitent.AvailableTimes > 0 && variable is DamageVariable dv && sender.TeamID == me.TeamIndex)
             {

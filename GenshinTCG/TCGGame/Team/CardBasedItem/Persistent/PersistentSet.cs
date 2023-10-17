@@ -7,6 +7,7 @@ namespace TCGGame
 {
     public class PersistentSet
     {
+        public int PersistentRegion { get;init; }
     }
     public class PersistentSet<T> : PersistentSet, IPrintable where T : AbstractCardPersistent
     {
@@ -27,8 +28,13 @@ namespace TCGGame
         public int Count => _data.Count;
         public bool Full => MaxSize > 0 && MaxSize <= Count;
 
-        public PersistentSet(int size = 0, bool multisame = false, List<AbstractPersistent<T>>? data = null)
+        /// <param name="region">
+        /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
+        /// -1=团队 0-5=角色 11=召唤物 12=支援区
+        /// </param>
+        public PersistentSet(int region,int size = 0, bool multisame = false, List<AbstractPersistent<T>>? data = null)
         {
+            PersistentRegion=region;
             _data = data ?? new();
             MaxSize = size;
             MultiSame = multisame;
@@ -46,8 +52,15 @@ namespace TCGGame
                     //NOTE:按照最初的设计，在触发effect的时候不会改变effect（日后可能会导致一些bug）
                     if (t.Active)
                     {
-                        t.AvailableTimes = t.Card.MaxUseTimes;
-                        t.Data = null;
+                        //TODO:不好看，以后改
+                        if(t is AbstractPersistent<AbstractCardPersistentSummon > cs)
+                        {
+                            cs.Card.Update(cs);
+                        }else
+                        {
+                            t.AvailableTimes = t.Card.MaxUseTimes;
+                            t.Data = null;
+                        }
                     }
                     else
                     {
@@ -63,11 +76,12 @@ namespace TCGGame
         public void RemoveAt(int index) => _data.RemoveAt(index);
         public int Update() => _during ? 0 : _data.RemoveAll(p => !p.Active);
         public bool Contains(string nameid) => _data.Exists(e => e.NameID == nameid);
+        public AbstractPersistent<T>? TryGet(string nameid)=> _data.Find(e => e.NameID == nameid);
         public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
             if (_during)
             {
-                Logger.Error($"PersistentSet.EffectTrigger():结算sendertype={sender.SenderName}进入了嵌套的buff结算！");
+                //Logger.Error($"PersistentSet.EffectTrigger():结算sendertype={sender.SenderName}进入了嵌套的buff结算！");
                 foreach (var e in _data)
                 {
                     //TODO:UNKNOWN GAME STEP
@@ -91,7 +105,6 @@ namespace TCGGame
                 _during = false;
             }
         }
-
         public void Print()
         {
             foreach (var e in _data)

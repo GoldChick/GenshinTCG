@@ -7,14 +7,14 @@ namespace TCGMod
     /// <summary>
     /// 可用次数--
     /// </summary>
-    public class PersistentSimpleConsume : IPersistentTrigger
+    public class PersistentSimpleConsume : PersistentTrigger
     {
         private Func<AbstractTeam, AbstractPersistent, AbstractSender, AbstractVariable?, bool>? _condition;
         public PersistentSimpleConsume(Func<AbstractTeam, AbstractPersistent, AbstractSender, AbstractVariable?, bool>? condition = null)
         {
             _condition = condition;
         }
-        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public override void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             if (_condition == null || _condition.Invoke(me, persitent, sender, variable))
             {

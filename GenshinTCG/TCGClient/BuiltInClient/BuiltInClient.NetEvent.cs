@@ -96,7 +96,7 @@ namespace TCGClient
             Logger.Print($"使用技能!输入0-{skills.Length - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
             for (int i = 0; i < skills.Length; i++)
             {
-                Logger.Print($"{i}: {cha.NameID}_{skills[i].NameID} {JsonSerializer.Serialize(skills[i].Tags)}");
+                Logger.Print($"{i}: {cha.NameID}_{skills[i].NameID} {JsonSerializer.Serialize(skills[i].SpecialTags)}");
             }
             if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
             {
@@ -180,10 +180,12 @@ namespace TCGClient
         }
         public NetAction? Print()
         {
-            Logger.Print("Team Me Info:", ConsoleColor.DarkCyan);
-            Me.Print();
-            Logger.Print("Team Enemy Info:", ConsoleColor.DarkRed);
-            Enemy.Print();
+            var tr = new TeamRender();
+            Console.WriteLine("===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====");
+            tr.RenderEnemy(MePt,MePt.Enemy as PlayerTeam);
+            Console.WriteLine("===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====");
+            tr.RenderMe(MePt);
+            Console.WriteLine("===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====");
             return null;
         }
     }
