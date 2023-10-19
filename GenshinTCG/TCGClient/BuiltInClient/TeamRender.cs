@@ -145,7 +145,7 @@ namespace TCGClient
                 strings = new()
                 {
                         p.NameID,
-                        $"可用次数:{p.CardBase.Info(p)[0]}"
+                        $"可用:{p.CardBase.Info(p)[0]}"
                 };
                 summons[i].Update(strings);
             }

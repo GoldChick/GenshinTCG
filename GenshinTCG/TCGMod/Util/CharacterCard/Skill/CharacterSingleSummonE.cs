@@ -23,7 +23,8 @@ namespace TCGMod
             _costs = new int[8];
             if (diceElement > 0 && diceElement < 8)
             {
-                _costs[diceElement] = 3;
+                //TODO:应该是3，但是for test
+                _costs[diceElement] = 0;
             }
             else
             {

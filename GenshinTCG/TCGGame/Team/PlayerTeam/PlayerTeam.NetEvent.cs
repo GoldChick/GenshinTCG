@@ -27,7 +27,7 @@ namespace TCGGame
         public bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
         {
             ActionType.Switch or ActionType.SwitchForced =>
-                action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
+                action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].HP>0,
             ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length,
             ActionType.UseCard => action.Index < CardsInHand.Count,
             ActionType.Blend => action.Index < CardsInHand.Count,

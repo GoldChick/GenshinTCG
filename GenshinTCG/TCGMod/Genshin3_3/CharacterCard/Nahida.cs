@@ -8,7 +8,7 @@ namespace Genshin3_3
 {
     public class Nahida : AbstractCardCharacter
     {
-        public override AbstractCardSkill[] Skills => new AbstractCardSkill[] { 
+        public override AbstractCardSkill[] Skills => new AbstractCardSkill[] {
         new CharacterTrivalNormalAttack("行相",6,1),
         new 所闻编辑真如()
         };
@@ -35,11 +35,11 @@ namespace Genshin3_3
         }
         public class 所闻编辑真如 : AbstractCardSkill
         {
-            public override int[] Costs => new int[] { 1};
+            public override int[] Costs => new int[] { 1 };
 
             public override string NameID => "所闻编辑真如";
 
-            public override string[] SpecialTags => new string[] { Tags.SkillTags.E};
+            public override string[] SpecialTags => new string[] { Tags.SkillTags.E };
 
             public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
             {
@@ -61,17 +61,16 @@ namespace Genshin3_3
                     Tags.SenderTags.AFTER_HURT,
                     new((me, p, s, v) =>
                     {
-                        if (s is HurtSender hs)
+                        if (s is HurtSender hs &&  hs.Reaction!=null)
                         {
                             if (hs.TeamID==me.TeamIndex && hs.TargetIndex==p.PersistentRegion)
                             {
-                                Logger.Print("怨种印起始触发，开始broadcast!");
                                 p.AvailableTimes--;
                                 p.Data=1;
                                 me.Hurt(new DamageVariable(-1,1,DamageSource.NoWhere,0));
                                 me.EffectTrigger(me.Game,me.TeamIndex,new SimpleSender(怨种印触发));
-	                        }
-	                    }
+                            }
+                        }
                 }) },
                 {
                     怨种印触发,
@@ -80,12 +79,11 @@ namespace Genshin3_3
                         if (p.Data!=null && p.Data.Equals(1))
                         {
                             p.Data=null;
-	                    }else
+                        }else
                         {
                                 p.AvailableTimes--;
                                 p.Data=1;
-                                me.Hurt(new DamageVariable(-1,1,DamageSource.NoWhere,0));
-                                Logger.Print("怨种印连携触发!");
+                                me.Hurt(new DamageVariable(-1,1,DamageSource.NoWhere,p.PersistentRegion-me.CurrCharacter));
                         }
                 }) }
             };

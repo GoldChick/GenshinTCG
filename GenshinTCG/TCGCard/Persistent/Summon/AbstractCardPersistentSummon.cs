@@ -17,7 +17,7 @@ namespace TCGCard
         /// </summary>
         Defend
     }
-    public abstract class AbstractCardPersistentSummon : AbstractCardPersistent
+    public abstract class AbstractCardPersistentSummon : AbstractCardPersistent,ISinglePersistentProvider<AbstractCardPersistentSummon>
     {
         /// <summary>
         /// 召唤物默认为空tag<br/>
@@ -28,6 +28,9 @@ namespace TCGCard
         /// 召唤物产生时候的基础使用次数，默认和[最大次数]一样
         /// </summary>
         public virtual int InitialUseTimes { get => MaxUseTimes; }
+
+        public AbstractCardPersistentSummon PersistentPool => this;
+
         /// <summary>
         /// 重复刷新召唤物的时候会如何行动，默认为取[当前次数]和[最大次数]的最大值
         /// </summary>

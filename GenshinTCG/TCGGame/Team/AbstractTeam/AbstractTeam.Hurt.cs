@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TCGBase;
+using TCGMod;
 using TCGUtil;
 
 namespace TCGGame
@@ -18,14 +19,6 @@ namespace TCGGame
         {
             List<HurtSender> hss = new();
             overload = false;
-            if (d.Element != -1)
-            {
-                Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.ELEMENT_ENCHANT), d);
-                Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.DAMAGE_ADD), d);
-                Game.EffectTrigger(new SimpleSender(TeamIndex, Tags.SenderTags.HURT_ADD), d);
-                Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.DAMAGE_MUL), d);
-                Game.EffectTrigger(new SimpleSender(TeamIndex, Tags.SenderTags.HURT_MUL), d);
-            }
             if (d.TargetExcept)
             {
                 //except to non-except
@@ -43,9 +36,39 @@ namespace TCGGame
             else
             {
                 //only one target
-                string? reaction = GetReaction(d, out DamageVariable? mul);
-                overload = reaction == Tags.ReactionTags.OVERLOADED && d.TargetIndex == CurrCharacter;
+                string? reaction = GetReaction(d, out DamageVariable? mul);                
+                if (d.Element != -1)
+                {
+                    Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.ELEMENT_ENCHANT), d);
+                    Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.DAMAGE_ADD), d);
+                    Game.EffectTrigger(new SimpleSender(TeamIndex, Tags.SenderTags.HURT_ADD), d);
+                    Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.DAMAGE_MUL), d);
+                    Game.EffectTrigger(new SimpleSender(TeamIndex, Tags.SenderTags.HURT_MUL), d);
+                }
+
                 hss.Add(new(TeamIndex, d, reaction));
+
+                if (reaction == Tags.ReactionTags.BLOOM)
+                {
+                    Enemy.AddPersistent(new DendroCore());
+                }
+                else if (reaction == Tags.ReactionTags.BURNING)
+                {
+                    Enemy.TryAddSummon(new Burning());
+                }
+                else if (reaction == Tags.ReactionTags.CATALYZE)
+                {
+                    Enemy.AddPersistent(new CatalyzeField());
+
+                }
+                else if (reaction == Tags.ReactionTags.OVERLOADED)
+                {
+                    overload = d.TargetIndex == CurrCharacter;
+                }else if(reaction==Tags.ReactionTags.FROZEN)
+                {
+                    //TODO:frozen?
+                }
+
                 if (mul != null)
                 {
                     hss.AddRange(Hurt(out bool one_overload, mul));
@@ -80,21 +103,21 @@ namespace TCGGame
             }
             return selects;
         }
+        /// <summary>
+        /// 确定死亡的角色
+        /// </summary>
         private void CheckDie()
         {
             for (int i = 0; i < Characters.Length; i++)
             {
                 int curr = (i + CurrCharacter) % Characters.Length;
                 Character target = Characters[curr];
-                if (target.HP == 0)
+                if (target.Predie)
                 {
-                    EffectTrigger(Game, TeamIndex, new DieSender(TeamIndex, curr, true), null);
-                    if (target.HP == 0)
-                    {
-                        EffectTrigger(Game, TeamIndex, new DieSender(TeamIndex, curr), null);
-                        target.Alive = false;
-                        //TODO:掉装备
-                    }
+                    EffectTrigger(Game, TeamIndex, new DieSender(TeamIndex, curr), null);
+                    target.Predie = false;
+                    target.Alive = false;
+                    //TODO:掉装备
                 }
             }
             if (Characters.All(p => !p.Alive))
@@ -117,16 +140,50 @@ namespace TCGGame
                 Characters[hs.TargetIndex].HP -= hs.Damage;
                 Logger.Print($"{hs.TargetIndex}受伤了{hs.Damage}");
             }
+            for (int i = 0; i < Characters.Length; i++)
+            {
+                int curr = (i + CurrCharacter) % Characters.Length;
+                var cha = Characters[curr];
+                if (cha.HP == 0 && cha.Alive && !cha.Predie)
+                {
+                    EffectTrigger(Game, TeamIndex, new DieSender(TeamIndex, curr, true), null);
+                    if (cha.HP == 0)
+                    {
+                        cha.Predie = true;
+                    }
+                }
+            }
+            if (Characters.All(p => p.HP == 0))
+            {
+                //TODO:全死了之后如何结束  
+                throw new Exception("所有角色都死亡了，游戏结束！");
+            }
+            //判断共死
+            if (Characters[CurrCharacter].HP == 0 && Enemy.Characters[Enemy.CurrCharacter].HP == 0)
+            {
+                //TODO:when双方出战都没血，选择新的角色出战，应该能互相看到
+                Logger.Print("双方出战角色都被击倒！进入选择角色出战！");
+                var t0 = new Task<NetEvent>(() => Client.RequestEvent(ActionType.SwitchForced, "Die Together"));
+                var t1 = new Task<NetEvent>(() => Enemy.Client.RequestEvent(ActionType.SwitchForced, "Die Together"));
+
+                t0.Start();
+                t1.Start();
+                Task.WaitAll(t0, t1);
+
+                Game.HandleEvent(t0.Result, TeamIndex);
+                Game.HandleEvent(t1.Result, Enemy.TeamIndex);
+
+            }
             action?.Invoke();
             if (overload)
             {
                 SwitchToNext();
             }
-            CheckDie();
             foreach (var hs in hss)
             {
                 Game.EffectTrigger(hs, null);
             }
+            CheckDie();
         }
         /// <param name="action">伤害结算后，死亡结算前结算的东西</param>
         public void Hurt(DamageVariable dv, Action? action = null) => MultiHurt(new DamageVariable[] { dv }, action);
@@ -134,7 +191,6 @@ namespace TCGGame
         /// mul : targetRelative=false;<br/>
         /// 注意：调用此方法将改变角色头上的元素!
         /// </summary>
-        /// <returns></returns>
         public string? GetReaction(DamageVariable dv_person, out DamageVariable? mul)
         {
             //角色身上附着的元素(只允许附着 无0 冰1 水2 火3 雷4 草6 <b>冰+草5</b>
@@ -219,7 +275,7 @@ namespace TCGGame
                         nextElement = 5;
                         break;
 
-                    case 10 or 20 or 30 or 40://不反应，但是改变附着
+                    case 10 or 20 or 30 or 40 or 60://不反应，但是改变附着
                         nextElement = dv_person.Element;
                         break;
 
@@ -236,6 +292,8 @@ namespace TCGGame
             }
 
             Characters[dv_person.TargetIndex].Element = nextElement;
+
+            dv_person.Reaction = reaction;
 
             return reaction;
         }

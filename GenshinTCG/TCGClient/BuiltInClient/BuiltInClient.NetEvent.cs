@@ -70,7 +70,7 @@ namespace TCGClient
             for (int i = 0; i < chars.Length; i++)
             {
                 var cha = chars[i];
-                Logger.Print($"{i}: {cha.Card.NameID} Alive:{chars[i].Alive} ");
+                Logger.Print($"{i}: {cha.Card.NameID} HP:{chars[i].HP} ");
             }
             if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
             {

@@ -8,6 +8,10 @@ namespace TCGGame
     public class Character : IPrintable
     {
         public AbstractCardCharacter Card { get; protected set; }
+        /// <summary>
+        /// 表示自己在team中的位置
+        /// </summary>
+        public int Index { get; init; }
         private int _hp;
         private int _mp;
         public AbstractPersistent<AbstractCardPersistentEffect>? Weapon { get; internal set; }
@@ -25,6 +29,11 @@ namespace TCGGame
 
         public bool Alive;
         /// <summary>
+        /// 濒死状态，生命值降为0，又不被“免于被击倒”治疗会使其为true<br/>
+        /// 真死了之后又为false
+        /// </summary>
+        public bool Predie;
+        /// <summary>
         /// 为active时可以使用技能
         /// </summary>
         public bool Active;
@@ -32,6 +41,7 @@ namespace TCGGame
         public Character(AbstractCardCharacter character,int index)
         {
             Card = character;
+            Index=index; 
 
             Effects = new(index);
 

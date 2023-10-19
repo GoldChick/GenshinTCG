@@ -16,6 +16,7 @@ namespace TCGCard
         /// string: SenderTag names<br/>
         /// team: team me<br/>
         /// persistent: this buff<br/>
+        /// 通过此方式结算伤害时，对角色index的描述皆为绝对坐标，并且均为单体伤害<br/>
         /// 在#TCGMod.Util#中提供一些预设，如刷新次数，清除，黄盾，紫盾等
         /// </summary>
         public abstract Dictionary<string, PersistentTrigger> TriggerDic { get; }

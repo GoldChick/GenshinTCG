@@ -50,6 +50,10 @@
         /// </summary>
         public bool TargetExcept { get; init; }
         /// <summary>
+        /// 伤害触发的反应类型，仅在伤害结算时获得，只读
+        /// </summary>
+        public string? Reaction { get;internal set; }
+        /// <summary>
         /// 通过public方法创建的dmg的targetindex为相对坐标
         /// </summary>
         public DamageVariable(int element, int basedamage, DamageSource source, int relativeTarget, bool targetExcept = false)

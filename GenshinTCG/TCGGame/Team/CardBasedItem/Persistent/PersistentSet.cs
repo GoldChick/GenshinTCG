@@ -7,7 +7,7 @@ namespace TCGGame
 {
     public class PersistentSet
     {
-        public int PersistentRegion { get;init; }
+        public int PersistentRegion { get; init; }
     }
     public class PersistentSet<T> : PersistentSet, IPrintable where T : AbstractCardPersistent
     {
@@ -32,9 +32,9 @@ namespace TCGGame
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
         /// </param>
-        public PersistentSet(int region,int size = 0, bool multisame = false, List<AbstractPersistent<T>>? data = null)
+        public PersistentSet(int region, int size = 0, bool multisame = false, List<AbstractPersistent<T>>? data = null)
         {
-            PersistentRegion=region;
+            PersistentRegion = region;
             _data = data ?? new();
             MaxSize = size;
             MultiSame = multisame;
@@ -45,6 +45,7 @@ namespace TCGGame
         /// </summary>
         public void Add([NotNull] AbstractPersistent<T> input)
         {
+            input.PersistentRegion = PersistentRegion;
             if (MaxSize <= 0 || _data.Count < MaxSize)
             {
                 if (!MultiSame && _data.Find(p => p.NameID == input.NameID) is AbstractPersistent<T> t)
@@ -53,10 +54,11 @@ namespace TCGGame
                     if (t.Active)
                     {
                         //TODO:不好看，以后改
-                        if(t is AbstractPersistent<AbstractCardPersistentSummon > cs)
+                        if (t is AbstractPersistent<AbstractCardPersistentSummon> cs)
                         {
                             cs.Card.Update(cs);
-                        }else
+                        }
+                        else
                         {
                             t.AvailableTimes = t.Card.MaxUseTimes;
                             t.Data = null;
@@ -76,7 +78,7 @@ namespace TCGGame
         public void RemoveAt(int index) => _data.RemoveAt(index);
         public int Update() => _during ? 0 : _data.RemoveAll(p => !p.Active);
         public bool Contains(string nameid) => _data.Exists(e => e.NameID == nameid);
-        public AbstractPersistent<T>? TryGet(string nameid)=> _data.Find(e => e.NameID == nameid);
+        public AbstractPersistent<T>? TryGet(string nameid) => _data.Find(e => e.NameID == nameid);
         public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
             if (_during)

@@ -64,10 +64,9 @@ namespace TCGGame
             return false;
         }
         /// <summary>
-        /// 尝试在我方场上添加召唤物<br/>
+        /// 尝试在我方场上添加单个或多个召唤物<br/>
         /// 当我方召唤物满场时，仅在provider的召唤物全在场时会进行更新
         /// </summary>
-        /// <param name="provider"></param>
         public void TryAddSummon(IPersistentProvider<AbstractCardPersistentSummon> provider)
         {
             if (provider is ISinglePersistentProvider<AbstractCardPersistentSummon> single)
