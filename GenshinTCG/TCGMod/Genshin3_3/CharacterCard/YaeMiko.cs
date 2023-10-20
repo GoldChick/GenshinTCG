@@ -8,7 +8,7 @@ namespace Genshin3_3
     public class YaeMiko : AbstractCardCharacter
     {
         public override AbstractCardSkill[] Skills => new AbstractCardSkill[] {
-        new CharacterTrivalNormalAttack("胡灵验最是",4,1),
+        new CharacterSimpleA("胡灵验最是",4,1),
         new CharacterSingleSummonE("召唤杀生樱",new 杀生樱(),4),
         new 大秘法天胡县镇()
         };
@@ -29,11 +29,11 @@ namespace Genshin3_3
 
             public override string NameID => "大秘法天湖县镇";
 
-            public override string[] SpecialTags => new string[] { Tags.SkillTags.Q };
+            public override SkillCategory Category => SkillCategory.Q;
 
-            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
             {
-                me.Enemy.Hurt(new DamageVariable(4, 4, DamageSource.Character, 0));
+                me.Enemy.Hurt(new DamageVariable(4, 4, 0), this);
                 var s = me.Summons.TryGet("杀生樱");
                 if (s != null)
                 {
@@ -61,12 +61,12 @@ namespace Genshin3_3
                     if (p.AvailableTimes>3 &&s.TeamID==me.TeamIndex)
                     {
                         p.AvailableTimes--;
-                        me.Enemy.Hurt(new(4, 1, DamageSource.Summon, 0));
+                        me.Enemy.Hurt(new(4, 1, 0), this);
                     }})},
                  { Tags.SenderTags.ROUND_OVER,new ((me,p,s,v)=>
                  {
                     p.AvailableTimes--;
-                    me.Enemy.Hurt(new(4, 1, DamageSource.Summon, 0));
+                    me.Enemy.Hurt(new(4, 1, 0), this);
                  })}
             };
 

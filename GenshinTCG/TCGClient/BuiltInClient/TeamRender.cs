@@ -155,7 +155,7 @@ namespace TCGClient
                 strings = new()
                 {
                         p.NameID,
-                        $"可用次数:{p.CardBase.Info(p)[0]}"
+                        $"可用:{p.CardBase.Info(p)[0]}"
                 };
                 supports[i].Update(strings);
             }
@@ -179,7 +179,7 @@ namespace TCGClient
                     //TODO: when 溢出
                     for (int j = 0; j < p.Effects.Count; j++)
                     {
-                        strings.Add($"{p.Effects[j].NameID} 可用次数:{p.Effects[j].Card.Info(p.Effects[j])[0]}");
+                        strings.Add($"{p.Effects[j].NameID} 可用:{p.Effects[j].Card.Info(p.Effects[j])[0]}");
                     }
                 }
                 characters[i].Update(strings);
@@ -192,7 +192,7 @@ namespace TCGClient
                 //TODO: when 溢出
                 for (int j = 0; j < pt.Effects.Count; j++)
                 {
-                    strings.Add($"{pt.Effects[j].NameID} 可用次数:{pt.Effects[j].Card.Info(pt.Effects[j])[0]}");
+                    strings.Add($"{pt.Effects[j].NameID} 可用:{pt.Effects[j].Card.Info(pt.Effects[j])[0]}");
                 }
             }
             teamEffects.Update(strings);

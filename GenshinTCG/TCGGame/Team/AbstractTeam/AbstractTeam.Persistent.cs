@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using TCGBase;
 using TCGCard;
+using TCGMod;
 using TCGRule;
 using TCGUtil;
 
@@ -18,16 +19,15 @@ namespace TCGGame
         /// IEffect -1:团队 0-(characters.count-1):个人
         /// ISupport: 0-3顶掉的场地
         /// </summary>
-        /// <param name="per"></param>
-        /// <param name="target"></param>
+        /// <param name="bind">绑定在某个其他persistent上供检测，只对出战状态和角色状态有效</param>
         /// <returns></returns>
-        public bool AddPersistent(AbstractCardPersistent per, int target = -1)
+        public bool AddPersistent(AbstractCardPersistent per, int target = -1, AbstractPersistent? bind = null)
         {
             if (per is AbstractCardPersistentEffect ef)
             {
                 if (target == -1)
                 {
-                    Effects.Add(new Effect(ef));
+                    Effects.Add(new Effect(ef, bind));
                 }
                 else
                 {
@@ -35,7 +35,7 @@ namespace TCGGame
                     var cha = Characters[i];
                     if (cha.Alive)
                     {
-                        cha.Effects.Add(new PersonalEffect(i, ef));
+                        cha.Effects.Add(new PersonalEffect(ef, bind));
                     }
                     else
                     {
@@ -104,6 +104,22 @@ namespace TCGGame
                 }
             }
 
+        }
+        /// <summary>
+        /// 注册所有角色的被动技能，通常在游戏开始出人之前
+        /// </summary>
+        public void RegisterPassive()
+        {
+            for (int i = 0; i < Characters.Length; i++)
+            {
+                foreach (var s in Characters[i].Card.Skills)
+                {
+                    if (s is AbstractPassiveSkill ps)
+                    {
+                        AddPersistent(new Passive(ps, i));
+                    }
+                }
+            }
         }
         /// <summary>
         /// 在某一次所有的结算之后，清除not active的effect

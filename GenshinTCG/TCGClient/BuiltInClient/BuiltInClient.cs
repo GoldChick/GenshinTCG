@@ -26,7 +26,7 @@ namespace TCGClient
                 Name = "DefaultBuiltIn",
                 DefaultCardSet = new PlayerNetCardSet()
                 {
-                    Characters = new[] { "genshin3_3:xiangling", "genshin3_3:mona", "genshin3_3:keqing" },
+                    Characters = new[] { "genshin3_3:qq", "genshin3_3:yoimiya", "genshin3_3:ayaka" },
                     ActionCards = new[] { "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon", "genshin3_3:paimon" ,
                                                       "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪" ,
                                                       "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:赌徒的耳环", "genshin3_3:参量质变仪", "genshin3_3:参量质变仪" ,

@@ -21,7 +21,11 @@ namespace TCGCard
         /// 叫至冬国，实际上是愚人众?
         /// TODO:改一下名字
         /// </summary>
-        SNEZHNAYA
+        SNEZHNAYA,
+        /// <summary>
+        /// 丘丘人也算个国家算了
+        /// </summary>
+        QQ
     }
     public abstract class AbstractCardCharacter : AbstractCardServer
     {

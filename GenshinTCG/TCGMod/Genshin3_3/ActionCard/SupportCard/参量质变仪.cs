@@ -1,7 +1,6 @@
 ﻿using TCGBase;
 using TCGCard;
-using TCGMod;
-using TCGUtil;
+using TCGGame;
 
 namespace Genshin3_3
 {
@@ -40,6 +39,12 @@ namespace Genshin3_3
                             {
                                 me.Random.Next(7);
                                 //TODO:爆质变仪
+                                if (me is PlayerTeam pt)
+    {
+                                    pt.AddDice(0);
+                                    pt.AddDice(0);
+                                    pt.AddDice(0);
+    }
                             }
                         }
                     }

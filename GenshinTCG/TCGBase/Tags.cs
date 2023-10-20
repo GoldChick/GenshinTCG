@@ -97,16 +97,9 @@ namespace TCGBase
                 public static readonly string BOW = "minecraft:bow";
             }
         }
-        public static class SkillTags
-        {
-            public static readonly string PASSIVE = "minecraft:passive";
-            public static readonly string NORMAL_ATTACK = "minecraft:normal_attack";
-            public static readonly string E = "minecraft:e";
-            public static readonly string Q = "minecraft:q";
-        }
         public static class SenderTags
         {
-            public static readonly string GAME_STAGE = "minecraft:game_stage";
+            public static readonly string GAME_START = "minecraft:game_start";
 
             /// <summary>
             /// 投掷阶段
@@ -135,10 +128,10 @@ namespace TCGBase
 
             //并没有实际作用，只是占位符
             public static readonly string BEFORE_PASS = "minecraft:before_pass";
-            //附魔>增伤(火共鸣) 增伤>乘伤(护体岩铠)
+            //附魔>=增伤(火共鸣) 增伤>乘伤(护体岩铠)
             public static readonly string ELEMENT_ENCHANT = "minecraft:element_enchant";
-            public static readonly string DAMAGE_ADD = "minecraft:damage_add";
-            public static readonly string HURT_ADD = "minecraft:hurt_add";
+            public static readonly string DAMAGE_INCREASE = "minecraft:damage_add";
+            public static readonly string HURT_DECREASE = "minecraft:hurt_add";
             public static readonly string DAMAGE_MUL = "minecraft:damage_mul";
             public static readonly string HURT_MUL = "minecraft:hurt_mul";
 

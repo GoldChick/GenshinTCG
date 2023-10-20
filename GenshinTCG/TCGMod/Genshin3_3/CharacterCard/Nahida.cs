@@ -9,7 +9,7 @@ namespace Genshin3_3
     public class Nahida : AbstractCardCharacter
     {
         public override AbstractCardSkill[] Skills => new AbstractCardSkill[] {
-        new CharacterTrivalNormalAttack("行相",6,1),
+        new CharacterSimpleA("行相",6,1),
         new 所闻编辑真如()
         };
 
@@ -26,9 +26,9 @@ namespace Genshin3_3
 
             public override string NameID => throw new NotImplementedException();
 
-            public override string[] SpecialTags => throw new NotImplementedException();
+            public override SkillCategory Category => throw new NotImplementedException();
 
-            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
             {
                 throw new NotImplementedException();
             }
@@ -39,15 +39,15 @@ namespace Genshin3_3
 
             public override string NameID => "所闻编辑真如";
 
-            public override string[] SpecialTags => new string[] { Tags.SkillTags.E };
+            public override SkillCategory Category => SkillCategory.E;
 
-            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
             {
                 for (int i = 0; i < me.Enemy.Characters.Length; i++)
                 {
                     me.Enemy.AddPersistent(new 怨种印(), i);
                 }
-                me.Enemy.Hurt(new DamageVariable(6, 3, DamageSource.Character, 0));
+                me.Enemy.Hurt(new DamageVariable(6, 3, 0), this);
             }
         }
         public class 怨种印 : AbstractCardPersistentEffect
@@ -67,7 +67,7 @@ namespace Genshin3_3
                             {
                                 p.AvailableTimes--;
                                 p.Data=1;
-                                me.Hurt(new DamageVariable(-1,1,DamageSource.NoWhere,0));
+                                me.Hurt(new DamageVariable(-1,1,0),this);
                                 me.EffectTrigger(me.Game,me.TeamIndex,new SimpleSender(怨种印触发));
                             }
                         }
@@ -83,7 +83,7 @@ namespace Genshin3_3
                         {
                                 p.AvailableTimes--;
                                 p.Data=1;
-                                me.Hurt(new DamageVariable(-1,1,DamageSource.NoWhere,p.PersistentRegion-me.CurrCharacter));
+                                me.Hurt(new DamageVariable(-1,1,p.PersistentRegion-me.CurrCharacter),this);
                         }
                 }) }
             };

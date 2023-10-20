@@ -7,7 +7,7 @@ namespace Genshin3_3
     public class Qiqi : AbstractCardCharacter
     {
         public override AbstractCardSkill[] Skills => new AbstractCardSkill[] {
-        new CharacterTrivalNormalAttack("古运来剑法",1,2),
+        new CharacterSimpleA("古运来剑法",1,2),
         new CharacterSingleSummonE("寒冰鬼差",new 寒冰鬼差(),1),
         };
 
@@ -26,8 +26,9 @@ namespace Genshin3_3
             {
                 { Tags.SenderTags.ROUND_OVER,new((me,p,s,v)=>
                     {
+                        //TODO:治疗效果
                         p.AvailableTimes--;
-                        me.Enemy.Hurt(new DamageVariable(1,1,DamageSource.Summon,0));
+                        me.Enemy.Hurt(new DamageVariable(1,1,0),this);
                     })}
             };
 

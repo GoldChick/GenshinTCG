@@ -27,6 +27,10 @@ namespace TCGGame
         /// 如[桓纳兰那]
         /// </summary>
         public object? Data { get; set; }
+        /// <summary>
+        /// 依赖于的另一个persistent，在自己的persistent中编写检测机制
+        /// </summary>
+        public AbstractPersistent? Bind { get; set; }
         public AbstractPersistent(string nameid)
         {
             NameID = nameid;
@@ -62,18 +66,12 @@ namespace TCGGame
                 }
             }
         }
-        protected AbstractPersistent(string nameid, T card) : base(nameid)
+        protected AbstractPersistent(string nameid, T card, AbstractPersistent? bind = null) : base(nameid)
         {
             Card = card ?? throw new Exception($"AbstractPersistent<T>:找不到nameid={nameid}的类型为{typeof(T)}的ICardBase!");
             //TODO:不好看，以后改改
-            if (Card is AbstractCardPersistentSummon cs)
-            {
-                AvailableTimes = cs.InitialUseTimes;
-            }
-            else
-            {
-                AvailableTimes = Card.MaxUseTimes;
-            }
+            AvailableTimes = card.InitialUseTimes;
+            Bind = bind;
         }
         public override void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {

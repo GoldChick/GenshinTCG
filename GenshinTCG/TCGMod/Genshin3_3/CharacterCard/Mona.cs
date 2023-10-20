@@ -10,7 +10,7 @@ namespace Genshin3_3
         public override int MaxMP => 3;
 
         public override AbstractCardSkill[] Skills => new AbstractCardSkill[] {
-            new CharacterTrivalNormalAttack("因果点破",2,1),
+            new CharacterSimpleA("因果点破",2,1),
             new CharacterSingleSummonE("水中幻愿",2,1,new 虚影()),
             new 星命定轨()};
 
@@ -27,11 +27,11 @@ namespace Genshin3_3
             public override bool DeleteWhenUsedUp => false;
             public override int MaxUseTimes => 1;
             public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
-                { TCGBase.Tags.SenderTags.HURT_ADD, new PersistentPurpleShield(1, 1) },
+                { TCGBase.Tags.SenderTags.HURT_DECREASE, new PersistentPurpleShield(1) },
                 { TCGBase.Tags.SenderTags.ROUND_OVER, new ((me,p,s,v)=>
                 {
                     p.Active = false;
-                    me.Enemy.Hurt(new(2, 1, DamageSource.Summon, 0));
+                    me.Enemy.Hurt(new(2, 1,  0),this);
                 })}
             };
 
@@ -41,11 +41,11 @@ namespace Genshin3_3
         {
             public override int[] Costs => new int[] { 0, 0, 3 };
             public override string NameID => "星命定轨";
-            public override string[] SpecialTags => new string[] { TCGBase.Tags.SkillTags.Q };
+            public override SkillCategory Category => SkillCategory.Q;
 
-            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
             {
-                me.Enemy.Hurt(new DamageVariable(DamageSource.Character, 2, 4, 0));
+                me.Enemy.Hurt(new DamageVariable(2, 4, 0), this);
                 me.AddPersistent(new 泡影());
             }
             private class 泡影 : AbstractCardPersistentEffect
@@ -53,7 +53,7 @@ namespace Genshin3_3
                 public override int MaxUseTimes => 1;
 
                 public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
-                    { TCGBase.Tags.SenderTags.HURT_MUL,new 泡影_Trigger()} };
+                    { Tags.SenderTags.HURT_MUL,new 泡影_Trigger()} };
 
                 public override string NameID => "泡影";
                 private class 泡影_Trigger : PersistentTrigger

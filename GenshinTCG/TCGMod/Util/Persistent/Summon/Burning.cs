@@ -3,21 +3,10 @@ using TCGCard;
 
 namespace TCGMod
 {
-    public class Burning : AbstractCardPersistentSummon
+    public class Burning : SimpleSummon
     {
-        public override int MaxUseTimes => 2;
-
-        public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+        public Burning() : base("燃烧烈焰", 3,1, 2)
         {
-            { Tags.SenderTags.ROUND_OVER,new((me,p,s,v)=>
-                {
-                    me.Hurt(new DamageVariable(3,1,DamageSource.Summon,0));
-                    p.AvailableTimes--;
-                }
-            )}
         }
-        ;
-
-        public override string NameID => "燃烧烈焰";
     }
 }

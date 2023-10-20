@@ -81,6 +81,9 @@ namespace TCGGame
 
         public virtual void Gaming()
         {
+            Teams[CurrTeam].RegisterPassive();
+            Teams[1 - CurrTeam].RegisterPassive();
+
             for (int i = 0; i < 2; i++)
             {
                 if (Teams[i] is PlayerTeam pt)
@@ -99,6 +102,8 @@ namespace TCGGame
             HandleEvent(t1.Result, 1);
 
             UpdateTeam();
+
+            EffectTrigger(new SimpleSender(Tags.SenderTags.GAME_START));
 
             while (!IsGameOver())
             {
@@ -164,8 +169,6 @@ namespace TCGGame
         }
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
-            //Logger.Warning($"Global Effect Triggering : sender {sender.SenderName}");
-
             Teams[CurrTeam].EffectTrigger(this, CurrTeam, sender, variable);
             Teams[1 - CurrTeam].EffectTrigger(this, 1 - CurrTeam, sender, variable);
         }

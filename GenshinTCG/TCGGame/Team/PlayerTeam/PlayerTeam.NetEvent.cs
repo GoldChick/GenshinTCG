@@ -28,7 +28,7 @@ namespace TCGGame
         {
             ActionType.Switch or ActionType.SwitchForced =>
                 action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].HP>0,
-            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length,
+            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length && (Characters[CurrCharacter].Card.Skills[action.Index].Category!=SkillCategory.Q || Characters[CurrCharacter].MP == Characters[CurrCharacter].Card.MaxMP),
             ActionType.UseCard => action.Index < CardsInHand.Count,
             ActionType.Blend => action.Index < CardsInHand.Count,
             ActionType.Pass => true,
@@ -97,17 +97,9 @@ namespace TCGGame
                     defaultCost = new(false, action.Type == ActionType.Switch ? 1 : 0);
                     break;
                 case ActionType.UseSKill:
-                    Character character = Characters[CurrCharacter];
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
                     AbstractCardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
-                    if (skill.SpecialTags.Contains(Tags.SkillTags.Q) && character.MP != chaCard.MaxMP)
-                    {
-                        defaultCost = new(false, 114514);
-                    }
-                    else
-                    {
-                        defaultCost = new(skill.CostSame, skill.Costs);
-                    }
+                    defaultCost = new(skill.CostSame, skill.Costs);
                     break;
                 case ActionType.UseCard:
                     AbstractCardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;

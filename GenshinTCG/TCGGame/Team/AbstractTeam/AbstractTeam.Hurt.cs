@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TCGBase;
+using TCGCard;
 using TCGMod;
 using TCGUtil;
 
@@ -15,7 +16,7 @@ namespace TCGGame
         /// </summary>
         /// <param name="d">targetRelative=false</param>
         /// <param name="overload">是否有出战角色被超载</param>
-        private List<HurtSender> Hurt(out bool overload, DamageVariable d)
+        private List<HurtSender> Hurt(IDamageSource ds, out bool overload, DamageVariable d)
         {
             List<HurtSender> hss = new();
             overload = false;
@@ -27,8 +28,8 @@ namespace TCGGame
                     int index = (i + CurrCharacter) % Characters.Length;
                     if (index != d.TargetIndex)
                     {
-                        DamageVariable dv_person = new(d.Source, d.Element, d.Damage, index);
-                        hss.AddRange(Hurt(out bool one_overload, dv_person));
+                        DamageVariable dv_person = new(d.DirectSource, d.Element, d.Damage, index);
+                        hss.AddRange(Hurt(ds, out bool one_overload, dv_person));
                         overload = overload || one_overload;
                     }
                 }
@@ -36,14 +37,14 @@ namespace TCGGame
             else
             {
                 //only one target
-                string? reaction = GetReaction(d, out DamageVariable? mul);                
+                Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, Tags.SenderTags.ELEMENT_ENCHANT), d);
+                string? reaction = GetReaction(d, out DamageVariable? mul);
                 if (d.Element != -1)
                 {
-                    Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.ELEMENT_ENCHANT), d);
-                    Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.DAMAGE_ADD), d);
-                    Game.EffectTrigger(new SimpleSender(TeamIndex, Tags.SenderTags.HURT_ADD), d);
-                    Game.EffectTrigger(new SimpleSender(1 - TeamIndex, Tags.SenderTags.DAMAGE_MUL), d);
-                    Game.EffectTrigger(new SimpleSender(TeamIndex, Tags.SenderTags.HURT_MUL), d);
+                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, Tags.SenderTags.DAMAGE_INCREASE), d);
+                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, Tags.SenderTags.HURT_DECREASE), d);
+                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, Tags.SenderTags.DAMAGE_MUL), d);
+                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, Tags.SenderTags.HURT_MUL), d);
                 }
 
                 hss.Add(new(TeamIndex, d, reaction));
@@ -61,30 +62,35 @@ namespace TCGGame
                     Enemy.AddPersistent(new CatalyzeField());
 
                 }
+                else if (reaction == Tags.ReactionTags.CRYSTALLIZE)
+                {
+                    Enemy.AddPersistent(new Crystal());
+                }
                 else if (reaction == Tags.ReactionTags.OVERLOADED)
                 {
                     overload = d.TargetIndex == CurrCharacter;
-                }else if(reaction==Tags.ReactionTags.FROZEN)
+                }
+                else if (reaction == Tags.ReactionTags.FROZEN)
                 {
                     //TODO:frozen?
                 }
 
                 if (mul != null)
                 {
-                    hss.AddRange(Hurt(out bool one_overload, mul));
+                    hss.AddRange(Hurt(ds, out bool one_overload, mul));
                     overload = overload || one_overload;
                 }
             }
             return hss;
         }
         /// <returns>经过merge的hurtsender们</returns>
-        private List<HurtSender> MultiHurt(out bool overload, params DamageVariable[] dvs)
+        private List<HurtSender> MultiHurt(IDamageSource ds, out bool overload, params DamageVariable[] dvs)
         {
             overload = false;
             List<HurtSender> hss = new();
             foreach (var item in dvs)
             {
-                hss.AddRange(Hurt(out bool one_overload, item));
+                hss.AddRange(Hurt(ds, out bool one_overload, item));
                 overload = overload || one_overload;
             }
 
@@ -131,14 +137,15 @@ namespace TCGGame
             }
         }
         /// <param name="action">伤害结算后，死亡结算前结算的东西，如[风压剑]</param>
-        public void MultiHurt(DamageVariable[] dvs, Action? action = null)
+        public void MultiHurt(DamageVariable[] dvs, IDamageSource ds, Action? action = null)
         {
-            DamageVariable[] dvs_person = dvs.Select(p => p.TargetRelative ? new(p.Source, p.Element, p.Damage, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept) : p).ToArray();
-            List<HurtSender> hss = MultiHurt(out bool overload, dvs_person);
+            //assert dvs.all(p=>p.targetrelative)
+            DamageVariable[] dvs_person = dvs.Select(p => new DamageVariable(ds.DamageSource, p.Element, p.Damage, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
+            List<HurtSender> hss = MultiHurt(ds, out bool overload, dvs_person);
             foreach (var hs in hss)
             {
                 Characters[hs.TargetIndex].HP -= hs.Damage;
-                Logger.Print($"{hs.TargetIndex}受伤了{hs.Damage}");
+                Logger.Print($"{hs.TargetIndex}受伤了{hs.Damage}点{hs.Element}元素");
             }
             for (int i = 0; i < Characters.Length; i++)
             {
@@ -186,7 +193,7 @@ namespace TCGGame
             CheckDie();
         }
         /// <param name="action">伤害结算后，死亡结算前结算的东西</param>
-        public void Hurt(DamageVariable dv, Action? action = null) => MultiHurt(new DamageVariable[] { dv }, action);
+        public void Hurt(DamageVariable dv, IDamageSource ds, Action? action = null) => MultiHurt(new DamageVariable[] { dv }, ds, action);
         ///<summary>
         /// mul : targetRelative=false;<br/>
         /// 注意：调用此方法将改变角色头上的元素!
@@ -268,7 +275,7 @@ namespace TCGGame
                     case 71 or 72 or 73 or 74://扩散
                     case 75:
                         reaction = Tags.ReactionTags.SWIRL;
-                        mul = new(DamageSource.NoWhere, (currElement - 1) % 4 + 1, 1, dv_person.TargetIndex, true);
+                        mul = new(DamageSource.Addition, (currElement - 1) % 4 + 1, 1, dv_person.TargetIndex, true);
                         break;
 
                     case 61 or 16://不反应，但是冰草共存

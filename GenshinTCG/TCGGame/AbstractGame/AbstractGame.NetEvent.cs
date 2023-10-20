@@ -84,12 +84,12 @@ namespace TCGGame
                     var ski = skis[evt.Action.Index];
                     //考虑AfterUseAction中可能让角色位置改变的
                     afterEventSender = new UseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
-                    ski.AfterUseAction(t, evt.AdditionalTargetArgs);
-                    if (ski.SpecialTags.Contains(Tags.SkillTags.Q))
+                    ski.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
+                    if (ski.Category == SkillCategory.Q)
                     {
                         t.Characters[t.CurrCharacter].MP = 0;
                     }
-                    else
+                    else if (ski.GiveMP)
                     {
                         t.Characters[t.CurrCharacter].MP++;
                     }
@@ -131,7 +131,6 @@ namespace TCGGame
             }
             //after_xx 在这里结算是否是战斗行动
             EffectTrigger(afterEventSender, afterEventVariable);
-
             bool fight_action = !(afterEventVariable?.Fast ?? false);
 
             if (fight_action && CurrTeam == currTeam)

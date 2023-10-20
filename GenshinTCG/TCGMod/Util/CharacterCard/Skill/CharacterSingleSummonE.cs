@@ -59,15 +59,15 @@ namespace TCGMod
 
         public override string NameID => _name;
 
-        public override string[] SpecialTags => new string[] { TCGBase.Tags.SkillTags.E };
-
         public AbstractCardPersistentSummon PersistentPool => _summon;
 
-        public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+        public override SkillCategory Category => SkillCategory.E;
+
+        public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
         {
             if (_doDamage)
             {
-                me.Enemy.Hurt(new TCGBase.DamageVariable(_element, _damage, TCGBase.DamageSource.Character, 0));
+                me.Enemy.Hurt(new(_element, _damage, 0), this);
             }
         }
 

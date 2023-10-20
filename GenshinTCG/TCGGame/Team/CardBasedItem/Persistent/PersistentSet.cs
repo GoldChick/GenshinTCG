@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using TCGBase;
 using TCGCard;
 using TCGUtil;
@@ -25,6 +27,10 @@ namespace TCGGame
         /// 正在遍历
         /// </summary>
         private bool _during;
+        /// <summary>
+        /// 正在遍历中的缓存
+        /// </summary>
+        private List<AbstractPersistent<T>> _cash;
         public int Count => _data.Count;
         public bool Full => MaxSize > 0 && MaxSize <= Count;
 
@@ -36,6 +42,7 @@ namespace TCGGame
         {
             PersistentRegion = region;
             _data = data ?? new();
+            _cash = new();
             MaxSize = size;
             MultiSame = multisame;
         }
@@ -45,33 +52,39 @@ namespace TCGGame
         /// </summary>
         public void Add([NotNull] AbstractPersistent<T> input)
         {
-            input.PersistentRegion = PersistentRegion;
-            if (MaxSize <= 0 || _data.Count < MaxSize)
+            if (_during)
             {
-                if (!MultiSame && _data.Find(p => p.NameID == input.NameID) is AbstractPersistent<T> t)
+                _cash.Add(input);
+            }
+            else
+            {
+                input.PersistentRegion = PersistentRegion;
+                if (MaxSize <= 0 || _data.Count < MaxSize)
                 {
-                    //NOTE:按照最初的设计，在触发effect的时候不会改变effect（日后可能会导致一些bug）
-                    if (t.Active)
+                    if (!MultiSame && _data.Find(p => p.NameID == input.NameID) is AbstractPersistent<T> t)
                     {
-                        //TODO:不好看，以后改
-                        if (t is AbstractPersistent<AbstractCardPersistentSummon> cs)
+                        if (t.Active)
                         {
-                            cs.Card.Update(cs);
+                            //TODO:不好看，以后改
+                            if (t is AbstractPersistent<AbstractCardPersistentSummon> cs)
+                            {
+                                cs.Card.Update(cs);
+                            }
+                            else
+                            {
+                                t.AvailableTimes = t.Card.MaxUseTimes;
+                                t.Data = null;
+                            }
                         }
                         else
                         {
-                            t.AvailableTimes = t.Card.MaxUseTimes;
-                            t.Data = null;
+                            throw new NotImplementedException($"PersistentSet.Add():更新了已经存在，但并非active的effect:{input.NameID}!");
                         }
                     }
                     else
                     {
-                        throw new NotImplementedException("PersistentSet.Add():更新了已经存在，但并非active的effect!");
+                        _data.Add(input);
                     }
-                }
-                else
-                {
-                    _data.Add(input);
                 }
             }
         }
@@ -81,9 +94,8 @@ namespace TCGGame
         public AbstractPersistent<T>? TryGet(string nameid) => _data.Find(e => e.NameID == nameid);
         public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
-            if (_during)
+            Action a = () =>
             {
-                //Logger.Error($"PersistentSet.EffectTrigger():结算sendertype={sender.SenderName}进入了嵌套的buff结算！");
                 foreach (var e in _data)
                 {
                     //TODO:UNKNOWN GAME STEP
@@ -92,19 +104,18 @@ namespace TCGGame
                         e.EffectTrigger(game, meIndex, sender, variable);
                     }
                 }
+            };
+            if (_during)
+            {
+                a.Invoke();
             }
             else
             {
                 _during = true;
-                foreach (var e in _data)
-                {
-                    //TODO:UNKNOWN GAME STEP
-                    if (e.Active)
-                    {
-                        e.EffectTrigger(game, meIndex, sender, variable);
-                    }
-                }
+                a.Invoke();
                 _during = false;
+                _cash.ForEach(Add);
+                _cash.Clear();
             }
         }
         public void Print()

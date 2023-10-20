@@ -8,7 +8,7 @@ namespace Genshin3_3
     public class Sucrose : AbstractCardCharacter
     {
         public override AbstractCardSkill[] Skills => new AbstractCardSkill[] {
-        new CharacterTrivalNormalAttack("简式风灵作成",7,1),
+        new CharacterSimpleA("简式风灵作成",7,1),
 
         };
 
@@ -28,11 +28,11 @@ namespace Genshin3_3
 
             public override string NameID => "风灵作成·陆叁零捌";
 
-            public override string[] SpecialTags => new string[] { TCGBase.Tags.SkillTags.E };
+            public override SkillCategory Category => throw new NotImplementedException();
 
-            public override void AfterUseAction(AbstractTeam me, int[]? targetArgs = null)
+            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
             {
-                me.Enemy.Hurt(new TCGBase.DamageVariable(TCGBase.DamageSource.Character, 7, 3, 0), me.Enemy.SwitchToLast);
+                me.Enemy.Hurt(new DamageVariable(7, 3, 0), this, me.Enemy.SwitchToLast);
             }
         }
     }

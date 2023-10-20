@@ -9,7 +9,7 @@ namespace TCGMod
 
         public override Dictionary<string, PersistentTrigger> TriggerDic => new()
         {
-            {Tags.SenderTags.DAMAGE_ADD,new((me,p,s,v)=>
+            {Tags.SenderTags.DAMAGE_INCREASE,new((me,p,s,v)=>
                 {
                     if (s.TeamID==me.TeamIndex && v is DamageVariable dv && dv.TargetIndex==me.CurrCharacter && (dv.Element==4||dv.Element==6))
                     {

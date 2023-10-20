@@ -1,0 +1,18 @@
+﻿using GenshinTCG.TCGMod.Util.Persistent;
+using TCGBase;
+using TCGCard;
+using TCGGame;
+
+namespace TCGMod
+{ 
+    public class PersistentWeapon: PersistentTrigger
+    {
+        public override void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        {
+            if (PersistentFunc.IsCurrCharacterDamage(me,persitent,sender,variable,out var dv))
+            {
+                dv.Damage++;
+            }
+        }
+    }
+}

@@ -8,7 +8,7 @@ namespace TCGGame
         public Effect(string nameid) : base(nameid, Registry.Instance.Effects.GetValueOrDefault(nameid))
         {
         }
-        public Effect(AbstractCardPersistentEffect ef) : base(ef.NameID, ef)
+        public Effect(AbstractCardPersistentEffect ef, AbstractPersistent? bind=null) : base(ef.NameID, ef,bind)
         {
         }
     }

@@ -28,6 +28,9 @@ namespace Genshin3_3
             consumer.Accept(new YaeMiko());
             consumer.Accept(new Qiqi());
             consumer.Accept(new Nahida());
+            consumer.Accept(new 丘丘岩盔王());
+            consumer.Accept(new Ayaka());
+            consumer.Accept(new Yoimiya());
         }
 
         public override void RegisterEffect(IRegistryConsumer<AbstractCardPersistentEffect> consumer)

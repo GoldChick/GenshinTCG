@@ -11,6 +11,10 @@ namespace TCGCard
 
     public abstract class AbstractCardPersistent : AbstractCardServer
     {
+        /// <summary>
+        /// 产生时候的基础使用次数，默认和[最大次数]一样
+        /// </summary>
+        public virtual int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
         /// <summary>
         /// string: SenderTag names<br/>
