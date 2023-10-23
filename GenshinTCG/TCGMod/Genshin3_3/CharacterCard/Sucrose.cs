@@ -30,7 +30,7 @@ namespace Genshin3_3
 
             public override SkillCategory Category => throw new NotImplementedException();
 
-            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
+            public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
             {
                 me.Enemy.Hurt(new DamageVariable(7, 3, 0), this, me.Enemy.SwitchToLast);
             }

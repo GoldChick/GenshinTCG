@@ -9,7 +9,7 @@ namespace TCGMod
     /// </summary>
     public class PersistentSimpleReset : PersistentTrigger
     {
-        public override void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             persitent.AvailableTimes = 0;
         }

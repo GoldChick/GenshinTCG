@@ -76,7 +76,7 @@ namespace Genshin3_3
 
             public override SkillCategory Category => SkillCategory.E;
 
-            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
+            public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
             {
                 me.Enemy.Hurt(new(4, 3, 0), this);
                 Logger.Warning("刻请使用了星斗归位！并且产生了一张雷楔！");
@@ -106,7 +106,7 @@ namespace Genshin3_3
             public override bool CostSame => false;
             public override SkillCategory Category => SkillCategory.Q;
 
-            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
+            public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
             {
                 me.Enemy.MultiHurt(new DamageVariable[]
                 {

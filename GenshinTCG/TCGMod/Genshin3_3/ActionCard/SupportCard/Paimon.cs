@@ -30,7 +30,7 @@ namespace Genshin3_3
 
             private class PaimonTrigger : PersistentTrigger
             {
-                public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+                public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
                     persitent.AvailableTimes--;
                     Logger.Warning("大派触发了！");

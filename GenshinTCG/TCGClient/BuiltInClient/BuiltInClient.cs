@@ -75,7 +75,7 @@ namespace TCGClient
             }
 
         }
-        public override void UpdateTeam(AbstractTeam me, AbstractTeam enemy)
+        public override void UpdateTeam(PlayerTeam me, PlayerTeam enemy)
         {
             if(me is PlayerTeam pt)
             {

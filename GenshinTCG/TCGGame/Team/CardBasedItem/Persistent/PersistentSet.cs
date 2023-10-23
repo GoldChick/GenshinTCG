@@ -92,7 +92,7 @@ namespace TCGGame
         public int Update() => _during ? 0 : _data.RemoveAll(p => !p.Active);
         public bool Contains(string nameid) => _data.Exists(e => e.NameID == nameid);
         public AbstractPersistent<T>? TryGet(string nameid) => _data.Find(e => e.NameID == nameid);
-        public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
+        public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
             Action a = () =>
             {
@@ -101,7 +101,7 @@ namespace TCGGame
                     //TODO:UNKNOWN GAME STEP
                     if (e.Active)
                     {
-                        e.EffectTrigger(game, meIndex, sender, variable);
+                        e.EffectTrigger(me, sender, variable);
                     }
                 }
             };

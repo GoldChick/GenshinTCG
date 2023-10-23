@@ -63,7 +63,7 @@ namespace TCGMod
 
         public override SkillCategory Category => SkillCategory.E;
 
-        public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
         {
             if (_doDamage)
             {

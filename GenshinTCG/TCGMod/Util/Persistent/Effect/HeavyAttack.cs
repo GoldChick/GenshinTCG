@@ -19,7 +19,7 @@ namespace TCGMod
              };
         public class HeavyAttackTrigger : PersistentTrigger
         {
-            public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
             {
                 //TODO:调用错误
                 if (me.GetDiceNum() % 2 == 0)

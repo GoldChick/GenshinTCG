@@ -31,12 +31,17 @@ namespace TCGGame
         /// 依赖于的另一个persistent，在自己的persistent中编写检测机制
         /// </summary>
         public AbstractPersistent? Bind { get; set; }
+        /// <summary>
+        /// 依赖于自己的persistent们，此状态清除时将把list中的其他状态也清除
+        /// </summary>
+        public List<AbstractPersistent> Subs { get; }
         public AbstractPersistent(string nameid)
         {
             NameID = nameid;
             Active = true;
+            Subs = new();
         }
-        public abstract void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable);
+        public abstract void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable);
     }
     public abstract class AbstractPersistent<T> : AbstractPersistent where T : AbstractCardPersistent
     {
@@ -72,18 +77,19 @@ namespace TCGGame
             //TODO:不好看，以后改改
             AvailableTimes = card.InitialUseTimes;
             Bind = bind;
+            bind?.Subs.Add(this);
         }
-        public override void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
+        public override void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
             if (Card != null)
             {
                 if (Card.TriggerDic.TryGetValue(sender.SenderName, out var trigger))
                 {
-                    trigger?.Trigger(game.Teams[meIndex], this, sender, variable);
+                    trigger?.Trigger(me, this, sender, variable);
                 }
                 else if (Card.TriggerDic.TryGetValue(Tags.SenderTags.AFTER_ANY_ACTION, out var trigger_any))
                 {
-                    trigger_any?.Trigger(game.Teams[meIndex], this, sender, variable);
+                    trigger_any?.Trigger(me, this, sender, variable);
                 }
                 //TODO:game.Step(), such as shining?
             }

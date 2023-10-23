@@ -36,7 +36,7 @@ namespace TCGCard
         /// targetargs是可能的自定义Additionaltargetargs(需要自己维护)<br/><br/>
         /// <b>对于被动技能targetargs[0]表示teamid，并且没有additionaltargetargs</b>
         /// </summary>
-        public abstract void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null);
+        public abstract void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null);
         public override sealed string[] SpecialTags => new string[] { Category.ToString() };
         public DamageSource DamageSource => DamageSource.Character;
     }

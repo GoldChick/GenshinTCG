@@ -31,7 +31,7 @@ namespace Genshin3_3
 
             public override string NameID => "神里流霰步";
 
-            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
+            public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
             {
                 if (targetArgs[0] == me.TeamIndex && me.CurrCharacter == c.Index)
                 {

@@ -28,7 +28,7 @@ namespace Genshin3_3
 
             public override SkillCategory Category => throw new NotImplementedException();
 
-            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
+            public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
             {
                 throw new NotImplementedException();
             }
@@ -41,7 +41,7 @@ namespace Genshin3_3
 
             public override SkillCategory Category => SkillCategory.E;
 
-            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
+            public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
             {
                 for (int i = 0; i < me.Enemy.Characters.Length; i++)
                 {

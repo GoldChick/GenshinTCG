@@ -34,7 +34,7 @@ namespace Genshin3_3
 
             private class FastSwitchTrigger : PersistentTrigger
             {
-                public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+                public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
                     if (variable is FastActionVariable fav)
                     {

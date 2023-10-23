@@ -8,8 +8,8 @@ namespace TCGClient
         public ClientSetting ClientSetting { get; protected set; }
         public ServerSetting ServerSetting { get; protected set; }
 
-        public AbstractTeam Me { get; protected set; }
-        public AbstractTeam Enemy { get; protected set; }
+        public PlayerTeam Me { get; protected set; }
+        public PlayerTeam Enemy { get; protected set; }
 
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace TCGClient
         /// 服务端=>客户端
         /// 游戏进行中更新Team
         /// </summary>
-        public virtual void UpdateTeam(AbstractTeam me, AbstractTeam enemy)
+        public virtual void UpdateTeam(PlayerTeam me, PlayerTeam enemy)
         {
             Me = me;
             Enemy = enemy;

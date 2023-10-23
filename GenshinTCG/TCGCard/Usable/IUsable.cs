@@ -7,7 +7,7 @@ namespace TCGCard
     {
 
     }
-    public interface IUsable<T> : IUsable where T : AbstractTeam
+    public interface IUsable<T> : IUsable where T : PlayerTeam
     {
         public void AfterUseAction(T me, int[]? targetArgs = null);
     }

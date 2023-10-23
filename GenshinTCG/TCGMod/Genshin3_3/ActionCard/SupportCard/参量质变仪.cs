@@ -39,13 +39,14 @@ namespace Genshin3_3
                             {
                                 me.Random.Next(7);
                                 //TODO:爆质变仪
-                                if (me is PlayerTeam pt)
+
+                            }
+                           if (me is PlayerTeam pt)
     {
                                     pt.AddDice(0);
                                     pt.AddDice(0);
                                     pt.AddDice(0);
     }
-                            }
                         }
                     }
                     p.Data=0;

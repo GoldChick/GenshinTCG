@@ -43,7 +43,7 @@ namespace Genshin3_3
             public override string NameID => "星命定轨";
             public override SkillCategory Category => SkillCategory.Q;
 
-            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
+            public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
             {
                 me.Enemy.Hurt(new DamageVariable(2, 4, 0), this);
                 me.AddPersistent(new 泡影());
@@ -58,7 +58,7 @@ namespace Genshin3_3
                 public override string NameID => "泡影";
                 private class 泡影_Trigger : PersistentTrigger
                 {
-                    public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+                    public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                     {
                         if (variable is DamageVariable dv)
                         {

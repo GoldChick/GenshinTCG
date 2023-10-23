@@ -15,7 +15,7 @@ namespace TCGGame
     }
     public abstract partial class AbstractGame
     {
-        public AbstractTeam[] Teams { get; init; }
+        public PlayerTeam[] Teams { get; init; }
         /// <summary>
         /// 对战双方，暂无观战模式
         /// </summary>
@@ -30,7 +30,7 @@ namespace TCGGame
 
         public AbstractGame()
         {
-            Teams = new AbstractTeam[2];
+            Teams = new PlayerTeam[2];
             Clients = new AbstractClient[2];
 
             Registry.Instance.LoadDlls(Directory.GetCurrentDirectory() + "/mods");

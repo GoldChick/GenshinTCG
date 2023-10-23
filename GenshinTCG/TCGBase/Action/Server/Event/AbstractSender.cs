@@ -1,5 +1,90 @@
 ﻿namespace TCGBase
 {
+    //TODO:check it
+    public enum SenderTags
+    {
+        GameStart,
+        /// <summary>
+        /// 投掷阶段
+        /// </summary>
+        RollingStart,
+        /// <summary>
+        /// 行动阶段开始时
+        /// </summary>
+        RoundStart,
+        /// <summary>
+        /// 结束阶段
+        /// </summary>
+        RoundOver,
+        /// <summary>
+        /// 我方行动开始前，如[天狐霆雷]
+        /// </summary>
+        RoundMeStart,
+        #region 某个Player Action前，用于减费等
+        BeforeSwitch,
+        //并没有实际作用，只是占位符
+        BeforeBlend,
+        BeforeUseCard,
+        BeforeUseSkill,
+        //并没有实际作用，只是占位符
+        BeforePass,
+        //附魔>=增伤(火共鸣) 增伤>乘伤(护体岩铠)
+        ElementEnchant,
+        DamageIncrease,
+        HurtDecrease,
+        DamageMul,
+        HurtMul,
+        #endregion
+        #region 某个Player Action结算后，用于减少effect次数、触发其他效果等
+        AfterSwitch,
+        AfterBlend,
+        AfterUseCard,
+        AfterUseSkill,
+        AfterPass,
+        /// <summary>
+        /// 仅用于触发effect，而且仅在其他都不触发的时候触发
+        /// </summary>
+        AfterAnyAction,
+        //受到伤害后
+        AfterHurt,
+        #endregion
+        #region 处理击倒
+        /// <summary>
+        /// 击倒预处理，在此可以判定出一些“免于被击倒”之类的状态
+        /// </summary>
+        PreDie,
+        /// <summary>
+        /// 击倒处理，预处理后生命值为0才触发。
+        /// </summary>
+        Die
+        #endregion
+        /// <summary>
+        /// 将actiontype转化成对应的tag，可以用来作为sender触发一些effect
+        /// (注：若before，此时仍然是可撤回阶段)
+        /// <br/>
+        /// before_sendertag:
+        /// <br/>
+        /// 若带有Variable为<see cref="DiceCostVariable"/>则说明为减费
+        /// 若带有Variable为<see cref="CanActionVariable"/>则说明为能否行动
+        /// 若不带有任何Variable，说明只是通知一次xx行动要开始了
+        /// <br/>
+        /// after_sendertag:
+        /// <br/>
+        /// 若带有Variable为<see cref="FastActionVariable"/>则说明为是否快速行动
+        /// </summary>
+        //public static string ActionTypeToSenderTag(ActionType type, bool before = false) => type switch
+        //{
+        //    //ActionType.ReplaceSupport
+        //    ActionType.Switch or ActionType.SwitchForced => before ? BEFORE_SWITCH : AFTER_SWITCH,
+        //    ActionType.UseSKill => before ? BEFORE_USE_SKILL : AFTER_USE_SKILL,
+        //    ActionType.UseCard => before ? BEFORE_USE_CARD : AFTER_USE_CARD,
+        //    ActionType.Blend => before ? BEFORE_BLEND : AFTER_BLEND,
+        //    ActionType.Pass => before ? BEFORE_PASS : AFTER_PASS,
+        //    //TODO: when wrong
+        //    _ => throw new Exception("Tags.ActionTypeToSenderTag():传入了未知的ActionType!")
+        //};
+    }
+
     /// <summary>
     /// 用于给EffectAct传递actioninfo的sender,
     /// 能被外界读取的值(除了Tags)必须<b>不可更改</b>

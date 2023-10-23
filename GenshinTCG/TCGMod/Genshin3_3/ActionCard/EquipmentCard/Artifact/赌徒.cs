@@ -5,7 +5,7 @@ using TCGUtil;
 
 namespace Genshin3_3
 {
-    public class 赌徒 : ICardArtifact, ITargetSelector
+    public class 赌徒 : AbstractCardArtifact, ITargetSelector
     {
         public override string NameID => "赌徒的耳环";
 
@@ -33,7 +33,7 @@ namespace Genshin3_3
 
             private class 赌徒_Trigger : PersistentTrigger
             {
-                public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+                public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
                     throw new NotImplementedException();
                 }

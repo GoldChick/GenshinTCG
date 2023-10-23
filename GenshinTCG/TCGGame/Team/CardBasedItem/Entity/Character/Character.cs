@@ -50,15 +50,15 @@ namespace TCGGame
             Active = true;
         }
         ///<returns>没用</returns>
-        public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
+        public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
-            Weapon?.EffectTrigger(game, meIndex, sender, variable);
+            Weapon?.EffectTrigger(me, sender, variable);
 
-            Artifact?.EffectTrigger(game, meIndex, sender, variable);
+            Artifact?.EffectTrigger(me, sender, variable);
 
-            Talent?.EffectTrigger(game, meIndex, sender, variable);
+            Talent?.EffectTrigger(me, sender, variable);
 
-            Effects.EffectTrigger(game, meIndex, sender, variable);
+            Effects.EffectTrigger(me, sender, variable);
         }
 
         public void Print()

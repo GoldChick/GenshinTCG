@@ -38,7 +38,7 @@ namespace TCGCard
 
         public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => me.Characters[targetArgs[0]].Card.WeaponCategory == WeaponCategory;
     }
-    public abstract class ICardArtifact : AbstractCardEquipment
+    public abstract class AbstractCardArtifact : AbstractCardEquipment
     {
 
     }

@@ -16,7 +16,7 @@ namespace TCGGame
         }
         private void ReRollDice()
         {
-            Logger.Error("PlayerTeam:ReRoll还没做");
+            Logger.Error("AbstractTeam:ReRoll还没做");
             //TODO:need request
         }
 
@@ -36,7 +36,7 @@ namespace TCGGame
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public override int GetDiceNum(int type = 0) => Dices.FindAll(p=>p==type).Count;
+        public int GetDiceNum(int type = 0) => Dices.FindAll(p=>p==type).Count;
         /// <summary>
         /// 获得一个骰子,当骰子数量不满16个时才能获得成功
         /// </summary>

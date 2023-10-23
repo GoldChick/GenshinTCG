@@ -1,4 +1,6 @@
-﻿using TCGBase;
+﻿using System;
+using System.Text.Json;
+using TCGBase;
 using TCGCard;
 using TCGUtil;
 
@@ -6,29 +8,15 @@ namespace TCGGame
 {
     public partial class PlayerTeam
     {
-        protected override bool IsTargetValid(TargetEnum e, int arg) => e switch
-        {
-            TargetEnum.Card_Me => arg >= 0 && arg < CardsInHand.Count,
-            TargetEnum.Character_Me => arg >= 0 && arg < Characters.Length,
-            TargetEnum.Character_Enemy => arg >= 0 && arg < Enemy.Characters.Length,
-            //TargetEnum.Dice => arg >= 0 && arg < Characters.Length,
-            //TargetEnum.MultiCard => arg >= 0,
-            //TargetEnum.MultiDice => arg >= 0 && arg < Characters.Length,
-            TargetEnum.Summon_Me => arg >= 0 && arg < Summons.Count,
-            TargetEnum.Summon_Enemy => arg >= 0 && arg < Enemy.Summons.Count,
-            TargetEnum.Support_Me => arg >= 0 && arg < Supports.Count,
-            TargetEnum.Support_Enemy => arg >= 0 && arg < Enemy.Supports.Count,
-            _ => false
-        };
-        public override bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Action) && IsTargetValid(evt) && IsDiceValid(evt);
+        public bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Action) && IsTargetValid(evt) && IsDiceValid(evt);
         /// <summary>
         /// 判断action.Index是否在合适范围
         /// </summary>
         public bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
         {
             ActionType.Switch or ActionType.SwitchForced =>
-                action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].HP>0,
-            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length && (Characters[CurrCharacter].Card.Skills[action.Index].Category!=SkillCategory.Q || Characters[CurrCharacter].MP == Characters[CurrCharacter].Card.MaxMP),
+                action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].HP > 0,
+            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length && (Characters[CurrCharacter].Card.Skills[action.Index].Category != SkillCategory.Q || Characters[CurrCharacter].MP == Characters[CurrCharacter].Card.MaxMP),
             ActionType.UseCard => action.Index < CardsInHand.Count,
             ActionType.Blend => action.Index < CardsInHand.Count,
             ActionType.Pass => true,
@@ -88,7 +76,27 @@ namespace TCGGame
             }
             return enums;
         }
-        protected override void GetEventInitialDiceRequirement(NetAction action, out Cost defaultCost)
+
+        /// <summary>
+        /// 当action不合法时，返回需要Cost非常多的NetEventRequire
+        /// </summary>
+        public virtual NetEventRequire GetEventFinalDiceRequirement(NetAction action, bool forced = false)
+        {
+            // DefaultCost 
+            GetEventInitialDiceRequirement(action, out Cost defaultCost);
+
+            DiceCostVariable c = new(defaultCost);
+
+            string tag = Tags.SenderTags.ActionTypeToSenderTag(action.Type, true);
+
+            if (action.Type != ActionType.SwitchForced)
+            {
+                EffectTrigger(Game, TeamIndex, new SimpleSender(TeamIndex, tag), c);
+            }
+            return new(c.Cost);
+        }
+        /// <param name="defaultCost">其实只是这个action最初需要的骰子，不经过任何的减费加费</param>
+        protected void GetEventInitialDiceRequirement(NetAction action, out Cost defaultCost)
         {
             switch (action.Type)
             {
@@ -118,5 +126,23 @@ namespace TCGGame
                     throw new NotImplementedException($"PlayerTeam.NetEvent.GetEventInitialDiceRequirement():还没有实现{action.Type}的情况！");
             }
         }
+
+        /// <summary>
+        /// 判断targetenum所需要的targetarg是否合理
+        /// </summary>
+        protected virtual bool IsTargetValid(TargetEnum e, int arg) => e switch
+        {
+            TargetEnum.Card_Me => arg >= 0 && arg < CardsInHand.Count,
+            TargetEnum.Character_Me => arg >= 0 && arg < Characters.Length,
+            TargetEnum.Character_Enemy => arg >= 0 && arg < Enemy.Characters.Length,
+            //TargetEnum.Dice => arg >= 0 && arg < Characters.Length,
+            //TargetEnum.MultiCard => arg >= 0,
+            //TargetEnum.MultiDice => arg >= 0 && arg < Characters.Length,
+            TargetEnum.Summon_Me => arg >= 0 && arg < Summons.Count,
+            TargetEnum.Summon_Enemy => arg >= 0 && arg < Enemy.Summons.Count,
+            TargetEnum.Support_Me => arg >= 0 && arg < Supports.Count,
+            TargetEnum.Support_Enemy => arg >= 0 && arg < Enemy.Supports.Count,
+            _ => false
+        };
     }
 }

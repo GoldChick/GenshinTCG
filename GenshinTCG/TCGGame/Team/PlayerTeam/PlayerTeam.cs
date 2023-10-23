@@ -1,41 +1,99 @@
 ﻿using System.Text.Json;
 using TCGBase;
+using TCGCard;
+using TCGClient;
 using TCGUtil;
 
 namespace TCGGame
 {
-    public partial class PlayerTeam : AbstractTeam
+    public partial class PlayerTeam : IPrintable
     {
+        internal AbstractGame Game { get; private init; }
+        /// <summary>
+        /// 在Game.Teams中的index
+        /// </summary>
+        internal int TeamIndex { get; private init; }
+        internal PlayerTeam Enemy => Game.Teams[1 - TeamIndex];
+        internal AbstractClient Client { get => Game.Clients[TeamIndex]; }
+        /// <summary>
+        /// TODO:用于:TODO
+        /// </summary>
+        public bool IsPreviewMode { get; }
+        /// <summary>
+        /// 为True则为骰子模式,需要消耗骰子;为False则为行动模式,不需要骰子(NOTE:很远的将来)
+        /// </summary>
+        public bool UseDice { get; protected init; }
+        /// <summary>
+        /// 只允许使用队内的random
+        /// </summary>
+        internal CounterRandom Random { get; init; }
+        /// <summary>
+        /// 用于pvp模式仅限4个角色(NOTE:pve-很远的将来)
+        /// </summary>
+        public Character[] Characters { get; protected init; }
+
+
+        public PersistentSet<AbstractCardPersistentSupport> Supports { get; init; }
+        public PersistentSet<AbstractCardPersistentSummon> Summons { get; init; }
+        public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
+
+        public int CurrCharacter { get; internal set; }
+        public bool Pass { get; internal set; }
+
         internal List<ActionCard> LeftCards { get; init; }
         public List<ActionCard> CardsInHand { get; init; }
         /// <summary>
         /// max_size=16,默认顺序为 万能 冰水火雷岩草风(0-7)
         /// </summary>
-        protected List<int> Dices { get; } = new();
+        protected List<int> Dices { get; }
+        public PlayerTeam(AbstractGame game, int index)
+        {
+            CurrCharacter = -1;
+            Pass = false;
+            Dices = new();
+            Random = new();//TODO:SEED
 
+            Supports = new(12, 4, true);
+            Summons = new(11, 4);
+            Effects = new(-1);
+
+            Game = game;
+            TeamIndex = index;
+        }
         /// <param name="cardset">经过处理确认正确的卡组</param>
-        public PlayerTeam(ServerPlayerCardSet cardset, AbstractGame game, int index) : base(game, index)
+        public PlayerTeam(ServerPlayerCardSet cardset, AbstractGame game, int index) : this(game, index)
         {
             UseDice = true;
-            Characters = cardset.CharacterCards.Select((c,i) => new Character(c,i)).ToArray();
+            Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i)).ToArray();
             LeftCards = cardset.ActionCards.Select(a => new ActionCard(a)).ToList();
             CardsInHand = new();
         }
-
-
-        public override void RoundStart()
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool ReplaceAssist()
+        {
+            return false;
+        }
+        /// <summary>
+        /// 回合开始时最先调用，如扔骰子等
+        /// </summary>
+        public virtual void RoundStart()
         {
             Logger.Print("team:start");
             DiceRollingVariable v = new(TeamIndex);
             Game.EffectTrigger(new SimpleSender(Tags.SenderTags.ROLLING_START), v);
             RollDice(v);
         }
-        public override void RoundEnd()
+        /// <summary>
+        /// 回合结束时最后调用，如清理骰子等
+        /// </summary>
+        public virtual void RoundEnd()
         {
             Dices.Clear();
             RollCard(2);
         }
-        public override void Print()
+        public virtual void Print()
         {
             Logger.Print($"Index:{TeamIndex}");
             Logger.Print($"Pass:{Pass}");
@@ -50,9 +108,8 @@ namespace TCGGame
             Supports.Print();
             Logger.Print($"Summons:");
             Summons.Print();
-            CardsInHand.ForEach( c => c.Print());
+            CardsInHand.ForEach(c => c.Print());
             Logger.Print($"");
         }
     }
-
 }

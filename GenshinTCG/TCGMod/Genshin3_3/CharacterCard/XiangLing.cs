@@ -31,7 +31,7 @@ namespace Genshin3_3
 
             public override SkillCategory Category => SkillCategory.Q;
 
-            public override void AfterUseAction(AbstractTeam me, Character c, int[]? targetArgs = null)
+            public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
             {
                 me.Enemy.Hurt(new DamageVariable(3, 3, 0), this);
                 me.AddPersistent(new 火轮());
