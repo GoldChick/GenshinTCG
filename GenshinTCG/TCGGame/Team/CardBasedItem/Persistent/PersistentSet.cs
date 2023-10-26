@@ -11,6 +11,7 @@ namespace TCGGame
     {
         public int PersistentRegion { get; init; }
     }
+    public delegate void EventPersistentSetHandler(PlayerTeam me, AbstractSender? s, AbstractVariable? v);
     public class PersistentSet<T> : PersistentSet, IPrintable where T : AbstractCardPersistent
     {
         /// <summary>
@@ -23,14 +24,8 @@ namespace TCGGame
         public bool MultiSame { get; init; }
 
         private readonly List<AbstractPersistent<T>> _data;
-        /// <summary>
-        /// 正在遍历
-        /// </summary>
-        private bool _during;
-        /// <summary>
-        /// 正在遍历中的缓存
-        /// </summary>
-        private List<AbstractPersistent<T>> _cash;
+
+        private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
         public int Count => _data.Count;
         public bool Full => MaxSize > 0 && MaxSize <= Count;
 
@@ -42,7 +37,7 @@ namespace TCGGame
         {
             PersistentRegion = region;
             _data = data ?? new();
-            _cash = new();
+            _handlers = new();
             MaxSize = size;
             MultiSame = multisame;
         }
@@ -52,70 +47,53 @@ namespace TCGGame
         /// </summary>
         public void Add([NotNull] AbstractPersistent<T> input)
         {
-            if (_during)
+            input.PersistentRegion = PersistentRegion;
+            if (MaxSize <= 0 || _data.Count < MaxSize)
             {
-                _cash.Add(input);
-            }
-            else
-            {
-                input.PersistentRegion = PersistentRegion;
-                if (MaxSize <= 0 || _data.Count < MaxSize)
+                if (!MultiSame && _data.Find(p => p.NameID == input.NameID) is AbstractPersistent<T> t)
                 {
-                    if (!MultiSame && _data.Find(p => p.NameID == input.NameID) is AbstractPersistent<T> t)
+                    if (t.Active)
                     {
-                        if (t.Active)
+                        //TODO:不好看，以后改
+                        if (t is AbstractPersistent<AbstractCardPersistentSummon> cs)
                         {
-                            //TODO:不好看，以后改
-                            if (t is AbstractPersistent<AbstractCardPersistentSummon> cs)
-                            {
-                                cs.Card.Update(cs);
-                            }
-                            else
-                            {
-                                t.AvailableTimes = t.Card.MaxUseTimes;
-                                t.Data = null;
-                            }
+                            cs.Card.Update(cs);
                         }
                         else
                         {
-                            throw new NotImplementedException($"PersistentSet.Add():更新了已经存在，但并非active的effect:{input.NameID}!");
+                            t.AvailableTimes = t.Card.MaxUseTimes;
+                            t.Data = null;
                         }
                     }
                     else
                     {
-                        _data.Add(input);
+                        throw new NotImplementedException($"PersistentSet.Add():更新了已经存在，但并非active的effect:{input.NameID}!");
                     }
+                }
+                else
+                {
+                    _data.Add(input);
+                    Register(input);
                 }
             }
         }
         public void RemoveAt(int index) => _data.RemoveAt(index);
-        public int Update() => _during ? 0 : _data.RemoveAll(p => !p.Active);
+        public void Update()
+        {
+            _data.Where(p => !p.Active).ToList().ForEach(Unregister);
+            _data.RemoveAll(p => !p.Active);
+        }
         public bool Contains(string nameid) => _data.Exists(e => e.NameID == nameid);
         public AbstractPersistent<T>? TryGet(string nameid) => _data.Find(e => e.NameID == nameid);
         public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
-            Action a = () =>
+            if (_handlers.TryGetValue(sender.SenderName, out var hs))
             {
-                foreach (var e in _data)
-                {
-                    //TODO:UNKNOWN GAME STEP
-                    if (e.Active)
-                    {
-                        e.EffectTrigger(me, sender, variable);
-                    }
-                }
-            };
-            if (_during)
-            {
-                a.Invoke();
+                hs?.Invoke(me, sender, variable);
             }
-            else
+            if (_handlers.TryGetValue(SenderTags.AfterAnyAction.ToString(), out hs))
             {
-                _during = true;
-                a.Invoke();
-                _during = false;
-                _cash.ForEach(Add);
-                _cash.Clear();
+                hs?.Invoke(me, sender, variable);
             }
         }
         public void Print()
@@ -123,6 +101,39 @@ namespace TCGGame
             foreach (var e in _data)
             {
                 Logger.Print($"{e.NameID} 可用次数{e.AvailableTimes}/{e.Card.MaxUseTimes}");
+            }
+        }
+        private EventPersistentSetHandler PersistentHandelerConvert(AbstractPersistent<T> p, EventPersistentHandler value)
+        {
+            return (me, s, v) =>
+            {
+                if (p.Active)
+                {
+                    value.Invoke(me, p, s, v);
+                }
+            };
+        }
+        private void Register(AbstractPersistent<T> p)
+        {
+            //TODO:是否需要在其他地方额外统一注册kvp.key
+            foreach (var kvp in p.Card.TriggerDic)
+            {
+                var h = PersistentHandelerConvert(p, kvp.Value);
+                if (!_handlers.ContainsKey(kvp.Key))
+                {
+                    _handlers.Add(kvp.Key, h);
+                }
+                else
+                {
+                    _handlers[kvp.Key] += h;
+                }
+            }
+        }
+        private void Unregister(AbstractPersistent<T> p)
+        {
+            foreach (var kvp in p.Card.TriggerDic)
+            {
+                _handlers[kvp.Key] -= PersistentHandelerConvert(p, kvp.Value);
             }
         }
     }

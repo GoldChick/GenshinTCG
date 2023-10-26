@@ -81,18 +81,15 @@ namespace TCGGame
         }
         public override void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
-            if (Card != null)
+            if (Card.TriggerDic.TryGetValue(sender.SenderName, out var trigger))
             {
-                if (Card.TriggerDic.TryGetValue(sender.SenderName, out var trigger))
-                {
-                    trigger?.Trigger(me, this, sender, variable);
-                }
-                else if (Card.TriggerDic.TryGetValue(Tags.SenderTags.AFTER_ANY_ACTION, out var trigger_any))
-                {
-                    trigger_any?.Trigger(me, this, sender, variable);
-                }
-                //TODO:game.Step(), such as shining?
+                trigger?.Invoke(me, this, sender, variable);
             }
+            else if (Card.TriggerDic.TryGetValue(Tags.SenderTags.AFTER_ANY_ACTION, out var trigger_any))
+            {
+                trigger_any?.Invoke(me, this, sender, variable);
+            }
+            //TODO:game.Step(), such as shining?
         }
     }
 }

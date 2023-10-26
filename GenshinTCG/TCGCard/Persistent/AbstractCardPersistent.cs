@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using TCGBase;
 
 namespace TCGCard
 {
@@ -23,7 +24,7 @@ namespace TCGCard
         /// 通过此方式结算伤害时，对角色index的描述皆为绝对坐标，并且均为单体伤害<br/>
         /// 在#TCGMod.Util#中提供一些预设，如刷新次数，清除，黄盾，紫盾等
         /// </summary>
-        public abstract Dictionary<string, PersistentTrigger> TriggerDic { get; }
+        public abstract PersistentTriggerDictionary TriggerDic { get; }
         /// <summary>
         /// 可用次数为0时是否立即删除(表现为记active为false，下次/本次结算完毕后清除)<br/>
         /// 为false时，需要自己手动控制AbstractPersistent.Active，每次结算(update())会清除所有deactive的effect

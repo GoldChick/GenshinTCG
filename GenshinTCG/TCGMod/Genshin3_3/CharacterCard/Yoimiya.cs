@@ -40,9 +40,9 @@ namespace Genshin3_3
             {
                 public override int MaxUseTimes => 2;
 
-                public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+                public override PersistentTriggerDictionary TriggerDic => new()
                 {
-                    { Tags.SenderTags.ELEMENT_ENCHANT,new((me,p,s,v)=>
+                    { Tags.SenderTags.ELEMENT_ENCHANT,(me,p,s,v)=>
                         {
                             if (PersistentFunc.IsCurrCharacterDamage(me,p,s,v,out var dv))
                             {
@@ -54,7 +54,7 @@ namespace Genshin3_3
                                 }
                             }
                         }
-                    )}
+                    }
                 };
 
                 public override string NameID => "点燃引信";
@@ -64,17 +64,16 @@ namespace Genshin3_3
         {
             public override int MaxUseTimes => 2;
 
-            public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+            public override PersistentTriggerDictionary TriggerDic => new()
             {
-                { Tags.SenderTags.ROUND_START,new((me,p,s,v)=>p.AvailableTimes--)},
-                { Tags.SenderTags.AFTER_USE_SKILL,new((me,p,s,v)=>
+                { Tags.SenderTags.ROUND_START,(me, p, s, v) => p.AvailableTimes --},
+                { Tags.SenderTags.AFTER_USE_SKILL,(me, p, s, v) => 
+                {
+                    if(s is UseSkillSender usks && usks.Skill.Category == SkillCategory.A) 
                     {
-                        if (s is UseSkillSender usks && usks.Skill.Category==SkillCategory.A)
-                        {
-                            me.Enemy.Hurt(new(3,1,0),this);
-                        }
-                    }
-                )}
+                        me.Enemy.Hurt(new(3, 1, 0), this); 
+                    } 
+                }}
             };
 
             public override string NameID => "协同攻击烟花";

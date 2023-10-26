@@ -40,10 +40,10 @@ namespace Genshin3_3
             {
                 public override int MaxUseTimes => 3;
 
-                public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+                public override PersistentTriggerDictionary TriggerDic => new()
                 {
                     {Tags.SenderTags.HURT_DECREASE,new PersistentPurpleShield(1) },
-                    {Tags.SenderTags.ROUND_START,new((me,p,s,v)=>me.AddPersistent(new 坚岩之力(),p.PersistentRegion,p))}
+                    {Tags.SenderTags.ROUND_START,(me, p, s, v) => me.AddPersistent(new 坚岩之力(), p.PersistentRegion, p)}
                 };
 
                 public override string NameID => "岩盔";
@@ -52,9 +52,9 @@ namespace Genshin3_3
             {
                 public override int MaxUseTimes => 1;
 
-                public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+                public override PersistentTriggerDictionary TriggerDic => new()
                 {
-                    { Tags.SenderTags.ELEMENT_ENCHANT,new((me,p,s,v)=>
+                    { Tags.SenderTags.ELEMENT_ENCHANT,(me,p,s,v)=>
                         {
                             if (PersistentFunc.IsCurrCharacterDamage(me,p,s,v,out var dv))
                             {
@@ -63,7 +63,7 @@ namespace Genshin3_3
                                 p.AvailableTimes--;
                             }
                         }
-                    )}
+                    }
                 };
 
                 public override string NameID => "坚岩之力";

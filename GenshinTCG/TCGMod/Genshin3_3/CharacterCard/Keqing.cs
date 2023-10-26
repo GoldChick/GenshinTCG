@@ -41,10 +41,10 @@ namespace Genshin3_3
 
             public override string NameID => "雷楔_effect";
 
-            public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+            public override PersistentTriggerDictionary TriggerDic => new()
             {
-                { Tags.SenderTags.ROUND_ME_START,new((me,p,s,v)=>me.Game.HandleEvent(new(new(ActionType.UseSKill, 1)), me.TeamIndex)) },
-                { Tags.SenderTags.AFTER_USE_SKILL, new((me,p,s,v)=>p.AvailableTimes--)}
+                { Tags.SenderTags.ROUND_ME_START,(me, p, s, v) => me.Game.HandleEvent(new(new(ActionType.UseSKill, 1)), me.TeamIndex) },
+                { Tags.SenderTags.AFTER_USE_SKILL, (me, p, s, v) => p.AvailableTimes --}
             };
         }
     }

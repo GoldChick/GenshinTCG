@@ -40,17 +40,9 @@ namespace Genshin3_3
             {
                 public override int MaxUseTimes => 2;
 
-                public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+                public override PersistentTriggerDictionary TriggerDic => new()
                 {
-                    { Tags.SenderTags.AFTER_USE_SKILL,new((me,p,s,v)=>
-                    {
-                        if (s is UseSkillSender ski && ski.Skill is not 旋火轮)
-                        {
-                            me.Enemy.Hurt(new DamageVariable(3, 2, 0), this);
-                            p.AvailableTimes--;
-                        }
-                    }
-                    )}
+                    { Tags.SenderTags.AFTER_USE_SKILL,(me, p, s, v) => { if(s is UseSkillSender ski && ski.Skill is not 旋火轮) { me.Enemy.Hurt(new DamageVariable(3, 2, 0), this); p.AvailableTimes --; } }}
                 };
 
 
@@ -62,13 +54,8 @@ namespace Genshin3_3
     {
         public override int MaxUseTimes => 2;
 
-        public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
-            { Tags.SenderTags.ROUND_OVER,new((me,p,s,v)=>
-                {
-                    me.Enemy.Hurt(new(3, 2, 0),this);
-                    p.AvailableTimes--;
-                }
-            )}};
+        public override PersistentTriggerDictionary TriggerDic => new() {
+            { Tags.SenderTags.ROUND_OVER,(me, p, s, v) => { me.Enemy.Hurt(new(3, 2, 0), this); p.AvailableTimes --; }}};
 
         public override string NameID => "guoba";
     }

@@ -26,7 +26,7 @@ namespace Genshin3_3
 
             public override string[] SpecialTags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
 
-            public override Dictionary<string, PersistentTrigger> TriggerDic => new() { { TCGBase.Tags.SenderTags.ROUND_START, new PaimonTrigger() } };
+            public override PersistentTriggerDictionary TriggerDic => new() { { TCGBase.Tags.SenderTags.ROUND_START, new PaimonTrigger() } };
 
             private class PaimonTrigger : PersistentTrigger
             {

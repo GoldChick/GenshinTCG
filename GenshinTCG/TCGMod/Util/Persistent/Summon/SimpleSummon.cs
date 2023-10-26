@@ -22,14 +22,9 @@ namespace TCGMod
         }
         public override int MaxUseTimes => _maxusetimes;
 
-        public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+        public override PersistentTriggerDictionary TriggerDic => new()
         {
-            { Tags.SenderTags.ROUND_OVER,new((me,p,s,v)=>
-                {
-                    me.Enemy.Hurt(new(_element,_damage,0),this);
-                    p.AvailableTimes--;
-                }
-            )}
+            { Tags.SenderTags.ROUND_OVER,(me, p, s, v) => { me.Enemy.Hurt(new(_element, _damage, 0), this); p.AvailableTimes --; }}
         };
 
         public override string NameID => _nameID;

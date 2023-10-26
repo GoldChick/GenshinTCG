@@ -26,13 +26,13 @@ namespace Genshin3_3
         {
             public override bool DeleteWhenUsedUp => false;
             public override int MaxUseTimes => 1;
-            public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
-                { TCGBase.Tags.SenderTags.HURT_DECREASE, new PersistentPurpleShield(1) },
-                { TCGBase.Tags.SenderTags.ROUND_OVER, new ((me,p,s,v)=>
+            public override PersistentTriggerDictionary TriggerDic => new() {
+                { Tags.SenderTags.HURT_DECREASE, new PersistentPurpleShield(1) },
+                { Tags.SenderTags.ROUND_OVER, (me,p,s,v)=>
                 {
                     p.Active = false;
                     me.Enemy.Hurt(new(2, 1,  0),this);
-                })}
+                }}
             };
 
             public override string NameID => "虚影";
@@ -52,7 +52,7 @@ namespace Genshin3_3
             {
                 public override int MaxUseTimes => 1;
 
-                public override Dictionary<string, PersistentTrigger> TriggerDic => new() {
+                public override PersistentTriggerDictionary TriggerDic => new() {
                     { Tags.SenderTags.HURT_MUL,new 泡影_Trigger()} };
 
                 public override string NameID => "泡影";

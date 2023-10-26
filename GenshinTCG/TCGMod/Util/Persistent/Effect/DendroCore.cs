@@ -7,7 +7,7 @@ namespace TCGMod
     {
         public override int MaxUseTimes => 1;
 
-        public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+        public override PersistentTriggerDictionary TriggerDic => new()
         {
             { Tags.SenderTags.DAMAGE_INCREASE,new PersistentTrigger((me,p,s,v)=>
                 {

@@ -19,16 +19,18 @@ namespace Genshin3_3
         {
             public override int MaxUseTimes => 0;
             public override bool DeleteWhenUsedUp => false;
-            public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+            public override PersistentTriggerDictionary TriggerDic => new()
             {
-                { Tags.SenderTags.BEFORE_USE_SKILL,new ((me,p,s,v)=>{p.Data=1; })},
-                { Tags.SenderTags.AFTER_HURT,new ((me,p,s,v)=>{
+                { Tags.SenderTags.BEFORE_USE_SKILL,(me,p,s,v)=>p.Data=1},
+                { Tags.SenderTags.AFTER_HURT,(me,p,s,v)=>
+                {
                     if (p.Data!=null && p.Data.Equals(1)&& s is HurtSender hs && hs.Element>0)
                     {
                         p.Data=2;
                     }
-                })},
-                { Tags.SenderTags.AFTER_USE_SKILL,new ((me,p,s,v)=>{
+                }},
+                { Tags.SenderTags.AFTER_USE_SKILL,(me,p,s,v)=>
+                {
                     if (p.Data!=null && p.Data.Equals(2))
                     {
                         p.AvailableTimes++;
@@ -50,7 +52,7 @@ namespace Genshin3_3
                         }
                     }
                     p.Data=0;
-                })}
+                }}
             };
 
             public override string NameID => "参量质变仪_P";

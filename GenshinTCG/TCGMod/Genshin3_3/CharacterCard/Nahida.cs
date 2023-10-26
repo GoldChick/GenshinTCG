@@ -55,37 +55,16 @@ namespace Genshin3_3
             private readonly static string 怨种印触发 = "genshin3_3:怨种印触发";
             public override int MaxUseTimes => 2;
 
-            public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+            public override PersistentTriggerDictionary TriggerDic => new()
             {
                 {
                     Tags.SenderTags.AFTER_HURT,
-                    new((me, p, s, v) =>
-                    {
-                        if (s is HurtSender hs &&  hs.Reaction!=null)
-                        {
-                            if (hs.TeamID==me.TeamIndex && hs.TargetIndex==p.PersistentRegion)
-                            {
-                                p.AvailableTimes--;
-                                p.Data=1;
-                                me.Hurt(new DamageVariable(-1,1,0),this);
-                                me.EffectTrigger(me.Game,me.TeamIndex,new SimpleSender(怨种印触发));
-                            }
-                        }
-                }) },
+                    (me, p, s, v) => { if(s is HurtSender hs && hs.Reaction != null) { if(hs.TeamID == me.TeamIndex && hs.TargetIndex == p.PersistentRegion) { p.AvailableTimes --; p.Data = 1; me.Hurt(new DamageVariable(-1, 1, 0), this); me.EffectTrigger(me.Game, me.TeamIndex, new SimpleSender(怨种印触发)); } } } 
+                },
                 {
                     怨种印触发,
-                    new((me, p, s, v) =>
-                    {
-                        if (p.Data!=null && p.Data.Equals(1))
-                        {
-                            p.Data=null;
-                        }else
-                        {
-                                p.AvailableTimes--;
-                                p.Data=1;
-                                me.Hurt(new DamageVariable(-1,1,p.PersistentRegion-me.CurrCharacter),this);
-                        }
-                }) }
+                    (me, p, s, v) => { if(p.Data != null && p.Data.Equals(1)) { p.Data = null; } else { p.AvailableTimes --; p.Data = 1; me.Hurt(new DamageVariable(-1, 1, p.PersistentRegion - me.CurrCharacter), this); } } 
+                }
             };
 
             public override string NameID => "怨种印";

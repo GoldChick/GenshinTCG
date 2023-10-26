@@ -1,5 +1,7 @@
 ﻿using System.Collections.Immutable;
+using TCGBase;
 using TCGCard;
+using TCGGame;
 
 namespace TCGMod
 {
@@ -9,22 +11,23 @@ namespace TCGMod
     internal class Passive : AbstractCardPersistentEffect
     {
         private readonly string _nameID;
-        private readonly Dictionary<string, PersistentTrigger> _triggerDic;
+        private readonly PersistentTriggerDictionary _triggerDic;
         public Passive(AbstractPassiveSkill skill, int chaIndex)
         {
             _nameID = skill.NameID;
-            _triggerDic = skill.TriggerDic.ToDictionary(s => s, s => new PersistentTrigger((me, p, s, v) =>
-            {
-                skill.AfterUseAction(me, me.Characters[chaIndex], new int[] { s.TeamID });
-                if (skill.TriggerOnce)
+            _triggerDic = new(skill.TriggerDic.ToDictionary<string, string, EventPersistentHandler>(st => st, st =>
+                (PlayerTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v) =>
                 {
-                    p.AvailableTimes--;
-                }
-            }
-            ));
+                     skill.AfterUseAction(me, me.Characters[chaIndex], new int[] { s.TeamID });
+                     if (skill.TriggerOnce)
+                     {
+                         p.AvailableTimes--;
+                     }
+                })
+            );
         }
         public override int MaxUseTimes => 1;
-        public override Dictionary<string, PersistentTrigger> TriggerDic => _triggerDic;
+        public override PersistentTriggerDictionary TriggerDic => _triggerDic;
         public override string NameID => _nameID;
     }
 }

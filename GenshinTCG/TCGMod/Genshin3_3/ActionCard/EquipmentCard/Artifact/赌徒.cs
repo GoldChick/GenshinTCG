@@ -27,7 +27,7 @@ namespace Genshin3_3
         {
             public override int MaxUseTimes => 3;
 
-            public override Dictionary<string, PersistentTrigger> TriggerDic => throw new NotImplementedException();
+            public override PersistentTriggerDictionary TriggerDic => throw new NotImplementedException();
 
             public override string NameID => "赌徒_effect";
 

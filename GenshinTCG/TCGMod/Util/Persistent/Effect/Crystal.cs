@@ -8,7 +8,7 @@ namespace TCGMod
         public override int InitialUseTimes => 1;
         public override int MaxUseTimes => 2;
 
-        public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+        public override PersistentTriggerDictionary TriggerDic => new()
         {
             { Tags.SenderTags.HURT_DECREASE,new PersistentYellowShield()}
         };

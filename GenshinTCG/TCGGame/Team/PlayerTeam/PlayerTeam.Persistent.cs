@@ -39,6 +39,7 @@ namespace TCGGame
             //else if (equip is AbstractCardWeapon)
             {
             }
+            return true;
         }
 
         /// <summary>
@@ -152,13 +153,12 @@ namespace TCGGame
         /// 在某一次所有的结算之后，清除not active的effect
         /// </summary>
         /// <returns>删除的effect总数量</returns>
-        private int EffectUpdate()
+        private void EffectUpdate()
         {
-            int sum = Characters.Select(c => c.Effects.Update()).Sum();
-            sum += Effects.Update();
-            sum += Summons.Update();
-            sum += Supports.Update();
-            return sum;
+            Array.ForEach(Characters,c => c.Effects.Update());
+            Effects.Update();
+            Summons.Update();
+            Supports.Update();
         }
         /// <summary>
         /// effect按照 0-N角色=>团队=>召唤物=>支援区 的顺序结算

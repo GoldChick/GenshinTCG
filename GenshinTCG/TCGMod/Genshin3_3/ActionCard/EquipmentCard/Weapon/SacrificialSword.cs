@@ -29,17 +29,17 @@ namespace Genshin3_3
             public override bool DeleteWhenUsedUp => false;
             public override string NameID => "祭礼剑_effect";
 
-            public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+            public override PersistentTriggerDictionary TriggerDic => new()
             {
                 {Tags.SenderTags.DAMAGE_INCREASE, new PersistentWeapon() },
-                {Tags.SenderTags.AFTER_USE_SKILL, new((me,p,s,v)=>
+                {Tags.SenderTags.AFTER_USE_SKILL, (me,p,s,v)=>
                     {
                         if (p.AvailableTimes > 0 && s is UseSkillSender sks && sks.Skill.Category == SkillCategory.E)
                         {
                             p.AvailableTimes--;
                         }
                     }
-                ) },
+                },
                 {Tags.SenderTags.ROUND_START, new PersistentSimpleUpdate() }
             };
         }

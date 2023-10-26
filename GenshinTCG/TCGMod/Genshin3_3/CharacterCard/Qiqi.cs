@@ -22,14 +22,9 @@ namespace Genshin3_3
         {
             public override int MaxUseTimes => 3;
 
-            public override Dictionary<string, PersistentTrigger> TriggerDic => new()
+            public override PersistentTriggerDictionary TriggerDic => new()
             {
-                { Tags.SenderTags.ROUND_OVER,new((me,p,s,v)=>
-                    {
-                        //TODO:治疗效果
-                        p.AvailableTimes--;
-                        me.Enemy.Hurt(new DamageVariable(1,1,0),this);
-                    })}
+                { Tags.SenderTags.ROUND_OVER,(me, p, s, v) => { p.AvailableTimes --; me.Enemy.Hurt(new DamageVariable(1, 1, 0), this); }}
             };
 
             public override string NameID => "寒冰鬼差";

@@ -28,7 +28,7 @@ namespace Genshin3_3
 
             public override string NameID => "leaveittome_effect";
 
-            public override Dictionary<string, PersistentTrigger> TriggerDic => new() { 
+            public override PersistentTriggerDictionary TriggerDic => new() { 
                 { TCGBase.Tags.SenderTags.AFTER_SWITCH, new FastSwitchTrigger() }
             };
 

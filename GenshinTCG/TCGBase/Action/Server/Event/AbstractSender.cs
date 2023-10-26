@@ -1,5 +1,9 @@
 ﻿namespace TCGBase
 {
+    public static class TagsExtendMethod
+    {
+        public static string ToString(this SenderTags st) => $"minecraft:{st}";
+    }
     //TODO:check it
     public enum SenderTags
     {
