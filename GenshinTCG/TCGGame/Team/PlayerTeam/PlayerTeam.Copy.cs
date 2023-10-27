@@ -3,11 +3,11 @@
     public partial class PlayerTeam
     {
         /// <summary>
-        /// just copy
+        /// TODO: just copy
         /// </summary>
         /// <param name="t"></param>
-        public PlayerTeam(PlayerTeam t)
-        {
-        }
+        //public PlayerTeam(PlayerTeam t)
+        //{
+        //}
     }
 }

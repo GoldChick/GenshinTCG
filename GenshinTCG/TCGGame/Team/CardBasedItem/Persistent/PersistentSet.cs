@@ -1,4 +1,5 @@
-﻿using TCGBase;
+﻿using System.Diagnostics.CodeAnalysis;
+using TCGBase;
 using TCGUtil;
 
 namespace TCGGame
@@ -78,8 +79,8 @@ namespace TCGGame
         {
             while (true)
             {
-                var disposes =_data.Where(p => !p.Active).ToList();
-                if (disposes.Count==0)
+                var disposes = _data.Where(p => !p.Active).ToList();
+                if (disposes.Count == 0)
                 {
                     break;
                 }
@@ -112,6 +113,7 @@ namespace TCGGame
                 Logger.Print($"{e.NameID} 可用次数{e.AvailableTimes}/{e.Card.MaxUseTimes}");
             }
         }
+        public List<Persistent<T>> Copy() => _data.ToList();
         private EventPersistentSetHandler PersistentHandelerConvert(Persistent<T> p, EventPersistentHandler value)
         {
             return (me, s, v) =>

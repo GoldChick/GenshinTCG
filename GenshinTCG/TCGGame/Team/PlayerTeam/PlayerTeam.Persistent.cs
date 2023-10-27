@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using TCGBase;
 using TCGMod;
-using TCGRule;
 using TCGUtil;
 
 namespace TCGGame
@@ -20,7 +19,7 @@ namespace TCGGame
         public bool AddEquipment(AbstractCardEquipment equip, int target = 0)
         {
             target = int.Clamp(target, 0, Characters.Length - 1);
-            Debug.Assert(equip.CanBeUsed(this as PlayerTeam, new int[] { target }), $"{equip.NameID} Cant be Armed");
+            Debug.Assert(equip.CanBeUsed(this, new int[] { target }), $"{equip.NameID} Cant be Armed");
             var cha = Characters[target];
             if (equip is AbstractCardWeapon wp)
             {
@@ -162,7 +161,7 @@ namespace TCGGame
         /// <summary>
         /// effect按照 0-N角色=>团队=>召唤物=>支援区 的顺序结算
         /// </summary>
-        public void EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable = null)
+        public void EffectTrigger(Game game, int meIndex, AbstractSender sender, AbstractVariable? variable = null)
         {
 
 

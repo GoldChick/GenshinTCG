@@ -10,21 +10,4 @@ namespace TCGUtil
         /// </summary>
         void Print();
     }
-    /// <summary>
-    /// 适用于需要特殊的序列化方式的对象
-    /// </summary>
-    public interface IJsonable : IPrintable
-    {
-        /// <summary>
-        /// 返回经特殊规则序列化后的Json
-        /// </summary>
-        string Json();
-    }
-    public interface IDetailable : IJsonable
-    {
-        /// <summary>
-        /// 返回经特殊规则更加详细序列化后的Json
-        /// </summary>
-        string JsonDetail();
-    }
 }

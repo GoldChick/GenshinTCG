@@ -11,7 +11,7 @@ namespace TCGGame
         {
             Card = card;
         }
-        public bool EffectTrigger(AbstractGame game, int meIndex, AbstractSender sender, AbstractVariable? variable)
+        public bool EffectTrigger(Game game, int meIndex, AbstractSender sender, AbstractVariable? variable)
         {
             //TODO
             return true;

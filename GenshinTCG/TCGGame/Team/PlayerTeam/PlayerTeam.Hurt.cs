@@ -129,8 +129,7 @@ namespace TCGGame
             }
             if (Characters.All(p => !p.Alive))
             {
-                //TODO:全死了之后如何结束  
-                throw new Exception("所有角色都死亡了，游戏结束！");
+                throw new GameOverException();
             }
             if (!Characters[CurrCharacter].Alive)
             {
@@ -163,24 +162,17 @@ namespace TCGGame
             }
             if (Characters.All(p => p.HP == 0))
             {
-                //TODO:全死了之后如何结束  
-                throw new Exception("所有角色都死亡了，游戏结束！");
+                throw new GameOverException();
             }
             //判断共死
             if (Characters[CurrCharacter].HP == 0 && Enemy.Characters[Enemy.CurrCharacter].HP == 0)
             {
-                //TODO:when双方出战都没血，选择新的角色出战，应该能互相看到
                 Logger.Print("双方出战角色都被击倒！进入选择角色出战！");
-                var t0 = new Task<NetEvent>(() => Client.RequestEvent(ActionType.SwitchForced, "Die Together"));
-                var t1 = new Task<NetEvent>(() => Enemy.Client.RequestEvent(ActionType.SwitchForced, "Die Together"));
-
+                var t0 = new Task(() => Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced, "Die Together"));
+                var t1 = new Task(() => Game.RequestAndHandleEvent(1 - TeamIndex, 30000, ActionType.SwitchForced, "Die Together"));
                 t0.Start();
                 t1.Start();
                 Task.WaitAll(t0, t1);
-
-                Game.HandleEvent(t0.Result, TeamIndex);
-                Game.HandleEvent(t1.Result, Enemy.TeamIndex);
-
             }
             action?.Invoke();
             if (overload)

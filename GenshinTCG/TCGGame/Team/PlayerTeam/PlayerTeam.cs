@@ -1,29 +1,22 @@
-﻿using System.Text.Json;
-using TCGBase;
-using TCGClient;
+﻿using TCGBase;
 using TCGUtil;
 
 namespace TCGGame
 {
-    public partial class PlayerTeam : IPrintable
+    public partial class PlayerTeam
     {
-        internal AbstractGame Game { get; private init; }
+        internal Game Game { get; private init; }
         /// <summary>
         /// 在Game.Teams中的index
         /// </summary>
         internal int TeamIndex { get; private init; }
         internal PlayerTeam Enemy => Game.Teams[1 - TeamIndex];
-        internal AbstractClient Client { get => Game.Clients[TeamIndex]; }
-        /// <summary>
-        /// TODO:用于:TODO
-        /// </summary>
-        public bool IsPreviewMode { get; }
         /// <summary>
         /// 只允许使用队内的random
         /// </summary>
         internal CounterRandom Random { get; init; }
         /// <summary>
-        /// 用于pvp模式仅限4个角色(NOTE:pve-很远的将来)
+        /// 用于pvp模式仅限3个角色(然而设计模式似乎允许使用最多10个角色 Warning:未经测试)
         /// </summary>
         public Character[] Characters { get; protected init; }
 
@@ -41,8 +34,13 @@ namespace TCGGame
         /// max_size=16,默认顺序为 万能 冰水火雷岩草风(0-7)
         /// </summary>
         internal List<int> Dices { get; }
-        public PlayerTeam(AbstractGame game, int index)
+        /// <param name="cardset">经过处理确认正确的卡组</param>
+        public PlayerTeam(ServerPlayerCardSet cardset, Game game, int index)
         {
+            Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i)).ToArray();
+            LeftCards = cardset.ActionCards.Select(a => new ActionCard(a)).ToList();
+            CardsInHand = new();
+
             CurrCharacter = -1;
             Pass = false;
             Dices = new();
@@ -55,59 +53,26 @@ namespace TCGGame
             Game = game;
             TeamIndex = index;
         }
-        /// <param name="cardset">经过处理确认正确的卡组</param>
-        public PlayerTeam(ServerPlayerCardSet cardset, AbstractGame game, int index) : this(game, index)
-        {
-            Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i)).ToArray();
-            LeftCards = cardset.ActionCards.Select(a => new ActionCard(a)).ToList();
-            CardsInHand = new();
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool ReplaceAssist()
-        {
-            return false;
-        }
         /// <summary>
         /// 回合开始时最先调用，如扔骰子等
         /// </summary>
         public virtual void RoundStart()
         {
-            Logger.Print("team:start");
-            DiceRollingVariable v = new();
-            Game.EffectTrigger(new SimpleSender(TeamIndex, SenderTag.RollingStart), v);
-            RollDice(v);
-            for (int i = 0; i < v.RollingTimes; i++)
+            DiceRollingVariable drv = new();
+            Game.EffectTrigger(new SimpleSender(TeamIndex, SenderTag.RollingStart), drv);
+            RollDice(drv);
+            for (int i = 0; i < drv.RollingTimes; i++)
             {
                 Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.ReRollDice, "reroll_dice?");
             }
         }
         /// <summary>
-        /// 回合结束时最后调用，如清理骰子等
+        /// 回合结束时最后调用，清理骰子，抽2卡
         /// </summary>
         public virtual void RoundEnd()
         {
             Dices.Clear();
             RollCard(2);
-        }
-        public virtual void Print()
-        {
-            Logger.Print($"Index:{TeamIndex}");
-            Logger.Print($"Pass:{Pass}");
-            Logger.Print($"DiceNum:{Dices.Count}");
-            Logger.Print("----骰子种类----：万能冰水火雷岩草风");
-            Logger.Print($"现在拥有的骰子数： {JsonSerializer.Serialize(GetDices())}");
-            Logger.Print($"CurrCharacter:{CurrCharacter}");
-            Array.ForEach(Characters, c => c.Print());
-            Logger.Print($"Team Effects:");
-            Effects.Print();
-            Logger.Print($"Supports:");
-            Supports.Print();
-            Logger.Print($"Summons:");
-            Summons.Print();
-            CardsInHand.ForEach(c => c.Print());
-            Logger.Print($"");
         }
     }
 }

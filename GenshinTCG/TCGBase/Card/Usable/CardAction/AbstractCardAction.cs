@@ -1,4 +1,5 @@
-﻿using TCGGame;
+﻿using System.Diagnostics.CodeAnalysis;
+using TCGGame;
 
 namespace TCGBase
 {

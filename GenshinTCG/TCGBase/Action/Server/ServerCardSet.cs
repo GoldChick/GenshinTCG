@@ -5,16 +5,13 @@ using TCGUtil;
 
 namespace TCGBase
 {
-    public abstract class AbstractServerCardSet
-    {
-        public bool Valid { get; init; }
-    }
     /// <summary>
     /// 通过客户端传递来的NetCardSet制作而成
     /// 使用前请确定是Valid的
     /// </summary>
-    public class ServerPlayerCardSet : AbstractServerCardSet, IPrintable
+    public class ServerPlayerCardSet : IPrintable
     {
+        public bool Valid { get; init; }
         public AbstractCardCharacter[] CharacterCards { get; init; }
         public AbstractCardAction[] ActionCards { get; init; }
         public ServerPlayerCardSet(PlayerNetCardSet input)

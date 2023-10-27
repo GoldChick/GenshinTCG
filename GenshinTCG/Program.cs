@@ -10,7 +10,7 @@ namespace GenshinTCG
             string gameid = $"{now.Year,4}{now.Hour,2}{now.Minute,2}{now.Second,2}{now.Microsecond,3}";
 
             
-            PVPGame game = new();
+            Game game = new();
             game.StartGame();
         }
     }

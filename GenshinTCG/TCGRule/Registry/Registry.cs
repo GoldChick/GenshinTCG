@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using TCGBase;
 using TCGMod;
 using TCGUtil;
@@ -16,7 +17,7 @@ namespace TCGRule
     }
     internal class Registry
     {
-        private static Registry _instance;
+        private static readonly Registry _instance = new();
         private Registry()
         {
             CharacterCards = new();
@@ -26,14 +27,7 @@ namespace TCGRule
             Summons = new();
             CardCollections = new RegistryCardCollection[] { CharacterCards, ActionCards, Supports, Effects, Summons };
         }
-        public static Registry Instance
-        {
-            get
-            {
-                _instance ??= new Registry();
-                return _instance;
-            }
-        }
+        public static Registry Instance { get => _instance; }
 
         public List<string> Mods { get; } = new();
         internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; } = new();

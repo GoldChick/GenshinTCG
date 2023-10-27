@@ -6,9 +6,7 @@ namespace TCGGame
     public partial class PlayerTeam
     {
         /// <summary>
-        /// 强制切换下一个角色(没有则不切换)<br/>
-        /// NOTE:想要进行正确的[风压剑](或类似)结算，必须调用这个方法作为action参数！<br/>
-        /// TODO:以后的版本可能会考虑修改？
+        /// 强制切换下一个角色(没有则不切换)
         /// </summary>
         public void SwitchToNext()
         {
@@ -21,6 +19,9 @@ namespace TCGGame
             while (!Characters[curr].Alive);
             Game.HandleEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
         }
+        /// <summary>
+        /// 强制切换上一个角色(没有则不切换)
+        /// </summary>
         public void SwitchToLast()
         {
             Debug.Assert(Characters.Any(c => c.Alive), "AbstractTeam.Prefab.SwitchToLast():所有角色都已经死亡!");

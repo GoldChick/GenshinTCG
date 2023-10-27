@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-
 namespace TCGGame
 {
     public abstract class AbstractPersistent
@@ -18,7 +17,8 @@ namespace TCGGame
         /// </summary>
         public bool Active { get; set; }
         /// <summary>
-        /// 经过namespace修正的、在服务端中确定的nameid，如"genshin3_3:paimon"
+        /// 经过namespace修正的、在服务端中确定的nameid，如"genshin3_3:paimon"<br/>
+        /// TODO:并不准确，namespace还没有正确完成
         /// </summary>
         public string NameID { get; protected init; }
         /// <summary>

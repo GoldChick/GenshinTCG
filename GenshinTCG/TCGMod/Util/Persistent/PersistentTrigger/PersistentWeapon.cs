@@ -1,9 +1,8 @@
-﻿using GenshinTCG.TCGMod.Util.Persistent;
-using TCGBase;
+﻿using TCGBase;
 using TCGGame;
 
 namespace TCGMod
-{ 
+{
     public class PersistentWeapon: PersistentTrigger
     {
         public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
