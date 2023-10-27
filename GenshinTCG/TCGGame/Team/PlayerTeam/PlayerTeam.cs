@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using TCGBase;
-using TCGCard;
 using TCGClient;
 using TCGUtil;
 
@@ -19,10 +18,6 @@ namespace TCGGame
         /// TODO:用于:TODO
         /// </summary>
         public bool IsPreviewMode { get; }
-        /// <summary>
-        /// 为True则为骰子模式,需要消耗骰子;为False则为行动模式,不需要骰子(NOTE:很远的将来)
-        /// </summary>
-        public bool UseDice { get; protected init; }
         /// <summary>
         /// 只允许使用队内的random
         /// </summary>
@@ -45,7 +40,7 @@ namespace TCGGame
         /// <summary>
         /// max_size=16,默认顺序为 万能 冰水火雷岩草风(0-7)
         /// </summary>
-        protected List<int> Dices { get; }
+        internal List<int> Dices { get; }
         public PlayerTeam(AbstractGame game, int index)
         {
             CurrCharacter = -1;
@@ -63,7 +58,6 @@ namespace TCGGame
         /// <param name="cardset">经过处理确认正确的卡组</param>
         public PlayerTeam(ServerPlayerCardSet cardset, AbstractGame game, int index) : this(game, index)
         {
-            UseDice = true;
             Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i)).ToArray();
             LeftCards = cardset.ActionCards.Select(a => new ActionCard(a)).ToList();
             CardsInHand = new();
@@ -81,9 +75,13 @@ namespace TCGGame
         public virtual void RoundStart()
         {
             Logger.Print("team:start");
-            DiceRollingVariable v = new(TeamIndex);
-            Game.EffectTrigger(new SimpleSender(Tags.SenderTags.ROLLING_START), v);
+            DiceRollingVariable v = new();
+            Game.EffectTrigger(new SimpleSender(TeamIndex, SenderTag.RollingStart), v);
             RollDice(v);
+            for (int i = 0; i < v.RollingTimes; i++)
+            {
+                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.ReRollDice, "reroll_dice?");
+            }
         }
         /// <summary>
         /// 回合结束时最后调用，如清理骰子等

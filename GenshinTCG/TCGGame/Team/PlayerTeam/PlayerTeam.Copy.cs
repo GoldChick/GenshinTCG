@@ -1,9 +1,4 @@
-﻿using TCGBase;
-using TCGCard;
-using TCGClient;
-using TCGUtil;
-
-namespace TCGGame
+﻿namespace TCGGame
 {
     public partial class PlayerTeam
     {

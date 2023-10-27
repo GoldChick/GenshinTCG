@@ -81,19 +81,22 @@ namespace TCGGame
 
         public virtual void Gaming()
         {
-            Teams[CurrTeam].RegisterPassive();
-            Teams[1 - CurrTeam].RegisterPassive();
-
             for (int i = 0; i < 2; i++)
             {
-                if (Teams[i] is PlayerTeam pt)
-                {
-                    pt.RollCard(5);
-                }
+                Teams[i].RegisterPassive();
+                Teams[i].RollCard(5);
             }
             UpdateTeam();
-            var t0 = new Task<NetEvent>(() => Clients[0].RequestEvent(ActionType.SwitchForced, "Game Start"));
-            var t1 = new Task<NetEvent>(() => Clients[1].RequestEvent(ActionType.SwitchForced, "Game Start"));
+            var t0 = new Task<NetEvent>(() => Clients[0].RequestEvent(ActionType.ReRollCard, "reroll card"));
+            var t1 = new Task<NetEvent>(() => Clients[1].RequestEvent(ActionType.ReRollCard, "reroll card"));
+            t0.Start();
+            t1.Start();
+            Task.WaitAll(t0, t1);
+
+            UpdateTeam();
+
+            t0 = new Task<NetEvent>(() => Clients[0].RequestEvent(ActionType.SwitchForced, "Game Start"));
+            t1 = new Task<NetEvent>(() => Clients[1].RequestEvent(ActionType.SwitchForced, "Game Start"));
             t0.Start();
             t1.Start();
             Task.WaitAll(t0, t1);
@@ -103,7 +106,7 @@ namespace TCGGame
 
             UpdateTeam();
 
-            EffectTrigger(new SimpleSender(Tags.SenderTags.GAME_START));
+            EffectTrigger(new SimpleSender(SenderTag.GameStart.ToString()));
 
             while (!IsGameOver())
             {
@@ -119,7 +122,7 @@ namespace TCGGame
 
                 Thread.Sleep(500);
                 Stage = GameStage.Gaming;
-                EffectTrigger(new SimpleSender(Tags.SenderTags.ROUND_START));
+                EffectTrigger(new SimpleSender(SenderTag.RoundStart));
                 //Logger.Print($"行动阶段");
 
                 Array.ForEach(Teams, t => t.Pass = false);
@@ -129,7 +132,7 @@ namespace TCGGame
                     //wait until both pass
                     Thread.Sleep(500);
                     var old_currteam = CurrTeam;
-                    EffectTrigger(new SimpleSender(CurrTeam, Tags.SenderTags.ROUND_ME_START));
+                    EffectTrigger(new SimpleSender(CurrTeam, SenderTag.RoundMeStart));
 
                     UpdateTeam();
                     if (old_currteam == CurrTeam)
@@ -145,7 +148,7 @@ namespace TCGGame
 
                 Stage = GameStage.Ending;
                 CurrTeam = 1 - CurrTeam;
-                EffectTrigger(new SimpleSender(Tags.SenderTags.ROUND_OVER));
+                EffectTrigger(new SimpleSender(SenderTag.RoundOver.ToString()));
 
                 Array.ForEach(Teams, t => t.RoundEnd());
             }

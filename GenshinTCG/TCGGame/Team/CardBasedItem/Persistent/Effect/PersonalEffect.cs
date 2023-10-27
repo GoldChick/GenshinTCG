@@ -1,9 +1,9 @@
-﻿using TCGCard;
+﻿using TCGBase;
 using TCGRule;
 
 namespace TCGGame
 {
-    public class PersonalEffect : AbstractPersistent<AbstractCardPersistentEffect>
+    public class PersonalEffect : Persistent<AbstractCardPersistentEffect>
     {
         public PersonalEffect(string nameid) : base(nameid, Registry.Instance.Effects.GetValueOrDefault(nameid))
         {

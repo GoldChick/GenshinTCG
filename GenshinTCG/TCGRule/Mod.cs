@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using TCGCard;
+using TCGBase;
 using TCGMod;
 using TCGRule;
 

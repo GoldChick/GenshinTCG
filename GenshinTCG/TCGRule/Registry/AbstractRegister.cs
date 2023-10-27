@@ -1,4 +1,4 @@
-﻿using TCGCard;
+﻿using TCGBase;
 using TCGUtil;
 
 namespace TCGRule

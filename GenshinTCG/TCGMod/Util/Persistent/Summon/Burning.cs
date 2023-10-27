@@ -1,7 +1,4 @@
-﻿using TCGBase;
-using TCGCard;
-
-namespace TCGMod
+﻿namespace TCGMod
 {
     public class Burning : SimpleSummon
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text.Json;
-using TCGBase;
-using TCGCard;
-using TCGUtil;
+﻿using TCGBase;
 
 namespace TCGGame
 {
@@ -14,6 +10,7 @@ namespace TCGGame
         /// </summary>
         public bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
         {
+            ActionType.ReRollDice or ActionType.ReRollCard => true,
             ActionType.Switch or ActionType.SwitchForced =>
                 action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].HP > 0,
             ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length && (Characters[CurrCharacter].Card.Skills[action.Index].Category != SkillCategory.Q || Characters[CurrCharacter].MP == Characters[CurrCharacter].Card.MaxMP),
@@ -31,9 +28,13 @@ namespace TCGGame
             //Logger.Error($"1={enums.Count == (evt.AdditionalTargetArgs?.Length ?? 0)}");
             //Logger.Error($"2={enums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)}");
 
-            return enums.Count == (evt.AdditionalTargetArgs?.Length ?? 0)
+            return enums.Count == (evt.AdditionalTargetArgs.Length)
             && enums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
-            && (!(evt.Action.Type == ActionType.UseCard) || CardsInHand[evt.Action.Index].Card.CanBeUsed(this, evt.AdditionalTargetArgs));
+            && evt.Action.Type switch
+            {
+                ActionType.UseCard => CardsInHand[evt.Action.Index].Card.CanBeUsed(this, evt.AdditionalTargetArgs),
+                _ => true
+            };
         }
         public bool IsDiceValid(NetEvent evt)
         {
@@ -56,6 +57,18 @@ namespace TCGGame
             List<TargetEnum> enums = new();
             switch (action.Type)
             {
+                case ActionType.ReRollDice:
+                    for (int i = 0; i < Dices.Count; i++)
+                    {
+                        enums.Add(TargetEnum.Dice_Optional);
+                    }
+                    break;
+                case ActionType.ReRollCard:
+                    for (int i = 0; i < CardsInHand.Count; i++)
+                    {
+                        enums.Add(TargetEnum.Card_Optional);
+                    }
+                    break;
                 case ActionType.UseSKill:
                     if (Characters[CurrCharacter].Card.Skills[action.Index] is ITargetSelector selector)
                     {
@@ -87,7 +100,7 @@ namespace TCGGame
 
             DiceCostVariable c = new(defaultCost);
 
-            string tag = Tags.SenderTags.ActionTypeToSenderTag(action.Type, true);
+            string tag = action.Type.ToSenderTags(true).ToString();
 
             if (action.Type != ActionType.SwitchForced)
             {
@@ -100,8 +113,10 @@ namespace TCGGame
         {
             switch (action.Type)
             {
-                case ActionType.Switch:
-                case ActionType.SwitchForced:
+                case ActionType.ReRollDice or ActionType.ReRollCard:
+                    defaultCost = new(false);
+                    break;
+                case ActionType.Switch or ActionType.SwitchForced:
                     defaultCost = new(false, action.Type == ActionType.Switch ? 1 : 0);
                     break;
                 case ActionType.UseSKill:
@@ -132,16 +147,15 @@ namespace TCGGame
         /// </summary>
         protected virtual bool IsTargetValid(TargetEnum e, int arg) => e switch
         {
+            TargetEnum.Card_Enemy => throw new Exception("PlayerTeam.IsTargetValid:Card_Enemy根本没做"),
             TargetEnum.Card_Me => arg >= 0 && arg < CardsInHand.Count,
-            TargetEnum.Character_Me => arg >= 0 && arg < Characters.Length,
             TargetEnum.Character_Enemy => arg >= 0 && arg < Enemy.Characters.Length,
-            //TargetEnum.Dice => arg >= 0 && arg < Characters.Length,
-            //TargetEnum.MultiCard => arg >= 0,
-            //TargetEnum.MultiDice => arg >= 0 && arg < Characters.Length,
-            TargetEnum.Summon_Me => arg >= 0 && arg < Summons.Count,
+            TargetEnum.Character_Me => arg >= 0 && arg < Characters.Length,
+            TargetEnum.Dice_Optional or TargetEnum.Card_Optional => arg == 0 || arg == 1,
             TargetEnum.Summon_Enemy => arg >= 0 && arg < Enemy.Summons.Count,
-            TargetEnum.Support_Me => arg >= 0 && arg < Supports.Count,
+            TargetEnum.Summon_Me => arg >= 0 && arg < Summons.Count,
             TargetEnum.Support_Enemy => arg >= 0 && arg < Enemy.Supports.Count,
+            TargetEnum.Support_Me => arg >= 0 && arg < Supports.Count,
             _ => false
         };
     }

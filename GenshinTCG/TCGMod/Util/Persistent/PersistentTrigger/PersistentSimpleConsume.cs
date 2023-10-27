@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGCard;
 using TCGGame;
 
 namespace TCGMod

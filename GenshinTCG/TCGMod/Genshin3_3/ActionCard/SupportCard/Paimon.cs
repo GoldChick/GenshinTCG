@@ -1,6 +1,5 @@
 ﻿using System;
 using TCGBase;
-using TCGCard;
 using TCGGame;
 using TCGUtil;
 
@@ -9,8 +8,6 @@ namespace Genshin3_3
     public class Paimon : AbstractCardSupport
     {
         public override string NameID => "paimon";
-
-        public override string[] SpecialTags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
 
         public override int[] Costs => new int[] { 3 };
 
@@ -24,13 +21,20 @@ namespace Genshin3_3
 
             public override string NameID => "paimon_support";
 
-            public override string[] SpecialTags => new string[] { TCGBase.Tags.CardTags.AssistTags.PARTNER };
-
-            public override PersistentTriggerDictionary TriggerDic => new() { { TCGBase.Tags.SenderTags.ROUND_START, new PaimonTrigger() } };
+            public override PersistentTriggerDictionary TriggerDic => new()
+            {
+                { SenderTag.RoundStart, (me,p,s,v)=>
+                {
+                    p.AvailableTimes--;
+                    me.AddDice(0);
+                    me.AddDice(0);
+                }
+                }
+            };
 
             private class PaimonTrigger : PersistentTrigger
             {
-                public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+                public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
                     persitent.AvailableTimes--;
                     Logger.Warning("大派触发了！");

@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using TCGBase;
-using TCGCard;
 using TCGUtil;
 
 namespace TCGGame
@@ -30,19 +29,27 @@ namespace TCGGame
             Logger.Warning($"AbstractGame.RequestEvent():请求NetEvent超时或者无效，使用默认值！");
             ts.Cancel();
 
-            if (demand == ActionType.SwitchForced)
+            switch (demand)
             {
-                var chas = Teams[teamid].Characters;
-                for (int i = 0; i < chas.Length; i++)
-                {
-                    if (chas[i].Alive)
+                case ActionType.ReRollCard:
+                    return new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].CardsInHand.Count).ToArray());
+                case ActionType.ReRollDice:
+                    return new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].GetDices().Sum()).ToArray());
+                case ActionType.SwitchForced:
                     {
-                        return new NetEvent(new NetAction(ActionType.SwitchForced, i));
+                        var chas = Teams[teamid].Characters;
+                        for (int i = 0; i < chas.Length; i++)
+                        {
+                            if (chas[i].Alive)
+                            {
+                                return new NetEvent(new NetAction(demand, i));
+                            }
+                        }
+                        throw new Exception("AbstractGame.NetEvent.RequestEvent():demand=SwitchForced时出现错误！角色全部死亡！");
                     }
-                }
-                throw new Exception("AbstractGame.NetEvent.RequestEvent():demand=SwitchForced时出现错误！角色全部死亡！");
+                default:
+                    return new NetEvent(new NetAction(ActionType.Pass));
             }
-            return new NetEvent(new NetAction(ActionType.Pass));
         }
         public void RequestAndHandleEvent(int teamid, int millisecondsTimeout, ActionType demand, string help_txt = "Null")
           => HandleEvent(RequestEvent(teamid, millisecondsTimeout, demand, help_txt), teamid);
@@ -57,21 +64,39 @@ namespace TCGGame
             var t = Teams[currTeam];
 
             //before_xx 通知要发生一个xx事件，[常九爷]等可以开始检测，检测到after_xx之后判定
-            EffectTrigger(new SimpleSender(currTeam, Tags.SenderTags.ActionTypeToSenderTag(evt.Action.Type, true)));
+            EffectTrigger(new SimpleSender(currTeam, evt.Action.Type.ToSenderTags(true)));
+            //cost
+            t.CostDices(evt.CostArgs);
 
-            PlayerTeam? pt = null;
-            AbstractSender afterEventSender = new SimpleSender(currTeam, Tags.SenderTags.ActionTypeToSenderTag(evt.Action.Type));
+            AbstractSender afterEventSender = new SimpleSender(currTeam, evt.Action.Type.ToSenderTags());
             FastActionVariable? afterEventVariable = null;
-
-            if (t is PlayerTeam)
-            {
-                pt = (PlayerTeam)t;
-                //cost
-                pt.CostDices(evt.CostArgs);
-            }
 
             switch (evt.Action.Type)
             {
+                case ActionType.ReRollDice:
+                    var dices = Teams[currTeam].Dices;
+                    int cnt = dices.Count;
+                    var dicecash = dices.Where((value, index) => evt.AdditionalTargetArgs[index] == 0);
+                    dices.Clear();
+                    dices.AddRange(dicecash);
+                    DiceRollingVariable dvr = new(cnt - dicecash.Count());
+                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeRerollDice), dvr);
+                    Teams[currTeam].ReRollDice(dvr);
+                    break;
+                case ActionType.ReRollCard:
+                    var cards = Teams[currTeam].CardsInHand;
+                    var cardcash0 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 0);
+                    var cardcash1 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 1);
+                    cards.Clear();
+                    cards.AddRange(cardcash0);
+                    var over = Teams[currTeam].LeftCards.Count - cardcash1.Count();
+                    Teams[currTeam].RollCard(cardcash1.Count());
+                    Teams[currTeam].LeftCards.AddRange(cardcash1);
+                    if (over > 0)
+                    {
+                        Teams[currTeam].RollCard(over);
+                    }
+                    break;
                 case ActionType.Switch:
                 case ActionType.SwitchForced:
                     var initial = t.CurrCharacter;
@@ -80,11 +105,20 @@ namespace TCGGame
                     afterEventVariable = new FastActionVariable(evt.Action.Type == ActionType.SwitchForced);
                     break;
                 case ActionType.UseSKill:
-                    var skis = t.Characters[t.CurrCharacter].Card.Skills;
+                    var cha = t.Characters[t.CurrCharacter];
+                    var skis = cha.Card.Skills;
                     var ski = skis[evt.Action.Index];
                     //考虑AfterUseAction中可能让角色位置改变的
                     afterEventSender = new UseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
-                    ski.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
+                    if (cha.Talent != null && cha.Talent.Card.Skill == evt.Action.Index)
+                    {
+                        cha.Talent.Card.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
+                    }
+                    else
+                    {
+                        ski.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
+                    }
+
                     if (ski.Category == SkillCategory.Q)
                     {
                         t.Characters[t.CurrCharacter].MP = 0;
@@ -93,6 +127,7 @@ namespace TCGGame
                     {
                         t.Characters[t.CurrCharacter].MP++;
                     }
+
                     if (ski is IPersistentProvider<AbstractCardPersistentSummon> su)
                     {
                         //auto summon
@@ -101,10 +136,9 @@ namespace TCGGame
                     afterEventVariable = new FastActionVariable(false);
                     break;
                 case ActionType.UseCard:
-                    Debug.Assert(pt != null, "AbstractGame.NetEvent:不应该拥有行动牌的Team尝试打出卡牌！");
-                    ActionCard c = pt.CardsInHand[evt.Action.Index % pt.CardsInHand.Count];
-                    pt.CardsInHand.Remove(c);
-                    c.Card.AfterUseAction(pt, evt.AdditionalTargetArgs);
+                    ActionCard c = t.CardsInHand[evt.Action.Index % t.CardsInHand.Count];
+                    t.CardsInHand.Remove(c);
+                    c.Card.AfterUseAction(t, evt.AdditionalTargetArgs);
                     if (c.Card is AbstractCardSupport sp)
                     {
                         //auto support
@@ -114,10 +148,9 @@ namespace TCGGame
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Blend://调和
-                    Debug.Assert(pt != null, "AbstractGame.NetEvent:不应该拥有行动牌的Team尝试调和卡牌！");
-                    ActionCard c1 = pt.CardsInHand[evt.Action.Index % pt.CardsInHand.Count];
-                    pt.CardsInHand.Remove(c1);
-                    pt.AddDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
+                    ActionCard c1 = t.CardsInHand[evt.Action.Index % t.CardsInHand.Count];
+                    t.CardsInHand.Remove(c1);
+                    t.AddDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Pass://空过

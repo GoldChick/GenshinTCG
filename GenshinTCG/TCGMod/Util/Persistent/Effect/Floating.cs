@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGCard;
 
 namespace TCGMod
 {
@@ -13,8 +12,8 @@ namespace TCGMod
         public override bool DeleteWhenUsedUp => false;
 
         public override PersistentTriggerDictionary TriggerDic => new() {
-            {TCGBase.Tags.SenderTags.AFTER_ANY_ACTION, new PersistentSimpleConsume()} ,
-            {TCGBase.Tags.SenderTags.AFTER_SWITCH, new PersistentSimpleUpdate()}
+            {TCGBase.SenderTag.AfterAnyAction.ToString(), new PersistentSimpleConsume()} ,
+            {SenderTag.AfterSwitch, new PersistentSimpleUpdate()}
              };
     }
 }

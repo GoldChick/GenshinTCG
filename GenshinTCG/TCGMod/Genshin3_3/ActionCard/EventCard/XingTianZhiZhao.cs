@@ -1,6 +1,5 @@
 ﻿using System;
 using TCGBase;
-using TCGCard;
 using TCGGame;
 using TCGUtil;
 

@@ -11,10 +11,10 @@
         {
             if (pre)
             {
-                SenderName = Tags.SenderTags.PRE_DIE;
+                SenderName = SenderTag.PreDie.ToString();
             }else
             {
-                SenderName = Tags.SenderTags.DIE;
+                SenderName = SenderTag.Die.ToString();
             }
             Cha_Index= cha_index;
         }

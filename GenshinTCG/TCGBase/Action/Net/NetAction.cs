@@ -3,9 +3,15 @@
     public enum ActionType
     {
         Trival,
-
+        /// <summary>
+        /// Index:0表示不重投，1表示重投<br/>
+        /// 选择任意骰子重投
+        /// </summary>
         ReRollDice,
-
+        /// <summary>
+        /// Index:0表示不重投，1表示重投<br/>
+        /// 选择任意卡牌重投
+        /// </summary>
         ReRollCard,
 
         ReplaceSupport,

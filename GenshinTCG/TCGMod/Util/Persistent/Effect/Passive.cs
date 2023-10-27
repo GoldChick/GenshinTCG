@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using TCGBase;
-using TCGCard;
 using TCGGame;
 
 namespace TCGMod

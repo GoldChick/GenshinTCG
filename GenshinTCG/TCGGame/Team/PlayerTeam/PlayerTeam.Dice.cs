@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGUtil;
 
 namespace TCGGame
 {
@@ -7,17 +6,16 @@ namespace TCGGame
     {
         public void RollDice(DiceRollingVariable rolling)
         {
-            Logger.Print($"{rolling.DiceNum}");
+            //TODO:是对的吗
             int num = int.Max(0, rolling.DiceNum - rolling.InitialDices.Count);
             for (int i = 0; i < num; i++)
                 AddDice(Random.Next(8));
-            for (int i = 0; i < rolling.RollingTimes; i++)
-                ReRollDice();
         }
-        private void ReRollDice()
+        public void ReRollDice(DiceRollingVariable rolling)
         {
-            Logger.Error("AbstractTeam:ReRoll还没做");
-            //TODO:need request
+            for (int i = 0; i < rolling.DiceNum; i++)
+                AddDice(Random.Next(8));
+            Dices.AddRange(rolling.InitialDices);
         }
 
         /// <summary>

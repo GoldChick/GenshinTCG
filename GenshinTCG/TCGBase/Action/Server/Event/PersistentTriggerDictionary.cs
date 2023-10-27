@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using TCGCard;
 using TCGGame;
 
 namespace TCGBase
@@ -13,7 +12,8 @@ namespace TCGBase
             _dic = new();
         }
         public PersistentTriggerDictionary(Dictionary<string, EventPersistentHandler> dic) { _dic = dic; }
-        public void Add(SenderTags st, EventPersistentHandler h) => Add(st.ToString(), h);
+        public void Add(SenderTag st, EventPersistentHandler h) => Add(st.ToString(), h);
+        public void Add(SenderTag st, PersistentTrigger t) => Add(st.ToString(), t);
         public void Add(string st, EventPersistentHandler h) => _dic.Add(st, h);
         public void Add(string st, PersistentTrigger t) => _dic.Add(st, t.Trigger);
         public EventPersistentHandler this[string st] => _dic[st];

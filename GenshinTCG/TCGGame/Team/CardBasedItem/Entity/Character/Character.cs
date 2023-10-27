@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using TCGBase;
-using TCGCard;
 using TCGUtil;
 
 namespace TCGGame
@@ -14,9 +13,9 @@ namespace TCGGame
         public int Index { get; init; }
         private int _hp;
         private int _mp;
-        public AbstractPersistent<AbstractCardPersistentEffect>? Weapon { get; internal set; }
-        public AbstractPersistent<AbstractCardPersistentEffect>? Artifact { get; internal set; }
-        public AbstractPersistent<AbstractCardPersistentEffect>? Talent { get; internal set; }
+        public Persistent<AbstractCardPersistentEffect>? Weapon { get; internal set; }
+        public Persistent<AbstractCardPersistentEffect>? Artifact { get; internal set; }
+        public Persistent<AbstractCardPersistentTalent>? Talent { get; internal set; }
 
         public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
 

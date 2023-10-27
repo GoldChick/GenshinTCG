@@ -1,11 +1,7 @@
 ﻿namespace TCGBase
 {
-    public static class TagsExtendMethod
-    {
-        public static string ToString(this SenderTags st) => $"minecraft:{st}";
-    }
     //TODO:check it
-    public enum SenderTags
+    public enum SenderTag
     {
         GameStart,
         /// <summary>
@@ -13,11 +9,11 @@
         /// </summary>
         RollingStart,
         /// <summary>
-        /// 行动阶段开始时
+        /// 行动阶段开始时，没有队伍参数
         /// </summary>
         RoundStart,
         /// <summary>
-        /// 结束阶段
+        /// 结束阶段，没有队伍参数
         /// </summary>
         RoundOver,
         /// <summary>
@@ -25,6 +21,8 @@
         /// </summary>
         RoundMeStart,
         #region 某个Player Action前，用于减费等
+        BeforeRerollDice,
+        BeforeRerollCard,
         BeforeSwitch,
         //并没有实际作用，只是占位符
         BeforeBlend,
@@ -40,6 +38,8 @@
         HurtMul,
         #endregion
         #region 某个Player Action结算后，用于减少effect次数、触发其他效果等
+        AfterRerollDice,
+        AfterRerollCard,
         AfterSwitch,
         AfterBlend,
         AfterUseCard,

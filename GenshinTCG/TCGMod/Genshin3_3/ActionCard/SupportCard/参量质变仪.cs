@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGCard;
 using TCGGame;
 
 namespace Genshin3_3
@@ -21,15 +20,15 @@ namespace Genshin3_3
             public override bool DeleteWhenUsedUp => false;
             public override PersistentTriggerDictionary TriggerDic => new()
             {
-                { Tags.SenderTags.BEFORE_USE_SKILL,(me,p,s,v)=>p.Data=1},
-                { Tags.SenderTags.AFTER_HURT,(me,p,s,v)=>
+                { SenderTag.BeforeUseSkill.ToString(),(me,p,s,v)=>p.Data=1},
+                { SenderTag.AfterHurt.ToString(),(me,p,s,v)=>
                 {
                     if (p.Data!=null && p.Data.Equals(1)&& s is HurtSender hs && hs.Element>0)
                     {
                         p.Data=2;
                     }
                 }},
-                { Tags.SenderTags.AFTER_USE_SKILL,(me,p,s,v)=>
+                { SenderTag.AfterUseSkill.ToString(),(me,p,s,v)=>
                 {
                     if (p.Data!=null && p.Data.Equals(2))
                     {

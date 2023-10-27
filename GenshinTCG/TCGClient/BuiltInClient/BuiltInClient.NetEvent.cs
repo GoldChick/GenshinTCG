@@ -4,9 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using TCGBase;
-using TCGCard;
 using TCGGame;
 using TCGUtil;
+using static Genshin3_3.Yoimiya;
 
 namespace TCGClient
 {
@@ -46,16 +46,14 @@ namespace TCGClient
                 var dicereq = MePt.GetEventFinalDiceRequirement(ac);
 
                 Logger.Warning($"返回的actiontype={ac.Type}");
-                NetEvent nevt = new(ac, dicereq.Cost.Costs.Sum() > 0 ? SelectDices(dicereq.Cost.Costs) : null)
-                {
-                    AdditionalTargetArgs = SelectTargets(MePt, ac)
-                };
+                NetEvent nevt = new(ac, dicereq.Cost.Costs.Sum() > 0 ? SelectDices(dicereq.Cost.Costs) : null, SelectTargets(MePt, ac));
                 return nevt;
             }
             else
             {
                 return demand switch
                 {
+                    ActionType.ReRollDice or ActionType.ReRollCard => new NetEvent(new(demand), Array.Empty<int>(), SelectOptionalTargets(MePt, new(demand))),
                     ActionType.Switch => new(Switch()),
                     ActionType.SwitchForced => new(Switch(true)),
                     _ => throw new NotImplementedException("指定demand的还没做呃呃呃")
@@ -121,16 +119,6 @@ namespace TCGClient
             throw new NotImplementedException("NO REPLACE NOW");
         }
 
-        public NetEvent ReRollCard()
-        {
-            throw new NotImplementedException("NO REROLL NOW");
-        }
-
-        public NetEvent ReRollDice()
-        {
-            throw new NotImplementedException("NO REROLL NOW");
-        }
-
         public int[] SelectDices([NotNull] int[] req)
         {
             Logger.Print("----骰子种类----：万能冰水火雷岩草风");
@@ -148,6 +136,33 @@ namespace TCGClient
                 ints[i] = input_num;
             }
             return ints;
+        }
+        public int[] SelectOptionalTargets(PlayerTeam me, NetAction action)
+        {
+            List<TargetEnum> enums = me.GetTargetEnums(action);
+            if (enums.Count > 0)
+            {
+                IEnumerable<string> values = enums[0] switch
+                {
+                    TargetEnum.Card_Optional => me.CardsInHand.Select(c => c.Card.NameID),
+                    TargetEnum.Dice_Optional => me.GetDices().SelectMany((value, index) => Enumerable.Repeat(((ElementCategory)index).ToString(), value)),
+                    _ => throw new Exception("没有实现的target")
+                };
+                int cnt = values.Count();
+                Logger.Print($"选择{enums[0]}目标!输入{cnt}个0/1数字，代表是否重投。", ConsoleColor.DarkCyan);
+                for (int i = 0; i < cnt; i++)
+                {
+                    Logger.Print($"{i}:{values.ElementAt(i)}");
+                }
+            }
+            return enums.Select((e) =>
+            {
+                if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
+                {
+                    input_num = 0;
+                }
+                return int.Clamp(input_num, 0, 1);
+            }).ToArray();
         }
         public int[] SelectTargets(PlayerTeam me, NetAction action)
         {
@@ -182,7 +197,7 @@ namespace TCGClient
         {
             var tr = new TeamRender();
             Console.WriteLine("===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====");
-            tr.RenderEnemy(MePt,MePt.Enemy as PlayerTeam);
+            tr.RenderEnemy(MePt, MePt.Enemy as PlayerTeam);
             Console.WriteLine("===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====");
             tr.RenderMe(MePt);
             Console.WriteLine("===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====");

@@ -1,6 +1,4 @@
-﻿using System;
-using TCGBase;
-using TCGCard;
+﻿using TCGBase;
 using TCGGame;
 using TCGUtil;
 
@@ -29,24 +27,19 @@ namespace Genshin3_3
             public override string NameID => "leaveittome_effect";
 
             public override PersistentTriggerDictionary TriggerDic => new() { 
-                { TCGBase.Tags.SenderTags.AFTER_SWITCH, new FastSwitchTrigger() }
-            };
-
-            private class FastSwitchTrigger : PersistentTrigger
-            {
-                public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+                { SenderTag.AfterSwitch, (me,p,s,v)=>
                 {
-                    if (variable is FastActionVariable fav)
+                    if (v is FastActionVariable fav)
                     {
-                        Logger.Error("SwitchSender 用 FastActionVariable 触发了 交给我吧！");
                         if (!fav.Fast)
                         {
                             fav.Fast = true;
-                            persitent.AvailableTimes--;
+                            p.AvailableTimes--;
                         }
                     }
                 }
-            }
+                }
+            };
         }
     }
 }

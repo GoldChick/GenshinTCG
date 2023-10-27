@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using TCGCard;
+using TCGBase;
 using TCGRule;
 using TCGUtil;
 

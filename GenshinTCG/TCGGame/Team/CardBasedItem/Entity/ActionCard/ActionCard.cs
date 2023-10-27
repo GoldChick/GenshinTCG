@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using TCGBase;
-using TCGCard;
+﻿using TCGBase;
 using TCGUtil;
 
 namespace TCGGame
@@ -21,7 +19,7 @@ namespace TCGGame
 
         public void Print()
         {
-            Logger.Print($"{Card.NameID} {JsonSerializer.Serialize(Card.SpecialTags)}");
+            Logger.Print($"{Card.NameID}");
         }
     }
 }

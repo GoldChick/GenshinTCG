@@ -5,7 +5,7 @@
     /// </summary>
     public class HurtSender : AbstractSender
     {
-        public override string SenderName => Tags.SenderTags.AFTER_HURT;
+        public override string SenderName => SenderTag.AfterHurt.ToString();
         public int Element { get; init; }
         public int Damage { get; internal set; }//set只是为了合并
         public int TargetIndex { get; init; }

@@ -4,16 +4,15 @@ namespace TCGBase
 {
     public class DiceRollingVariable : AbstractVariable
     {
-        public override string VariableName => Tags.VariableTags.DICE_ROLLING;
+        public override string VariableName => VariableTags.DICE_ROLLING;
 
-        /// <summary>
-        /// 投掷骰子方在Game.Teams中的index
-        /// </summary>
-        public int Owner { get; init; }
         /// <summary>
         /// 为正表示新扔的骰子，为负表示重投已有
         /// </summary>
         public int DiceNum { get; set; }
+        /// <summary>
+        /// 剩余重投次数
+        /// </summary>
         public int RollingTimes { get; set; }
         /// <summary>
         /// 首次一定会投掷出的骰子，前DiceNum个有效
@@ -22,18 +21,26 @@ namespace TCGBase
 
         public DiceRollingVariable(int owner, int rollingTimes, [NotNull] List<int> ints)
         {
-            Owner = owner;
             DiceNum = -1;
             RollingTimes = rollingTimes;
             InitialDices = ints ?? new();
         }
 
-        public DiceRollingVariable(int owner)
+        public DiceRollingVariable()
         {
             DiceNum = 8;
             RollingTimes = 1;
             InitialDices = new();
-            Owner = owner;
+        }
+        /// <summary>
+        /// 仅为单次重投设计，无rollingtimes<br/>
+        /// 并且presets中的骰子不会占用dicenum中的数量
+        /// </summary>
+        /// <param name="dicenum"></param>
+        internal DiceRollingVariable(int dicenum, List<int>? presets = null)
+        {
+            DiceNum = dicenum;
+            InitialDices = presets ?? new();
         }
     }
 }

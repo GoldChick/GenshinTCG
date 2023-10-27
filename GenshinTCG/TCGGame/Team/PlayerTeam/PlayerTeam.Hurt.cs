@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TCGBase;
-using TCGCard;
 using TCGMod;
 using TCGUtil;
 
@@ -37,40 +36,40 @@ namespace TCGGame
             else
             {
                 //only one target
-                Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, Tags.SenderTags.ELEMENT_ENCHANT), d);
+                Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.ElementEnchant.ToString()), d);
                 string? reaction = GetReaction(d, out DamageVariable? mul);
                 if (d.Element != -1)
                 {
-                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, Tags.SenderTags.DAMAGE_INCREASE), d);
-                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, Tags.SenderTags.HURT_DECREASE), d);
-                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, Tags.SenderTags.DAMAGE_MUL), d);
-                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, Tags.SenderTags.HURT_MUL), d);
+                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.DamageIncrease.ToString()), d);
+                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, SenderTag.HurtDecrease.ToString()), d);
+                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.DamageMul.ToString()), d);
+                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, SenderTag.HurtMul.ToString()), d);
                 }
 
                 hss.Add(new(TeamIndex, d, reaction));
 
-                if (reaction == Tags.ReactionTags.BLOOM)
+                if (reaction == ReactionTags.Bloom.ToString())
                 {
                     Enemy.AddPersistent(new DendroCore());
                 }
-                else if (reaction == Tags.ReactionTags.BURNING)
+                else if (reaction == ReactionTags.Burning.ToString())
                 {
                     Enemy.TryAddSummon(new Burning());
                 }
-                else if (reaction == Tags.ReactionTags.CATALYZE)
+                else if (reaction == ReactionTags.Catalyze.ToString())
                 {
                     Enemy.AddPersistent(new CatalyzeField());
 
                 }
-                else if (reaction == Tags.ReactionTags.CRYSTALLIZE)
+                else if (reaction == ReactionTags.Crystallize.ToString())
                 {
                     Enemy.AddPersistent(new Crystal());
                 }
-                else if (reaction == Tags.ReactionTags.OVERLOADED)
+                else if (reaction == ReactionTags.Overloaded.ToString())
                 {
                     overload = d.TargetIndex == CurrCharacter;
                 }
-                else if (reaction == Tags.ReactionTags.FROZEN)
+                else if (reaction == ReactionTags.Frozen.ToString())
                 {
                     //TODO:frozen?
                 }
@@ -123,6 +122,8 @@ namespace TCGGame
                     EffectTrigger(Game, TeamIndex, new DieSender(TeamIndex, curr), null);
                     target.Predie = false;
                     target.Alive = false;
+
+
                     //TODO:掉装备
                 }
             }
@@ -203,7 +204,8 @@ namespace TCGGame
             //角色身上附着的元素(只允许附着 无0 冰1 水2 火3 雷4 草6 <b>冰+草5</b>
             mul = null;
 
-            string? reaction = null;
+            ReactionTags reactiontag = ReactionTags.None;
+
             int currElement = Characters[dv_person.TargetIndex].Element;
             int nextElement = currElement;
 
@@ -216,65 +218,65 @@ namespace TCGGame
                 {
                     case 12 or 21://冻结
                     case 25:
-                        reaction = Tags.ReactionTags.FROZEN;
+                        reactiontag = ReactionTags.Frozen;
                         dv_person.Damage++;
                         break;
 
                     case 13 or 31://融化
                     case 35:
-                        reaction = Tags.ReactionTags.MELT;
+                        reactiontag = ReactionTags.Melt;
                         dv_person.Damage += 2;
                         break;
 
                     case 14 or 41://超导
                     case 45:
-                        reaction = Tags.ReactionTags.SUPERCONDUCT;
+                        reactiontag = ReactionTags.SuperConduct;
                         dv_person.Damage++;
                         mul = new(DamageSource.NoWhere, -1, 1, dv_person.TargetIndex, true);
                         break;
 
                     case 23 or 32://蒸发
-                        reaction = Tags.ReactionTags.VAPORIZE;
+                        reactiontag = ReactionTags.Vaporize;
                         dv_person.Damage += 2;
                         break;
 
                     case 24 or 42://感电
-                        reaction = Tags.ReactionTags.ELECTRO_CHARGED;
+                        reactiontag = ReactionTags.ElectroCharged;
                         dv_person.Damage++;
                         mul = new(DamageSource.NoWhere, -1, 1, dv_person.TargetIndex, true);
                         break;
 
                     case 34 or 43://超载
-                        reaction = Tags.ReactionTags.OVERLOADED;
+                        reactiontag = ReactionTags.Overloaded;
                         dv_person.Damage += 2;
                         break;
 
                     case 51 or 52 or 53 or 54://结晶
                     case 55:
-                        reaction = Tags.ReactionTags.CRYSTALLIZE;
+                        reactiontag = ReactionTags.Crystallize;
                         dv_person.Damage++;
                         break;
 
                     //NOTE:冰草共存优先反应冰
 
                     case 62 or 26://绽放
-                        reaction = Tags.ReactionTags.BLOOM;
+                        reactiontag = ReactionTags.Bloom;
                         dv_person.Damage++;
                         break;
 
                     case 63 or 36://燃烧
-                        reaction = Tags.ReactionTags.BURNING;
+                        reactiontag = ReactionTags.Burning;
                         dv_person.Damage++;
                         break;
 
                     case 64 or 46://激化
-                        reaction = Tags.ReactionTags.CATALYZE;
+                        reactiontag = ReactionTags.Catalyze;
                         dv_person.Damage++;
                         break;
 
                     case 71 or 72 or 73 or 74://扩散
                     case 75:
-                        reaction = Tags.ReactionTags.SWIRL;
+                        reactiontag = ReactionTags.Swirl;
                         mul = new(DamageSource.Addition, (currElement - 1) % 4 + 1, 1, dv_person.TargetIndex, true);
                         break;
 
@@ -292,7 +294,7 @@ namespace TCGGame
                 }
 
                 //冰草共存检测是否反应掉了冰
-                if (currElement == 5 && reaction != null)
+                if (currElement == 5 && reactiontag != ReactionTags.None)
                 {
                     nextElement = 6;
                 }
@@ -300,9 +302,9 @@ namespace TCGGame
 
             Characters[dv_person.TargetIndex].Element = nextElement;
 
-            dv_person.Reaction = reaction;
+            dv_person.Reaction = reactiontag.ToString();
 
-            return reaction;
+            return reactiontag.ToString();
         }
     }
 }

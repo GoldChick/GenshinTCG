@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using TCGCard;
+using TCGBase;
 using TCGMod;
 using TCGUtil;
 

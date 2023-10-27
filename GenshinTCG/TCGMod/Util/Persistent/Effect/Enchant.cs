@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGCard;
 
 namespace TCGMod
 {
@@ -15,11 +14,11 @@ namespace TCGMod
             _maxusetimes = maxusetimes;
             _triggerdic = new()
             {
-                { Tags.SenderTags.ELEMENT_ENCHANT, new PersistentElementEnchant(element, !round,adddamage) }
+                { SenderTag.ElementEnchant, new PersistentElementEnchant(element, !round,adddamage) }
             };
             if (round)
             {
-                _triggerdic.Add(Tags.SenderTags.ROUND_START, (me, p, s, v) => p.AvailableTimes--);
+                _triggerdic.Add(SenderTag.RoundOver, (me, p, s, v) => p.AvailableTimes--);
             }
         }
         public override int MaxUseTimes => _maxusetimes;

@@ -1,4 +1,4 @@
-﻿using TCGCard;
+﻿using TCGBase;
 
 namespace TCGBase
 {
@@ -7,7 +7,7 @@ namespace TCGBase
     /// </summary>
     public class UseSkillSender : AbstractAfterActionSender
     {
-        public override string SenderName => Tags.SenderTags.AFTER_USE_SKILL;
+        public override string SenderName => SenderTag.AfterUseSkill.ToString();
         public int CharIndex { get; set; }
         public AbstractCardSkill Skill { get; set; }
         public int[]? AdditionalTargetArgs { get; set; }

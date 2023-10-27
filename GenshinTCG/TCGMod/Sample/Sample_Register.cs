@@ -1,4 +1,4 @@
-﻿using TCGCard;
+﻿using TCGBase;
 using TCGRule;
 using TCGUtil;
 

@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGCard;
 
 namespace TCGMod
 {
@@ -9,7 +8,7 @@ namespace TCGMod
 
         public override PersistentTriggerDictionary TriggerDic => new()
         {
-            { Tags.SenderTags.DAMAGE_INCREASE,new PersistentTrigger((me,p,s,v)=>
+            { SenderTag.DamageIncrease.ToString(),new PersistentTrigger((me,p,s,v)=>
                 {
                     if (s.TeamID==me.TeamIndex &&v is DamageVariable dv && (dv.Element==3 || dv.Element==4))
                     {

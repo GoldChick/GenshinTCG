@@ -1,6 +1,5 @@
 ﻿using GenshinTCG.TCGMod.Util.Persistent;
 using TCGBase;
-using TCGCard;
 using TCGGame;
 
 namespace TCGMod

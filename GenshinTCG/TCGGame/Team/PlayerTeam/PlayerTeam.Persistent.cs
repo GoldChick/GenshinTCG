@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using TCGBase;
-using TCGCard;
 using TCGMod;
 using TCGRule;
 using TCGUtil;

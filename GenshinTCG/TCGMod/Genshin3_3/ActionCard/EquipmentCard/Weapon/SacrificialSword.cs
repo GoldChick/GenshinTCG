@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using TCGBase;
-using TCGCard;
 using TCGGame;
 using TCGMod;
 using TCGUtil;
@@ -31,8 +30,8 @@ namespace Genshin3_3
 
             public override PersistentTriggerDictionary TriggerDic => new()
             {
-                {Tags.SenderTags.DAMAGE_INCREASE, new PersistentWeapon() },
-                {Tags.SenderTags.AFTER_USE_SKILL, (me,p,s,v)=>
+                {SenderTag.DamageIncrease.ToString(), new PersistentWeapon() },
+                {SenderTag.AfterUseSkill.ToString(), (me,p,s,v)=>
                     {
                         if (p.AvailableTimes > 0 && s is UseSkillSender sks && sks.Skill.Category == SkillCategory.E)
                         {
@@ -40,7 +39,7 @@ namespace Genshin3_3
                         }
                     }
                 },
-                {Tags.SenderTags.ROUND_START, new PersistentSimpleUpdate() }
+                {SenderTag.RoundStart.ToString(), new PersistentSimpleUpdate() }
             };
         }
     }

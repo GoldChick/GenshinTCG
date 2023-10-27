@@ -1,9 +1,9 @@
-﻿using TCGCard;
+﻿using TCGBase;
 using TCGRule;
 
 namespace TCGGame
 {
-    public class Support : AbstractPersistent<AbstractCardPersistentSupport>
+    public class Support : Persistent<AbstractCardPersistentSupport>
     {
         public Support(string nameid) : base(nameid, Registry.Instance.Supports.GetValueOrDefault(nameid))
         {

@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGCard;
 
 namespace TCGMod
 {
@@ -10,7 +9,7 @@ namespace TCGMod
 
         public override PersistentTriggerDictionary TriggerDic => new()
         {
-            { Tags.SenderTags.HURT_DECREASE,new PersistentYellowShield()}
+            { SenderTag.HurtDecrease.ToString(),new PersistentYellowShield()}
         };
 
         public override string NameID => "结晶盾";

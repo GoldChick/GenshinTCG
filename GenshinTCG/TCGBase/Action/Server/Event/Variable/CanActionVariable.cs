@@ -5,7 +5,7 @@
     /// </summary>
     public class CanActionVariable : AbstractSimpleVariable<bool>
     {
-        public override string VariableName => Tags.VariableTags.CAN_ACTION;
+        public override string VariableName => VariableTags.CAN_ACTION;
         public CanActionVariable(bool can = true) : base(can) { }
     }
 }

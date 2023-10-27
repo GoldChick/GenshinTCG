@@ -2,7 +2,7 @@
 {
     public class DiceCostVariable : AbstractVariable
     {
-        public override string VariableName => Tags.VariableTags.DICE_COST;
+        public override string VariableName => VariableTags.DICE_COST;
         public Cost Cost { get; set; }
 
         public DiceCostVariable(Cost? cost)

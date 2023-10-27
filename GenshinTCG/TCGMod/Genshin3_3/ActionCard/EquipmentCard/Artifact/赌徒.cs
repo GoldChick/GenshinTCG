@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGCard;
 using TCGGame;
 using TCGUtil;
 
@@ -8,8 +7,6 @@ namespace Genshin3_3
     public class 赌徒 : AbstractCardArtifact, ITargetSelector
     {
         public override string NameID => "赌徒的耳环";
-
-        public override string[] SpecialTags => new string[] { TCGBase.Tags.CardTags.EquipmentTags.ARTIFACT };
 
         public override int[] Costs => new int[] { 1 };
 
@@ -33,7 +30,7 @@ namespace Genshin3_3
 
             private class 赌徒_Trigger : PersistentTrigger
             {
-                public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+                public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
                     throw new NotImplementedException();
                 }

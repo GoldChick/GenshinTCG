@@ -1,5 +1,5 @@
 ﻿using System.Xml.Linq;
-using TCGCard;
+using TCGBase;
 
 namespace TCGBase
 {
@@ -26,7 +26,7 @@ namespace TCGBase
     {
         private int _damage;
         private int _element;
-        public override string VariableName => Tags.VariableTags.DAMAGE;
+        public override string VariableName => VariableTags.DAMAGE;
         public int Damage { get => _damage; set => _damage = int.Max(0, value); }
 
         /// <summary>
