@@ -1,6 +1,4 @@
-﻿using TCGBase;
-
-namespace TCGClient
+﻿namespace TCGBase
 {
     public class ClientSetting
     {

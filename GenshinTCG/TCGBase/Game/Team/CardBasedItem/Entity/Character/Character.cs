@@ -1,8 +1,4 @@
-﻿using System.Text.Json;
-using TCGBase;
-using TCGUtil;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public class Character
     {

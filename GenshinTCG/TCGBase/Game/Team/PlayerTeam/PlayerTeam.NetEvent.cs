@@ -96,7 +96,7 @@ namespace TCGBase
         public virtual NetEventRequire GetEventFinalDiceRequirement(NetAction action)
         {
             // DefaultCost 
-            GetEventInitialDiceRequirement(action, out Cost defaultCost);
+            GetEventInitialDiceRequirement(action, out DiceCost defaultCost);
 
             DiceCostVariable c = new(defaultCost);
 
@@ -109,7 +109,7 @@ namespace TCGBase
             return new(c.Cost);
         }
         /// <param name="defaultCost">其实只是这个action最初需要的骰子，不经过任何的减费加费</param>
-        protected void GetEventInitialDiceRequirement(NetAction action, out Cost defaultCost)
+        protected void GetEventInitialDiceRequirement(NetAction action, out DiceCost defaultCost)
         {
             switch (action.Type)
             {

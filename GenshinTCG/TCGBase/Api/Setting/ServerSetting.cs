@@ -1,4 +1,4 @@
-﻿namespace TCGClient
+﻿namespace TCGBase
 {
     public class ServerSetting
     {

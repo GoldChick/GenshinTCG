@@ -20,7 +20,6 @@
     <Folder Include="TCGMod\Sample\Persistent\Effect\" />
     <Folder Include="TCGMod\Sample\Persistent\Summon\" />
     <Folder Include="TCGMod\Sample\Persistent\Support\" />
-    <Folder Include="TCGMod\Util\" />
   </ItemGroup>
 
 </Project>

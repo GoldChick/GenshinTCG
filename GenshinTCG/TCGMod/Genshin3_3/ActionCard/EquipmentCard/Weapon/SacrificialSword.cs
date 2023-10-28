@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using TCGBase;
-using TCGMod;
-using TCGUtil;
+ 
 
 namespace Genshin3_3
 {

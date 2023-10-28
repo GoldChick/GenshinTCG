@@ -1,8 +1,4 @@
-﻿using TCGBase;
-using TCGBase;
-using TCGUtil;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public partial class PlayerTeam
     {
