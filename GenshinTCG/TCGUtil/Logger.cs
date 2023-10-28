@@ -1,10 +1,7 @@
-﻿using System.Diagnostics;
-
-namespace TCGUtil
+﻿namespace TCGUtil
 {
     public static class Logger
     {
-        //TODO:DEBUG MODE
         private static void Print(string? m, string prefix, bool debug = false)
         {
             Console.WriteLine($"[{DateTime.Now} {prefix}]:{(debug ? "DEBUG:" : null)}{m}");

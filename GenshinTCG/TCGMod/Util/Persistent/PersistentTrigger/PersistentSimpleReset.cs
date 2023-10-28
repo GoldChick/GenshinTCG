@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGGame;
 
 namespace TCGMod
 {

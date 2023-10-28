@@ -1,7 +1,4 @@
-﻿using TCGBase;
-using TCGGame;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public enum SummonCategory
     {
@@ -20,12 +17,6 @@ namespace TCGBase
     }
     public abstract class AbstractCardPersistentSummon : AbstractCardPersistent,ISinglePersistentProvider<AbstractCardPersistentSummon>,IDamageSource
     {
-        /// <summary>
-        /// 召唤物默认为空tag<br/>
-        /// TODO:没有注意过召唤物是否有tag
-        /// </summary>
-        public override sealed string[] SpecialTags => Array.Empty<string>();
-
         public AbstractCardPersistentSummon PersistentPool => this;
 
         public DamageSource DamageSource => DamageSource.Summon;

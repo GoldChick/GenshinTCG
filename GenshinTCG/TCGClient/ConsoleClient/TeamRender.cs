@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using TCGBase;
-using TCGGame;
 
 namespace TCGClient
 {
@@ -56,7 +55,6 @@ namespace TCGClient
         /// </summary>
         private void Render(MessageSet left, List<string> right)
         {
-            //TODO: left & right bar
             string message = "";
             for (currPrintHeight = 0; currPrintHeight < 12; currPrintHeight++)
             {
@@ -133,44 +131,44 @@ namespace TCGClient
                 message = "";
             }
         }
-        public void Render(PlayerTeam pt, List<string> left, List<string> right)
+        public void Render(ReadonlyRegion region, List<string> left, List<string> right)
         {
             List<string> strings = new();
             Array.ForEach(summons, s => s.Update(strings));
             Array.ForEach(supports, s => s.Update(strings));
 
-            for (int i = 0; i < pt.Summons.Count; i++)
+            for (int i = 0; i < region.Summons.Count; i++)
             {
-                AbstractPersistent p = pt.Summons[i];
+                var p = region.Summons[i];
                 strings = new()
                 {
-                        p.NameID,
-                        $"可用:{p.CardBase.Info(p)[0]}"
+                        p.Name,
+                        $"可用:{p.Infos[0]}"
                 };
                 summons[i].Update(strings);
             }
-            for (int i = 0; i < pt.Supports.Count; i++)
+            for (int i = 0; i < region.Supports.Count; i++)
             {
-                AbstractPersistent p = pt.Supports[i];
+                var p = region.Supports[i];
                 strings = new()
                 {
-                        p.NameID,
-                        $"可用:{p.CardBase.Info(p)[0]}"
+                        p.Name,
+                        $"可用:{p.Infos[0]}"
                 };
                 supports[i].Update(strings);
             }
             for (int i = 0; i < 3; i++)
             {
-                var p = pt.Characters[i];
+                var p = region.Characters[i];
                 strings = new()
                 {
-                    p.Card.NameID,
-                    $"HP:{p.HP}/{p.Card.MaxHP} MP:{p.MP}/{p.Card.MaxMP}",
+                    p.Name,
+                    $"HP:{p.HP}/{p.MaxHP} MP:{p.MP}/{p.MaxMP}",
                     $"Element:{p.Element}"
                 };
                 if (p.Weapon != null)
                 {
-                    strings.Add($"Weapon:{p.Weapon.NameID} 可用:{p.Weapon.Card.Info(p.Weapon)[0]}");
+                    strings.Add($"Weapon:{p.Weapon.Name} 可用:{p.Weapon.Infos[0]}");
                 }
                 //TODO: equipment
                 if (p.Effects.Count > 0)
@@ -179,54 +177,71 @@ namespace TCGClient
                     //TODO: when 溢出
                     for (int j = 0; j < p.Effects.Count; j++)
                     {
-                        strings.Add($"{p.Effects[j].NameID} 可用:{p.Effects[j].Card.Info(p.Effects[j])[0]}");
+                        strings.Add($"{p.Effects[j].Name} 可用:{p.Effects[j].Infos[0]}");
                     }
                 }
                 characters[i].Update(strings);
             }
-            currCharacter = pt.CurrCharacter;
+            currCharacter = region.CurrCharacter;
             strings.Clear();
-            if (pt.Effects.Count > 0)
+            if (region.Effects.Count > 0)
             {
                 strings.Add("TeamEffects:");
                 //TODO: when 溢出
-                for (int j = 0; j < pt.Effects.Count; j++)
+                for (int j = 0; j < region.Effects.Count; j++)
                 {
-                    strings.Add($"{pt.Effects[j].NameID} 可用:{pt.Effects[j].Card.Info(pt.Effects[j])[0]}");
+                    strings.Add($"{region.Effects[j].Name} 可用:{region.Effects[j].Infos[0]}");
                 }
             }
             teamEffects.Update(strings);
 
-            left = new()
+            MessageSet leftm = new(6);
+            leftm.Update(left);
+            Render(leftm, right);
+        }
+        public void RenderMe(ReadonlyGame gm)
+        {
+            List<string> left = new()
             {
                 "骰子数:",
-                $"{pt.GetDices().Sum()}",
+                $"{gm.Dices.Count}",
                 "卡牌数:",
-                $"{pt.CardsInHand.Count}"
+                $"{gm.Cards.Count}",
+                "剩余卡牌数:",
+                $"{gm.LeftCardsNum}"
             };
-            if (pt.Game.CurrTeam == pt.TeamIndex)
+            if (gm.CurrTeam == gm.MeID)
             {
                 left.Add("");
                 left.Add("");
                 left.Add("");
                 left.Add("行动中");
             }
-
-            MessageSet leftm = new(6);
-            leftm.Update(left);
-            Render(leftm, right);
-        }
-        public void RenderMe(PlayerTeam pt)
-        {
-            List<string> right = pt.CardsInHand.Select(c => c.Card.NameID).ToList();
+            List<string> right = gm.Cards.ToList();
             right.Insert(0, "Cards:");
-            Render(pt, null, right);
+            Render(gm.Me, left, right);
         }
-        public void RenderEnemy(PlayerTeam me, PlayerTeam enemy)
+        public void RenderEnemy(ReadonlyGame gm)
         {
-            List<string> right = me.GetDices().Select((p, index) => $"{(ElementCategory)index}:{p}").ToList();
+            List<string> left = new()
+            {
+                "骰子数:",
+                $"{gm.EnemyDiceNum}",
+                "卡牌数:",
+                $"{gm.EnemyCardNum}",
+                "剩余卡牌数:",
+                $"{gm.EnemyLeftCardsNum}"
+            };
+            if (gm.CurrTeam != gm.MeID)
+            {
+                left.Add("");
+                left.Add("");
+                left.Add("");
+                left.Add("行动中");
+            }
+            List<string> right = gm.Dices.Select(p => $"{(ElementCategory)p}").ToList();
             right.Insert(0, "Dices:");
-            Render(enemy, null, right);
+            Render(gm.Enemy, left, right);
         }
     }
 }

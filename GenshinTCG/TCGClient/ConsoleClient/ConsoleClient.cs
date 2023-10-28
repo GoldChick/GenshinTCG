@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGGame;
 using TCGUtil;
 
 namespace TCGClient

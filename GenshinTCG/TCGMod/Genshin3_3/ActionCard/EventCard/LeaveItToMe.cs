@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGGame;
 using TCGUtil;
 
 namespace Genshin3_3
@@ -9,8 +8,6 @@ namespace Genshin3_3
         public override string NameID => "leaveittome";
 
         public override bool CostSame => false;
-
-        public override string[] SpecialTags => Array.Empty<string>();
 
         public override int[] Costs => Array.Empty<int>();
 

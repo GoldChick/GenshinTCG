@@ -7,7 +7,6 @@ namespace TCGBase
     /// </summary>
     public abstract class AbstractCardPersistentEffect : AbstractCardPersistent, IDamageSource
     {
-        public override sealed string[] SpecialTags => throw new Exception("AbstractCardEffect:不应该访问一个普通effect的Tags!");
         /// <summary>
         /// 是否在角色/团队effect中可见<br/>
         /// 其实也是客户端only的东西

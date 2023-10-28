@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGGame;
 using TCGMod;
 using TCGUtil;
 
@@ -9,8 +8,6 @@ namespace Genshin3_3
     {
         public override string NameID => "雷楔";
 
-        public override string[] SpecialTags => new string[] { "战斗行动" };
-
         public override int[] Costs => new int[] { 0, 0, 0, 0, 1 };
 
         public override bool CostSame => false;
@@ -18,7 +15,6 @@ namespace Genshin3_3
 
         public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
-            Logger.Error("打出了一张雷楔！但是什么都没有发生！");
             for (int i = 0; i < me.Characters.Length; i++)
             {
                 if (me.Characters[i].Card.NameID == "keqing")
@@ -78,7 +74,6 @@ namespace Genshin3_3
             public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
             {
                 me.Enemy.Hurt(new(4, 3, 0), this);
-                Logger.Warning("刻请使用了星斗归位！并且产生了一张雷楔！");
                 if (me is PlayerTeam pt)
                 {
                     var cih = pt.CardsInHand.Find(p => p.Card.NameID == "雷楔");
@@ -89,7 +84,6 @@ namespace Genshin3_3
                     }
                     else if (me.Effects.Contains("雷楔_effect"))
                     {
-                        Logger.Warning("由于使用雷楔出来，所以不会产生雷楔，！");
                     }
                     else
                     {
@@ -112,7 +106,6 @@ namespace Genshin3_3
                 new(4, 4,  0) ,
                 new(-1, 3,  0, true)
                 }, this);
-                Logger.Warning("刻请使用了天街巡游！");
             }
 
         }

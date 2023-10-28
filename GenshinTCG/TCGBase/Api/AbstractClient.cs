@@ -1,16 +1,20 @@
-﻿using TCGGame;
+﻿using TCGBase;
 using TCGUtil;
 using TCGClient;
 
 namespace TCGBase
 {
+    /// <summary>
+    /// 尽管名字叫Client，实际上是在服务端运行的<br/>
+    /// 其实更应该是Server与Client之间交互的通道，只是想不起来应该叫什么名字了
+    /// </summary>
     public abstract class AbstractClient
     {
         public ClientSetting ClientSetting { get; protected set; }
         public ServerSetting ServerSetting { get; protected set; }
 
         public ReadonlyGame Game { get; protected set; }
-        public PlayerTeam Me { get; protected set; }
+        private PlayerTeam Me { get; set; }
 
         /// <summary>
         /// 服务端=>客户端
@@ -33,16 +37,18 @@ namespace TCGBase
         /// 服务端=>客户端
         /// 游戏进行中更新Team<br/>
         /// </summary>
-        public virtual void UpdateTeam(PlayerTeam me) => Me = me;
-        /// <summary>
-        /// 开发者出于精力问题做出的偷懒的方案，直接传递Full State<br/>
-        /// TODO:目前理想的方案其实是每次传递变化量，不过暂时懒得做捏
-        /// </summary>
-        /// <param name="game"></param>
-        public void UpdateGame(ReadonlyGame game) => Game = game;
-        public void Update(ClientUpdatePacket packet)
+        public void BindTeam(PlayerTeam me)
         {
-
+            Me = me;
+            Game = new(me.Game, me.TeamIndex);
         }
+
+        protected List<TargetEnum> GetTargetEnums(NetAction action) => Me.GetTargetEnums(action);
+        protected NetEventRequire GetEventFinalDiceRequirement(NetAction action) => Me.GetEventFinalDiceRequirement(action);
+        public void Update(ClientUpdatePacket packet) => Game.Update(packet);
+        /// <summary>
+        /// TODO:偷个懒
+        /// </summary>
+        public void UpdateRegion() => Game.UpdateRegion(Me, Me.Enemy);
     }
 }

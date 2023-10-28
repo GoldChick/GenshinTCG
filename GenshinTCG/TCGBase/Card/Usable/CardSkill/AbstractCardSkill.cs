@@ -1,7 +1,4 @@
-﻿using TCGBase;
-using TCGGame;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public enum SkillCategory
     {
@@ -37,7 +34,6 @@ namespace TCGBase
         /// <b>对于被动技能targetargs[0]表示teamid，并且没有additionaltargetargs</b>
         /// </summary>
         public abstract void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null);
-        public override sealed string[] SpecialTags => new string[] { Category.ToString() };
         public DamageSource DamageSource => DamageSource.Character;
     }
 }

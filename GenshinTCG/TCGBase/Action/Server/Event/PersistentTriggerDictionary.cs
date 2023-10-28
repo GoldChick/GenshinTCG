@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using TCGGame;
+using TCGBase;
 
 namespace TCGBase
 {

@@ -1,4 +1,4 @@
-﻿using TCGGame;
+﻿using TCGBase;
 
 namespace TCGBase
 {
@@ -33,9 +33,6 @@ namespace TCGBase
         /// 默认给自己的角色装备（可修改）
         /// </summary>
         public virtual TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
-        //TODO:如何tostring
-        public override string[] SpecialTags => new string[] { WeaponCategory.ToString()};
-
         public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => me.Characters[targetArgs[0]].Card.WeaponCategory == WeaponCategory;
     }
     public abstract class AbstractCardArtifact : AbstractCardEquipment

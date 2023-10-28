@@ -1,4 +1,4 @@
-﻿using TCGGame;
+﻿using TCGBase;
 
 namespace TCGBase
 {

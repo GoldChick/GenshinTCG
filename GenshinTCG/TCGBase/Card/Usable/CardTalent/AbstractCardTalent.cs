@@ -1,6 +1,4 @@
-﻿using TCGGame;
-using TCGBase;
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// 仅表明为天赋牌，具体的Category还是需要继承其他的类<br/>
@@ -47,8 +45,6 @@ namespace TCGBase
             var sks = me.Characters[targetArgs[0]].Card.Skills;
             return me.Characters[targetArgs[0]].Card.NameID == CharacterNameID && (targetArgs[0] == me.CurrCharacter || sks[Skill % sks.Length] is AbstractPassiveSkill);
         }
-        public override sealed string[] SpecialTags => new string[] { "sb" };
-
         public TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
     }
 }

@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGGame;
 namespace TCGMod
 {
     /// <summary>
@@ -13,7 +12,7 @@ namespace TCGMod
         private readonly int[] _costs;
         private readonly int _damage;
         private readonly int _element;
-        /// <param name="diceElement">默认E会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
+        /// <param name="diceElement">默认Q会消耗至少3有效；如果不填，则默认为element；如果element不为某种元素，则为至少3白</param>
         public CharacterSingleSummonQ(string nameID, AbstractCardPersistentSummon summon, int diceElement = -1, int diceNum = 3)
         {
             _name = nameID;
@@ -23,8 +22,7 @@ namespace TCGMod
             diceNum = int.Max(diceNum, 3);
             if (diceElement > 0 && diceElement < 8)
             {
-                //TODO:应该是3，但是for test
-                _costs[diceElement] = 0;
+                _costs[diceElement] = diceNum;
             }
             else
             {

@@ -1,7 +1,4 @@
-﻿using TCGBase;
-using TCGGame;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// Assist和Summon相当于[自己]和Effect的结合
@@ -27,6 +24,5 @@ namespace TCGBase
         /// 默认的TriggerDic为空，但也不排除特殊情况，如[迪西雅]天赋
         /// </summary>
         public override PersistentTriggerDictionary TriggerDic => new();
-        public override sealed string[] SpecialTags => throw new Exception("AbstractCardTalent:不应该访问一个普通talent的Tags!");
     }
 }

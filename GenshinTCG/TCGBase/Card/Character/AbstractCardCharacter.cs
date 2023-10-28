@@ -57,18 +57,5 @@ namespace TCGBase
         /// 角色卡的(生物)种类，默认为HUMAN人类
         /// </summary>
         public virtual CharacterCategory CharacterCategory { get => CharacterCategory.HUMAN; }
-
-        /// <summary>
-        /// 用来存放比较特殊的tag，比如[丘丘岩盔王]：[丘丘人]
-        /// </summary>
-        public override sealed string[] SpecialTags => new List<string>()
-            {
-                CharacterElement.ToString(),
-                CharacterCategory.ToString(),
-                CharacterRegion.ToString(),
-                WeaponCategory.ToString()
-            }
-        .Where(s => !string.IsNullOrEmpty(s)).ToArray();
-        //TODO: how to to string?
     }
 }

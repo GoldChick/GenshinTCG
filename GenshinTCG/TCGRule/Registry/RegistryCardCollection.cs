@@ -19,7 +19,7 @@ namespace TCGUtil
         internal void MoveModToNext(string next) => _currModID = Normalize.StringNormalize(next);
 
     }
-    public class RegistryCardCollection<T> : RegistryCardCollection, IRegistryConsumer<T>, IPrintable where T : AbstractCardBase
+    public class RegistryCardCollection<T> : RegistryCardCollection, IRegistryConsumer<T> where T : AbstractCardBase
     {
         private readonly Dictionary<string, T> _values;
 

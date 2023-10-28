@@ -124,20 +124,30 @@ namespace TCGClient
             Obtain,
             Lose
         }
-        /// <param name="pos">persistent position (0-6 character 7 team 8 summon 9 support)</param>
-        public static ClientUpdatePacket PersistentUpdate(int teamID, PersistentUpdateCategory category, int pos, string cardID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)category, new int[] { pos }, new string[] { cardID });
-        public enum DiceUpdateCategory
-        {
-            Consume,
-            Obtain
-        }
-        public static ClientUpdatePacket DiceUpdate(int teamID, DiceUpdateCategory category, params int[] dices) => new(ClientUpdateType.Dice, 10 * teamID + (int)category, dices);
+        /// <param name="region">persistent position (0-9 character -1 team 11 summon 12 support)</param>
+        public static ClientUpdatePacket PersistentUpdate(int teamID, PersistentUpdateCategory category, int region, string cardID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)category, new int[] { region }, new string[] { cardID });
+        public static ClientUpdatePacket DiceUpdate(int teamID, params int[] dices) => new(ClientUpdateType.Dice, 10 * teamID, dices);
         public enum CardUpdateCategory
         {
+            /// <summary>
+            /// 使用掉（双方都能看到）(int[0]+{string[] (Me Onlyl)})
+            /// </summary>
             Use,
+            /// <summary>
+            /// 消耗掉（只有自己能看到）(string[])/(int[0])
+            /// </summary>
             Consume,
+            /// <summary>
+            /// 凭空得到 (string[])/(int[0])
+            /// </summary>
             Obtain,
+            /// <summary>
+            /// LeftCards中卡牌数量增加(string[]).Length
+            /// </summary>
             Push,
+            /// <summary>
+            /// LeftCards中卡牌数量减少1
+            /// </summary>
             Pop
         }
         public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, params string[] cardID) => new(ClientUpdateType.Card, 10 * teamID + (int)category, cardID);

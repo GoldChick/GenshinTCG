@@ -1,8 +1,5 @@
-﻿using GenshinTCG.TCGMod.Util.Persistent;
-using TCGBase;
-using TCGGame;
+﻿using TCGBase;
 using TCGMod;
-using TCGUtil;
 
 namespace Genshin3_3
 {

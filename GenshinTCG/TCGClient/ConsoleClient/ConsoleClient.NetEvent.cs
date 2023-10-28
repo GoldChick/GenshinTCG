@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using TCGBase;
-using TCGGame;
 using TCGUtil;
 
 namespace TCGClient
@@ -40,17 +39,17 @@ namespace TCGClient
                         _ => new NetAction(ActionType.Pass)
                     };
                 }
-                var dicereq = Me.GetEventFinalDiceRequirement(ac);
+                var dicereq = GetEventFinalDiceRequirement(ac);
 
                 Logger.Warning($"返回的actiontype={ac.Type}");
-                NetEvent nevt = new(ac, dicereq.Cost.Costs.Sum() > 0 ? SelectDices(dicereq.Cost.Costs) : null, SelectTargets(Me, ac));
+                NetEvent nevt = new(ac, dicereq.Cost.Costs.Sum() > 0 ? SelectDices(dicereq.Cost.Costs) : null, SelectTargets(ac));
                 return nevt;
             }
             else
             {
                 return demand switch
                 {
-                    ActionType.ReRollDice or ActionType.ReRollCard => new NetEvent(new(demand), Array.Empty<int>(), SelectOptionalTargets(Me, new(demand))),
+                    ActionType.ReRollDice or ActionType.ReRollCard => new NetEvent(new(demand), Array.Empty<int>(), SelectOptionalTargets(new(demand))),
                     ActionType.Switch => new(Switch()),
                     ActionType.SwitchForced => new(Switch(true)),
                     _ => throw new NotImplementedException("指定demand的还没做呃呃呃")
@@ -60,24 +59,27 @@ namespace TCGClient
         /// <param name="forced">是否是要求的强制切人</param>
         public NetAction Switch(bool forced = false)
         {
-            var chars = Me.Characters;
-            Logger.Print($"选择要切到的角色!输入0-{chars.Length - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
-            for (int i = 0; i < chars.Length; i++)
+            var chars = Game.Me.Characters;
+            Logger.Print($"选择要切到的角色!输入0-{chars.Count - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
+            for (int i = 0; i < chars.Count; i++)
             {
                 var cha = chars[i];
-                Logger.Print($"{i}: {cha.Card.NameID} HP:{chars[i].HP} ");
+                Logger.Print($"{i}: {cha.Name} HP:{chars[i].HP} ");
             }
             if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
             {
                 input_num = 0;
             }
-            return new NetAction(forced ? ActionType.SwitchForced : ActionType.Switch, input_num % base.Me.Characters.Length);
+            return new NetAction(forced ? ActionType.SwitchForced : ActionType.Switch, input_num % chars.Count);
         }
         public NetAction UseCard()
         {
-            var cards = Me.CardsInHand;
+            var cards = Game.Cards;
             Logger.Print($"使用卡牌!输入0-{cards.Count - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
-            cards.ForEach(c => c.Print());
+            for (int i = 0; i < cards.Count; i++)
+            {
+                Logger.Print($"{i}:{cards[i]}");
+            }
             if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
             {
                 input_num = 0;
@@ -86,24 +88,27 @@ namespace TCGClient
         }
         public NetAction UseSkill()
         {
-            var cha = base.Me.Characters[base.Me.CurrCharacter].Card;
+            var cha = Game.Me.Characters[Game.Me.CurrCharacter];
             var skills = cha.Skills;
-            Logger.Print($"使用技能!输入0-{skills.Length - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
-            for (int i = 0; i < skills.Length; i++)
+            Logger.Print($"使用技能!输入0-{skills.Count - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
+            for (int i = 0; i < skills.Count; i++)
             {
-                Logger.Print($"{i}: {cha.NameID}_{skills[i].NameID} {JsonSerializer.Serialize(skills[i].SpecialTags)}");
+                Logger.Print($"{i}: {cha.Name}_{skills[i]}");
             }
             if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
             {
                 input_num = 0;
             }
-            return new NetAction(ActionType.UseSKill, int.Clamp(input_num, 0, skills.Length - 1));
+            return new NetAction(ActionType.UseSKill, int.Clamp(input_num, 0, skills.Count - 1));
         }
         public NetAction Blend()
         {
-            var cards = Me.CardsInHand;
+            var cards = Game.Cards;
             Logger.Print($"选择要消耗的卡牌!输入0-{cards.Count - 1}，不输入将视为0。", ConsoleColor.DarkCyan);
-            cards.ForEach(c => c.Print());
+            for (int i = 0; i < cards.Count; i++)
+            {
+                Logger.Print($"{i}:{cards[i]}");
+            }
             if (!int.TryParse(Regex.Replace(Console.ReadLine() ?? "0", @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)), out int input_num))
             {
                 input_num = 0;
@@ -119,7 +124,9 @@ namespace TCGClient
         public int[] SelectDices([NotNull] int[] req)
         {
             Logger.Print("----骰子种类----：万能冰水火雷岩草风");
-            Logger.Print($"现在拥有的骰子数： {JsonSerializer.Serialize(Game.Dices)}");
+            int[] dices = new int[8];
+            Game.Dices.ForEach(v => dices[v]++);
+            Logger.Print($"现在拥有的骰子数： {JsonSerializer.Serialize(dices)}");
             Logger.Print($"需要使用的骰子数： {JsonSerializer.Serialize(req)}");
 
             int[] ints = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -134,15 +141,15 @@ namespace TCGClient
             }
             return ints;
         }
-        public int[] SelectOptionalTargets(PlayerTeam me, NetAction action)
+        public int[] SelectOptionalTargets(NetAction action)
         {
-            List<TargetEnum> enums = me.GetTargetEnums(action);
+            List<TargetEnum> enums = GetTargetEnums(action);
             if (enums.Count > 0)
             {
                 IEnumerable<string> values = enums[0] switch
                 {
-                    TargetEnum.Card_Optional => me.CardsInHand.Select(c => c.Card.NameID),
-                    TargetEnum.Dice_Optional => me.GetDices().SelectMany((value, index) => Enumerable.Repeat(((ElementCategory)index).ToString(), value)),
+                    TargetEnum.Card_Optional => Game.Cards.Select(c => c),
+                    TargetEnum.Dice_Optional => Game.Dices.Select(d => ((ElementCategory)d).ToString()),
                     _ => throw new Exception("没有实现的target")
                 };
                 int cnt = values.Count();
@@ -161,17 +168,17 @@ namespace TCGClient
                 return int.Clamp(input_num, 0, 1);
             }).ToArray();
         }
-        public int[] SelectTargets(PlayerTeam me, NetAction action)
+        public int[] SelectTargets(NetAction action)
         {
-            List<TargetEnum> enums = me.GetTargetEnums(action);
+            List<TargetEnum> enums = GetTargetEnums(action);
 
             Func<TargetEnum, int> input_target = (e) =>
             {
                 IEnumerable<string> values = e switch
                 {
-                    TargetEnum.Card_Me => me.CardsInHand.Select(c => c.Card.NameID),
-                    TargetEnum.Character_Enemy => me.Enemy.Characters.Select(c => c.Card.NameID),
-                    TargetEnum.Character_Me => me.Characters.Select(c => c.Card.NameID),
+                    TargetEnum.Card_Me => Game.Cards.Select(c => c),
+                    TargetEnum.Character_Enemy => Game.Enemy.Characters.Select(c => c.Name),
+                    TargetEnum.Character_Me => Game.Me.Characters.Select(c => c.Name),
                     _ => throw new Exception("没有实现的target")
                 };
                 int cnt = values.Count();
@@ -194,9 +201,9 @@ namespace TCGClient
         {
             var tr = new TeamRender();
             Console.WriteLine("===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====");
-            tr.RenderEnemy(Me, Me.Enemy as PlayerTeam);
+            tr.RenderEnemy(Game);
             Console.WriteLine("===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====");
-            tr.RenderMe(Me);
+            tr.RenderMe(Game);
             Console.WriteLine("===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====");
             return null;
         }

@@ -25,7 +25,7 @@ namespace TCGBase
         /// 用来给客户端提供使用的表现参数<br/>
         /// 默认为可用次数，TODO:将来可能会删除？
         /// </summary>
-        public virtual int[] Info(TCGGame.AbstractPersistent p)
+        public virtual int[] Info(TCGBase.AbstractPersistent p)
         {
             Debug.Assert(p.NameID.Contains(NameID),$"AbstractCardPersistent: unknown behavior? {p.NameID} and {NameID}");
             return new int[] { p.AvailableTimes };

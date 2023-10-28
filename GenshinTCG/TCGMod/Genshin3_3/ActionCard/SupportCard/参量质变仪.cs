@@ -1,6 +1,4 @@
 ﻿using TCGBase;
-using TCGGame;
-
 namespace Genshin3_3
 {
     public class 参量质变仪 : AbstractCardSupport
@@ -12,8 +10,6 @@ namespace Genshin3_3
         public override bool CostSame => false;
 
         public override string NameID => "参量质变仪";
-
-        public override string[] SpecialTags => new string[] { "道具" };
         private class 参量质变仪_P : AbstractCardPersistentSupport
         {
             public override int MaxUseTimes => 0;
@@ -55,7 +51,6 @@ namespace Genshin3_3
             };
 
             public override string NameID => "参量质变仪_P";
-            public override string[] SpecialTags => new string[] { "道具" };
         }
     }
 }
