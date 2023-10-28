@@ -1,7 +1,4 @@
-﻿using System.Xml.Linq;
-using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public enum DamageSource
     {

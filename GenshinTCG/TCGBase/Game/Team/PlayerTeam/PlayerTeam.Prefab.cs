@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using TCGBase;
 namespace TCGBase
 {
     //这里写出各种预设

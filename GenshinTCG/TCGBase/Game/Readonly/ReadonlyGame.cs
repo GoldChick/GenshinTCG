@@ -1,8 +1,4 @@
-﻿using System.Text.Json;
-using TCGBase;
- 
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// 从一个玩家的视角展现的
@@ -90,7 +86,14 @@ namespace TCGBase
                         case 1://consume
                             if (teamID == MeID)
                             {
-                                Array.ForEach(packet.Strings, s => Cards.RemoveAt(Cards.FindIndex(c => c == s)));
+                                Array.ForEach(packet.Strings, s =>
+                                {
+                                    var i = Cards.FindIndex(c => c == s);
+                                    if (i != -1)
+                                    {
+                                        Cards.RemoveAt(i);
+                                    }
+                                });
                             }
                             else
                             {

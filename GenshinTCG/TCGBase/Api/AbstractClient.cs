@@ -43,10 +43,10 @@ namespace TCGBase
 
         protected List<TargetEnum> GetTargetEnums(NetAction action) => Me.GetTargetEnums(action);
         protected NetEventRequire GetEventFinalDiceRequirement(NetAction action) => Me.GetEventFinalDiceRequirement(action);
-        public void Update(ClientUpdatePacket packet) => Game.Update(packet);
+        public virtual void Update(ClientUpdatePacket packet) => Game.Update(packet);
         /// <summary>
         /// TODO:偷个懒
         /// </summary>
-        public void UpdateRegion() => Game.UpdateRegion(Me, Me.Enemy);
+        public virtual void UpdateRegion() => Game.UpdateRegion(Me, Me.Enemy);
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// 用于客户端和服务端之间信息传输的Event

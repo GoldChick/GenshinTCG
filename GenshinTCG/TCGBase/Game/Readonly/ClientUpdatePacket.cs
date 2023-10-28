@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public enum ClientUpdateType
     {
@@ -45,7 +43,6 @@ namespace TCGBase
         /// <summary>
         /// 仅为json使用
         /// </summary>
-        [JsonConstructor]
         public ClientUpdatePacket(ClientUpdateType type, int category, int[] ints, string[] strings)
         {
             Type = type;
