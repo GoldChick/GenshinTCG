@@ -1,20 +1,17 @@
-﻿using TCGBase;
- 
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public partial class PlayerTeam
     {
-        internal Game Game { get; private init; }
+        public Game Game { get; private init; }
         /// <summary>
         /// 在Game.Teams中的index
         /// </summary>
-        internal int TeamIndex { get; private init; }
-        internal PlayerTeam Enemy => Game.Teams[1 - TeamIndex];
+        public int TeamIndex { get; private init; }
+        public PlayerTeam Enemy => Game.Teams[1 - TeamIndex];
         /// <summary>
         /// 只允许使用队内的random
         /// </summary>
-        internal CounterRandom Random { get; init; }
+        public CounterRandom Random { get; init; }
         /// <summary>
         /// 用于pvp模式仅限3个角色(然而设计模式似乎允许使用最多10个角色 Warning:未经测试)
         /// </summary>

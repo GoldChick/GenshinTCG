@@ -3,7 +3,7 @@
     /// <summary>
     /// 调用时计数的random，依次复制random来实现预览
     /// </summary>
-    internal class CounterRandom
+    public class CounterRandom
     {
         private Random _random;
         private int _seed;

@@ -1,17 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="TCGMod\Genshin3_3\ActionCard\OtherCard\" />
-    <Folder Include="TCGMod\Genshin3_3\Persistent\Effect\" />
-    <Folder Include="TCGMod\Genshin3_3\Persistent\Summon\" />
-    <Folder Include="TCGMod\Genshin3_3\Persistent\Support\" />
     <Folder Include="TCGMod\Sample\ActionCard\EquipmentCard\" />
     <Folder Include="TCGMod\Sample\ActionCard\EventCard\" />
     <Folder Include="TCGMod\Sample\ActionCard\OtherCard\" />

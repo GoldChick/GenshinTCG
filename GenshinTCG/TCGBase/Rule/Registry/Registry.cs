@@ -94,9 +94,9 @@ namespace TCGBase
                         {
                             types = ass.GetTypes();
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            throw new Exception($"加载{dll.Name}时出现了错误！请排查此dll需要的游戏版本等信息！");
+                            throw new Exception($"加载{dll.Name}时出现了错误！请排查此dll需要的游戏版本等信息！{ex.Message}");
                         }
 
                         try
