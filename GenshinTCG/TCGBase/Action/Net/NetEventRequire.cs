@@ -4,17 +4,17 @@ namespace TCGBase
 {
     public class NetEventRequire
     {
-        public Cost Cost { get; init; }
+        public DiceCost Cost { get; init; }
 
         /// <param name="dices">any 冰水火雷岩草风</param>
         [JsonConstructor]
-        public NetEventRequire(Cost? cost)
+        public NetEventRequire(DiceCost? cost)
         {
-            Cost = cost ?? new Cost(false, 0);
+            Cost = cost ?? new DiceCost(false, 0);
         }
         public NetEventRequire()
         {
-            Cost = new Cost(false, 128);
+            Cost = new DiceCost(false, 128);
         }
     }
 }

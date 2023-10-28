@@ -1,6 +1,5 @@
-﻿using TCGBase;
-using TCGRule;
-using TCGUtil;
+﻿using GenshinTCG.TCGBase.TCGRule.Registry;
+using TCGBase;
 
 namespace Sample
 {

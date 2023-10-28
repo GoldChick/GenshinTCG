@@ -1,5 +1,5 @@
 ﻿using TCGBase;
-using TCGClient;
+using TCGBase;
 using TCGUtil;
 
 namespace TCGBase
@@ -159,7 +159,6 @@ namespace TCGBase
                 default:
                     t.Pass = true;
                     throw new Exception($"玩家{currTeam}选择了没有NotImplement的Action！");
-                    break;
             }
             //after_xx 在这里结算是否是战斗行动
             EffectTrigger(afterEventSender, afterEventVariable);

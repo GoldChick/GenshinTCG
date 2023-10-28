@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using TCGClient;
+using TCGBase;
 using TCGUtil;
 
 namespace TCGBase

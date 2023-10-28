@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using TCGClient;
 using TCGBase;
-using TCGUtil;
 
 namespace TCGClient
 {

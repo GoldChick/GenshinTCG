@@ -15,7 +15,6 @@ namespace Genshin3_3
 
         public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
-            Logger.Print($"对着{targetArgs[0]}号角色使用了赌徒的耳环!");
         }
 
         public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;

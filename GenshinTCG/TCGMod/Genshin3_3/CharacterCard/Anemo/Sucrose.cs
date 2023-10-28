@@ -1,6 +1,4 @@
 ﻿using TCGBase;
-using TCGMod;
-
 namespace Genshin3_3
 {
     public class Sucrose : AbstractCardCharacter

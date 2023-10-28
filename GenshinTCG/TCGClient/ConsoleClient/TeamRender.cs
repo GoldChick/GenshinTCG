@@ -40,11 +40,11 @@ namespace TCGClient
     internal class TeamRender
     {
         private int currPrintHeight;
-        private MessageSet[] supports = new MessageSet[] { new MessageSet(12), new MessageSet(12), new MessageSet(12), new MessageSet(12) };
+        private readonly MessageSet[] supports = new MessageSet[] { new MessageSet(12), new MessageSet(12), new MessageSet(12), new MessageSet(12) };
         //length:17
-        private List<MessageSet> characters;
+        private readonly List<MessageSet> characters;
         private readonly MessageSet[] summons = new MessageSet[] { new MessageSet(12), new MessageSet(12), new MessageSet(12), new MessageSet(12) };
-        private MessageSet teamEffects = new(17);
+        private readonly MessageSet teamEffects = new(17);
         private int currCharacter;
         public TeamRender()
         {
@@ -170,11 +170,17 @@ namespace TCGClient
                 {
                     strings.Add($"Weapon:{p.Weapon.Name} 可用:{p.Weapon.Infos[0]}");
                 }
-                //TODO: equipment
+                if (p.Artifact != null)
+                {
+                    strings.Add($"Artifact:{p.Artifact.Name} 可用:{p.Artifact.Infos[0]}");
+                }
+                if (p.Talent != null)
+                {
+                    strings.Add($"Talent:{p.Talent.Name} 可用:{p.Talent.Infos[0]}");
+                }
                 if (p.Effects.Count > 0)
                 {
                     strings.Add("Effects:");
-                    //TODO: when 溢出
                     for (int j = 0; j < p.Effects.Count; j++)
                     {
                         strings.Add($"{p.Effects[j].Name} 可用:{p.Effects[j].Infos[0]}");
@@ -187,7 +193,6 @@ namespace TCGClient
             if (region.Effects.Count > 0)
             {
                 strings.Add("TeamEffects:");
-                //TODO: when 溢出
                 for (int j = 0; j < region.Effects.Count; j++)
                 {
                     strings.Add($"{region.Effects[j].Name} 可用:{region.Effects[j].Infos[0]}");

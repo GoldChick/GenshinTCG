@@ -1,6 +1,4 @@
 ﻿using TCGBase;
-using TCGMod;
-
 namespace Genshin3_3
 {
     public class 丘丘岩盔王 : AbstractCardCharacter

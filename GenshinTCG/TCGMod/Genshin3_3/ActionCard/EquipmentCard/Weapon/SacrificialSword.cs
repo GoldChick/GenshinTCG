@@ -17,7 +17,6 @@ namespace Genshin3_3
 
         public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
-            Logger.Print($"给{targetArgs[0]}号角色装备了一张祭礼剑！");
             me.Characters[targetArgs[0]].Weapon = new Effect(new 祭礼剑_effect());
             //TODO:更替武器等
         }

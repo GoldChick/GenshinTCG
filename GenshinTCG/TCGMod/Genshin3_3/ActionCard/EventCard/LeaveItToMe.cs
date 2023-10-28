@@ -15,7 +15,6 @@ namespace Genshin3_3
         public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             me.AddPersistent(new LeaveItToMeEffect());
-            Logger.Error("使用了交给我吧!");
         }
         public class LeaveItToMeEffect : AbstractCardPersistentEffect
         {

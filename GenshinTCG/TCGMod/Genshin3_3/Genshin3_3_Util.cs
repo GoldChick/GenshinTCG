@@ -1,5 +1,4 @@
-﻿using TCGMod;
-using TCGRule;
+﻿using TCGBase;
 
 namespace Genshin3_3
 {

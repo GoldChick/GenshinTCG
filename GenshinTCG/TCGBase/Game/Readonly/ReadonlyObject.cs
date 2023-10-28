@@ -41,7 +41,7 @@
             var tempt = c.Talent;
             if (tempt != null)
             {
-                Weapon = new(tempt.NameID, tempt.Card.Info(tempt));
+                Talent = new(tempt.NameID, tempt.Card.Info(tempt));
             }
             Skills = c.Card.Skills.Select(p => p.NameID).ToList();
         }

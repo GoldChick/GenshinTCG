@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGRule;
 
 namespace TCGBase
 {

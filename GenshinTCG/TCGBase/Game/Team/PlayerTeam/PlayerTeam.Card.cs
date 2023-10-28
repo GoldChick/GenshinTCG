@@ -1,5 +1,5 @@
 ﻿using TCGBase;
-using TCGClient;
+using TCGBase;
 using TCGUtil;
 
 namespace TCGBase

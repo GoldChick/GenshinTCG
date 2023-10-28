@@ -1,8 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
-using TCGBase;
-using TCGMod;
-using TCGUtil;
 
 namespace TCGBase
 {
@@ -63,10 +59,6 @@ namespace TCGBase
                     if (cha.Alive)
                     {
                         cha.Effects.Add(new PersonalEffect(ef, bind));
-                    }
-                    else
-                    {
-                        Logger.Warning($"AbstractTeam.AddPersistent():添加名为{ef.NameID}的effect时出现问题：角色已经被击倒！");
                     }
                 }
             }
@@ -156,7 +148,7 @@ namespace TCGBase
         {
             for (int i = 0; i < Characters.Length; i++)
             {
-                Characters[(i + CurrCharacter) % Characters.Length].Effects.Update();
+                Characters[(i + Characters.Length + CurrCharacter) % Characters.Length].Effects.Update();
             }
             Effects.Update();
             Summons.Update();
@@ -170,7 +162,7 @@ namespace TCGBase
             var me = game.Teams[meIndex];
             for (int i = 0; i < Characters.Length; i++)
             {
-                Characters[(i + CurrCharacter) % Characters.Length].EffectTrigger(me, sender, variable);
+                Characters[(i + Characters.Length + CurrCharacter) % Characters.Length].EffectTrigger(me, sender, variable);
             }
             Effects.EffectTrigger(me, sender, variable);
             Summons.EffectTrigger(me, sender, variable);

@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using TCGUtil;
+using TCGBase;
 
 namespace TCGBase
 {

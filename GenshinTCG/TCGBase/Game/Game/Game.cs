@@ -1,9 +1,4 @@
-﻿using System.Text.Json;
-using TCGBase;
-using TCGClient;
-using TCGRule;
-using TCGUtil;
-namespace TCGBase
+﻿namespace TCGBase
 {
     internal enum GameStage
     {
@@ -75,10 +70,10 @@ namespace TCGBase
                     {
 
                     }
-                    catch (Exception ex)
-                    {
-                        throw new Exception($"Game Fatal! ex:{ex.Message} \n {ex.StackTrace}");
-                    }
+                    //catch (Exception ex)
+                    //{
+                    //    throw new Exception($"Game Fatal! ex:{ex.Message} \n {ex.StackTrace}");
+                    //}
                     finally
                     {
                         Stage = GameStage.PreGame;

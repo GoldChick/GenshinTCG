@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using TCGBase;
-using TCGRule;
-using TCGUtil;
+﻿using TCGBase;
 
 namespace TCGBase
 {

@@ -1,5 +1,4 @@
-﻿using TCGMod;
-using TCGRule;
+﻿using TCGBase;
 
 namespace Sample
 {

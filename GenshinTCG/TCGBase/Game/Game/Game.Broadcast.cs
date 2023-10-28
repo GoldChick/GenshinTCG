@@ -1,4 +1,4 @@
-﻿using TCGClient;
+﻿using TCGBase;
 
 namespace TCGBase
 {

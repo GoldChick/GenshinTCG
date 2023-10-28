@@ -1,5 +1,4 @@
 ﻿using TCGBase;
-using TCGMod;
 using TCGUtil;
 
 namespace Genshin3_3
@@ -33,6 +32,10 @@ namespace Genshin3_3
             {
                 if (targetArgs[0] == me.TeamIndex && me.CurrCharacter == c.Index)
                 {
+                    if (c.Talent!=null &&c.Talent.NameID== "寒天宣命祝词")
+                    {
+                        Console.WriteLine("寒天触发了？？");
+                    }
                     me.AddPersistent(new Enchant("冰附魔", 1, 1), c.Index);
                 }
             }
@@ -43,22 +46,18 @@ namespace Genshin3_3
         private static readonly Ayaka _ayaka = new();
         public override string CharacterNameID => _ayaka.NameID;
 
-        public override int[] Costs => new int[] { 2};
+        public override int[] Costs => new int[] { 2 };
 
         public override string NameID => "寒天宣命祝词";
 
         public override AbstractCardPersistentTalent Effect => new 天赋();
 
         public override int Skill => 3;
-        private class 天赋 : AbstractCardPersistentTalent
+        public class 天赋 : AbstractCardPersistentTalent
         {
             public override int MaxUseTimes => 1;
             public override int Skill => 3;
             public override string NameID => "寒天宣命祝词";
-            public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
-            {
-                Logger.Print("寒天触发了？？");
-            }
         }
     }
 }

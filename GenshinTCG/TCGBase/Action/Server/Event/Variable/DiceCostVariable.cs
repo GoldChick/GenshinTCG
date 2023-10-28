@@ -3,9 +3,9 @@
     public class DiceCostVariable : AbstractVariable
     {
         public override string VariableName => VariableTags.DICE_COST;
-        public Cost Cost { get; set; }
+        public DiceCost Cost { get; set; }
 
-        public DiceCostVariable(Cost? cost)
+        public DiceCostVariable(DiceCost? cost)
         {
             Cost = cost ?? new(false, 0);
         }

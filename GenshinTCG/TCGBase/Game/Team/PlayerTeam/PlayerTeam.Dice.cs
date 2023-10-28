@@ -1,5 +1,5 @@
 ﻿using TCGBase;
-using TCGClient;
+using TCGBase;
 namespace TCGBase
 {
     public partial class PlayerTeam

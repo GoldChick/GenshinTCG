@@ -1,7 +1,4 @@
-﻿using TCGBase;
-using TCGRule;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public class Support : Persistent<AbstractCardPersistentSupport>
     {

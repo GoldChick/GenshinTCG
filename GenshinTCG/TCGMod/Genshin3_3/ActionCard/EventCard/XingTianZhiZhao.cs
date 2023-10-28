@@ -15,7 +15,6 @@ namespace Genshin3_3
 
         public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
-            Logger.Error("使用了星天之兆!");
             me.Characters[me.CurrCharacter].MP++;
         }
 

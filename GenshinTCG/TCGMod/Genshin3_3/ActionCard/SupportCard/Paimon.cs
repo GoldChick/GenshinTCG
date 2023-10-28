@@ -36,15 +36,10 @@ namespace Genshin3_3
                 public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
                 {
                     persitent.AvailableTimes--;
-                    Logger.Warning("大派触发了！");
                     if (me is PlayerTeam pt)
                     {
                         pt.AddDice(0);
                         pt.AddDice(0);
-                    }
-                    if (persitent.AvailableTimes == 0)
-                    {
-                        Logger.Warning("大派触发了！并且弃置！");
                     }
                 }
             }
