@@ -1,43 +1,7 @@
-﻿using System.Diagnostics;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public partial class PlayerTeam
     {
-        ///<summary>
-        ///添加/更新装备
-        /// </summary>
-        public bool AddEquipment(AbstractCardEquipment equip, int target = 0)
-        {
-            target = int.Clamp(target, 0, Characters.Length - 1);
-            Debug.Assert(equip.CanBeUsed(this, new int[] { target }), $"{equip.NameID} Cant be Armed");
-            var cha = Characters[target];
-            if (equip is AbstractCardWeapon wp)
-            {
-                if (cha.Weapon != null)
-                {
-                    cha.Weapon.Active = false;
-                    EffectUpdate();
-                    //cha.Weapon = new PersonalEffect(wp);
-                }
-            }
-            else if (equip is AbstractCardArtifact)
-            {
-            }
-            //TODO:nature?
-            //else if (equip is AbstractCardWeapon)
-            {
-            }
-            return true;
-        }
-        public void AddSupport(AbstractCardPersistent sp, int desperatedWhenFull)
-        {
-            if (Supports.Full)
-            {
-                Supports.RemoveAt(desperatedWhenFull);
-            }
-            Supports.Add(new Persistent<AbstractCardPersistent>(sp));
-        }
         /// <summary>
         /// 增加一个effect
         /// IEffect -1:团队 0-(characters.count-1):个人
@@ -104,7 +68,7 @@ namespace TCGBase
         /// <summary>
         /// 注册所有角色的被动技能，通常在游戏开始出人之前
         /// </summary>
-        public void RegisterPassive()
+        internal void RegisterPassive()
         {
             for (int i = 0; i < Characters.Length; i++)
             {
@@ -121,7 +85,7 @@ namespace TCGBase
         /// 在某一次所有的结算之后，清除not active的effect
         /// </summary>
         /// <returns>删除的effect总数量</returns>
-        private void EffectUpdate()
+        internal void EffectUpdate()
         {
             for (int i = 0; i < Characters.Length; i++)
             {

@@ -7,14 +7,12 @@
     {
         private readonly bool _doDamage;
         private readonly AbstractCardPersistentSummon _summon;
-        private readonly string _name;
         private readonly int[] _costs;
         private readonly int _damage;
         private readonly int _element;
         /// <param name="diceElement">默认Q会消耗至少3有效；如果不填，则默认为element；如果element不为某种元素，则为至少3白</param>
-        public CharacterSingleSummonQ(string nameID, AbstractCardPersistentSummon summon, int diceElement = -1, int diceNum = 3)
+        public CharacterSingleSummonQ(AbstractCardPersistentSummon summon, int diceElement = -1, int diceNum = 3)
         {
-            _name = nameID;
             _summon = summon;
             _doDamage = false;
             _costs = new int[8];
@@ -29,9 +27,8 @@
             }
         }
         /// <param name="diceElement">默认E会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
-        public CharacterSingleSummonQ(string nameID, int element, int damage, AbstractCardPersistentSummon summon, int diceElement = -1, int diceNum = 3)
+        public CharacterSingleSummonQ(int element, int damage, AbstractCardPersistentSummon summon, int diceElement = -1, int diceNum = 3)
         {
-            _name = nameID;
             _summon = summon;
             _doDamage = true;
             _damage = int.Max(0, damage);
@@ -54,8 +51,6 @@
         public override int[] Costs => _costs;
 
         public override bool CostSame => true;
-
-        public override string NameID => _name;
 
         public AbstractCardPersistentSummon PersistentPool => _summon;
 

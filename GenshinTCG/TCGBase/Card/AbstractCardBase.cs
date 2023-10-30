@@ -7,11 +7,4 @@
         /// </summary>
         public abstract string NameID { get; }
     }
-    /// <summary>
-    /// 可能会有用的客户端服务端分离？
-    /// </summary>
-    public abstract class AbstractCardServer : AbstractCardBase
-    {
-
-    }
 }

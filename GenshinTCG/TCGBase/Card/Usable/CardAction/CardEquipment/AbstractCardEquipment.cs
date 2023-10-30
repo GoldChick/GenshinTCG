@@ -1,6 +1,4 @@
-﻿using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public enum WeaponCategory
     {
@@ -13,6 +11,10 @@ namespace TCGBase
     }
     public abstract class AbstractCardEquipment : AbstractCardAction
     {
+        /// <summary>
+        /// 绑定在角色身上的effect
+        /// </summary>
+        public abstract AbstractCardPersistentEffect Effect { get; }
     }
     public abstract class AbstractCardWeapon : AbstractCardEquipment, ITargetSelector
     {
@@ -22,9 +24,30 @@ namespace TCGBase
         /// </summary>
         public virtual TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
         public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => me.Characters[targetArgs[0]].Card.WeaponCategory == WeaponCategory;
+        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
+        {
+            int target = targetArgs[0];
+            var cha = me.Characters[target];
+            if (cha.Weapon != null)
+            {
+                cha.Weapon.Active = false;
+                me.EffectUpdate();
+            }
+            cha.Weapon = new Persistent<AbstractCardPersistentEffect>(Effect);
+        }
     }
     public abstract class AbstractCardArtifact : AbstractCardEquipment
     {
-
+        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
+        {
+            int target = targetArgs[0];
+            var cha = me.Characters[target];
+            if (cha.Artifact != null)
+            {
+                cha.Artifact.Active = false;
+                me.EffectUpdate();
+            }
+            cha.Artifact = new Persistent<AbstractCardPersistentEffect>(Effect);
+        }
     }
 }

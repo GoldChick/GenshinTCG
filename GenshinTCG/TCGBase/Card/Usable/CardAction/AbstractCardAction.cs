@@ -3,7 +3,7 @@
     /// <summary>
     /// 可以拿在手中被使用的卡牌
     /// </summary>
-    public abstract class AbstractCardAction : AbstractCardServer
+    public abstract class AbstractCardAction : AbstractCardBase
     {
         /// <summary>
         /// 允许携带的最大数量<br/>

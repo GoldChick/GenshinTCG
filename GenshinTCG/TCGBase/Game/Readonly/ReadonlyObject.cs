@@ -19,7 +19,7 @@
         public ReadonlyPersistent? Artifact { get; set; }
         public ReadonlyPersistent? Talent { get; set; }
         public List<ReadonlyPersistent> Effects { get; }
-        public List<string> Skills { get; }
+        public int SkillCount { get; }
         public ReadonlyCharacter(Character c) : base(c.Card.NameID)
         {
             HP = c.HP;
@@ -43,7 +43,7 @@
             {
                 Talent = new(tempt.NameID, tempt.Card.Info(tempt));
             }
-            Skills = c.Card.Skills.Select(p => p.NameID).ToList();
+            SkillCount = c.Card.Skills.Length;
         }
     }
     public class ReadonlyPersistent : AbstractReadonlyObject

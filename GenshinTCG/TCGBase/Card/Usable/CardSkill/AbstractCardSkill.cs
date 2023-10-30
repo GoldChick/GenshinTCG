@@ -10,7 +10,7 @@
         /// </summary>
         P
     }
-    public abstract class AbstractCardSkill : AbstractCardServer, IDamageSource
+    public abstract class AbstractCardSkill : IDamageSource
     {
         /// <summary>
         /// 是否是[准备行动]<br/>

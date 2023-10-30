@@ -1,11 +1,9 @@
-﻿using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public enum CharacterCategory
     {
-        HUMAN,
-        MOB
+        Human,
+        Mob
     }
     public enum CharacterRegion
     {
@@ -27,7 +25,7 @@ namespace TCGBase
         /// </summary>
         QQ
     }
-    public abstract class AbstractCardCharacter : AbstractCardServer
+    public abstract class AbstractCardCharacter : AbstractCardBase
     {
         public virtual int MaxHP { get => 10; }
         public virtual int MaxMP { get => 2; }
@@ -51,6 +49,6 @@ namespace TCGBase
         /// <summary>
         /// 角色卡的(生物)种类，默认为HUMAN人类
         /// </summary>
-        public virtual CharacterCategory CharacterCategory { get => CharacterCategory.HUMAN; }
+        public virtual CharacterCategory CharacterCategory { get => CharacterCategory.Human; }
     }
 }

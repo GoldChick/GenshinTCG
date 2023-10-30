@@ -1,6 +1,4 @@
-﻿using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public partial class PlayerTeam
     {
@@ -22,12 +20,6 @@ namespace TCGBase
         public bool IsTargetValid(NetEvent evt)
         {
             List<TargetEnum> enums = GetTargetEnums(evt.Action);
-
-            //Logger.Error($"enums={enums}");
-            //Logger.Error($"0={evt.AdditionalTargetArgs}");
-            //Logger.Error($"1={enums.Count == (evt.AdditionalTargetArgs?.Length ?? 0)}");
-            //Logger.Error($"2={enums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)}");
-
             return enums.Count == (evt.AdditionalTargetArgs.Length)
             && enums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
             && evt.Action.Type switch

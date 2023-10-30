@@ -8,14 +8,13 @@
         private readonly bool _doDamage;
         private readonly bool _oncharacter;
         private readonly AbstractCardPersistentEffect _effect;
-        private readonly string _name;
+
         private readonly int[] _costs;
         private readonly int _damage;
         private readonly int _element;
         /// <param name="diceElement">默认E会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
-        public CharacterEffectE(string nameID, AbstractCardPersistentEffect effect, bool onCharacter = true, int diceElement = -1)
+        public CharacterEffectE(AbstractCardPersistentEffect effect, bool onCharacter = true, int diceElement = -1)
         {
-            _name = nameID;
             _effect = effect;
             _doDamage = false;
             _oncharacter = onCharacter;
@@ -30,9 +29,8 @@
             }
         }
         /// <param name="diceElement">默认E会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
-        public CharacterEffectE(string nameID, int element, int damage, AbstractCardPersistentEffect effect, bool onCharacter = true, int diceElement = -1)
+        public CharacterEffectE(int element, int damage, AbstractCardPersistentEffect effect, bool onCharacter = true, int diceElement = -1)
         {
-            _name = nameID;
             _effect = effect;
             _doDamage = true;
             _oncharacter = onCharacter;
@@ -53,11 +51,7 @@
             }
         }
         public override int[] Costs => _costs;
-
         public override bool CostSame => true;
-
-        public override string NameID => _name;
-
         public override SkillCategory Category => SkillCategory.E;
 
         public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)

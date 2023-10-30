@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 namespace TCGBase
 {
-    public abstract class AbstractCardPersistent : AbstractCardServer
+    public abstract class AbstractCardPersistent : AbstractCardBase
     {
         /// <summary>
         /// 产生时候的基础使用次数，默认和[最大次数]一样

@@ -1,9 +1,5 @@
 ﻿namespace TCGBase
 {
-    /// <summary>
-    /// 仅表明为天赋牌，具体的Category还是需要继承其他的类<br/>
-    /// 以此实现普通天赋牌和无相之雷天赋牌这种差异
-    /// </summary>
     public abstract class AbstractCardTalent : AbstractCardAction, ITargetSelector
     {
         public override bool CostSame => false;
@@ -21,7 +17,7 @@
         /// </summary>
         public abstract int Skill { get; }
         /// <summary>
-        /// 默认实现为先带上天赋，然后如果天赋不是被动技能的，就释放一次技能
+        /// 默认实现为先带上天赋，然后如果天赋不是被动技能的，就释放一次<b>原来拥有的</b>技能
         /// </summary>
         public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {

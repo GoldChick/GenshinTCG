@@ -134,11 +134,6 @@
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, c.Card.NameID));
 
                     c.Card.AfterUseAction(t, evt.AdditionalTargetArgs);
-                    if (c.Card is AbstractCardSupport sp)
-                    {
-                        //auto support
-                        Teams[currTeam].AddSupport(new CardPersistentSupport(sp), evt.AdditionalTargetArgs?.LastOrDefault() ?? -1);
-                    }
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Blend://调和
