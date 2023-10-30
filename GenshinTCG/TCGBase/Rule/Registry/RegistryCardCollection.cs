@@ -1,6 +1,4 @@
-﻿using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public interface IRegistryConsumer<T> where T : AbstractCardBase
     {
@@ -15,7 +13,6 @@ namespace TCGBase
         /// </summary>
         protected string _currModID = "minecraft";
         internal void MoveModToNext(string next) => _currModID = Normalize.StringNormalize(next);
-
     }
     public class RegistryCardCollection<T> : RegistryCardCollection, IRegistryConsumer<T> where T : AbstractCardBase
     {
@@ -49,12 +46,5 @@ namespace TCGBase
         public bool ContainsKey(string nameID) => _values.ContainsKey(nameID);
         public bool TryGetValue(string nameID, out T? value) => _values.TryGetValue(nameID, out value);
         public T? GetValueOrDefault(string nameID) => ContainsKey(nameID) ? _values[nameID] : default;
-
-        public void Print()
-        {
-            var collection = _values.Select(kvp => kvp.Key);
-
-            //Logger.Print(JsonSerializer.Serialize(collection, new JsonSerializerOptions() { WriteIndented = true }));
-        }
     }
 }

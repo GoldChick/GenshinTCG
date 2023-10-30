@@ -19,7 +19,7 @@
         {
             if (CardsInHand.Count > 10)
             {
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Consume, card.Card.NameID));
+                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, card.Card.NameID));
             }
             else
             {

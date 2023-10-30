@@ -32,11 +32,6 @@ namespace TCGBase
         public virtual int MaxHP { get => 10; }
         public virtual int MaxMP { get => 2; }
         /// <summary>
-        /// @Nullable
-        /// TODO: check it?
-        /// </summary>
-        public virtual AbstractCardPersistentEffect? DefaultEffect { get => null; }
-        /// <summary>
         ///  @NonNull 角色的所有技能
         /// </summary>
         public abstract AbstractCardSkill[] Skills { get; }

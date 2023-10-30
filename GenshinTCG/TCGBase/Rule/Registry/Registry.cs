@@ -5,10 +5,6 @@ namespace TCGBase
     {
         CharacterCard,
         ActionCard,
-
-        Support,
-        Effect,
-        Summon
     }
     internal class Registry
     {
@@ -17,20 +13,13 @@ namespace TCGBase
         {
             CharacterCards = new();
             ActionCards = new();
-            Supports = new();
-            Effects = new();
-            Summons = new();
-            CardCollections = new RegistryCardCollection[] { CharacterCards, ActionCards, Supports, Effects, Summons };
+            CardCollections = new RegistryCardCollection[] { CharacterCards, ActionCards, };
         }
         public static Registry Instance { get => _instance; }
 
         public List<string> Mods { get; } = new();
         internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; } = new();
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; } = new();
-
-        internal RegistryCardCollection<AbstractCardPersistentSupport> Supports { get; } = new();
-        internal RegistryCardCollection<AbstractCardPersistentEffect> Effects { get; } = new();
-        internal RegistryCardCollection<AbstractCardPersistentSummon> Summons { get; } = new();
 
         private RegistryCardCollection[] CardCollections { get; }
 
@@ -41,9 +30,6 @@ namespace TCGBase
             {
                 RegistryType.CharacterCard => CharacterCards.ContainsKey(strs[1]),
                 RegistryType.ActionCard => ActionCards.ContainsKey(strs[1]),
-                RegistryType.Support => Supports.ContainsKey(strs[1]),
-                RegistryType.Effect => Effects.ContainsKey(strs[1]),
-                RegistryType.Summon => Summons.ContainsKey(strs[1]),
                 _ => false,
             };
         }
@@ -63,10 +49,6 @@ namespace TCGBase
 
             reg.RegisterCharacter(CharacterCards);
             reg.RegisterActionCard(ActionCards);
-
-            reg.RegisterSupport(Supports);
-            reg.RegisterEffect(Effects);
-            reg.RegisterSummon(Summons);
         }
 
         public void LoadDlls(string path)
@@ -77,11 +59,7 @@ namespace TCGBase
             }
             DirectoryInfo info = new(path);
             FileInfo[] s = info.GetFiles();
-            if (s.Length == 0)
-            {
-                //"不存在可以读取的Mod！请尝试下载一些，否则无法正常运行游戏！";
-            }
-            else
+            if (s.Length != 0)
             {
                 foreach (var dll in s)
                 {
@@ -115,29 +93,6 @@ namespace TCGBase
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// 仅用作测试使用
-        /// </summary>
-        public void DebugLoad()
-        {
-            //Genshin3_3.Genshin_3_3_Util util = new();
-            //Register(util);
-        }
-        public void Print()
-        {
-            Print("CharacterCards", CharacterCards);
-            Print("ActionCards", ActionCards);
-
-            Print("Supports", Supports);
-            Print("Effects", Effects);
-            Print("Summons", Summons);
-        }
-        private static void Print<T>(string name, RegistryCardCollection<T> dic) where T : AbstractCardBase
-        {
-            //Logger.Print($"{name}:");
-            //dic.Print();
         }
     }
 }

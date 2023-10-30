@@ -1,5 +1,4 @@
-﻿using TCGBase;
-namespace TCGBase
+﻿namespace TCGBase
 {
     public abstract class AbstractPersistent
     {

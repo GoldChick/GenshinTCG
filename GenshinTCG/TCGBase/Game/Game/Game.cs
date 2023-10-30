@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    internal enum GameStage
+    public enum GameStage
     {
         PreGame,
 
@@ -16,7 +16,7 @@
         /// </summary>
         internal List<AbstractClient> Clients { get; init; }
 
-        internal GameStage Stage { get; set; }
+        public GameStage Stage { get;private set; }
 
         public int Round { get; private set; }
 
@@ -28,11 +28,6 @@
             Clients = new();
 
             Registry.Instance.LoadDlls(Directory.GetCurrentDirectory() + "/mods");
-
-            //TODO:正式启动不使用
-            Registry.Instance.DebugLoad();
-
-            Registry.Instance.Print();
         }
         public void AddClient(AbstractClient c) => Clients.Add(c);
         /// <summary>

@@ -1,6 +1,4 @@
-﻿using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// 尽管名字叫Client，实际上是在服务端运行的<br/>
@@ -30,7 +28,8 @@ namespace TCGBase
         /// 游戏进行中调用索取对应行动
         /// </summary>
         public abstract NetEvent RequestEvent(ActionType demand, string help_txt = "Null");
-
+        public List<TargetEnum> GetTargetEnums(NetAction action) => Me.GetTargetEnums(action);
+        public NetEventRequire GetEventFinalDiceRequirement(NetAction action) => Me.GetEventFinalDiceRequirement(action);
         /// <summary>
         /// 服务端=>客户端
         /// 游戏进行中更新Team<br/>
@@ -39,10 +38,12 @@ namespace TCGBase
         {
             Me = me;
             Game = new(me.Game, me.TeamIndex);
+            BindInit(Game);
         }
+        public virtual void BindInit(ReadonlyGame game)
+        {
 
-        protected List<TargetEnum> GetTargetEnums(NetAction action) => Me.GetTargetEnums(action);
-        protected NetEventRequire GetEventFinalDiceRequirement(NetAction action) => Me.GetEventFinalDiceRequirement(action);
+        }
         public virtual void Update(ClientUpdatePacket packet) => Game.Update(packet);
         /// <summary>
         /// TODO:偷个懒

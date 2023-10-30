@@ -18,7 +18,7 @@
         public Character[] Characters { get; protected init; }
 
 
-        public PersistentSet<AbstractCardPersistentSupport> Supports { get; init; }
+        public PersistentSet<AbstractCardPersistent> Supports { get; init; }
         public PersistentSet<AbstractCardPersistentSummon> Summons { get; init; }
         public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
 

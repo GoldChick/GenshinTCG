@@ -9,11 +9,10 @@ namespace TCGBase
         public virtual int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
         /// <summary>
-        /// string: SenderTag names<br/>
         /// team: team me<br/>
         /// persistent: this buff<br/>
         /// 通过此方式结算伤害时，对角色index的描述皆为绝对坐标，并且均为单体伤害<br/>
-        /// 在#TCGMod.Util#中提供一些预设，如刷新次数，清除，黄盾，紫盾等
+        /// 在#Api.Persistent.PersistentTriggerl#中提供一些预设，如刷新次数，清除，黄盾，紫盾等
         /// </summary>
         public abstract PersistentTriggerDictionary TriggerDic { get; }
         /// <summary>
@@ -22,13 +21,8 @@ namespace TCGBase
         /// </summary>
         public virtual bool DeleteWhenUsedUp { get => true; }
         /// <summary>
-        /// 用来给客户端提供使用的表现参数<br/>
-        /// 默认为可用次数，TODO:将来可能会删除？
+        /// 用来给客户端提供使用的表现参数
         /// </summary>
-        public virtual int[] Info(TCGBase.AbstractPersistent p)
-        {
-            Debug.Assert(p.NameID.Contains(NameID),$"AbstractCardPersistent: unknown behavior? {p.NameID} and {NameID}");
-            return new int[] { p.AvailableTimes };
-        }
+        public virtual int[] Info(AbstractPersistent p) => new int[] { p.AvailableTimes };
     }
 }

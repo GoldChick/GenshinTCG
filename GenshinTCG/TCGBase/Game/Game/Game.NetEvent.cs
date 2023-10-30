@@ -137,14 +137,14 @@
                     if (c.Card is AbstractCardSupport sp)
                     {
                         //auto support
-                        Teams[currTeam].AddPersistent(sp.PersistentPool, evt.AdditionalTargetArgs?.LastOrDefault() ?? -1);
+                        Teams[currTeam].AddSupport(new CardPersistentSupport(sp), evt.AdditionalTargetArgs?.LastOrDefault() ?? -1);
                     }
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Blend://调和
                     c = t.CardsInHand[evt.Action.Index ];
                     t.CardsInHand.Remove(c);
-                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Consume, c.Card.NameID));
+                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Blend, c.Card.NameID));
                     
                     t.AddDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
                     afterEventVariable = new FastActionVariable(true);

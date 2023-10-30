@@ -1,7 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// 可以拿在手中被使用的卡牌

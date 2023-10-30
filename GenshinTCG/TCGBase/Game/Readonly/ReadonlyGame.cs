@@ -135,6 +135,8 @@
                                 EnemyLeftCardsNum += cnt * (7 - category * 2);
                             }
                             break;
+                        case 5:
+                            break;
                         default:
                             throw new NotImplementedException("ReadonlyGame.Update():收到了莫名其妙的packet!");
                     }

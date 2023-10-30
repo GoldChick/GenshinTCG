@@ -2,26 +2,14 @@
 
 namespace TCGBase
 {
-    public static class WeaponTags
-    {
-        public static string GetWeaponCategory(WeaponCategory cate) => cate switch
-        {
-            WeaponCategory.SWORD => "minecraft:sword",
-            WeaponCategory.CLAYMORE => "minecraft:claymore",
-            WeaponCategory.LONGWEAPON => "minecraft:longweapon",
-            WeaponCategory.CATALYST => "minecraft:catalyst",
-            WeaponCategory.BOW => "minecraft:bow",
-            _ => "minecraft:other"
-        };
-    }
     public enum WeaponCategory
     {
-        OTHER,
-        SWORD,
-        CLAYMORE,
-        LONGWEAPON,
-        CATALYST,
-        BOW
+        Other,
+        Sword,
+        Claymore,
+        Longweapon,
+        Catalyst,
+        Bow
     }
     public abstract class AbstractCardEquipment : AbstractCardAction
     {

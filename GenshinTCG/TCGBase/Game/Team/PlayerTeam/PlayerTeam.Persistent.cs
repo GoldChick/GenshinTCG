@@ -4,12 +4,6 @@ namespace TCGBase
 {
     public partial class PlayerTeam
     {
-        /// <summary>
-        /// TODO: 为了修改注册机制而做的<br/>
-        /// 但是感觉没什么必要？就放在这里吧
-        /// </summary>
-        //public bool AddEffect(RegistryObject<AbstractCardPersistentEffect> effect, int target = -1) => AddPersistent(effect.Value, target);
-
         ///<summary>
         ///添加/更新装备
         /// </summary>
@@ -36,51 +30,34 @@ namespace TCGBase
             }
             return true;
         }
-
+        public void AddSupport(AbstractCardPersistent sp, int desperatedWhenFull)
+        {
+            if (Supports.Full)
+            {
+                Supports.RemoveAt(desperatedWhenFull);
+            }
+            Supports.Add(new Persistent<AbstractCardPersistent>(sp));
+        }
         /// <summary>
-        /// 增加一个persistent类型的effect
+        /// 增加一个effect
         /// IEffect -1:团队 0-(characters.count-1):个人
-        /// ISupport: 0-3顶掉的场地
         /// </summary>
         /// <param name="bind">绑定在某个其他persistent上供检测，只对出战状态和角色状态有效</param>
         /// <returns></returns>
-        public bool AddPersistent(AbstractCardPersistent per, int target = -1, AbstractPersistent? bind = null)
+        public void AddPersistent(AbstractCardPersistentEffect per, int target = -1, AbstractPersistent? bind = null)
         {
-            if (per is AbstractCardPersistentEffect ef)
+            if (target == -1)
             {
-                if (target == -1)
-                {
-                    Effects.Add(new Effect(ef, bind));
-                }
-                else
-                {
-                    int i = int.Clamp(target, 0, Characters.Length - 1);
-                    var cha = Characters[i];
-                    if (cha.Alive)
-                    {
-                        cha.Effects.Add(new PersonalEffect(ef, bind));
-                    }
-                }
-            }
-            else if (per is AbstractCardPersistentSupport sp)
-            {
-                if (!Supports.Full)
-                {
-                    Supports.Add(new Support(sp));
-                }
-                else
-                {
-                    Debug.Assert(target >= 0 && target < Supports.MaxSize, "AbstractTeam.Persistent.AddPersistent:场地区已满，但是未给出正确的将弃置场地index!");
-                    Supports.RemoveAt(target);
-                    Supports.Add(new Support(sp));
-                }
+                Effects.Add(new Effect(per, bind));
             }
             else
             {
-                throw new ArgumentException("AbstractTeam.AddPersistent():添加的Persistent类型不支持！");
+                var cha = Characters[int.Clamp(target, 0, Characters.Length - 1)];
+                if (cha.Alive)
+                {
+                    cha.Effects.Add(new PersonalEffect(per, bind));
+                }
             }
-            //TODO:replace
-            return false;
         }
         /// <summary>
         /// 尝试在我方场上添加单个或多个召唤物<br/>
@@ -90,7 +67,7 @@ namespace TCGBase
         {
             if (provider is ISinglePersistentProvider<AbstractCardPersistentSummon> single)
             {
-                Summons.Add(new Summon(single.PersistentPool));
+                Summons.Add(new(single.PersistentPool));
             }
             else if (provider is IMultiPersistentProvider<AbstractCardPersistentSummon> mul)
             {
@@ -104,7 +81,7 @@ namespace TCGBase
                         for (int i = 0; i < num && pool.Count > 0; i++)
                         {
                             int j = Random.Next(pool.Count);
-                            Summons.Add(new Summon(pool[j]));
+                            Summons.Add(new(pool[j]));
                             pool.RemoveAt(j);
                         }
                         break;
@@ -112,7 +89,7 @@ namespace TCGBase
                     else if (!Summons.Full)
                     {
                         var choose = Random.Next(left.Count);
-                        Summons.Add(new Summon(left[choose]));
+                        Summons.Add(new(left[choose]));
                         left.RemoveAt(choose);
                         num--;
                     }

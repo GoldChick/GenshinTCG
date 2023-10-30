@@ -131,9 +131,9 @@
             /// </summary>
             Use,
             /// <summary>
-            /// 消耗掉（只有自己能看到）(string[])/(int[0])
+            /// 调和掉（只有自己能看到）(string[])/(int[0])
             /// </summary>
-            Consume,
+            Blend,
             /// <summary>
             /// 凭空得到 (string[])/(int[0])
             /// </summary>
@@ -145,7 +145,11 @@
             /// <summary>
             /// LeftCards中卡牌数量减少1
             /// </summary>
-            Pop
+            Pop,
+            /// <summary>
+            /// 爆牌被摧毁(只有自己能看到) (string[])/(int[0])
+            /// </summary>
+            Broke
         }
         public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, params string[] cardID) => new(ClientUpdateType.Card, 10 * teamID + (int)category, cardID);
     }

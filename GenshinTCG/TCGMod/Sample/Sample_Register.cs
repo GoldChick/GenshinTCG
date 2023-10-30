@@ -11,17 +11,5 @@ namespace Sample
         public override void RegisterCharacter(IRegistryConsumer<AbstractCardCharacter> consumer)
         {
         }
-
-        public override void RegisterEffect(IRegistryConsumer<AbstractCardPersistentEffect> consumer)
-        {
-        }
-
-        public override void RegisterSummon(IRegistryConsumer<AbstractCardPersistentSummon> consumer)
-        {
-        }
-
-        public override void RegisterSupport(IRegistryConsumer<AbstractCardPersistentSupport> consumer)
-        {
-        }
     }
 }

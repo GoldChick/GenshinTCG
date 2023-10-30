@@ -1,8 +1,10 @@
 ﻿using System.Collections;
-using TCGBase;
-
 namespace TCGBase
 {
+    /// <param name="me">team me</param>
+    /// <param name="p">this buff</param>
+    /// <param name="s">the message sender</param>
+    /// <param name="v">possible things to change</param>
     public delegate void EventPersistentHandler(PlayerTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v);
     public class PersistentTriggerDictionary : IEnumerable<KeyValuePair<string, EventPersistentHandler>>
     {
