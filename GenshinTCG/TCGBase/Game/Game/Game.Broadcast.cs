@@ -1,6 +1,4 @@
-﻿using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public partial class Game
     {
@@ -12,7 +10,6 @@ namespace TCGBase
             {
                 ClientUpdateType.Dice => new(ClientUpdateType.Dice, packet.Category, packet.Ints.Length),
                 //使用卡牌的时候双方都能看到
-                ClientUpdateType.Card => packet.Category % 10 == 0 ? new(ClientUpdateType.Card, packet.Category, new int[] { packet.Strings.Length }, packet.Strings) : new(ClientUpdateType.Card, packet.Category, packet.Strings.Length),
                 _ => packet
             });
         }

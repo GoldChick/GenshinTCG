@@ -41,12 +41,12 @@
         /// <summary>
         /// 偷个懒
         /// </summary>
-        public void UpdateRegion(PlayerTeam teamMe, PlayerTeam teamEnemy)
+        public virtual  void UpdateRegion(PlayerTeam teamMe, PlayerTeam teamEnemy)
         {
             Me = new(teamMe);
             Enemy = new(teamEnemy);
         }
-        public void Update(ClientUpdatePacket packet)
+        public virtual void Update(ClientUpdatePacket packet)
         {
             int teamID = packet.Category / 10;
             int category = packet.Category % 10;
@@ -83,62 +83,53 @@
                     switch (category)
                     {
                         case 0://use
-                        case 1://consume
+                        case 1://blend
                             if (teamID == MeID)
                             {
-                                Array.ForEach(packet.Strings, s =>
-                                {
-                                    var i = Cards.FindIndex(c => c == s);
-                                    if (i != -1)
-                                    {
-                                        Cards.RemoveAt(i);
-                                    }
-                                });
+                                Cards.RemoveAt(packet.Ints[0]);
                             }
                             else
                             {
-                                EnemyCardNum -= packet.Ints[0];
-                            }
-                            if (category == 0)
-                            {
-                                //TODO:use的表现
-                                //Logger.Print($"使用了卡牌{JsonSerializer.Serialize(packet.Strings)}");
+                                EnemyCardNum -= 1;
                             }
                             break;
                         case 2://obtain
                             if (teamID == MeID)
                             {
-                                Array.ForEach(packet.Strings, Cards.Add);
+                                Cards.Add(packet.Strings[0]);
                             }
                             else
                             {
-                                EnemyCardNum += packet.Ints[0];
+                                EnemyCardNum += 1;
                             }
                             break;
                         case 3://push
-                        case 4://pop
-                            int cnt = packet.Strings.Length;
+                            int cnt = packet.Ints.Length;
                             if (teamID == MeID)
                             {
-                                if (category == 3)
+                                LeftCardsNum += cnt;
+                                //转为从大到小
+                                foreach (var i in packet.Ints.Reverse())
                                 {
-                                    LeftCardsNum += cnt;
-                                    Array.ForEach(packet.Strings, s => Cards.RemoveAt(Cards.FindIndex(c => c == s)));
-                                }
-                                else
-                                {
-                                    LeftCardsNum -= cnt;
+                                    Cards.RemoveAt(i);
                                 }
                             }
                             else
                             {
-                                EnemyLeftCardsNum += cnt * (7 - category * 2);
+                                EnemyLeftCardsNum += cnt;
                             }
                             break;
-                        case 5:
+                        case 4://pop
+                            if (teamID == MeID)
+                            {
+                                LeftCardsNum -= 1;
+                            }
+                            else
+                            {
+                                EnemyLeftCardsNum -= 1;
+                            }
                             break;
-                        default:
-                            throw new NotImplementedException("ReadonlyGame.Update():收到了莫名其妙的packet!");
+                            //broke:do nothing
                     }
                     break;
                 default:

@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using TCGBase;
- 
 
 namespace TCGBase
 {
@@ -47,7 +45,7 @@ namespace TCGBase
             input.PersistentRegion = PersistentRegion;
             if (MaxSize <= 0 || _data.Count < MaxSize)
             {
-                if (!MultiSame && _data.Find(p => p.NameID == input.NameID) is Persistent<T> t)
+                if (!MultiSame && _data.Find(p => p.Type == input.Type) is Persistent<T> t)
                 {
                     if (t.Active)
                     {
@@ -64,7 +62,7 @@ namespace TCGBase
                     }
                     else
                     {
-                        throw new NotImplementedException($"PersistentSet.Add():更新了已经存在，但并非active的effect:{input.NameID}!");
+                        throw new NotImplementedException($"PersistentSet.Add():更新了已经存在，但并非active的effect:{input.Type}!");
                     }
                 }
                 else
@@ -93,8 +91,10 @@ namespace TCGBase
                 _data.RemoveAll(p => !p.Active);
             }
         }
-        public bool Contains(string nameid) => _data.Exists(e => e.NameID == nameid);
-        public Persistent<T>? TryGet(string nameid) => _data.Find(e => e.NameID == nameid);
+        public bool Contains(Type type) => _data.Exists(e => e.Type == type);
+        public bool Contains(string textureNameID) => _data.Exists(e => e.Card.TextureNameID == textureNameID);
+        public Persistent<T>? TryGetFirst(Type type) => _data.Find(e => e.Type == type);
+        public Persistent<T>? TryGetFirst(string textureNameID) => _data.Find(e => e.Card.TextureNameID == textureNameID);
         public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
             if (_handlers.TryGetValue(sender.SenderName, out var hs))

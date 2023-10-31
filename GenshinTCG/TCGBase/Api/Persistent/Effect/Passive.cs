@@ -22,7 +22,5 @@
         }
         public override int MaxUseTimes => 1;
         public override PersistentTriggerDictionary TriggerDic => _triggerDic;
-        //TODO:TODO: passive skill effect
-        public override string NameID => "passive_effect";
     }
 }

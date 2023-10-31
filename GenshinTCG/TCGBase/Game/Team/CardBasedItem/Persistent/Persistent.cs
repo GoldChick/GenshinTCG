@@ -16,10 +16,9 @@
         /// </summary>
         public bool Active { get; set; }
         /// <summary>
-        /// 经过namespace修正的、在服务端中确定的nameid，如"genshin3_3:paimon"<br/>
-        /// TODO:并不准确，namespace还没有正确完成
+        /// 偷懒所使用的，不过确实有用捏
         /// </summary>
-        public string NameID { get; protected init; }
+        public Type Type { get; protected init; }
         /// <summary>
         /// 用于[已知class的]persistent储存更加详细的数据
         /// 如[桓纳兰那]
@@ -33,9 +32,9 @@
         /// 依赖于自己的persistent们，此状态清除时将把list中的其他状态也清除
         /// </summary>
         public List<AbstractPersistent> Childs { get; }
-        public AbstractPersistent(string nameid)
+        protected AbstractPersistent(Type type)
         {
-            NameID = nameid;
+            Type = type;
             Active = true;
             Childs = new();
         }
@@ -69,15 +68,14 @@
                 }
             }
         }
-        protected Persistent(string nameid, T card, AbstractPersistent? bind = null) : base(nameid)
+        protected Persistent(Type type, T card, AbstractPersistent? bind = null) : base(type)
         {
-            Card = card ?? throw new Exception($"AbstractPersistent<T>:找不到nameid={nameid}的类型为{typeof(T)}的ICardBase!");
-            //TODO:不好看，以后改改
+            Card = card;
             AvailableTimes = card.InitialUseTimes;
             Father = bind;
             bind?.Childs.Add(this);
         }
-        public Persistent(T card, AbstractPersistent? bind = null) : this(card.NameID, card, bind) { }
+        public Persistent(T card, AbstractPersistent? bind = null) : this(card.GetType(), card, bind) { }
         public override void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
             if (Card.TriggerDic.TryGetValue(sender.SenderName, out var trigger))

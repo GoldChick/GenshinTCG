@@ -48,8 +48,14 @@
         /// 仅用于触发effect，而且仅在其他都不触发的时候触发
         /// </summary>
         AfterAnyAction,
-        //受到伤害后
+        /// <summary>
+        /// 受到伤害后
+        /// </summary>
         AfterHurt,
+        /// <summary>
+        /// 受到治疗后
+        /// </summary>
+        AfterHeal,
         #endregion
         #region 处理击倒
         /// <summary>

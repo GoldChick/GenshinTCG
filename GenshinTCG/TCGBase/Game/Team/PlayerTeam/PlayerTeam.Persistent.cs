@@ -12,7 +12,7 @@
         {
             if (target == -1)
             {
-                Effects.Add(new Effect(per, bind));
+                Effects.Add(new(per, bind));
             }
             else
             {
@@ -22,6 +22,7 @@
                     cha.Effects.Add(new PersonalEffect(per, bind));
                 }
             }
+            Game.BroadCastRegion();
         }
         /// <summary>
         /// 尝试在我方场上添加单个或多个召唤物<br/>
@@ -35,7 +36,7 @@
             }
             else if (provider is IMultiPersistentProvider<AbstractCardPersistentSummon> mul)
             {
-                var left = mul.PersistentPool.Where(s => !Summons.Contains(s.NameID)).ToList();
+                var left = mul.PersistentPool.Where(s => !Summons.Contains(s.GetType())).ToList();
                 int num = mul.PersistentNum;
                 while (num > 0)
                 {

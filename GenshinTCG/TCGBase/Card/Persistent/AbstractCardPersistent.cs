@@ -1,8 +1,18 @@
-﻿using System.Diagnostics;
-namespace TCGBase
+﻿namespace TCGBase
 {
-    public abstract class AbstractCardPersistent : AbstractCardBase
+    public abstract class AbstractCardPersistent
     {
+        /// <summary>
+        /// 用于指示材质，没有namespace则默认置为"minecraft"
+        /// </summary>
+        public virtual string TextureNameSpace { get => "Minecraft"; }
+        /// <summary>
+        /// Persistent的NameID用于指示材质<br/>
+        /// 对于Support和Summon，材质在action文件夹中获得<br/>
+        /// 对于Effect，材质在icon文件夹中获得<br/><br/>
+        /// <b>如果没有检测到材质，则不会显示该Persistent</b>
+        /// </summary>
+        public virtual string TextureNameID { get => "nullable"; }
         /// <summary>
         /// 产生时候的基础使用次数，默认和[最大次数]一样
         /// </summary>

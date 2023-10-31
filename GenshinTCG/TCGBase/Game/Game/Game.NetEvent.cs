@@ -79,11 +79,11 @@
                     var cards = Teams[currTeam].CardsInHand;
                     var cardcash0 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 0).ToList();
                     var cardcash1 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 1).ToList();
-                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Push,cardcash1.Select(c=>c.Card.NameID).ToArray()));
+                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Push, cards.Select((value, index) => evt.AdditionalTargetArgs[index] == 1 ? index : -1).Where(p => p >= 0).ToArray()));
                     cards.Clear();
                     cards.AddRange(cardcash0);
-                    var over = cardcash1.Count - Teams[currTeam].LeftCards.Count;
-                    Teams[currTeam].RollCard(cardcash1.Count);
+                    var over = cardcash1.Count() - Teams[currTeam].LeftCards.Count;
+                    Teams[currTeam].RollCard(cardcash1.Count());
                     Teams[currTeam].LeftCards.AddRange(cardcash1);
                     if (over > 0)
                     {
@@ -129,18 +129,17 @@
                     afterEventVariable = new FastActionVariable(false);
                     break;
                 case ActionType.UseCard:
+                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, evt.Action.Index));
                     ActionCard c = t.CardsInHand[evt.Action.Index];
                     t.CardsInHand.Remove(c);
-                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, c.Card.NameID));
 
                     c.Card.AfterUseAction(t, evt.AdditionalTargetArgs);
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Blend://调和
-                    c = t.CardsInHand[evt.Action.Index ];
-                    t.CardsInHand.Remove(c);
-                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Blend, c.Card.NameID));
-                    
+                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Blend, evt.Action.Index));
+                    t.CardsInHand.Remove(t.CardsInHand[evt.Action.Index]);
+
                     t.AddDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
                     afterEventVariable = new FastActionVariable(true);
                     break;

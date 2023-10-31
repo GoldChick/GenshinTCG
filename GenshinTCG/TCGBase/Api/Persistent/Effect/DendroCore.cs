@@ -2,6 +2,7 @@
 {
     public class DendroCore : AbstractCardPersistentEffect
     {
+        public override string TextureNameID => PersistentTextures.Dendro_Core;
         public override int MaxUseTimes => 1;
 
         public override PersistentTriggerDictionary TriggerDic => new()
@@ -12,11 +13,10 @@
                     {
                         dv.Damage+=2;
                         p.AvailableTimes--;
-	                }
+                    }
                 }
              )}
         };
 
-        public override string NameID => "草原核";
     }
 }

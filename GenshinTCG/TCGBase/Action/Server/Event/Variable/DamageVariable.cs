@@ -63,11 +63,11 @@
         /// <summary>
         /// 伤害触发的反应类型，仅在伤害结算时获得，只读
         /// </summary>
-        public string? Reaction { get; internal set; }
+        public ReactionTags Reaction { get; internal set; }
         /// <summary>
         /// 通过public方法创建的dmg的targetindex为相对坐标
         /// </summary>
-        public DamageVariable(int element, int basedamage, int relativeTarget, bool targetExcept = false)
+        public DamageVariable(int element, int basedamage, int relativeTarget=0, bool targetExcept = false)
         {
             Element = int.Clamp(element, -1, 7);
             Damage = int.Max(0, basedamage);
@@ -88,17 +88,5 @@
             TargetRelative = false;
             TargetExcept = targetExcept;
         }
-        private DamageVariable(int damage, int element, DamageSource source, int targetIndex, bool targetRelative, bool targetExcept, string? reaction)
-        {
-            Damage = damage;
-            Element = element;
-            DirectSource = source;
-            TargetIndex = targetIndex;
-            TargetRelative = targetRelative;
-            TargetExcept = targetExcept;
-            Reaction = reaction;
-        }
-
-        public DamageVariable Copy() => new(_damage, _element, DirectSource, TargetIndex, TargetRelative, TargetExcept, Reaction);
     }
 }

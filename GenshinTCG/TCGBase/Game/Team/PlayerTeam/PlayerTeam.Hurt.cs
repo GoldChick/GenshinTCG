@@ -29,42 +29,40 @@
             else
             {
                 //only one target
-                Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.ElementEnchant.ToString()), d);
-                string? reaction = GetReaction(d, out DamageVariable? mul);
+                Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.ElementEnchant), d);
+                GetDamageReaction(d, out var mul);
                 if (d.Element != -1)
                 {
-                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.DamageIncrease.ToString()), d);
-                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, SenderTag.HurtDecrease.ToString()), d);
-                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.DamageMul.ToString()), d);
-                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, SenderTag.HurtMul.ToString()), d);
+                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.DamageIncrease), d);
+                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, SenderTag.HurtDecrease), d);
+                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.DamageMul), d);
+                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, SenderTag.HurtMul), d);
                 }
 
-                hss.Add(new(TeamIndex, d, reaction));
+                hss.Add(new(TeamIndex, d, d.Reaction));
 
-                if (reaction == ReactionTags.Bloom.ToString())
+                switch (d.Reaction)
                 {
-                    Enemy.AddPersistent(new DendroCore());
-                }
-                else if (reaction == ReactionTags.Burning.ToString())
-                {
-                    Enemy.TryAddSummon(new Burning());
-                }
-                else if (reaction == ReactionTags.Catalyze.ToString())
-                {
-                    Enemy.AddPersistent(new CatalyzeField());
-
-                }
-                else if (reaction == ReactionTags.Crystallize.ToString())
-                {
-                    Enemy.AddPersistent(new Crystal());
-                }
-                else if (reaction == ReactionTags.Overloaded.ToString())
-                {
-                    overload = d.TargetIndex == CurrCharacter;
-                }
-                else if (reaction == ReactionTags.Frozen.ToString())
-                {
-                    //TODO:frozen?
+                    case ReactionTags.Frozen:
+                        //TODO:frozen?
+                        break;
+                    case ReactionTags.Overloaded:
+                        overload = d.TargetIndex == CurrCharacter;
+                        break;
+                    case ReactionTags.Crystallize:
+                        Enemy.AddPersistent(new Crystal());
+                        break;
+                    case ReactionTags.Bloom:
+                        Enemy.AddPersistent(new DendroCore());
+                        break;
+                    case ReactionTags.Burning:
+                        Enemy.TryAddSummon(new Burning());
+                        break;
+                    case ReactionTags.Catalyze:
+                        Enemy.AddPersistent(new CatalyzeField());
+                        break;
+                    default:
+                        break;
                 }
 
                 if (mul != null)
@@ -119,7 +117,7 @@
                     target.Weapon = null;
                     target.Artifact = null;
                     target.Talent = null;
-                    target.MP=0;
+                    target.MP = 0;
                     target.Effects.Clear();
                 }
             }
@@ -182,116 +180,5 @@
         }
         /// <param name="action">伤害结算后，死亡结算前结算的东西</param>
         public void Hurt(DamageVariable dv, IDamageSource ds, Action? action = null) => MultiHurt(new DamageVariable[] { dv }, ds, action);
-        ///<summary>
-        /// mul : targetRelative=false;<br/>
-        /// 注意：调用此方法将改变角色头上的元素!
-        /// </summary>
-        public string? GetReaction(DamageVariable dv_person, out DamageVariable? mul)
-        {
-            //角色身上附着的元素(只允许附着 无0 冰1 水2 火3 雷4 草6 <b>冰+草5</b>
-            mul = null;
-
-            ReactionTags reactiontag = ReactionTags.None;
-
-            int currElement = Characters[dv_person.TargetIndex].Element;
-            int nextElement = currElement;
-
-            if (dv_person.Element > 0)
-            {
-                nextElement = 0;
-
-                int reactionType = dv_person.Element * 10 + currElement;
-                switch (reactionType)
-                {
-                    case 12 or 21://冻结
-                    case 25:
-                        reactiontag = ReactionTags.Frozen;
-                        dv_person.Damage++;
-                        break;
-
-                    case 13 or 31://融化
-                    case 35:
-                        reactiontag = ReactionTags.Melt;
-                        dv_person.Damage += 2;
-                        break;
-
-                    case 14 or 41://超导
-                    case 45:
-                        reactiontag = ReactionTags.SuperConduct;
-                        dv_person.Damage++;
-                        mul = new(DamageSource.NoWhere, -1, 1, dv_person.TargetIndex, true);
-                        break;
-
-                    case 23 or 32://蒸发
-                        reactiontag = ReactionTags.Vaporize;
-                        dv_person.Damage += 2;
-                        break;
-
-                    case 24 or 42://感电
-                        reactiontag = ReactionTags.ElectroCharged;
-                        dv_person.Damage++;
-                        mul = new(DamageSource.NoWhere, -1, 1, dv_person.TargetIndex, true);
-                        break;
-
-                    case 34 or 43://超载
-                        reactiontag = ReactionTags.Overloaded;
-                        dv_person.Damage += 2;
-                        break;
-
-                    case 51 or 52 or 53 or 54://结晶
-                    case 55:
-                        reactiontag = ReactionTags.Crystallize;
-                        dv_person.Damage++;
-                        break;
-
-                    //NOTE:冰草共存优先反应冰
-
-                    case 62 or 26://绽放
-                        reactiontag = ReactionTags.Bloom;
-                        dv_person.Damage++;
-                        break;
-
-                    case 63 or 36://燃烧
-                        reactiontag = ReactionTags.Burning;
-                        dv_person.Damage++;
-                        break;
-
-                    case 64 or 46://激化
-                        reactiontag = ReactionTags.Catalyze;
-                        dv_person.Damage++;
-                        break;
-
-                    case 71 or 72 or 73 or 74://扩散
-                    case 75:
-                        reactiontag = ReactionTags.Swirl;
-                        mul = new(DamageSource.Addition, (currElement - 1) % 4 + 1, 1, dv_person.TargetIndex, true);
-                        break;
-
-                    case 61 or 16://不反应，但是冰草共存
-                        nextElement = 5;
-                        break;
-
-                    case 10 or 20 or 30 or 40 or 60://不反应，但是改变附着
-                        nextElement = dv_person.Element;
-                        break;
-
-                    default://不反应，也不改变附着
-                        nextElement = currElement;
-                        break;
-                }
-
-                //冰草共存检测是否反应掉了冰
-                if (currElement == 5 && reactiontag != ReactionTags.None)
-                {
-                    nextElement = 6;
-                }
-            }
-
-            Characters[dv_person.TargetIndex].Element = nextElement;
-
-            dv_person.Reaction = reactiontag.ToString();
-
-            return reactiontag.ToString();
-        }
     }
 }

@@ -12,6 +12,7 @@
     /// </summary>
     public abstract class AbstractCardSupport : AbstractCardAction
     {
+        public virtual string NameSpace { get => "Minecraft"; }
         public virtual AssistTags AssistTag { get => AssistTags.None; }
         /// <summary>
         /// default do nothing for Support Card<br/>

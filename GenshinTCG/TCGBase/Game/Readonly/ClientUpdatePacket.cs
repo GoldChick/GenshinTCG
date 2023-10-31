@@ -127,19 +127,20 @@
         public enum CardUpdateCategory
         {
             /// <summary>
-            /// 使用掉（双方都能看到）(int[0]+{string[] (Me Onlyl)})
+            /// 使用掉int[0]号牌（双方都能看到）
             /// </summary>
             Use,
             /// <summary>
-            /// 调和掉（只有自己能看到）(string[])/(int[0])
+            /// 调和掉int[0]号牌（只有自己能看到是什么牌）
             /// </summary>
             Blend,
             /// <summary>
-            /// 凭空得到 (string[])/(int[0])
+            /// 凭空得到string[0]牌（只有自己能看到是什么牌）
             /// </summary>
             Obtain,
             /// <summary>
-            /// LeftCards中卡牌数量增加(string[]).Length
+            /// LeftCards中卡牌数量增加int[].length<br/>
+            /// int[]为从小到大的index
             /// </summary>
             Push,
             /// <summary>
@@ -147,10 +148,17 @@
             /// </summary>
             Pop,
             /// <summary>
-            /// 爆牌被摧毁(只有自己能看到) (string[])/(int[0])
+            /// 爆牌string[0](只有自己能看到) 
             /// </summary>
             Broke
         }
-        public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, params string[] cardID) => new(ClientUpdateType.Card, 10 * teamID + (int)category, cardID);
+        /// <summary>
+        /// for Blend and Use
+        /// </summary>
+        public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, params int[] indexs) => new(ClientUpdateType.Card, 10 * teamID + (int)category, indexs);
+        /// <summary>
+        /// for Obtain and Broke
+        /// </summary>
+        public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, string cardID) => new(ClientUpdateType.Card, 10 * teamID + (int)category, new string[] { cardID });
     }
 }

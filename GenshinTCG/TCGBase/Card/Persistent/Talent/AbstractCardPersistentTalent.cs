@@ -6,13 +6,18 @@
     public abstract class AbstractCardPersistentTalent : AbstractCardPersistent
     {
         public override int MaxUseTimes => 0;
+        /// <summary>
+        /// 天赋牌默认不会过期
+        /// </summary>
         public override bool DeleteWhenUsedUp => false;
         /// <summary>
-        /// 要覆写的skill
+        /// 要覆写的skill，默认不覆写，即没有特殊效果<br/>
+        /// 如果要覆写技能，请override下面的AfterUseAction()<br/>
+        /// 当然，你也可以在技能的地方做关于天赋牌的检测
         /// </summary>
-        public abstract int Skill { get; }
+        public virtual int Skill { get => 0; }
         /// <summary>
-        /// 使用后发生什么，<b>覆盖</b>原有技能<br/>
+        /// 使用index为Skill的技能后发生什么，<b>覆盖</b>原有技能<br/>
         /// targetargs是可能的自定义Additionaltargetargs(需要自己维护)<br/><br/>
         /// <b>对于被动技能targetargs[0]表示teamid，并且没有additionaltargetargs</b>
         /// </summary>

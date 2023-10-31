@@ -27,30 +27,32 @@
             MaxHP = c.Card.MaxHP;
             MaxMP = c.Card.MaxMP;
             Element = c.Element;
-            Effects = c.Effects.Copy().Select(e => new ReadonlyPersistent(e.NameID, e.Card.Info(e))).ToList();
+            Effects = c.Effects.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ToList();
             var temp = c.Weapon;
             if (temp != null)
             {
-                Weapon = new(temp.NameID, temp.Card.Info(temp));
+                Weapon = new(temp.Card.TextureNameSpace, temp.Card.TextureNameID, temp.Card.Info(temp));
             }
             temp = c.Artifact;
             if (temp != null)
             {
-                Artifact = new(temp.NameID, temp.Card.Info(temp));
+                Artifact = new(temp.Card.TextureNameSpace, temp.Card.TextureNameID, temp.Card.Info(temp));
             }
             var tempt = c.Talent;
             if (tempt != null)
             {
-                Talent = new(tempt.NameID, tempt.Card.Info(tempt));
+                Talent = new(tempt.Card.TextureNameSpace, tempt.Card.TextureNameID, tempt.Card.Info(tempt));
             }
             SkillCount = c.Card.Skills.Length;
         }
     }
     public class ReadonlyPersistent : AbstractReadonlyObject
     {
+        public string NameSpace { get; init; }
         public int[] Infos { get; set; }
-        public ReadonlyPersistent(string name, params int[] infos) : base(name)
+        public ReadonlyPersistent(string nameSpace, string name, params int[] infos) : base(name)
         {
+            NameSpace = nameSpace;
             Infos = infos;
         }
     }

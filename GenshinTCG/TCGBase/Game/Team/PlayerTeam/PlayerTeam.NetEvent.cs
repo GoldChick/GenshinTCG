@@ -87,17 +87,17 @@
         /// </summary>
         public virtual NetEventRequire GetEventFinalDiceRequirement(NetAction action)
         {
-            // DefaultCost 
             GetEventInitialDiceRequirement(action, out DiceCost defaultCost);
-
             DiceCostVariable c = new(defaultCost);
 
             string tag = action.Type.ToSenderTags(true).ToString();
+            // DefaultCost 
 
             if (action.Type != ActionType.SwitchForced)
             {
                 EffectTrigger(Game, TeamIndex, new SimpleSender(TeamIndex, tag), c);
             }
+
             return new(c.Cost);
         }
         /// <param name="defaultCost">其实只是这个action最初需要的骰子，不经过任何的减费加费</param>

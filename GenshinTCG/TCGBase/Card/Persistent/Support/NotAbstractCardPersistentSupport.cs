@@ -6,7 +6,7 @@
     internal class CardPersistentSupport : AbstractCardPersistent
     {
         private readonly Func<AbstractPersistent, int[]> _infos;
-        public override string NameID { get; }
+        public override string TextureNameID { get; }
         public override int InitialUseTimes { get; }
         public override int MaxUseTimes { get; }
         public override bool DeleteWhenUsedUp { get; }
@@ -16,7 +16,7 @@
         public CardPersistentSupport(AbstractCardSupport card) : this(card.NameID, card.InitialUseTimes, card.MaxNumPermitted, card.DeleteWhenUsedUp, card.TriggerDic, card.Info) { }
         private CardPersistentSupport(string nameid, int initialusetimes, int maxusetimes, bool deletewhenusedup, PersistentTriggerDictionary triggerdic, Func<AbstractPersistent, int[]> infos)
         {
-            NameID = nameid;
+            TextureNameID = nameid;
             InitialUseTimes = initialusetimes;
             MaxUseTimes = maxusetimes;
             DeleteWhenUsedUp = deletewhenusedup;

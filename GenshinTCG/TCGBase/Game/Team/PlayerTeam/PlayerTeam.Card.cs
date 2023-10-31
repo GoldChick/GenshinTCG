@@ -10,7 +10,7 @@
                 {
                     var c = LeftCards[Random.Next(LeftCards.Count)];
                     LeftCards.Remove(c);
-                    Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop, c.Card.NameID));
+                    Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop));
                     GainCard(c);
                 }
             }
@@ -19,7 +19,7 @@
         {
             if (CardsInHand.Count > 10)
             {
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, card.Card.NameID));
+                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Card.NameID));
             }
             else
             {
