@@ -11,7 +11,7 @@
         /// BeforeUseCard: card index
         /// </summary>
         public int CardIndex { get; }
-        internal UseDiceFromCardSender(int teamID, int cardindex, bool isrealaction = false) : base(isrealaction, teamID)
+        internal UseDiceFromCardSender(int teamID, int cardindex, bool isrealaction) : base(isrealaction, teamID)
         {
             CardIndex = cardindex;
         }

@@ -157,6 +157,9 @@
             Clients[0].BindTeam(Teams[0]);
             Clients[1].BindTeam(Teams[1]);
         }
+        /// <summary>
+        /// 如果你确信此次effecttrigger不会改变variable，那么可以不检测teamid
+        /// </summary>
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
         {
             Teams[CurrTeam].EffectTrigger(this, CurrTeam, sender, variable);

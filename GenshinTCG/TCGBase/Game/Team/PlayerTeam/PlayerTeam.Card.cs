@@ -17,7 +17,7 @@
         }
         public void GainCard(ActionCard card)
         {
-            if (CardsInHand.Count > 10)
+            if (CardsInHand.Count >= 10)
             {
                 Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Card.NameID));
             }

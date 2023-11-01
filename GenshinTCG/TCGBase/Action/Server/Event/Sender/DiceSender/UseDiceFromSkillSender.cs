@@ -15,7 +15,7 @@
         /// BeforeUseSkill: skill index<br/>
         /// </summary>
         public int SkillIndex { get; }
-        internal UseDiceFromSkillSender(int teamID, int chaindex, int skillindex, bool isrealaction = false) : base(isrealaction, teamID)
+        internal UseDiceFromSkillSender(int teamID, int chaindex, int skillindex, bool isrealaction) : base(isrealaction, teamID)
         {
             ChaIndex = chaindex;
             SkillIndex = skillindex;

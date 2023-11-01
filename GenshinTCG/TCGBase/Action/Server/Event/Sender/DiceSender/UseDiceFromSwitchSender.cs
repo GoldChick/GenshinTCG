@@ -15,7 +15,7 @@
         /// BeforeSwitch: target character<br/>
         /// </summary>
         public int Target { get; }
-        internal UseDiceFromSwitchSender(int teamID, int source, int target, bool isrealaction = false) : base(isrealaction, teamID)
+        internal UseDiceFromSwitchSender(int teamID, int source, int target, bool isrealaction) : base(isrealaction, teamID)
         {
             Source = source;
             Target = target;

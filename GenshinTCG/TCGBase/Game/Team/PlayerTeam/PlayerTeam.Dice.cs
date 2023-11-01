@@ -58,6 +58,9 @@
             Dices.Sort();
             Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
+        /// <summary>
+        /// 数组每一位表示该元素消耗的数量
+        /// </summary>
         public void CostDices(params int[]? costs)
         {
             for (int i = 0; i < costs?.Length; i++)

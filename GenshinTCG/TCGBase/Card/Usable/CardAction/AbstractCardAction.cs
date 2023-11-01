@@ -11,7 +11,7 @@
         /// </summary>
         public virtual int MaxNumPermitted { get => 2; }
         public abstract int[] Costs { get; }
-        public abstract bool CostSame { get; }
+        public virtual bool CostSame { get => true; }
 
         public abstract void AfterUseAction(PlayerTeam me, int[]? targetArgs = null);
 

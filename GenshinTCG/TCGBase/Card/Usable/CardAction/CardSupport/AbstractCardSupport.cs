@@ -32,15 +32,9 @@
         public virtual int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
-
         public virtual string TextureNameSpace => "Minecraft";
-
         public string TextureNameID => NameID;
-
         public virtual bool CustomDesperated { get => false; }
-
-        public virtual bool CustomAvailableTimes { get => false; }
-
         /// <summary>
         /// 用来给客户端提供使用的表现参数
         /// </summary>

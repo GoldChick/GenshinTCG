@@ -9,15 +9,15 @@
         /// <summary>
         /// 原先的index
         /// </summary>
-        public int Initial { get; init; }
+        public int Source { get; init; }
         /// <summary>
         /// 切换到的角色在队伍中的index
         /// </summary>
-        public int SwitchTarget { get; init; }
-        public SwitchSender(int teamID, int init, int target) : base(teamID)
+        public int Target { get; init; }
+        public SwitchSender(int teamID, int source, int target) : base(teamID)
         {
-            Initial = init;
-            SwitchTarget = target;
+            Source = source;
+            Target = target;
         }
     }
 }
