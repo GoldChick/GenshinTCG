@@ -29,7 +29,7 @@
         /// </summary>
         public abstract NetEvent RequestEvent(ActionType demand, string help_txt = "Null");
         public List<TargetEnum> GetTargetEnums(NetAction action) => Me.GetTargetEnums(action);
-        public NetEventRequire GetEventFinalDiceRequirement(NetAction action) => Me.GetEventFinalDiceRequirement(action);
+        public DiceCostVariable GetEventFinalDiceRequirement(NetAction action) => Me.GetEventFinalDiceRequirement(action);
         /// <summary>
         /// 服务端=>客户端
         /// 游戏进行中更新Team<br/>

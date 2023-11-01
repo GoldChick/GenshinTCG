@@ -4,8 +4,17 @@
     {
         protected int _availableTimes;
 
+        public int AvailableTimes
+        {
+            get => _availableTimes;
+            set
+            {
+                _availableTimes = int.Max(0, value);
+                Active = CardBase.CustomDesperated | _availableTimes != 0;
+            }
+        }
+
         public abstract AbstractCardPersistent CardBase { get; }
-        public abstract int AvailableTimes { get; set; }
         /// <summary>
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
@@ -38,36 +47,11 @@
             Active = true;
             Childs = new();
         }
-        public abstract void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable);
     }
     public class Persistent<T> : AbstractPersistent where T : AbstractCardPersistent
     {
         public override AbstractCardPersistent CardBase => Card;
         public T Card { get; protected set; }
-        public override int AvailableTimes
-        {
-            get => _availableTimes;
-            set
-            {
-                if (Card.DeleteWhenUsedUp)
-                {
-                    if (value <= 0)
-                    {
-                        _availableTimes = 0;
-                        Active = false;
-                    }
-                    else
-                    {
-                        _availableTimes = value;
-                        Active = true;
-                    }
-                }
-                else
-                {
-                    _availableTimes = int.Max(0, value);
-                }
-            }
-        }
         protected Persistent(Type type, T card, AbstractPersistent? bind = null) : base(type)
         {
             Card = card;
@@ -76,17 +60,5 @@
             bind?.Childs.Add(this);
         }
         public Persistent(T card, AbstractPersistent? bind = null) : this(card.GetType(), card, bind) { }
-        public override void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
-        {
-            if (Card.TriggerDic.TryGetValue(sender.SenderName, out var trigger))
-            {
-                trigger?.Invoke(me, this, sender, variable);
-            }
-            if (Card.TriggerDic.TryGetValue(SenderTag.AfterAnyAction.ToString(), out var trigger_any))
-            {
-                trigger_any?.Invoke(me, this, sender, variable);
-            }
-            //TODO:game.Step(), such as shining?
-        }
     }
 }

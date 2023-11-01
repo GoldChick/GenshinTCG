@@ -9,7 +9,7 @@
         /// <summary>
         /// 天赋牌默认不会过期
         /// </summary>
-        public override bool DeleteWhenUsedUp => false;
+        public override bool CustomDesperated => false;
         /// <summary>
         /// 要覆写的skill，默认不覆写，即没有特殊效果<br/>
         /// 如果要覆写技能，请override下面的AfterUseAction()<br/>

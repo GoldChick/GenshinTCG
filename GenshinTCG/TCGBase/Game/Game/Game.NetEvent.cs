@@ -55,6 +55,9 @@
         {
             var t = Teams[currTeam];
 
+            //用于给减费的persistent减少使用次数
+            t.GetEventFinalDiceRequirement(evt.Action, true);
+
             //before_xx 通知要发生一个xx事件，[常九爷]等可以开始检测，检测到after_xx之后判定
             EffectTrigger(new SimpleSender(currTeam, evt.Action.Type.ToSenderTags(true)));
             //cost
@@ -103,9 +106,9 @@
                     var ski = skis[evt.Action.Index];
                     //考虑AfterUseAction中可能让角色位置改变的
                     afterEventSender = new UseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
-                    if (cha.Talent != null && cha.Talent.Card.Skill == evt.Action.Index)
+                    if (cha.Talent.Full && cha.Talent[0].Card.Skill == evt.Action.Index)
                     {
-                        cha.Talent.Card.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
+                        cha.Talent[0].Card.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
                     }
                     else
                     {

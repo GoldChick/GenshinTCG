@@ -6,7 +6,7 @@
     public class HeavyAttack : AbstractCardPersistentEffect
     {
         public override int MaxUseTimes => 1;
-        public override bool DeleteWhenUsedUp => false;
+        public override bool CustomDesperated => false;
         public override PersistentTriggerDictionary TriggerDic => new() 
         {
             {SenderTag.AfterAnyAction, new HeavyAttackTrigger()} ,

@@ -90,7 +90,11 @@
         {
             for (int i = 0; i < Characters.Length; i++)
             {
-                Characters[(i + Characters.Length + CurrCharacter) % Characters.Length].Effects.Update();
+                var c = Characters[(i + Characters.Length + CurrCharacter) % Characters.Length];
+                c.Weapon.Update();
+                c.Artifact.Update();
+                c.Talent.Update();
+                c.Effects.Update();
             }
             Effects.Update();
             Summons.Update();

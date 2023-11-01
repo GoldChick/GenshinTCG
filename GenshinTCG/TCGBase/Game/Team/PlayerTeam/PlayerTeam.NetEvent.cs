@@ -36,7 +36,7 @@
             }
             else
             {
-                return GetEventFinalDiceRequirement(evt.Action).Cost.EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
+                return GetEventFinalDiceRequirement(evt.Action).EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
             }
         }/// <summary>
          /// 返回经过处理的targetenums们<br/>
@@ -83,55 +83,39 @@
         }
 
         /// <summary>
-        /// 当action不合法时，返回需要Cost非常多的NetEventRequire
+        /// 返回经过各种减费结算的
         /// </summary>
-        public virtual NetEventRequire GetEventFinalDiceRequirement(NetAction action)
+        internal virtual DiceCostVariable GetEventFinalDiceRequirement(NetAction action, bool realAction = false)
         {
-            GetEventInitialDiceRequirement(action, out DiceCost defaultCost);
-            DiceCostVariable c = new(defaultCost);
-
-            string tag = action.Type.ToSenderTags(true).ToString();
-            // DefaultCost 
-
-            if (action.Type != ActionType.SwitchForced)
-            {
-                EffectTrigger(Game, TeamIndex, new SimpleSender(TeamIndex, tag), c);
-            }
-
-            return new(c.Cost);
-        }
-        /// <param name="defaultCost">其实只是这个action最初需要的骰子，不经过任何的减费加费</param>
-        protected void GetEventInitialDiceRequirement(NetAction action, out DiceCost defaultCost)
-        {
+            DiceCostVariable c;
             switch (action.Type)
             {
-                case ActionType.ReRollDice or ActionType.ReRollCard:
-                    defaultCost = new(false);
-                    break;
-                case ActionType.Switch or ActionType.SwitchForced:
-                    defaultCost = new(false, action.Type == ActionType.Switch ? 1 : 0);
+                case ActionType.Switch:
+                    c = new(false, 1);
+                    Game.EffectTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
                     break;
                 case ActionType.UseSKill:
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
                     AbstractCardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
-                    defaultCost = new(skill.CostSame, skill.Costs);
+                    c = new(skill.CostSame, skill.Costs);
+                    Game.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, CurrCharacter, action.Index % chaCard.Skills.Length, realAction), c, false);
                     break;
                 case ActionType.UseCard:
                     AbstractCardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
-                    defaultCost = new(card.CostSame, card.Costs);
+                    c = new(card.CostSame, card.Costs);
+                    Game.EffectTrigger(new UseDiceFromCardSender(TeamIndex, action.Index % CardsInHand.Count, realAction), c,false);
                     break;
                 case ActionType.Blend:
                     int[] ints = new int[8];
                     ints[(int)Characters[CurrCharacter].Card.CharacterElement] = 1;
                     //对于Blend并不是需要该种元素，而是不能是该种元素
-                    defaultCost = new(false, ints);
-                    break;
-                case ActionType.Pass:
-                    defaultCost = new(false);
+                    c = new(false, ints);
                     break;
                 default:
-                    throw new NotImplementedException($"PlayerTeam.NetEvent.GetEventInitialDiceRequirement():还没有实现{action.Type}的情况！");
+                    c = new(false);
+                    break;
             }
+            return c;
         }
 
         /// <summary>

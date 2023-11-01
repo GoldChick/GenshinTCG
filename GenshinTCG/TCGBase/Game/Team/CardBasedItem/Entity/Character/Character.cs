@@ -9,9 +9,9 @@
         public int Index { get; init; }
         private int _hp;
         private int _mp;
-        public Persistent<AbstractCardPersistentEffect>? Weapon { get; internal set; }
-        public Persistent<AbstractCardPersistentEffect>? Artifact { get; internal set; }
-        public Persistent<AbstractCardPersistentTalent>? Talent { get; internal set; }
+        public PersistentSet<AbstractCardPersistentEffect> Weapon { get; init; }
+        public PersistentSet<AbstractCardPersistentEffect> Artifact { get; init; }
+        public PersistentSet<AbstractCardPersistentTalent> Talent { get; init; }
 
         public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
 
@@ -33,11 +33,14 @@
         /// </summary>
         public bool Active;
         public int Element;
-        public Character(AbstractCardCharacter character,int index)
+        public Character(AbstractCardCharacter character, int index)
         {
             Card = character;
-            Index=index; 
+            Index = index;
 
+            Weapon = new(index, 1);
+            Artifact = new(index, 1);
+            Talent = new(index, 1);
             Effects = new(index);
 
             HP = Card.MaxHP;

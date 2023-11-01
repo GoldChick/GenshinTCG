@@ -7,7 +7,7 @@
     {
         public override string SenderName {  get; }
         public int Cha_Index { get;  }
-        public DieSender(int teamID,int cha_index,bool pre=false) : base(teamID)
+        internal DieSender(int teamID,int cha_index,bool pre=false) : base(teamID)
         {
             if (pre)
             {

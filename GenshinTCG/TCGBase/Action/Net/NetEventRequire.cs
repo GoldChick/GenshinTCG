@@ -2,12 +2,12 @@
 {
     public class NetEventRequire
     {
-        public DiceCost Cost { get; init; }
+        public DiceCostVariable Cost { get; init; }
 
         /// <param name="dices">any 冰水火雷岩草风</param>
-        public NetEventRequire(DiceCost? cost)
+        public NetEventRequire(DiceCostVariable? cost)
         {
-            Cost = cost ?? new DiceCost(false, 0);
+            Cost = cost ?? new DiceCostVariable(false, 0);
         }
     }
 }

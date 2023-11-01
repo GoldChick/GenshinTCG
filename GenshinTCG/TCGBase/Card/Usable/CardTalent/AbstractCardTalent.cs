@@ -13,7 +13,7 @@
         /// </summary>
         public abstract string CharacterNameID { get; }
         /// <summary>
-        /// 所属的skill的index
+        /// 所属的skill的index，AfterUseAction()中默认会使用一次这个技能(如果不是被动)
         /// </summary>
         public abstract int Skill { get; }
         /// <summary>
@@ -22,11 +22,12 @@
         public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
             var c = me.Characters[targetArgs[0]];
-            c.Talent = new Persistent<AbstractCardPersistentTalent>(Effect);
-            var s = c.Card.Skills[Skill % c.Card.Skills.Length];
-            if (s is not AbstractPassiveSkill)
+            c.Talent.TryRemoveAt(0);
+            c.Talent.Add(new(Effect));
+            var index = Skill % c.Card.Skills.Length;
+            if (c.Card.Skills[index] is not AbstractPassiveSkill)
             {
-                me.Game.HandleEvent(new NetEvent(new NetAction(ActionType.UseSKill, Skill % c.Card.Skills.Length)), me.TeamIndex);
+                me.Game.HandleEvent(new NetEvent(new NetAction(ActionType.UseSKill, index)), me.TeamIndex);
             }
         }
         public override bool CanBeArmed()

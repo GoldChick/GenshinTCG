@@ -28,10 +28,10 @@ namespace TCGBase
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
         /// </param>
-        public PersistentSet(int region, int size = 0, bool multisame = false, List<Persistent<T>>? data = null)
+        public PersistentSet(int region, int size = 0, bool multisame = false)
         {
             PersistentRegion = region;
-            _data = data ?? new();
+            _data = new();
             _handlers = new();
             MaxSize = size;
             MultiSame = multisame;
@@ -49,16 +49,7 @@ namespace TCGBase
                 {
                     if (t.Active)
                     {
-                        //TODO:不好看，以后改
-                        if (t is Persistent<AbstractCardPersistentSummon> cs)
-                        {
-                            cs.Card.Update(cs);
-                        }
-                        else
-                        {
-                            t.AvailableTimes = t.Card.MaxUseTimes;
-                            t.Data = null;
-                        }
+                        t.Card.Update(t);
                     }
                     else
                     {
@@ -72,7 +63,6 @@ namespace TCGBase
                 }
             }
         }
-        public void RemoveAt(int index) => _data.RemoveAt(index);
         public void Update()
         {
             while (true)
@@ -101,12 +91,26 @@ namespace TCGBase
             {
                 hs?.Invoke(me, sender, variable);
             }
-            if (_handlers.TryGetValue(SenderTag.AfterAnyAction.ToString(), out hs))
+            //任意行动的主体必须是队伍
+            if (sender.TeamID != -1 && _handlers.TryGetValue(SenderTag.AfterAnyAction.ToString(), out hs))
             {
                 hs?.Invoke(me, sender, variable);
             }
         }
         public List<Persistent<T>> Copy() => _data.ToList();
+        internal void TryRemoveAt(int index)
+        {
+            if (_data.Count > index)
+            {
+                var d = _data[index];
+
+                Unregister(d);
+                d.Childs.ForEach(c => c.Active = false);
+                d.Father?.Childs.Remove(d);
+
+                _data.RemoveAt(index);
+            }
+        }
         internal void Clear()
         {
             _data.ForEach(d =>
@@ -118,7 +122,7 @@ namespace TCGBase
             _data.Clear();
             _handlers.Clear();
         }
-        private EventPersistentSetHandler PersistentHandelerConvert(Persistent<T> p, EventPersistentHandler value)
+        private static EventPersistentSetHandler PersistentHandelerConvert(Persistent<T> p, EventPersistentHandler value)
         {
             return (me, s, v) =>
             {

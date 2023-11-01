@@ -10,9 +10,8 @@
     /// <summary>
     /// 支援牌，打出后在支援区生成某种东西
     /// </summary>
-    public abstract class AbstractCardSupport : AbstractCardAction
+    public abstract class AbstractCardSupport : AbstractCardAction, ICardPersistnet
     {
-        public virtual string NameSpace { get => "Minecraft"; }
         public virtual AssistTags AssistTag { get => AssistTags.None; }
         /// <summary>
         /// default do nothing for Support Card<br/>
@@ -22,7 +21,7 @@
         {
             if (me.Supports.Full)
             {
-                me.Supports.RemoveAt(targetArgs[0]);
+                me.Supports.TryRemoveAt(targetArgs[0]);
             }
             me.Supports.Add(new Persistent<AbstractCardPersistent>(new CardPersistentSupport(this)));
         }
@@ -32,16 +31,16 @@
         /// </summary>
         public virtual int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
-        /// <summary>
-        /// team: team me<br/>
-        /// persistent: this support<br/>
-        /// </summary>
         public abstract PersistentTriggerDictionary TriggerDic { get; }
-        /// <summary>
-        /// 可用次数为0时是否立即删除(表现为记active为false，下次/本次结算完毕后清除)<br/>
-        /// 为false时，需要自己手动控制AbstractPersistent.Active，每次结算(update())会清除所有deactive的effect
-        /// </summary>
-        public virtual bool DeleteWhenUsedUp { get => true; }
+
+        public virtual string TextureNameSpace => "Minecraft";
+
+        public string TextureNameID => NameID;
+
+        public virtual bool CustomDesperated { get => false; }
+
+        public virtual bool CustomAvailableTimes { get => false; }
+
         /// <summary>
         /// 用来给客户端提供使用的表现参数
         /// </summary>

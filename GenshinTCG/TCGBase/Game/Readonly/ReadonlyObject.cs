@@ -28,21 +28,9 @@
             MaxMP = c.Card.MaxMP;
             Element = c.Element;
             Effects = c.Effects.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ToList();
-            var temp = c.Weapon;
-            if (temp != null)
-            {
-                Weapon = new(temp.Card.TextureNameSpace, temp.Card.TextureNameID, temp.Card.Info(temp));
-            }
-            temp = c.Artifact;
-            if (temp != null)
-            {
-                Artifact = new(temp.Card.TextureNameSpace, temp.Card.TextureNameID, temp.Card.Info(temp));
-            }
-            var tempt = c.Talent;
-            if (tempt != null)
-            {
-                Talent = new(tempt.Card.TextureNameSpace, tempt.Card.TextureNameID, tempt.Card.Info(tempt));
-            }
+            Weapon = c.Weapon.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ElementAtOrDefault(0);
+            Artifact = c.Artifact.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ElementAtOrDefault(0);
+            Talent = c.Talent.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ElementAtOrDefault(0);
             SkillCount = c.Card.Skills.Length;
         }
     }

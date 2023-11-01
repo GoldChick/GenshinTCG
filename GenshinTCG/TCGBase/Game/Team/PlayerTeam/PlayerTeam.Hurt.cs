@@ -114,10 +114,10 @@
                     target.Predie = false;
                     target.Alive = false;
 
-                    target.Weapon = null;
-                    target.Artifact = null;
-                    target.Talent = null;
                     target.MP = 0;
+                    target.Weapon.Clear();
+                    target.Artifact.Clear();
+                    target.Talent.Clear();
                     target.Effects.Clear();
                 }
             }

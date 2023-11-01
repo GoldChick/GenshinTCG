@@ -9,17 +9,17 @@
         public override string TextureNameID { get; }
         public override int InitialUseTimes { get; }
         public override int MaxUseTimes { get; }
-        public override bool DeleteWhenUsedUp { get; }
+        public override bool CustomDesperated { get; }
         public override PersistentTriggerDictionary TriggerDic { get; }
         public override int[] Info(AbstractPersistent p) => _infos(p);
 
-        public CardPersistentSupport(AbstractCardSupport card) : this(card.NameID, card.InitialUseTimes, card.MaxNumPermitted, card.DeleteWhenUsedUp, card.TriggerDic, card.Info) { }
-        private CardPersistentSupport(string nameid, int initialusetimes, int maxusetimes, bool deletewhenusedup, PersistentTriggerDictionary triggerdic, Func<AbstractPersistent, int[]> infos)
+        public CardPersistentSupport(AbstractCardSupport card) : this(card.NameID, card.InitialUseTimes, card.MaxNumPermitted, card.CustomDesperated,  card.TriggerDic, card.Info) { }
+        private CardPersistentSupport(string nameid, int initialusetimes, int maxusetimes, bool customdesperated, PersistentTriggerDictionary triggerdic, Func<AbstractPersistent, int[]> infos)
         {
             TextureNameID = nameid;
             InitialUseTimes = initialusetimes;
             MaxUseTimes = maxusetimes;
-            DeleteWhenUsedUp = deletewhenusedup;
+            CustomDesperated = customdesperated;
             TriggerDic = triggerdic;
             _infos = infos;
         }

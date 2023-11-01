@@ -16,7 +16,7 @@
         /// </summary>
         internal List<AbstractClient> Clients { get; init; }
 
-        public GameStage Stage { get;private set; }
+        public GameStage Stage { get; private set; }
 
         public int Round { get; private set; }
 
@@ -157,11 +157,14 @@
             Clients[0].BindTeam(Teams[0]);
             Clients[1].BindTeam(Teams[1]);
         }
-        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
+        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
         {
             Teams[CurrTeam].EffectTrigger(this, CurrTeam, sender, variable);
             Teams[1 - CurrTeam].EffectTrigger(this, 1 - CurrTeam, sender, variable);
-            BroadCastRegion();
+            if (broadcast)
+            {
+                BroadCastRegion();
+            }
         }
         public bool IsGameOver() => Round > 15 || Teams.Any(t => t.Characters.All(c => !c.Alive));
         public int GetWinner()

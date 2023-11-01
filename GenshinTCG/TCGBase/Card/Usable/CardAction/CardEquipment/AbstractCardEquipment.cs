@@ -26,28 +26,18 @@
         public override bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => me.Characters[targetArgs[0]].Card.WeaponCategory == WeaponCategory;
         public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
-            int target = targetArgs[0];
-            var cha = me.Characters[target];
-            if (cha.Weapon != null)
-            {
-                cha.Weapon.Active = false;
-                me.EffectUpdate();
-            }
-            cha.Weapon = new Persistent<AbstractCardPersistentEffect>(Effect);
+            var cha = me.Characters[targetArgs[0]];
+            cha.Weapon.TryRemoveAt(0);
+            cha.Weapon.Add(new(Effect));
         }
     }
     public abstract class AbstractCardArtifact : AbstractCardEquipment
     {
         public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
         {
-            int target = targetArgs[0];
-            var cha = me.Characters[target];
-            if (cha.Artifact != null)
-            {
-                cha.Artifact.Active = false;
-                me.EffectUpdate();
-            }
-            cha.Artifact = new Persistent<AbstractCardPersistentEffect>(Effect);
+            var cha = me.Characters[targetArgs[0]];
+            cha.Artifact.TryRemoveAt(0);
+            cha.Artifact.Add(new(Effect));
         }
     }
 }

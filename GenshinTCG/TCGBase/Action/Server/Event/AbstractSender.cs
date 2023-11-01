@@ -19,15 +19,24 @@
         /// 我方行动开始前，如[天狐霆雷]
         /// </summary>
         RoundMeStart,
-        #region 某个Player Action前，用于减费等
+        #region 用于减费
+        UseDiceFromCard,
+        UseDiceFromSkill,
+        UseDiceFromSwitch,
+        #endregion
+        #region 某个Player Action前
         BeforeRerollDice,
         BeforeRerollCard,
         BeforeSwitch,
-        //并没有实际作用，只是占位符
+        /// <summary>
+        /// 并没有实际作用，只是占位符
+        /// </summary>
         BeforeBlend,
         BeforeUseCard,
         BeforeUseSkill,
-        //并没有实际作用，只是占位符
+        /// <summary>
+        /// 并没有实际作用，只是占位符
+        /// </summary>
         BeforePass,
         //附魔>=增伤(火共鸣) 增伤>乘伤(护体岩铠)
         ElementEnchant,
@@ -36,7 +45,7 @@
         DamageMul,
         HurtMul,
         #endregion
-        #region 某个Player Action结算后，用于减少effect次数、触发其他效果等
+        #region 某个Player Action结算后
         AfterRerollDice,
         AfterRerollCard,
         AfterSwitch,
@@ -45,7 +54,7 @@
         AfterUseSkill,
         AfterPass,
         /// <summary>
-        /// 仅用于触发effect，而且仅在其他都不触发的时候触发
+        /// 仅用于触发effect，而且仅在[双方进行任意行动后]的时候触发
         /// </summary>
         AfterAnyAction,
         /// <summary>
