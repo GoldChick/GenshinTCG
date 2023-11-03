@@ -1,8 +1,11 @@
-﻿namespace TCGBase
+﻿using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     public abstract class AbstractReadonlyObject
     {
         public string Name { get; }
+        [JsonConstructor]
         public AbstractReadonlyObject(string name)
         {
             Name = name;
@@ -20,6 +23,23 @@
         public ReadonlyPersistent? Talent { get; set; }
         public List<ReadonlyPersistent> Effects { get; }
         public int SkillCount { get; }
+        [JsonConstructor]
+        public ReadonlyCharacter(string name, int hP, int mP, int maxHP, int maxMP, int element, ReadonlyPersistent? weapon, ReadonlyPersistent? artifact, ReadonlyPersistent? talent, List<ReadonlyPersistent> effects, int skillCount) : base(name)
+        {
+            HP = hP;
+            MP = mP;
+            MaxHP = maxHP;
+            MaxMP = maxMP;
+            Element = element;
+            Weapon = weapon;
+            Artifact = artifact;
+            Talent = talent;
+            Effects = effects;
+            SkillCount = skillCount;
+        }
+        public ReadonlyCharacter(string name) : base(name)
+        {
+        }
         public ReadonlyCharacter(Character c) : base(c.Card.NameID)
         {
             HP = c.HP;
@@ -38,6 +58,7 @@
     {
         public string NameSpace { get; init; }
         public int[] Infos { get; set; }
+        [JsonConstructor]
         public ReadonlyPersistent(string nameSpace, string name, params int[] infos) : base(name)
         {
             NameSpace = nameSpace;

@@ -2,11 +2,11 @@
 {
     public partial class PlayerTeam
     {
-        public bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Action) && IsTargetValid(evt) && IsDiceValid(evt);
+        internal bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Action) && IsTargetValid(evt) && IsDiceValid(evt);
         /// <summary>
         /// 判断action.Index是否在合适范围
         /// </summary>
-        public bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
+        private bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
         {
             ActionType.ReRollDice or ActionType.ReRollCard => true,
             ActionType.Switch or ActionType.SwitchForced =>
@@ -17,7 +17,7 @@
             ActionType.Pass => true,
             _ => false
         };
-        public bool IsTargetValid(NetEvent evt)
+        private bool IsTargetValid(NetEvent evt)
         {
             List<TargetEnum> enums = GetTargetEnums(evt.Action);
             return enums.Count == (evt.AdditionalTargetArgs.Length)
@@ -28,7 +28,7 @@
                 _ => true
             };
         }
-        public bool IsDiceValid(NetEvent evt)
+        private bool IsDiceValid(NetEvent evt)
         {
             if (evt.Action.Type == ActionType.Blend)
             {
@@ -44,7 +44,7 @@
          /// </summary>
          /// <param name="evt"></param>
          /// <returns></returns>
-        public List<TargetEnum> GetTargetEnums(NetAction action)
+        internal List<TargetEnum> GetTargetEnums(NetAction action)
         {
             List<TargetEnum> enums = new();
             switch (action.Type)
@@ -103,11 +103,18 @@
                 case ActionType.UseCard:
                     AbstractCardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
                     c = new(card.CostSame, card.Costs);
-                    Game.EffectTrigger(new UseDiceFromCardSender(TeamIndex, action.Index % CardsInHand.Count, realAction), c,false);
+                    Game.EffectTrigger(new UseDiceFromCardSender(TeamIndex, action.Index % CardsInHand.Count, realAction), c, false);
                     break;
                 case ActionType.Blend:
                     int[] ints = new int[8];
-                    ints[(int)Characters[CurrCharacter].Card.CharacterElement] = 1;
+                    if (CurrCharacter == -1)
+                    {
+                        ints[0] = 114514;
+                    }
+                    else
+                    {
+                        ints[(int)Characters[CurrCharacter].Card.CharacterElement] = 1;
+                    }
                     //对于Blend并不是需要该种元素，而是不能是该种元素
                     c = new(false, ints);
                     break;

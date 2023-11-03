@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     /// <summary>
     /// 用于客户端和服务端之间信息传输的Event
@@ -24,11 +26,12 @@
             Normalize.CostNormalize(cost, out _costargs);
             AdditionalTargetArgs = Array.Empty<int>();
         }
-        public NetEvent(NetAction action, int[]? cost, int[]? targetArgs)
+        [JsonConstructor]
+        public NetEvent(NetAction action, int[]? costargs, int[]? additionaltargetArgs)
         {
             Action = action;
-            Normalize.CostNormalize(cost, out _costargs);
-            AdditionalTargetArgs = targetArgs ?? Array.Empty<int>();
+            Normalize.CostNormalize(costargs, out _costargs);
+            AdditionalTargetArgs = additionaltargetArgs ?? Array.Empty<int>();
         }
     }
 }

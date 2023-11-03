@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     public enum ActionType
     {
@@ -46,7 +48,7 @@
         /// 某Action对应的Index含义见其注释(没有就是没有)
         /// </summary>
         public int Index { get; }
-
+        [JsonConstructor]
         public NetAction(ActionType type, int index = 0)
         {
             Type = type;

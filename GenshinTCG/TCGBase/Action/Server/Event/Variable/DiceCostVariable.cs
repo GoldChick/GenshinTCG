@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     public class DiceCostVariable : AbstractVariable
     {
@@ -18,7 +20,7 @@
         /// 万能 冰水火雷岩草风
         /// </summary>
         public int[] Costs { get => _costs; }
-
+        [JsonConstructor]
         public DiceCostVariable(bool costSame, params int[] costs)
         {
             Normalize.CostNormalize(costs, out _costs);

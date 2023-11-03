@@ -47,6 +47,7 @@
             Active = true;
             Childs = new();
         }
+
     }
     public class Persistent<T> : AbstractPersistent where T : AbstractCardPersistent
     {

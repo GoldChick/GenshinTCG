@@ -1,4 +1,7 @@
-﻿namespace TCGBase
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     public class ReadonlyRegion
     {
@@ -7,6 +10,16 @@
         public List<ReadonlyPersistent> Effects { get; }
         public List<ReadonlyPersistent> Summons { get; }
         public List<ReadonlyPersistent> Supports { get; }
+        [JsonConstructor]
+        public ReadonlyRegion(int currCharacter, List<ReadonlyCharacter> characters, List<ReadonlyPersistent> effects, List<ReadonlyPersistent> summons, List<ReadonlyPersistent> supports)
+        {
+            CurrCharacter = currCharacter;
+            Characters = characters;
+            Effects = effects;
+            Summons = summons;
+            Supports = supports;
+        }
+        public ReadonlyRegion() { }
         public ReadonlyRegion(PlayerTeam pt)
         {
             Characters = pt.Characters.Select(c => new ReadonlyCharacter(c)).ToList();

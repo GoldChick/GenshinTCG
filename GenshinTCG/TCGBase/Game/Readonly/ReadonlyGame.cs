@@ -1,4 +1,7 @@
-﻿namespace TCGBase
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     /// <summary>
     /// 从一个玩家的视角展现的
@@ -13,11 +16,27 @@
         public List<int> Dices { get; }
         public List<string> Cards { get; }
         public int LeftCardsNum { get; private set; }
-
         public ReadonlyRegion Enemy { get; private set; }
         public int EnemyDiceNum { get; private set; }
         public int EnemyCardNum { get; private set; }
         public int EnemyLeftCardsNum { get; private set; }
+        [JsonConstructor]
+        public ReadonlyGame(int currTeam, int waitingTime, ReadonlyRegion me, int meID, List<int> dices, List<string> cards, int leftCardsNum, ReadonlyRegion enemy, int enemyDiceNum, int enemyCardNum, int enemyLeftCardsNum)
+        {
+            CurrTeam = currTeam;
+            WaitingTime = waitingTime;
+            Me = me;
+            MeID = meID;
+            Dices = dices;
+            Cards = cards;
+            LeftCardsNum = leftCardsNum;
+            Enemy = enemy;
+            EnemyDiceNum = enemyDiceNum;
+            EnemyCardNum = enemyCardNum;
+            EnemyLeftCardsNum = enemyLeftCardsNum;
+        }
+        public ReadonlyGame() { }
+        public static ReadonlyGame DeserializeFromJson(string json) => JsonSerializer.Deserialize<ReadonlyGame>(json);
         public ReadonlyGame(Game game, int me)
         {
             CurrTeam = game.CurrTeam;
@@ -41,7 +60,7 @@
         /// <summary>
         /// 偷个懒
         /// </summary>
-        public virtual  void UpdateRegion(PlayerTeam teamMe, PlayerTeam teamEnemy)
+        public virtual void UpdateRegion(PlayerTeam teamMe, PlayerTeam teamEnemy)
         {
             Me = new(teamMe);
             Enemy = new(teamEnemy);
