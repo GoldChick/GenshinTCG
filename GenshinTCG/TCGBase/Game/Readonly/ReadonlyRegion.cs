@@ -19,7 +19,6 @@ namespace TCGBase
             Summons = summons;
             Supports = supports;
         }
-        public ReadonlyRegion() { }
         public ReadonlyRegion(PlayerTeam pt)
         {
             Characters = pt.Characters.Select(c => new ReadonlyCharacter(c)).ToList();

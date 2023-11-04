@@ -83,9 +83,44 @@
 
             return reactiontag;
         }
-        public void AttachElement()
+        /// <summary>
+        /// 偷懒使用了damagevariable<br/>
+        /// 只有TargetIndex TargetExcept和Element有效
+        /// </summary>
+        public void AttachElement(IDamageSource source, DamageVariable dv)
         {
-
+            var cha = Characters[(dv.TargetIndex + CurrCharacter) % Characters.Length];
+            //TODO: except?
+            ReactionTags tag = GetReaction(cha.Element, dv.Element, out int nextElement);
+            cha.Element = nextElement;
+            if (ReactionTrigger(dv.TargetIndex,tag))
+            {
+                SwitchToNext();
+            }
+        }
+        internal bool ReactionTrigger(int targetindex,ReactionTags tag)
+        {
+            switch (tag)
+            {
+                case ReactionTags.Frozen:
+                    //TODO:frozen?
+                    break;
+                case ReactionTags.Overloaded:
+                    return targetindex == CurrCharacter;
+                case ReactionTags.Crystallize:
+                    Enemy.AddPersistent(new Crystal());
+                    break;
+                case ReactionTags.Bloom:
+                    Enemy.AddPersistent(new DendroCore());
+                    break;
+                case ReactionTags.Burning:
+                    Enemy.TryAddSummon(new Burning());
+                    break;
+                case ReactionTags.Catalyze:
+                    Enemy.AddPersistent(new CatalyzeField());
+                    break;
+            }
+            return false;
         }
         internal void GetDamageReaction(DamageVariable dvToPerson, out DamageVariable? mul)
         {
@@ -93,7 +128,7 @@
             ReactionTags tag = GetReaction(cha.Element, dvToPerson.Element, out int nextElement);
             dvToPerson.Damage += tag switch
             {
-                ReactionTags.Vaporize or ReactionTags.Melt or ReactionTags.Overloaded=> 2,
+                ReactionTags.Vaporize or ReactionTags.Melt or ReactionTags.Overloaded => 2,
                 ReactionTags.Frozen or ReactionTags.SuperConduct or ReactionTags.ElectroCharged or
                 ReactionTags.Bloom or ReactionTags.Burning or ReactionTags.Catalyze or ReactionTags.Crystallize => 1,
                 _ => 0

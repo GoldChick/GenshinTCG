@@ -37,9 +37,6 @@ namespace TCGBase
             Effects = effects;
             SkillCount = skillCount;
         }
-        public ReadonlyCharacter(string name) : base(name)
-        {
-        }
         public ReadonlyCharacter(Character c) : base(c.Card.NameID)
         {
             HP = c.HP;

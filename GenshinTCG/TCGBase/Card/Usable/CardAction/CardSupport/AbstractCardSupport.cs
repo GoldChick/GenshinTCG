@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public enum AssistTags
+    public enum SupportTags
     {
         None,
         Place,
@@ -12,7 +12,7 @@
     /// </summary>
     public abstract class AbstractCardSupport : AbstractCardAction, ICardPersistnet
     {
-        public virtual AssistTags AssistTag { get => AssistTags.None; }
+        public abstract SupportTags SupportTag { get; }
         /// <summary>
         /// default do nothing for Support Card<br/>
         /// 或许可以用来加个入场效果

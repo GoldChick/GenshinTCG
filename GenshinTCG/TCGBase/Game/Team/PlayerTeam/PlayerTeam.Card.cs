@@ -2,6 +2,20 @@
 {
     public partial class PlayerTeam
     {
+        /// <summary>
+        /// 究极定向检索
+        /// </summary>
+        public void RollCard(Type type)
+        {
+            var col = LeftCards.Where(c => c.Card.GetType() == type);
+            if (col.Any())
+            {
+                var c = col.ElementAt(Random.Next(col.Count()));
+                LeftCards.Remove(c);
+                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop));
+                GainCard(c);
+            }
+        }
         public void RollCard(int num)
         {
             for (int i = 0; i < num; i++)

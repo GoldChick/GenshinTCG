@@ -14,7 +14,9 @@
         {
             CancellationTokenSource ts = new();
             var t = new Task<NetEvent>(() => Clients[teamid].RequestEvent(demand, help_txt), ts.Token);
+            Clients[1 - teamid].RequestEnemyEvent(demand);
             t.Start();
+
             Task.WaitAny(t, Task.Run(() => Thread.Sleep(millisecondsTimeout)));
 
             if (t.IsCompleted && Teams[teamid].IsEventValid(t.Result) && (demand == ActionType.Trival || demand == t.Result.Action.Type))
@@ -137,13 +139,15 @@
                     t.CardsInHand.Remove(c);
 
                     c.Card.AfterUseAction(t, evt.AdditionalTargetArgs);
+
+                    afterEventSender = new UseCardSender(currTeam, c.Card, evt.AdditionalTargetArgs);
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Blend://调和
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Blend, evt.Action.Index));
                     t.CardsInHand.Remove(t.CardsInHand[evt.Action.Index]);
 
-                    t.AddDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
+                    t.AddSingleDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Pass://空过

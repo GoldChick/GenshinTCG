@@ -4,9 +4,9 @@
     {
         public override bool CostSame => false;
         /// <summary>
-        /// 绑定在角色身上的effect
+        /// 绑定在角色身上的effect，在这里覆写角色技能
         /// </summary>
-        public abstract AbstractCardPersistentTalent Effect { get; }
+        public abstract CardPersistentTalent Effect { get; }
         /// <summary>
         /// 所属的角色的nameid
         /// TODO: without namespace currently

@@ -139,7 +139,7 @@
             /// </summary>
             Obtain,
             /// <summary>
-            /// LeftCards中卡牌数量增加int[].length<br/>
+            /// LeftCards中卡牌数量增加int[].length，CardsInHand减少<br/>
             /// int[]为从小到大的index
             /// </summary>
             Push,

@@ -1,6 +1,4 @@
-﻿using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// 使用技能的sender，参数为ICardSkill

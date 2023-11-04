@@ -35,8 +35,6 @@ namespace TCGBase
             EnemyCardNum = enemyCardNum;
             EnemyLeftCardsNum = enemyLeftCardsNum;
         }
-        public ReadonlyGame() { }
-        public static ReadonlyGame DeserializeFromJson(string json) => JsonSerializer.Deserialize<ReadonlyGame>(json);
         public ReadonlyGame(Game game, int me)
         {
             CurrTeam = game.CurrTeam;
@@ -136,6 +134,7 @@ namespace TCGBase
                             else
                             {
                                 EnemyLeftCardsNum += cnt;
+                                EnemyCardNum -= cnt;
                             }
                             break;
                         case 4://pop

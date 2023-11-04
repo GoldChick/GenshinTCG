@@ -4,7 +4,7 @@
     {
         GameStart,
         /// <summary>
-        /// 投掷阶段
+        /// 投掷阶段，此sendertag只会触发自己Team中的效果
         /// </summary>
         RollingStart,
         /// <summary>

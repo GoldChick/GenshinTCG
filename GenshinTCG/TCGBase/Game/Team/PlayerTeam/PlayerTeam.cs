@@ -56,7 +56,7 @@
         public virtual void RoundStart()
         {
             DiceRollingVariable drv = new();
-            Game.EffectTrigger(new SimpleSender(TeamIndex, SenderTag.RollingStart), drv);
+            EffectTrigger(Game, TeamIndex, new SimpleSender(TeamIndex, SenderTag.RollingStart), drv);
             RollDice(drv);
             for (int i = 0; i < drv.RollingTimes; i++)
             {

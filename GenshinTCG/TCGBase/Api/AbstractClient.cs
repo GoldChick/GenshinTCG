@@ -28,6 +28,10 @@
         /// 游戏进行中调用索取对应行动
         /// </summary>
         public abstract NetEvent RequestEvent(ActionType demand, string help_txt = "Null");
+        /// <summary>
+        /// 表示正在向对方request需要的event
+        /// </summary>
+        public virtual void RequestEnemyEvent(ActionType demand) { }
         public List<TargetEnum> GetTargetEnums(NetAction action) => Me.GetTargetEnums(action);
         public DiceCostVariable GetEventFinalDiceRequirement(NetAction action) => Me.GetEventFinalDiceRequirement(action);
         public bool IsEventValid(NetEvent evt) => Me.IsEventValid(evt);

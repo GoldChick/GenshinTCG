@@ -41,29 +41,7 @@
 
                 hss.Add(new(TeamIndex, d, d.Reaction));
 
-                switch (d.Reaction)
-                {
-                    case ReactionTags.Frozen:
-                        //TODO:frozen?
-                        break;
-                    case ReactionTags.Overloaded:
-                        overload = d.TargetIndex == CurrCharacter;
-                        break;
-                    case ReactionTags.Crystallize:
-                        Enemy.AddPersistent(new Crystal());
-                        break;
-                    case ReactionTags.Bloom:
-                        Enemy.AddPersistent(new DendroCore());
-                        break;
-                    case ReactionTags.Burning:
-                        Enemy.TryAddSummon(new Burning());
-                        break;
-                    case ReactionTags.Catalyze:
-                        Enemy.AddPersistent(new CatalyzeField());
-                        break;
-                    default:
-                        break;
-                }
+                overload = ReactionTrigger(d.TargetIndex,d.Reaction);
 
                 if (mul != null)
                 {

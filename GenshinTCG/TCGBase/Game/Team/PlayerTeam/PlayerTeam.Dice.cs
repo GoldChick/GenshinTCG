@@ -6,14 +6,22 @@
         {
             //TODO:是对的吗
             int num = int.Max(0, rolling.DiceNum - rolling.InitialDices.Count);
+            List<int> randoms = new();
+
             for (int i = 0; i < num; i++)
-                AddDice(Random.Next(8));
+                randoms.Add(Random.Next(8));
+
+            AddDiceRange(randoms);
         }
         public void ReRollDice(DiceRollingVariable rolling)
         {
+            List<int> randoms = new();
+            randoms.AddRange(rolling.InitialDices);
+
             for (int i = 0; i < rolling.DiceNum; i++)
-                AddDice(Random.Next(8));
-            AddDiceRange(rolling.InitialDices);
+                randoms.Add(Random.Next(8));
+            
+            AddDiceRange(randoms);
         }
 
         /// <summary>
@@ -33,10 +41,11 @@
         /// <returns></returns>
         public int GetDiceNum(int type = 0) => Dices.FindAll(p => p == type).Count;
         /// <summary>
-        /// 获得一个骰子,当骰子数量不满16个时才能获得成功
+        /// 获得一个骰子,当骰子数量不满16个时才能获得成功。<br/>
+        /// 会进行broadcast
         /// </summary>
         /// <returns>是否获得成功</returns>
-        public void AddDice(int d)
+        internal void AddSingleDice(int d)
         {
             if (Dices.Count < 16)
             {
@@ -45,6 +54,23 @@
                 Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
             }
         }
+        public void AddDiceRange(params int[] ds)
+        {
+            for (int i = 0; i < ds.Length; i++)
+            {
+                if (Dices.Count >= 16)
+                {
+                    break;
+                }
+                Dices.Add(int.Clamp(ds[i], 0, 7));
+            }
+            Dices.Sort();
+            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+        }
+        /// <summary>
+        /// 获得很多骰子<br/>
+        /// 会进行broadcast
+        /// </summary>
         public void AddDiceRange(IEnumerable<int> ds)
         {
             for (int i = 0; i < ds.Count(); i++)

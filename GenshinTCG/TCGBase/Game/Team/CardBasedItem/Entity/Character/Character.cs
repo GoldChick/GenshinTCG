@@ -11,7 +11,7 @@
         private int _mp;
         public PersistentSet<AbstractCardPersistentEffect> Weapon { get; init; }
         public PersistentSet<AbstractCardPersistentEffect> Artifact { get; init; }
-        public PersistentSet<AbstractCardPersistentTalent> Talent { get; init; }
+        public PersistentSet<CardPersistentTalent> Talent { get; init; }
 
         public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
 
