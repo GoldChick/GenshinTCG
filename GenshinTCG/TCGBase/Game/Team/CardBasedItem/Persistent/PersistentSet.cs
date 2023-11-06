@@ -86,8 +86,8 @@ namespace TCGBase
         /// 通过textureNameID来比较，不过不比较textureNameSpace，因此可能会有重复
         /// </summary>
         public bool Contains(string textureNameID) => _data.Exists(e => e.Card.TextureNameID == textureNameID);
-        public Persistent<T>? TryGetFirst(Type type) => _data.Find(e => e.Type == type);
-        public Persistent<T>? TryGetFirst(string textureNameID) => _data.Find(e => e.Card.TextureNameID == textureNameID);
+        public Persistent<T>? Find(Type type) => _data.Find(e => e.Type == type);
+        public Persistent<T>? Find(string textureNameID) => _data.Find(e => e.Card.TextureNameID == textureNameID);
         public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
             if (_handlers.TryGetValue(sender.SenderName, out var hs))

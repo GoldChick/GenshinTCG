@@ -9,13 +9,13 @@
         /// <summary>
         /// 天赋牌默认不会过期
         /// </summary>
-        public override bool CustomDesperated => false;
+        public override bool CustomDesperated => true;
         /// <summary>
         /// 要覆写的skill，默认不覆写，即没有特殊效果<br/>
         /// 如果要覆写技能，请override下面的AfterUseAction()<br/>
         /// 当然，你也可以在技能的地方做关于天赋牌的检测
         /// </summary>
-        public virtual int Skill { get => 0; }
+        public virtual int Skill { get => -1; }
         /// <summary>
         /// 使用index为Skill的技能后发生什么，<b>覆盖</b>原有技能<br/>
         /// targetargs是可能的自定义Additionaltargetargs(需要自己维护)<br/><br/>
@@ -23,7 +23,10 @@
         /// </summary>
         public virtual void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
         {
-            c.Card.Skills[Skill % c.Card.Skills.Length].AfterUseAction(me, c, targetArgs);
+            if(Skill>=0)
+            {
+                c.Card.Skills[Skill % c.Card.Skills.Length].AfterUseAction(me, c, targetArgs);
+            }
         }
         /// <summary>
         /// 默认的TriggerDic为空，但也不排除特殊情况，如[迪西雅]天赋

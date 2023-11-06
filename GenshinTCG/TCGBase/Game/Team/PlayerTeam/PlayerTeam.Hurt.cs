@@ -29,18 +29,18 @@
             else
             {
                 //only one target
-                Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.ElementEnchant), d);
+                Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.ElementEnchant), d);
                 GetDamageReaction(d, out var mul);
                 if (d.Element != -1)
                 {
-                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.DamageIncrease), d);
-                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, SenderTag.HurtDecrease), d);
-                    Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.DamageMul), d);
-                    Game.EffectTrigger(new PreHurSender(TeamIndex, ds, SenderTag.HurtMul), d);
+                    Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease), d);
+                    Game.EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtDecrease), d);
+                    Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul), d);
+                    Game.EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtMul), d);
                 }
 
                 hss.Add(new(TeamIndex, d, d.Reaction));
-
+                //生成effect等
                 overload = ReactionTrigger(d.TargetIndex,d.Reaction);
 
                 if (mul != null)

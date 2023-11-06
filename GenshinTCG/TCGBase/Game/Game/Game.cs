@@ -128,16 +128,16 @@
                 while (!Teams.All(t => t.Pass))
                 {
                     //wait until both pass
-                    var old_currteam = CurrTeam;
+                    var oldteam = CurrTeam;
                     EffectTrigger(new SimpleSender(CurrTeam, SenderTag.RoundMeStart));
-
-                    if (old_currteam == CurrTeam)
+                    var t = Teams[CurrTeam];
+                    if (t.Dices.Count % 2 == 0)
+                    {
+                        t.AddPersistent(new HeavyAttack());
+                    }
+                    if (oldteam == CurrTeam)
                     {
                         RequestAndHandleEvent(CurrTeam, 30000, ActionType.Trival, "Your Turn");
-                    }
-                    else
-                    {
-                        throw new Exception("TEAM CURRTEAM 莫名发生了变化");
                     }
                 }
 

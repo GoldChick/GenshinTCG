@@ -99,7 +99,7 @@
                 case ActionType.SwitchForced:
                     var initial = t.CurrCharacter;
                     t.CurrCharacter = evt.Action.Index;
-                    afterEventSender = new SwitchSender(currTeam, initial, t.CurrCharacter);
+                    afterEventSender = new AfterSwitchSender(currTeam, initial, t.CurrCharacter);
                     afterEventVariable = new FastActionVariable(evt.Action.Type == ActionType.SwitchForced);
                     break;
                 case ActionType.UseSKill:
@@ -107,7 +107,7 @@
                     var skis = cha.Card.Skills;
                     var ski = skis[evt.Action.Index];
                     //考虑AfterUseAction中可能让角色位置改变的
-                    afterEventSender = new UseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
+                    afterEventSender = new AfterUseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
                     if (cha.Talent.Full && cha.Talent[0].Card.Skill == evt.Action.Index)
                     {
                         cha.Talent[0].Card.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
@@ -140,7 +140,7 @@
 
                     c.Card.AfterUseAction(t, evt.AdditionalTargetArgs);
 
-                    afterEventSender = new UseCardSender(currTeam, c.Card, evt.AdditionalTargetArgs);
+                    afterEventSender = new AfterUseCardSender(currTeam, c.Card, evt.AdditionalTargetArgs);
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Blend://调和

@@ -12,6 +12,7 @@
         /// TODO: without namespace currently
         /// </summary>
         public abstract string CharacterNameID { get; }
+        public override string NameID => $"talent_{CharacterNameID}";
         /// <summary>
         /// 所属的skill的index，AfterUseAction()中默认会使用一次这个技能(如果不是被动)
         /// </summary>

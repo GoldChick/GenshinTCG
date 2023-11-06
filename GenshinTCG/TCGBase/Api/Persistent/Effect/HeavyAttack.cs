@@ -1,30 +1,14 @@
 ﻿namespace TCGBase
 {
     /// <summary>
-    /// 游戏开始时，为双方附属
+    /// [我方行动开始前]时，为我方消除，再附属
     /// </summary>
     public class HeavyAttack : AbstractCardPersistentEffect
     {
         public override int MaxUseTimes => 1;
-        public override bool CustomDesperated => false;
-        public override PersistentTriggerDictionary TriggerDic => new() 
+        public override PersistentTriggerDictionary TriggerDic => new()
         {
-            {SenderTag.AfterAnyAction, new HeavyAttackTrigger()} ,
+            { SenderTag.RoundMeStart, (me,p,s,v)=>p.Active=me.Dices.Count%2==0}
         };
-        public class HeavyAttackTrigger : PersistentTrigger
-        {
-            public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
-            {
-                //TODO:调用错误
-                if (me.GetDiceNum() % 2 == 0)
-                {
-                    persitent.AvailableTimes = 1;
-                }
-                else
-                {
-                    persitent.AvailableTimes = 0;
-                }
-            }
-        }
     }
 }

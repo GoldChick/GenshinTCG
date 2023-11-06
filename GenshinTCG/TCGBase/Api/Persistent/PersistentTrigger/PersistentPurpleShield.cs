@@ -5,14 +5,14 @@
     /// </summary>
     public class PersistentPurpleShield : PersistentTrigger
     {
-        private int _line;
-        private int _protect;
+        private readonly int _line;
+        private readonly int _protect;
         /// <param name="line">结算到此buff，伤害超过_line时才触发</param>
-        /// <param name="protect">一次抵挡多少伤害</param>
-        public PersistentPurpleShield(int protect, int line = 0)
+        /// <param name="protectNum">一次抵挡多少伤害</param>
+        public PersistentPurpleShield(int protectNum, int line = 1)
         {
             _line = line;
-            _protect = protect;
+            _protect = protectNum;
         }
         public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {

@@ -48,7 +48,7 @@ namespace TCGBase
             Weapon = c.Weapon.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ElementAtOrDefault(0);
             Artifact = c.Artifact.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ElementAtOrDefault(0);
             Talent = c.Talent.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ElementAtOrDefault(0);
-            SkillCount = c.Card.Skills.Length;
+            SkillCount = c.Card.Skills.Where(s => s.Category != SkillCategory.P).Count();
         }
     }
     public class ReadonlyPersistent : AbstractReadonlyObject
