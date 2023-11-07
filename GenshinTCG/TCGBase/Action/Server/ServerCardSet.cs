@@ -9,17 +9,17 @@ namespace TCGBase
     public class ServerPlayerCardSet
     {
         public bool Valid { get; init; }
-        internal AbstractCardCharacter[] CharacterCards { get; init; }
-        internal AbstractCardAction[] ActionCards { get; init; }
+        internal List<RegistryObject<AbstractCardCharacter>> CharacterCards { get; init; }
+        internal List<RegistryObject<AbstractCardAction>> ActionCards { get; init; }
         public ServerPlayerCardSet(PlayerNetCardSet input)
         {
             try
             {
-                CharacterCards = input.Characters.Select(s => Registry.Instance.CharacterCards[Normalize.NameIDNormalize(s)]).ToArray();
-                ActionCards = input.ActionCards.Select(s => Registry.Instance.ActionCards[Normalize.NameIDNormalize(s)]).ToArray();
-                Valid = CharacterCards.Length == 3
-                    && ActionCards.Length == 30
-                    && ActionCards.All(a => a.CanBeArmed());
+                CharacterCards = input.Characters.Select(s => new RegistryObject<AbstractCardCharacter>(s, Registry.Instance.CharacterCards[s])).ToList();
+                ActionCards = input.ActionCards.Select(s => new RegistryObject<AbstractCardAction>(s, Registry.Instance.ActionCards[s])).ToList();
+                Valid = CharacterCards.Count == 3
+                    && ActionCards.Count == 30
+                    && ActionCards.All(a => a.Value.CanBeArmed());
             }
             catch (Exception e)
             {

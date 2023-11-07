@@ -29,7 +29,7 @@
                 }
             }
         }
-        public void GainCard(ActionCard card)
+        internal void GainCard(ActionCard card)
         {
             if (CardsInHand.Count >= 10)
             {
@@ -41,6 +41,6 @@
                 Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Card.NameID));
             }
         }
-        public void GainCard(AbstractCardAction card) => GainCard(new ActionCard(card));
+        public void GainCard(RegistryObject<AbstractCardAction> card) => GainCard(new ActionCard(card));
     }
 }

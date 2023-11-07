@@ -9,6 +9,8 @@ namespace TCGBase
     public delegate void EventPersistentSetHandler(PlayerTeam me, AbstractSender s, AbstractVariable? v);
     public class PersistentSet<T> : PersistentSet where T : AbstractCardPersistent
     {
+        private readonly List<Persistent<T>> _data;
+        private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
         /// <summary>
         /// 为正代表最多x个，为负或0代表无限制
         /// </summary>
@@ -17,10 +19,6 @@ namespace TCGBase
         /// 是否可以存在相同id的东西
         /// </summary>
         public bool MultiSame { get; init; }
-
-        private readonly List<Persistent<T>> _data;
-
-        private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
         public int Count => _data.Count;
         public bool Full => MaxSize > 0 && MaxSize <= Count;
 
@@ -28,7 +26,7 @@ namespace TCGBase
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
         /// </param>
-        public PersistentSet(int region, int size = 0, bool multisame = false)
+        internal PersistentSet(int region, int size = 0, bool multisame = false)
         {
             PersistentRegion = region;
             _data = new();
@@ -49,7 +47,18 @@ namespace TCGBase
                 {
                     if (t.Active)
                     {
-                        t.Card.Update(t);
+                        if (t.Card.CanUpdate)
+                        {
+                            t.Card.Update(t);
+                        }
+                        else
+                        {
+                            t.Active = false;
+                            Update();
+
+                            _data.Add(input);
+                            Register(input);
+                        }
                     }
                     else
                     {

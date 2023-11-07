@@ -1,14 +1,17 @@
-﻿using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public class ActionCard
     {
-        public AbstractCardAction Card { get; protected set; }
+        public AbstractCardAction Card { get; }
+        /// <summary>
+        /// 注册后的、带有namespace的nameid
+        /// </summary>
+        public string NameID { get; }
 
-        public ActionCard(AbstractCardAction card)
+        public ActionCard(RegistryObject<AbstractCardAction> card)
         {
-            Card = card;
+            NameID = card.NameID;
+            Card = card.Value;
         }
     }
 }

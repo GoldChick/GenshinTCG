@@ -2,6 +2,10 @@
 {
     public partial class PlayerTeam
     {
+        public void AddEquipment(AbstractCardPersistentEffect equip,int target)
+        {
+
+        }
         /// <summary>
         /// 增加一个effect
         /// IEffect -1:团队 0-(characters.count-1):个人

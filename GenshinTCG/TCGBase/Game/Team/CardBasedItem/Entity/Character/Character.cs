@@ -2,7 +2,11 @@
 {
     public class Character
     {
-        public AbstractCardCharacter Card { get; protected set; }
+        public AbstractCardCharacter Card { get; }
+        /// <summary>
+        /// 注册后的、带有namespace的nameid
+        /// </summary>
+        public string NameID { get; }
         /// <summary>
         /// 表示自己在team中的位置
         /// </summary>
@@ -33,9 +37,10 @@
         /// </summary>
         public bool Active;
         public int Element;
-        public Character(AbstractCardCharacter character, int index)
+        public Character(RegistryObject<AbstractCardCharacter> character, int index)
         {
-            Card = character;
+            NameID = character.NameID;
+            Card = character.Value;
             Index = index;
 
             Weapon = new(index, 1);
