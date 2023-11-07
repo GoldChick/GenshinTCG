@@ -8,10 +8,6 @@
         public override sealed string TextureNameID => "talent";
         public override int MaxUseTimes => 0;
         /// <summary>
-        /// 天赋牌默认不会过期
-        /// </summary>
-        public override bool CustomDesperated => true;
-        /// <summary>
         /// 要覆写的skill，默认不覆写，即没有特殊效果<br/>
         /// 如果要覆写技能，请override下面的AfterUseAction()<br/>
         /// 当然，你也可以在技能的地方做关于天赋牌的检测
@@ -22,7 +18,7 @@
         /// targetargs是可能的自定义Additionaltargetargs(需要自己维护)<br/><br/>
         /// <b>对于被动技能targetargs[0]表示teamid，并且没有additionaltargetargs</b>
         /// </summary>
-        public virtual void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
+        public virtual void AfterUseAction(PlayerTeam me, Character c, int[] targetArgs)
         {
             if(Skill>=0)
             {

@@ -30,7 +30,7 @@
 
         public override SkillCategory Category => SkillCategory.A;
 
-        public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, Character c, int[] targetArgs)
         {
             me.Enemy.Hurt(new(_element, _damage, 0), this);
         }

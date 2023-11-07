@@ -31,9 +31,9 @@
         /// <summary>
         /// 使用后发生什么<br/>
         /// targetargs是可能的自定义Additionaltargetargs(需要自己维护)<br/><br/>
-        /// <b>对于被动技能targetargs[0]表示teamid，并且没有additionaltargetargs</b>
+        /// <b>对于被动技能targetargs[0]表示sender.teamid，character表示被动技能的主人，并且没有additionaltargetargs</b>
         /// </summary>
-        public abstract void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null);
+        public abstract void AfterUseAction(PlayerTeam me, Character c, int[] targetArgs);
         public DamageSource DamageSource => DamageSource.Character;
     }
 }

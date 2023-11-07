@@ -56,7 +56,7 @@
 
         public override SkillCategory Category => SkillCategory.Q;
 
-        public override void AfterUseAction(PlayerTeam me, Character c, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, Character c, int[] targetArgs)
         {
             if (_doDamage)
             {

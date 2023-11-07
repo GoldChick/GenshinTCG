@@ -13,7 +13,7 @@
         public abstract int[] Costs { get; }
         public virtual bool CostSame { get => true; }
 
-        public abstract void AfterUseAction(PlayerTeam me, int[]? targetArgs = null);
+        public abstract void AfterUseAction(PlayerTeam me, int[] targetArgs);
 
         /// <summary>
         /// TODO:还没写选卡
@@ -24,6 +24,6 @@
         /// <summary>
         /// 是否满足额外的打出条件（不包括骰子条件）
         /// </summary>
-        public virtual bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null) => true;
+        public virtual bool CanBeUsed(PlayerTeam me, int[] targetArgs) => true;
     }
 }

@@ -20,7 +20,7 @@
         /// <summary>
         /// 默认实现为先带上天赋，然后如果天赋不是被动技能的，就释放一次<b>原来拥有的</b><see cref="Skill"/>号技能
         /// </summary>
-        public override void AfterUseAction(PlayerTeam me, int[]? targetArgs = null)
+        public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
             me.AddEquipment(Effect, targetArgs[0]);
 
@@ -38,11 +38,12 @@
         /// <summary>
         /// 默认实现为需要是本人的天赋，并且为被动技能/该角色在前台
         /// </summary>
-        public override sealed bool CanBeUsed(PlayerTeam me, int[]? targetArgs = null)
+        public override sealed bool CanBeUsed(PlayerTeam me, int[] targetArgs)
         {
-            var card = me.Characters[targetArgs[0]].Card;
+            var c = me.Characters[targetArgs[0]];
+            var card = c.Card;
             var sks = card.Skills;
-            return $"{CharacterNamespace ?? Namespace}:{CharacterNameID}".Equals($"{card.Namespace}:{card.NameID}") && (targetArgs[0] == me.CurrCharacter || sks[Skill % sks.Length] is AbstractPassiveSkill);
+            return c.Alive && $"{CharacterNamespace ?? Namespace}:{CharacterNameID}".Equals($"{card.Namespace}:{card.NameID}") && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length] is AbstractPassiveSkill);
         }
     }
 }

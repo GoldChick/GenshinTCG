@@ -27,7 +27,7 @@ namespace TCGBase
             AdditionalTargetArgs = Array.Empty<int>();
         }
         [JsonConstructor]
-        public NetEvent(NetAction action, int[]? costargs, int[]? additionaltargetArgs)
+        public NetEvent(NetAction action, int[] costargs, int[] additionaltargetArgs)
         {
             Action = action;
             Normalize.CostNormalize(costargs, out _costargs);
