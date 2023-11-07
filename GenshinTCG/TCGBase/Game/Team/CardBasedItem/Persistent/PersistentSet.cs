@@ -47,18 +47,7 @@ namespace TCGBase
                 {
                     if (t.Active)
                     {
-                        if (t.Card.CanUpdate)
-                        {
-                            t.Card.Update(t);
-                        }
-                        else
-                        {
-                            t.Active = false;
-                            Update();
-
-                            _data.Add(input);
-                            Register(input);
-                        }
+                        t.Card.Update(t);
                     }
                     else
                     {
@@ -91,11 +80,13 @@ namespace TCGBase
             }
         }
         public bool Contains(Type type) => _data.Exists(e => e.Type == type);
+        public bool Contains(string textureNamespace, string textureNameID) => _data.Exists(e => e.Card.TextureNameSpace == textureNamespace && e.Card.TextureNameID == textureNameID);
         /// <summary>
         /// 通过textureNameID来比较，不过不比较textureNameSpace，因此可能会有重复
         /// </summary>
         public bool Contains(string textureNameID) => _data.Exists(e => e.Card.TextureNameID == textureNameID);
         public Persistent<T>? Find(Type type) => _data.Find(e => e.Type == type);
+        public Persistent<T>? Find(string textureNamespace, string textureNameID) => _data.Find(e => e.Card.TextureNameSpace == textureNamespace && e.Card.TextureNameID == textureNameID);
         public Persistent<T>? Find(string textureNameID) => _data.Find(e => e.Card.TextureNameID == textureNameID);
         public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
@@ -123,6 +114,30 @@ namespace TCGBase
                 _data.RemoveAt(index);
             }
         }
+        internal void TryRemove(Persistent<T>? t)
+        {
+            if (_data.Contains(t))
+            {
+                Unregister(t);
+                t.Childs.ForEach(c => c.Active = false);
+                t.Father?.Childs.Remove(t);
+
+                _data.Remove(t);
+            }
+        }
+        internal void TryRemove(string textureNameID)
+        {
+            var d = _data.Find(e => e.Card.TextureNameID == textureNameID);
+            if (d != null)
+            {
+                Unregister(d);
+                d.Childs.ForEach(c => c.Active = false);
+                d.Father?.Childs.Remove(d);
+
+                _data.Remove(d);
+            }
+        }
+
         internal void Clear()
         {
             _data.ForEach(d =>

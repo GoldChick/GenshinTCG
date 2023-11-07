@@ -108,9 +108,11 @@
                     var ski = skis[evt.Action.Index];
                     //考虑AfterUseAction中可能让角色位置改变的
                     afterEventSender = new AfterUseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
-                    if (cha.Talent.Full && cha.Talent[0].Card.Skill == evt.Action.Index)
+
+                    var talent = cha.Effects.Find("equipment", "talent");
+                    if (talent != null && talent.Card is CardPersistentTalent pt && pt.Skill == evt.Action.Index)
                     {
-                        cha.Talent[0].Card.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
+                        pt.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
                     }
                     else
                     {

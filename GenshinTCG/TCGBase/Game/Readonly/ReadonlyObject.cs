@@ -18,22 +18,16 @@ namespace TCGBase
         public int MaxHP { get; init; }
         public int MaxMP { get; init; }
         public int Element { get; set; }
-        public ReadonlyPersistent? Weapon { get; set; }
-        public ReadonlyPersistent? Artifact { get; set; }
-        public ReadonlyPersistent? Talent { get; set; }
         public List<ReadonlyPersistent> Effects { get; }
         public int SkillCount { get; }
         [JsonConstructor]
-        public ReadonlyCharacter(string name, int hP, int mP, int maxHP, int maxMP, int element, ReadonlyPersistent? weapon, ReadonlyPersistent? artifact, ReadonlyPersistent? talent, List<ReadonlyPersistent> effects, int skillCount) : base(name)
+        public ReadonlyCharacter(string name, int hP, int mP, int maxHP, int maxMP, int element,  List<ReadonlyPersistent> effects, int skillCount) : base(name)
         {
             HP = hP;
             MP = mP;
             MaxHP = maxHP;
             MaxMP = maxMP;
             Element = element;
-            Weapon = weapon;
-            Artifact = artifact;
-            Talent = talent;
             Effects = effects;
             SkillCount = skillCount;
         }
@@ -45,9 +39,6 @@ namespace TCGBase
             MaxMP = c.Card.MaxMP;
             Element = c.Element;
             Effects = c.Effects.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ToList();
-            Weapon = c.Weapon.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ElementAtOrDefault(0);
-            Artifact = c.Artifact.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ElementAtOrDefault(0);
-            Talent = c.Talent.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ElementAtOrDefault(0);
             SkillCount = c.Card.Skills.Where(s => s.Category != SkillCategory.P).Count();
         }
     }

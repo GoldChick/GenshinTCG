@@ -2,9 +2,11 @@
 {
     public partial class PlayerTeam
     {
-        public void AddEquipment(AbstractCardPersistentEffect equip,int target)
+        public void AddEquipment(AbstractCardPersistentEquipment equip, int target)
         {
-
+            var es = Characters[int.Clamp(target, 0, Characters.Length - 1)].Effects;
+            es.TryRemove(equip.TextureNameID);
+            es.Add(new(equip));
         }
         /// <summary>
         /// 增加一个effect
@@ -94,11 +96,7 @@
         {
             for (int i = 0; i < Characters.Length; i++)
             {
-                var c = Characters[(i + Characters.Length + CurrCharacter) % Characters.Length];
-                c.Weapon.Update();
-                c.Artifact.Update();
-                c.Talent.Update();
-                c.Effects.Update();
+                Characters[(i + Characters.Length + CurrCharacter) % Characters.Length].Effects.Update();
             }
             Effects.Update();
             Summons.Update();

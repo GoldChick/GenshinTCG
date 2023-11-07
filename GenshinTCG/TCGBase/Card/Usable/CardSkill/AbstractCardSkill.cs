@@ -6,7 +6,7 @@
         E,
         Q,
         /// <summary>
-        /// 不应当直接使用此Category，请考虑继承<see cref="AbstractPassiveSkill"/>或者<see cref="AbstractPrepareSkill"/>
+        /// 不应当直接使用此Category，请考虑继承<see cref="AbstractPassiveSkill"/>
         /// </summary>
         P
     }

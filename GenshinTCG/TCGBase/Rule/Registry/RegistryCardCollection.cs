@@ -2,8 +2,8 @@
 {
     public interface IRegistryConsumer<T> where T : AbstractCardBase
     {
-        public RegistryObject<T> Accept(T t);
-        public void Extend(RegistryCardCollection<T> collection);
+        public void Accept(T t);
+        //public void Extend(RegistryCardCollection<T> collection);
         public void AcceptMulti(params T[] ts) => Array.ForEach(ts, t => Accept(t));
     }
     public abstract class RegistryCardCollection
@@ -24,25 +24,24 @@
         }
         public T this[string nameID] { get => _values[nameID]; set => _values[nameID] = value; }
 
-        public RegistryObject<T> Accept(T t)
+        public void Accept(T t)
         {
-            string final_nameID = Normalize.NameIDNormalize(t.NameID, _currModID);
-            if (!_values.TryAdd(final_nameID, t))
+            t.Namespace = _currModID;
+            if (!_values.TryAdd($"{t.Namespace}:{t.NameID}", t))
             {
-                throw new Exception($"Registry:注册名为{t.NameID}的{typeof(T)}时出现了问题:nameID被占用!");
-            }
-            return new RegistryObject<T>(final_nameID, t);
-        }
-        public void Extend(RegistryCardCollection<T> collection)
-        {
-            foreach (var item in collection._values)
-            {
-                if (!_values.TryAdd(item.Key, item.Value))
-                {
-                    throw new Exception($"Registry:注册nameID为{item.Key}的{typeof(T)}时出现了问题:nameID被占用!");
-                }
+                throw new Exception($"Registry:Mod {t.Namespace}注册名为{t.NameID}的{typeof(T)}时出现了问题:nameID被占用!");
             }
         }
+        //public void Extend(RegistryCardCollection<T> collection)
+        //{
+        //    foreach (var item in collection._values)
+        //    {
+        //        if (!_values.TryAdd(item.Key, item.Value))
+        //        {
+        //            throw new Exception($"Registry:注册nameID为{item.Key}的{typeof(T)}时出现了问题:nameID被占用!");
+        //        }
+        //    }
+        //}
         public bool ContainsKey(string nameID) => _values.ContainsKey(nameID);
         public bool TryGetValue(string nameID, out T? value) => _values.TryGetValue(nameID, out value);
         public T? GetValueOrDefault(string nameID) => ContainsKey(nameID) ? _values[nameID] : default;

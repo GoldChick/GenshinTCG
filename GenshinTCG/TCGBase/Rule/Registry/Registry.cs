@@ -22,6 +22,8 @@ namespace TCGBase
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; } = new();
 
         private RegistryCardCollection[] CardCollections { get; }
+        //不知为何的namespace黑名单
+        private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "minecraft", "equipment", "nilou", "hutao" };
 
         public bool Contains(RegistryType type, string nameID)
         {
@@ -37,7 +39,7 @@ namespace TCGBase
         public void Register(AbstractModUtil util)
         {
             string name = util.NameSpace;
-            if (Mods.Contains(name))
+            if (Mods.Contains(name) || _blacklist.Contains(name))
             {
                 throw new Exception($"Registry:注册名为{name}的mod时出现问题:已经注册过相同namespace的mod!");
             }

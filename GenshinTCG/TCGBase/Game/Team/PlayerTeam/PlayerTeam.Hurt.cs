@@ -93,9 +93,6 @@
                     target.Alive = false;
 
                     target.MP = 0;
-                    target.Weapon.Clear();
-                    target.Artifact.Clear();
-                    target.Talent.Clear();
                     target.Effects.Clear();
                 }
             }

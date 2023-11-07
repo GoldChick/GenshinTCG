@@ -3,8 +3,9 @@
     /// <summary>
     /// Assist和Summon相当于[自己]和Effect的结合
     /// </summary>
-    public class CardPersistentTalent : AbstractCardPersistent
+    public class CardPersistentTalent : AbstractCardPersistentEquipment
     {
+        public override sealed string TextureNameID => "talent";
         public override int MaxUseTimes => 0;
         /// <summary>
         /// 天赋牌默认不会过期

@@ -42,11 +42,6 @@
         public abstract int MaxUseTimes { get; }
         public virtual bool CustomDesperated { get => false; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
-        /// <summary>
-        /// 是否可以在不改变位置的情况下刷新<br/>
-        /// 为false的话需要先删除再加入
-        /// </summary>
-        public virtual bool CanUpdate { get => true; }
 
         /// <summary>
         /// 重复刷新[召唤物]/[状态]的时候会如何行动，默认为取[当前次数]和[最大次数]的最大值

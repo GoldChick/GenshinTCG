@@ -41,6 +41,6 @@
                 Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Card.NameID));
             }
         }
-        public void GainCard(RegistryObject<AbstractCardAction> card) => GainCard(new ActionCard(card));
+        public void GainCard(AbstractCardAction card) => GainCard(new ActionCard(card));
     }
 }

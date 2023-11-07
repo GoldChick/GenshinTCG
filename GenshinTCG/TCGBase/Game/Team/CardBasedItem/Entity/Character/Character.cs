@@ -4,18 +4,14 @@
     {
         public AbstractCardCharacter Card { get; }
         /// <summary>
-        /// 注册后的、带有namespace的nameid
-        /// </summary>
-        public string NameID { get; }
-        /// <summary>
         /// 表示自己在team中的位置
         /// </summary>
         public int Index { get; init; }
         private int _hp;
         private int _mp;
-        public PersistentSet<AbstractCardPersistentEffect> Weapon { get; init; }
-        public PersistentSet<AbstractCardPersistentEffect> Artifact { get; init; }
-        public PersistentSet<CardPersistentTalent> Talent { get; init; }
+        //public PersistentSet<AbstractCardPersistentEffect> Weapon { get; init; }
+        //public PersistentSet<AbstractCardPersistentEffect> Artifact { get; init; }
+        //public PersistentSet<CardPersistentTalent> Talent { get; init; }
 
         public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
 
@@ -37,15 +33,11 @@
         /// </summary>
         public bool Active;
         public int Element;
-        public Character(RegistryObject<AbstractCardCharacter> character, int index)
+        public Character(AbstractCardCharacter character, int index)
         {
-            NameID = character.NameID;
-            Card = character.Value;
+            Card = character;
             Index = index;
 
-            Weapon = new(index, 1);
-            Artifact = new(index, 1);
-            Talent = new(index, 1);
             Effects = new(index);
 
             HP = Card.MaxHP;
@@ -56,9 +48,6 @@
         {
             if (Alive)
             {
-                Weapon?.EffectTrigger(me, sender, variable);
-                Artifact?.EffectTrigger(me, sender, variable);
-                Talent?.EffectTrigger(me, sender, variable);
                 Effects.EffectTrigger(me, sender, variable);
             }
         }
