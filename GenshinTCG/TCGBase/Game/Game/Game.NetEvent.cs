@@ -146,8 +146,7 @@
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Blend://调和
-                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Blend, evt.Action.Index));
-                    t.CardsInHand.Remove(t.CardsInHand[evt.Action.Index]);
+                    t.TryRemoveCard(evt.Action.Index);
 
                     t.AddSingleDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
                     afterEventVariable = new FastActionVariable(true);

@@ -43,7 +43,7 @@ namespace TCGBase
             input.PersistentRegion = PersistentRegion;
             if (MaxSize <= 0 || _data.Count < MaxSize)
             {
-                if (!MultiSame && _data.Find(p => p.Type == input.Type) is Persistent<T> t)
+                if (!MultiSame && _data.Find(p => p.Type == input.Type) is Persistent<T> t && t.Card.TextureNameID == input.Card.TextureNameID && t.Card.TextureNameSpace == input.Card.TextureNameSpace)
                 {
                     if (t.Active)
                     {
@@ -116,7 +116,7 @@ namespace TCGBase
         }
         internal void TryRemove(Persistent<T>? t)
         {
-            if (_data.Contains(t))
+            if (t != null && _data.Contains(t))
             {
                 Unregister(t);
                 t.Childs.ForEach(c => c.Active = false);

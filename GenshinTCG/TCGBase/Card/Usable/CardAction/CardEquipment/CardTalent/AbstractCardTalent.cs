@@ -2,11 +2,10 @@
 {
     public abstract class AbstractCardTalent : AbstractCardEquipment<CardPersistentTalent>
     {
-        public override sealed string NameID => $"talent_{CharacterNameID}";
+        public override string NameID => $"talent_{CharacterNameID}";
         public override bool CostSame => false;
         /// <summary>
         /// 不指定namespace，则和本身（这张卡）的一样
-        /// TODO: do namespace
         /// </summary>
         public virtual string? CharacterNamespace { get => null; }
         /// <summary>

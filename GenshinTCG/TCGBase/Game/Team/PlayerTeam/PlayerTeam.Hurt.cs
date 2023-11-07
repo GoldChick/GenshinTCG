@@ -39,9 +39,9 @@
                     Game.EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtMul), d);
                 }
 
-                hss.Add(new(TeamIndex, d, d.Reaction));
+                hss.Add(new(TeamIndex, d, d.Reaction, d.DirectSource, ds));
                 //生成effect等
-                overload = ReactionTrigger(d.TargetIndex,d.Reaction);
+                overload = ReactionTrigger(d.TargetIndex, d.Reaction);
 
                 if (mul != null)
                 {
@@ -121,7 +121,7 @@
                 var cha = Characters[curr];
                 if (cha.HP == 0 && cha.Alive && !cha.Predie)
                 {
-                    EffectTrigger(Game, TeamIndex, new DieSender(TeamIndex, curr, true), null);
+                    Game.EffectTrigger(new DieSender(TeamIndex, curr, true), null);
                     if (cha.HP == 0)
                     {
                         cha.Predie = true;

@@ -63,6 +63,5 @@
                 me.Enemy.Hurt(new(_element, _damage, 0), this);
             }
         }
-
     }
 }

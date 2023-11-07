@@ -58,9 +58,12 @@
         {
             if (_doDamage)
             {
-                me.Enemy.Hurt(new(_element, _damage, 0), this);
+                me.Enemy.Hurt(new(_element, _damage, 0), this, () => me.AddPersistent(_effect, _oncharacter ? c.Index : -1));
             }
-            me.AddPersistent(_effect, _oncharacter ? c.Index : -1);
+            else
+            {
+                me.AddPersistent(_effect, _oncharacter ? c.Index : -1);
+            }
         }
     }
 }

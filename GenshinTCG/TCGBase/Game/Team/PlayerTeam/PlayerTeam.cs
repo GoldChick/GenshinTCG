@@ -26,7 +26,7 @@
         public bool Pass { get; internal set; }
 
         internal List<ActionCard> LeftCards { get; init; }
-        public List<ActionCard> CardsInHand { get; init; }
+        internal List<ActionCard> CardsInHand { get; init; }
         /// <summary>
         /// max_size=16,默认顺序为 万能 冰水火雷岩草风(0-7)
         /// </summary>

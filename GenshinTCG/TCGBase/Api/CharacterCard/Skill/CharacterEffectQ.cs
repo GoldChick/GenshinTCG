@@ -8,7 +8,7 @@
         private readonly bool _doDamage;
         private readonly bool _oncharacter;
         private readonly AbstractCardPersistentEffect _effect;
-        
+
         private readonly int[] _costs;
         private readonly int _damage;
         private readonly int _element;
@@ -62,9 +62,12 @@
         {
             if (_doDamage)
             {
-                me.Enemy.Hurt(new(_element, _damage, 0), this);
+                me.Enemy.Hurt(new(_element, _damage, 0), this, () => me.AddPersistent(_effect, _oncharacter ? c.Index : -1));
             }
-            me.AddPersistent(_effect, _oncharacter ? c.Index : -1);
+            else
+            {
+                me.AddPersistent(_effect, _oncharacter ? c.Index : -1);
+            }
         }
     }
 }
