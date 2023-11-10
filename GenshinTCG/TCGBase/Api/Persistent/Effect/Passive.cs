@@ -2,13 +2,15 @@
 {
     /// <summary>
     /// 用于触发被动技能,但里面没有检测天赋，需要自己额外写（？）
-    /// TODO:天赋
     /// </summary>
     internal class Passive : AbstractCardPersistentEffect
     {
         private readonly PersistentTriggerDictionary _triggerDic;
-        public Passive(AbstractPassiveSkill skill, int chaIndex)
+        public override string TextureNameSpace => "equipment";
+        public override string TextureNameID { get; }
+        public Passive(AbstractPassiveSkill skill, int chaIndex, AbstractCardCharacter cha)
         {
+            TextureNameID = $"passive_{cha.Namespace}_{cha.NameID}";
             _triggerDic = new(skill.TriggerDic.ToDictionary<string, string, EventPersistentHandler>(st => st, st =>
                 (PlayerTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v) =>
                 {

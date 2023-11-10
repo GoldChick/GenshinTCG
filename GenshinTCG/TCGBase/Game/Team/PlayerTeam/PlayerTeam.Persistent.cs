@@ -79,11 +79,12 @@
         {
             for (int i = 0; i < Characters.Length; i++)
             {
-                foreach (var s in Characters[i].Card.Skills)
+                var c = Characters[i].Card;
+                foreach (var s in c.Skills)
                 {
                     if (s is AbstractPassiveSkill ps)
                     {
-                        AddPersistent(new Passive(ps, i));
+                        AddPersistent(new Passive(ps, i, c),i);
                     }
                 }
             }

@@ -101,43 +101,28 @@ namespace TCGBase
             }
         }
         public List<Persistent<T>> Copy() => _data.ToList();
-        internal void TryRemoveAt(int index)
+        public void TryRemoveAt(int index)
         {
             if (_data.Count > index)
             {
-                var d = _data[index];
-
-                Unregister(d);
-                d.Childs.ForEach(c => c.Active = false);
-                d.Father?.Childs.Remove(d);
-
-                _data.RemoveAt(index);
+                RemoveSingle(_data[index]);
             }
         }
-        internal void TryRemove(Persistent<T>? t)
+        public void TryRemove(Type type) => RemoveSingle(_data.Find(e => e.Type == type));
+        public void TryRemove(string textureNameID) => RemoveSingle(_data.Find(e => e.Card.TextureNameID == textureNameID));
+        public void TryRemove(string textureNamespace, string textureNameID) => RemoveSingle(_data.Find(e => e.Card.TextureNameSpace == textureNamespace && e.Card.TextureNameID == textureNameID));
+        /// <param name="p">确定存在的</param>
+        private void RemoveSingle(Persistent<T>? p)
         {
-            if (t != null && _data.Contains(t))
+            if (p != null)
             {
-                Unregister(t);
-                t.Childs.ForEach(c => c.Active = false);
-                t.Father?.Childs.Remove(t);
+                Unregister(p);
+                p.Childs.ForEach(c => c.Active = false);
+                p.Father?.Childs.Remove(p);
 
-                _data.Remove(t);
+                _data.Remove(p);
             }
         }
-        internal void TryRemove(string textureNameID)
-        {
-            var d = _data.Find(e => e.Card.TextureNameID == textureNameID);
-            if (d != null)
-            {
-                Unregister(d);
-                d.Childs.ForEach(c => c.Active = false);
-                d.Father?.Childs.Remove(d);
-
-                _data.Remove(d);
-            }
-        }
-
         internal void Clear()
         {
             _data.ForEach(d =>

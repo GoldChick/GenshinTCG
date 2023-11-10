@@ -26,9 +26,12 @@
             _costafteruse= costaftertrigger;
             _action= optionalActionIfTrigger;
         }
+        /// <summary>
+        /// 需要available才能减费
+        /// </summary>
         public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
-            if (me.TeamIndex == sender.TeamID && sender is T uds)
+            if (me.TeamIndex == sender.TeamID && persitent.AvailableTimes>0 && sender is T uds)
             {
                 if (_condition.Invoke(me, persitent, uds, variable) && variable is DiceCostVariable dcv)
                 {

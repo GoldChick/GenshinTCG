@@ -2,7 +2,7 @@
 {
     public partial class PlayerTeam
     {
-        public ReactionTags GetReaction(int currElement, int elementToApply, out int nextElement)
+        public static ReactionTags GetReaction(int currElement, int elementToApply, out int nextElement)
         {
             ReactionTags reactiontag = ReactionTags.None;
             //角色身上附着的元素(只允许附着 无0 冰1 水2 火3 雷4 草6 <b>冰+草5</b>
@@ -100,6 +100,7 @@
         }
         internal bool ReactionTrigger(int targetindex,ReactionTags tag)
         {
+            //TODO:nilou
             switch (tag)
             {
                 case ReactionTags.Frozen:

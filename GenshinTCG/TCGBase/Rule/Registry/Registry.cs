@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
 namespace TCGBase
 {
-    internal enum RegistryType
+    public enum RegistryType
     {
         CharacterCard,
         ActionCard,
     }
-    internal class Registry
+    public class Registry
     {
         private static readonly Registry _instance = new();
         private Registry()
@@ -17,13 +17,13 @@ namespace TCGBase
         }
         public static Registry Instance { get => _instance; }
 
-        public List<string> Mods { get; } = new();
+        internal List<string> Mods { get; } = new();
         internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; } = new();
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; } = new();
 
         private RegistryCardCollection[] CardCollections { get; }
         //不知为何的namespace黑名单
-        private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "minecraft", "equipment", "nilou", "hutao" };
+        private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "minecraft", "equipment","nilou", "hutao" };
 
         public bool Contains(RegistryType type, string nameID)
         {
@@ -35,8 +35,10 @@ namespace TCGBase
                 _ => false,
             };
         }
-
-        public void Register(AbstractModUtil util)
+        public string[] GetMods() => Mods.ToArray();
+        public string[] GetCharacterCards() => CharacterCards.Select(r=>r.Key).ToArray();
+        public string[] GetActionCards() => ActionCards.Select(r => r.Key).ToArray();
+        internal void Register(AbstractModUtil util)
         {
             string name = util.NameSpace;
             if (Mods.Contains(name) || _blacklist.Contains(name))
@@ -53,7 +55,7 @@ namespace TCGBase
             reg.RegisterActionCard(ActionCards);
         }
 
-        public void LoadDlls(string path)
+        internal void LoadDlls(string path)
         {
             if (!Directory.Exists(path))
             {
@@ -81,8 +83,8 @@ namespace TCGBase
 
                         try
                         {
-                            Type? tp = Array.Find(types, tp => tp.IsSubclassOf(typeof(AbstractModUtil)));
-                            if (tp != null && Activator.CreateInstance(tp) is AbstractModUtil util)
+                            var utils=types.Where(tp => tp.IsSubclassOf(typeof(AbstractModUtil))).Select(tp=>Activator.CreateInstance(tp) as AbstractModUtil);
+                            foreach (var util in utils)
                             {
                                 Register(util);
                             }

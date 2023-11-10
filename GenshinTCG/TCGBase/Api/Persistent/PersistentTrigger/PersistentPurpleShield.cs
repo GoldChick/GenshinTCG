@@ -7,7 +7,7 @@
     {
         private readonly int _line;
         private readonly int _protect;
-        /// <param name="line">结算到此buff，伤害超过_line时才触发</param>
+        /// <param name="line">结算到此buff，伤害大于等于_line时才触发</param>
         /// <param name="protectNum">一次抵挡多少伤害</param>
         public PersistentPurpleShield(int protectNum, int line = 1)
         {
@@ -22,7 +22,7 @@
                 {
                     if (dv.Element >= 0)
                     {
-                        if (dv.Damage > _line)
+                        if (dv.Damage >= _line)
                         {
                             dv.Damage -= _protect;
                             persitent.AvailableTimes--;

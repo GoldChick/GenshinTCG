@@ -58,9 +58,13 @@
         /// </summary>
         AfterAnyAction,
         /// <summary>
-        /// 受到伤害后
+        /// 受到伤害（可能有元素附着）后
         /// </summary>
         AfterHurt,
+        /// <summary>
+        /// 受到元素附着，但是没有伤害后
+        /// </summary>
+        AfterNoDamageHurt,
         /// <summary>
         /// 受到治疗后
         /// </summary>

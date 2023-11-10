@@ -9,12 +9,9 @@
         public int Index { get; init; }
         private int _hp;
         private int _mp;
-        //public PersistentSet<AbstractCardPersistentEffect> Weapon { get; init; }
-        //public PersistentSet<AbstractCardPersistentEffect> Artifact { get; init; }
-        //public PersistentSet<CardPersistentTalent> Talent { get; init; }
 
         public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
-
+        //TODO:改变时发包？
         public int HP
         {
             get { return _hp; }
