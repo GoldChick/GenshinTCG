@@ -18,10 +18,7 @@
         {
             me.AddEquipment(Effect, targetArgs[0]);
         }
-        public override bool CanBeArmed()
-        {
-            return base.CanBeArmed();
-        }
+        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(c => $"{CharacterNamespace ?? Namespace}:{CharacterNameID}".Equals($"{c.Namespace}:{c.NameID}"));
         /// <summary>
         /// 默认实现为需要是本人的天赋，并且为被动技能/该角色在前台
         /// </summary>

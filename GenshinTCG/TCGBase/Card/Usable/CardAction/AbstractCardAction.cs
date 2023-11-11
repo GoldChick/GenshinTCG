@@ -16,11 +16,10 @@
         public abstract void AfterUseAction(PlayerTeam me, int[] targetArgs);
 
         /// <summary>
-        /// TODO:还没写选卡
         /// //是否可以加入卡组里
         /// </summary>
         /// <returns></returns>
-        public virtual bool CanBeArmed() => true;
+        public virtual bool CanBeArmed(List<AbstractCardCharacter> chars) => true;
         /// <summary>
         /// 是否满足额外的打出条件（不包括骰子条件）
         /// </summary>

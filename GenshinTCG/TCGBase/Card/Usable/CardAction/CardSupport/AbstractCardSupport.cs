@@ -32,7 +32,7 @@
         public virtual int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
-        public virtual string TextureNameSpace => "Minecraft";
+        public virtual string TextureNameSpace => "minecraft";
         public string TextureNameID => NameID;
         public virtual bool CustomDesperated { get => false; }
         /// <summary>

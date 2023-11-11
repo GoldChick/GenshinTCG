@@ -40,7 +40,7 @@
             }
             int l = Characters.Length;
             hss.Sort((hs1, hs2) => (hs1.TargetIndex + l - CurrCharacter) % l - (hs2.TargetIndex + l - CurrCharacter) % l);
-            return hss.GroupBy(hs => hs.TargetIndex).Select(hsg => new HealSender(TeamIndex, hsg.Key, hsg.Sum(hs => hs.Amount))).ToList();
+            return hss.GroupBy(hs => hs.TargetIndex).Select(hsg => new HealSender(TeamIndex, hsg.Sum(hs => hs.Amount), hsg.Key)).ToList();
         }
         /// <summary>
         /// 为了偷懒，使用了DamageVariable作为了治疗<br/>
@@ -52,6 +52,7 @@
             List<HealSender> hss = MergeHeal(ds, dvs_person);
             foreach (var hs in hss)
             {
+                var old = Characters[hs.TargetIndex].HP;
                 Characters[hs.TargetIndex].HP += hs.Amount;
             }
             foreach (var hs in hss)

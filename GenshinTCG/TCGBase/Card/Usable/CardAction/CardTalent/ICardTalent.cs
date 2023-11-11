@@ -10,5 +10,7 @@
         /// </summary>
         public string? CharacterNamespace { get; }
         public string CharacterNameID { get; }
+        public sealed bool TalentCanBeArmed(List<AbstractCardCharacter> chars,string defaultnamespace) 
+            => chars.Any(c => $"{CharacterNamespace ?? defaultnamespace}:{CharacterNameID}".Equals($"{c.NameID}:{c.NameID}"));
     }
 }

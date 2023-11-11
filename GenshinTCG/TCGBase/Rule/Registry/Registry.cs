@@ -23,7 +23,7 @@ namespace TCGBase
 
         private RegistryCardCollection[] CardCollections { get; }
         //不知为何的namespace黑名单
-        private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "minecraft", "equipment","nilou", "hutao" };
+        private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "minecraft", "equipment", "nilou", "hutao" };
 
         public bool Contains(RegistryType type, string nameID)
         {
@@ -36,8 +36,8 @@ namespace TCGBase
             };
         }
         public string[] GetMods() => Mods.ToArray();
-        public string[] GetCharacterCards() => CharacterCards.Select(r=>r.Key).ToArray();
-        public string[] GetActionCards() => ActionCards.Select(r => r.Key).ToArray();
+        public List<AbstractCardCharacter> GetCharacterCards() => CharacterCards.Select(kvp=>kvp.Value).ToList();
+        public List<AbstractCardAction> GetActionCards() => ActionCards.Select(kvp => kvp.Value).ToList();
         internal void Register(AbstractModUtil util)
         {
             string name = util.NameSpace;
@@ -83,7 +83,7 @@ namespace TCGBase
 
                         try
                         {
-                            var utils=types.Where(tp => tp.IsSubclassOf(typeof(AbstractModUtil))).Select(tp=>Activator.CreateInstance(tp) as AbstractModUtil);
+                            var utils = types.Where(tp => tp.IsSubclassOf(typeof(AbstractModUtil))).Select(tp => Activator.CreateInstance(tp) as AbstractModUtil);
                             foreach (var util in utils)
                             {
                                 Register(util);

@@ -36,7 +36,7 @@
     }
     public abstract class AbstractCardPersistent : ICardPersistnet
     {
-        public virtual string TextureNameSpace { get => "Minecraft"; }
+        public virtual string TextureNameSpace { get => "minecraft"; }
         public virtual string TextureNameID { get => "nullable"; }
         public virtual int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
