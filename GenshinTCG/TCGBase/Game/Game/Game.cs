@@ -26,6 +26,7 @@
         {
             Teams = new PlayerTeam[2];
             Clients = new();
+            Records = new();
         }
         public void AddClient(AbstractClient c) => Clients.Add(c);
         /// <summary>
@@ -86,6 +87,7 @@
 
         public virtual void Gaming()
         {
+            Records.Add(new());
             for (int i = 0; i < 2; i++)
             {
                 Teams[i].RegisterPassive();
@@ -114,6 +116,7 @@
             while (!IsGameOver())
             {
                 Round++;
+                Records.Add(new());
 
                 Stage = GameStage.Rolling;
                 Task.WaitAll(Task.Run(() => Teams[0].RoundStart()), Task.Run(() => Teams[1].RoundStart()));

@@ -24,12 +24,16 @@
                 return t.Result;
             }
             ts.Cancel();
+
+            NetEvent? evt = null;
             switch (demand)
             {
                 case ActionType.ReRollCard:
-                    return new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].CardsInHand.Count).ToArray());
+                    evt = new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].CardsInHand.Count).ToArray());
+                    break;
                 case ActionType.ReRollDice:
-                    return new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].Dices.Count).ToArray());
+                    evt = new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].Dices.Count).ToArray());
+                    break;
                 case ActionType.SwitchForced:
                     {
                         var chas = Teams[teamid].Characters;
@@ -37,14 +41,22 @@
                         {
                             if (chas[i].Alive)
                             {
-                                return new NetEvent(new NetAction(demand, i));
+                                evt = new NetEvent(new NetAction(demand, i));
+                                break;
                             }
                         }
-                        throw new Exception("AbstractGame.NetEvent.RequestEvent():demand=SwitchForced时出现错误！角色全部死亡！");
+                        if (evt == null)
+                        {
+                            throw new Exception("已经没有存活角色，仍然要求SwitchForced!");
+                        }
                     }
+                    break;
                 default:
-                    return new NetEvent(new NetAction(ActionType.Pass));
+                    evt = new NetEvent(new NetAction(ActionType.Pass));
+                    break;
             }
+            Records.Last().Add((teamid, evt));
+            return evt;
         }
 
         ///<summary>
