@@ -92,38 +92,45 @@
             var cha = Characters[(dv.TargetIndex + CurrCharacter) % Characters.Length];
             //TODO: except?
             ReactionTags tag = GetReaction(cha.Element, dv.Element, out int nextElement);
+            int oldelement = cha.Element;
             cha.Element = nextElement;
-            if (ReactionTrigger(dv.TargetIndex,tag))
+            if (ReactionItemGenerate(dv.TargetIndex, tag, source, oldelement))
             {
                 SwitchToNext();
             }
         }
-        internal bool ReactionTrigger(int targetindex,ReactionTags tag)
+        internal bool ReactionItemGenerate(int targetindex, ReactionTags tag, IDamageSource source, int initialelement)
         {
-            //TODO:nilou
-            switch (tag)
+            var egv = new ElementGenerateVariable(false, null);
+            Game.EffectTrigger(new PreHurtSender(TeamIndex, source, SenderTag.ElementItemGenerate, initialelement), egv);
+
+            egv.GenerateAction?.Invoke(this, targetindex);
+            if (!egv.OverrideInitialGenerator)
             {
-                case ReactionTags.Frozen:
-                    //TODO:frozen?
-                    break;
-                case ReactionTags.Overloaded:
-                    return targetindex == CurrCharacter;
-                case ReactionTags.Crystallize:
-                    Enemy.AddPersistent(new Crystal());
-                    break;
-                case ReactionTags.Bloom:
-                    Enemy.AddPersistent(new DendroCore());
-                    break;
-                case ReactionTags.Burning:
-                    Enemy.TryAddSummon(new Burning());
-                    break;
-                case ReactionTags.Catalyze:
-                    Enemy.AddPersistent(new CatalyzeField());
-                    break;
+                switch (tag)
+                {
+                    case ReactionTags.Frozen:
+                        //TODO:frozen?
+                        break;
+                    case ReactionTags.Overloaded:
+                        return targetindex == CurrCharacter;
+                    case ReactionTags.Crystallize:
+                        Enemy.AddPersistent(new Crystal());
+                        break;
+                    case ReactionTags.Bloom:
+                        Enemy.AddPersistent(new DendroCore());
+                        break;
+                    case ReactionTags.Burning:
+                        Enemy.TryAddSummon(new Burning());
+                        break;
+                    case ReactionTags.Catalyze:
+                        Enemy.AddPersistent(new CatalyzeField());
+                        break;
+                }
             }
             return false;
         }
-        internal void GetDamageReaction(DamageVariable dvToPerson, out DamageVariable? mul)
+        internal int GetDamageReaction(DamageVariable dvToPerson, out DamageVariable? mul)
         {
             var cha = Characters[dvToPerson.TargetIndex];
             ReactionTags tag = GetReaction(cha.Element, dvToPerson.Element, out int nextElement);
@@ -140,8 +147,11 @@
                 ReactionTags.Swirl => new(DamageSource.Addition, (cha.Element - 1) % 4 + 1, 1, dvToPerson.TargetIndex, true),
                 _ => null
             };
+            int initialelement = cha.Element;
+
             cha.Element = nextElement;
             dvToPerson.Reaction = tag;
+            return initialelement;
         }
     }
 }

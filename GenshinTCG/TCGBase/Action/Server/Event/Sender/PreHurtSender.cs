@@ -7,11 +7,15 @@
     {
         public override string SenderName { get; }
         public IDamageSource RootSource { get; init; }
-        internal PreHurtSender(int teamID, IDamageSource ds, SenderTag sender) : this(teamID,ds,sender.ToString()){}
-        internal PreHurtSender(int teamID,IDamageSource ds, string sender) : base(teamID)
+        /// <summary>
+        /// 记录被打的角色头上的本来的元素，用来区分不同的结晶、扩散
+        /// </summary>
+        public int InitialElement { get; }
+        internal PreHurtSender(int teamID, IDamageSource ds, SenderTag sender, int initialelement = -1) : base(teamID)
         {
             RootSource = ds;
-            SenderName = sender;
+            SenderName = sender.ToString();
+            InitialElement = initialelement;
         }
     }
 }

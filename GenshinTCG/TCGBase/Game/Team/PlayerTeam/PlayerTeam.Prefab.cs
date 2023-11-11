@@ -5,6 +5,16 @@ namespace TCGBase
     public partial class PlayerTeam
     {
         /// <summary>
+        /// 强制切换到某一个角色（绝对坐标）
+        /// </summary>
+        public void SwitchToIndex(int index)
+        {
+            if (Characters[index].Alive)
+            {
+                Game.HandleEvent(new NetEvent(new NetAction(ActionType.SwitchForced, index)), TeamIndex);
+            }
+        }
+        /// <summary>
         /// 强制切换下一个角色(没有则不切换)
         /// </summary>
         public void SwitchToNext()

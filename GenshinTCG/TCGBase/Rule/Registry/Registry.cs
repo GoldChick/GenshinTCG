@@ -55,7 +55,7 @@ namespace TCGBase
             reg.RegisterActionCard(ActionCards);
         }
 
-        internal void LoadDlls(string path)
+        public void LoadDlls(string path)
         {
             if (!Directory.Exists(path))
             {

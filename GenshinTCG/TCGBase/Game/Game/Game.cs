@@ -26,8 +26,6 @@
         {
             Teams = new PlayerTeam[2];
             Clients = new();
-
-            Registry.Instance.LoadDlls(Directory.GetCurrentDirectory() + "/mods");
         }
         public void AddClient(AbstractClient c) => Clients.Add(c);
         /// <summary>

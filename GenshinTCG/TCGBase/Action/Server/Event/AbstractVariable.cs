@@ -8,6 +8,7 @@
         public static readonly string DAMAGE = "minecraft:damage";
         public static readonly string CAN_ACTION = "minecraft:can_action";
         public static readonly string FAST_ACTION = "minecraft:fast_action";
+        public static readonly string ELEMENT_GENERATE = "minecraft:element_generate";
     }
     /// <summary>
     /// 用于给EffectAct传递actioninfo的variable

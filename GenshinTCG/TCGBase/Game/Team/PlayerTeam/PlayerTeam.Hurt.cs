@@ -30,18 +30,18 @@
             {
                 //only one target
                 Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.ElementEnchant), d);
-                GetDamageReaction(d, out var mul);
+                int initialelement = GetDamageReaction(d, out var mul);
                 if (d.Element != -1)
                 {
-                    Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease), d);
-                    Game.EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtDecrease), d);
-                    Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul), d);
-                    Game.EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtMul), d);
+                    Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease, initialelement), d);
+                    Game.EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtDecrease, initialelement), d);
+                    Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul, initialelement), d);
+                    Game.EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtMul, initialelement), d);
                 }
 
-                hss.Add(new(TeamIndex, d, d.Reaction, d.DirectSource, ds));
+                hss.Add(new(TeamIndex, d, d.Reaction, d.DirectSource, ds, initialelement));
                 //生成effect等
-                overload = ReactionTrigger(d.TargetIndex, d.Reaction);
+                overload = ReactionItemGenerate(d.TargetIndex, d.Reaction, ds, initialelement);
 
                 if (mul != null)
                 {
