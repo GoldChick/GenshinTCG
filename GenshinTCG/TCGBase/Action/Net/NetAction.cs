@@ -16,7 +16,6 @@ namespace TCGBase
         /// </summary>
         ReRollCard,
 
-        ReplaceSupport,
         /// <summary>
         /// Index:Target Character Index
         /// </summary>

@@ -55,7 +55,6 @@
                     evt = new NetEvent(new NetAction(ActionType.Pass));
                     break;
             }
-            Records.Last().Add((teamid, evt));
             return evt;
         }
 
@@ -149,12 +148,12 @@
                     break;
                 case ActionType.UseCard:
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, evt.Action.Index));
-                    ActionCard c = t.CardsInHand[evt.Action.Index];
+                    var c = t.CardsInHand[evt.Action.Index];
                     t.CardsInHand.Remove(c);
 
-                    c.Card.AfterUseAction(t, evt.AdditionalTargetArgs);
+                    c.AfterUseAction(t, evt.AdditionalTargetArgs);
 
-                    afterEventSender = new AfterUseCardSender(currTeam, c.Card, evt.AdditionalTargetArgs);
+                    afterEventSender = new AfterUseCardSender(currTeam, c, evt.AdditionalTargetArgs);
                     afterEventVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Blend://调和
@@ -172,9 +171,9 @@
             }
             //after_xx 在这里结算是否是战斗行动
             EffectTrigger(afterEventSender, afterEventVariable);
-            bool fight_action = !(afterEventVariable?.Fast ?? false);
+            bool fight_action = !(afterEventVariable?.Fast ?? false) && CurrTeam == currTeam;
 
-            if (fight_action && CurrTeam == currTeam)
+            if (fight_action)
             {
                 //必须是当前行动的队伍才有意义做出战斗行动
                 if (!Teams[1 - CurrTeam].Pass)
@@ -183,6 +182,7 @@
                     BroadCast(ClientUpdateCreate.CurrTeamUpdate(CurrTeam));
                 }
             }
+            Records.Last().Add((currTeam, fight_action, evt));
         }
     }
 }

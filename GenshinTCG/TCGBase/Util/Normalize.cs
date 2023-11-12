@@ -26,16 +26,5 @@ namespace TCGBase
 
         public static string StringNormalize(string? str, [NotNull] string defaultStr = "minecraft")
         => string.IsNullOrEmpty(str) ? defaultStr : Regex.Replace(str, @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)).ToLower();
-        public static string NameIDNormalize(string? nameID, [NotNull] string defaultNameSpace = "minecraft")
-        {
-            nameID ??= "minecraft:keqing";
-            string[] strs = Regex.Replace(nameID, @"[^\w\:]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)).ToLower().Split(':');
-            return strs.Length switch
-            {
-                0 => $"{defaultNameSpace}:keqing",
-                1 => $"{defaultNameSpace}:{strs[0]}",
-                _ => $"{strs[0]}:{strs[1]}"
-            };
-        }
     }
 }

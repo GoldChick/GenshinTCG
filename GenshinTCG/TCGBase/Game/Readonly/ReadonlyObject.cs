@@ -4,10 +4,12 @@ namespace TCGBase
 {
     public abstract class AbstractReadonlyObject
     {
-        public string Name { get; }
+        public string NameSpace { get; init; }
+        public string Name { get; init; }
         [JsonConstructor]
-        public AbstractReadonlyObject(string name)
+        public AbstractReadonlyObject(string nameSpace,string name)
         {
+            NameSpace = nameSpace;
             Name = name;
         }
     }
@@ -21,7 +23,7 @@ namespace TCGBase
         public List<ReadonlyPersistent> Effects { get; }
         public int SkillCount { get; }
         [JsonConstructor]
-        public ReadonlyCharacter(string name, int hP, int mP, int maxHP, int maxMP, int element,  List<ReadonlyPersistent> effects, int skillCount) : base(name)
+        public ReadonlyCharacter(string nameSpace, string name, int hP, int mP, int maxHP, int maxMP, int element, List<ReadonlyPersistent> effects, int skillCount) : base(nameSpace,name)
         {
             HP = hP;
             MP = mP;
@@ -31,26 +33,27 @@ namespace TCGBase
             Effects = effects;
             SkillCount = skillCount;
         }
-        public ReadonlyCharacter(Character c) : base(c.Card.NameID)
+        public ReadonlyCharacter(Character c) : base(c.Card.Namespace,c.Card.NameID)
         {
             HP = c.HP;
             MP = c.MP;
             MaxHP = c.Card.MaxHP;
             MaxMP = c.Card.MaxMP;
             Element = c.Element;
-            Effects = c.Effects.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ToList();
+            Effects = c.Effects.Copy().Select(e => new ReadonlyPersistent(e)).ToList();
             SkillCount = c.Card.Skills.Where(s => s.Category != SkillCategory.P).Count();
         }
     }
     public class ReadonlyPersistent : AbstractReadonlyObject
     {
-        public string NameSpace { get; init; }
         public int[] Infos { get; set; }
         [JsonConstructor]
-        public ReadonlyPersistent(string nameSpace, string name, params int[] infos) : base(name)
+        public ReadonlyPersistent(string nameSpace, string name, params int[] infos) : base(nameSpace,name)
         {
-            NameSpace = nameSpace;
             Infos = infos;
+        }
+        internal ReadonlyPersistent(AbstractPersistent p) : this(p.CardBase.TextureNameSpace, p.CardBase.TextureNameID, p.CardBase.Info(p))
+        {
         }
     }
 

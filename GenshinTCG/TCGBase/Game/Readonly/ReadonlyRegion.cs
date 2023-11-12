@@ -22,9 +22,9 @@ namespace TCGBase
         public ReadonlyRegion(PlayerTeam pt)
         {
             Characters = pt.Characters.Select(c => new ReadonlyCharacter(c)).ToList();
-            Effects = pt.Effects.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ToList();
-            Summons = pt.Summons.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ToList();
-            Supports = pt.Supports.Copy().Select(e => new ReadonlyPersistent(e.Card.TextureNameSpace, e.Card.TextureNameID, e.Card.Info(e))).ToList();
+            Effects = pt.Effects.Copy().Select(e => new ReadonlyPersistent(e)).ToList();
+            Summons = pt.Summons.Copy().Select(e => new ReadonlyPersistent(e)).ToList();
+            Supports = pt.Supports.Copy().Select(e => new ReadonlyPersistent(e)).ToList();
             CurrCharacter = pt.CurrCharacter;
         }
     }

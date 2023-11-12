@@ -24,7 +24,7 @@
             && enums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
             && evt.Action.Type switch
             {
-                ActionType.UseCard => CardsInHand[evt.Action.Index].Card.CanBeUsed(this, evt.AdditionalTargetArgs),
+                ActionType.UseCard => CardsInHand[evt.Action.Index].CanBeUsed(this, evt.AdditionalTargetArgs),
                 _ => true
             };
         }
@@ -68,7 +68,7 @@
                     }
                     break;
                 case ActionType.UseCard:
-                    var actioncard = CardsInHand[action.Index].Card;
+                    var actioncard = CardsInHand[action.Index];
                     if (actioncard is ITargetSelector se1)
                     {
                         enums.AddRange(se1.TargetEnums);
@@ -101,7 +101,7 @@
                     Game.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, CurrCharacter, action.Index % chaCard.Skills.Length, realAction), c, false);
                     break;
                 case ActionType.UseCard:
-                    AbstractCardAction card = CardsInHand[action.Index % CardsInHand.Count].Card;
+                    var card = CardsInHand[action.Index % CardsInHand.Count];
                     c = new(card.CostSame, card.Costs);
                     Game.EffectTrigger(new UseDiceFromCardSender(TeamIndex, action.Index % CardsInHand.Count, realAction), c, false);
                     break;

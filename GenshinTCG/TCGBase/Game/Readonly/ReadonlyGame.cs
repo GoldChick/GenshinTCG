@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace TCGBase
 {
@@ -49,7 +48,7 @@ namespace TCGBase
 
             LeftCardsNum = teamMe.LeftCards.Count;
             Dices = teamMe.Dices.ToList();
-            Cards = teamMe.CardsInHand.Select(c => c.Card.NameID).ToList();
+            Cards = teamMe.CardsInHand.Select(c => $"{c.Namespace}:{c.NameID}").ToList();
 
             EnemyDiceNum = teamEnemy.Dices.Count;
             EnemyCardNum = teamEnemy.CardsInHand.Count;

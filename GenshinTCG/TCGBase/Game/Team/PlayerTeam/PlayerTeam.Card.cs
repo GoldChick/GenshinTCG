@@ -3,11 +3,11 @@
     public partial class PlayerTeam
     {
         /// <summary>
-        /// 究极定向检索
+        /// 究极定向检索，检索type类型和type的子类
         /// </summary>
         public void RollCard(Type type)
         {
-            var col = LeftCards.Where(c => c.Card.GetType() == type);
+            var col = LeftCards.Where(c => c.GetType() == type || c.GetType().IsSubclassOf(type));
             if (col.Any())
             {
                 var c = col.ElementAt(Random.Next(col.Count()));
@@ -29,20 +29,20 @@
                 }
             }
         }
-        internal void GainCard(ActionCard card)
+        internal void GainCard(AbstractCardAction card)
         {
+            string str = $"{card.Namespace}:{card.NameID}";
             if (CardsInHand.Count >= 10)
             {
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Card.NameID));
+                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, str));
             }
             else
             {
                 CardsInHand.Add(card);
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Card.NameID));
+                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, str));
             }
         }
-        public void GainCard(AbstractCardAction card) => GainCard(new ActionCard(card));
-        public List<ActionCard> GetCards() => CardsInHand.ToList();
+        public List<AbstractCardAction> GetCards() => CardsInHand.ToList();
         /// <summary>
         /// remove at index(0 to length-1)
         /// </summary>
@@ -57,12 +57,12 @@
         /// <summary>
         /// remove first one
         /// </summary>
-        public void TryRemoveCard(string cardNamespace, string cardNameID) => TryRemoveCard(CardsInHand.FindIndex(p => p.Card.Namespace == cardNamespace && p.Card.NameID == cardNameID));
+        public void TryRemoveCard(string cardNamespace, string cardNameID) => TryRemoveCard(CardsInHand.FindIndex(p => p.Namespace == cardNamespace && p.NameID == cardNameID));
         public void TryRemoveAllCard(Func<AbstractCardAction, bool> predicate)
         {
             for (int i = CardsInHand.Count - 1; i >= 0; i--)
             {
-                if (predicate.Invoke(CardsInHand[i].Card))
+                if (predicate.Invoke(CardsInHand[i]))
                 {
                     CardsInHand.RemoveAt(i);
                     Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, i));

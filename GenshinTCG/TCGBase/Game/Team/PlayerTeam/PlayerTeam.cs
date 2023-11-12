@@ -25,8 +25,8 @@
         public int CurrCharacter { get; internal set; }
         public bool Pass { get; internal set; }
 
-        internal List<ActionCard> LeftCards { get; init; }
-        internal List<ActionCard> CardsInHand { get; init; }
+        internal List<AbstractCardAction> LeftCards { get; init; }
+        internal List<AbstractCardAction> CardsInHand { get; init; }
         /// <summary>
         /// max_size=16,默认顺序为 万能 冰水火雷岩草风(0-7)
         /// </summary>
@@ -35,7 +35,7 @@
         public PlayerTeam(ServerPlayerCardSet cardset, Game game, int index)
         {
             Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i)).ToArray();
-            LeftCards = cardset.ActionCards.Select(a => new ActionCard(a)).ToList();
+            LeftCards = cardset.ActionCards.ToList();
             CardsInHand = new();
 
             CurrCharacter = -1;
@@ -60,7 +60,7 @@
             RollDice(drv);
             for (int i = 0; i < drv.RollingTimes; i++)
             {
-                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.ReRollDice, "reroll_dice?");
+                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.ReRollDice);
             }
         }
         /// <summary>

@@ -18,7 +18,6 @@
         /// </summary>
         public static SenderTag ToSenderTags(this ActionType type, bool before = false) => type switch
         {
-            //ActionType.ReplaceSupport
             ActionType.ReRollDice  => before ? SenderTag.BeforeRerollDice : SenderTag.AfterRerollDice,
             ActionType.ReRollCard => before ? SenderTag.BeforeRerollCard : SenderTag.AfterRerollCard,
             ActionType.Switch or ActionType.SwitchForced => before ? SenderTag.BeforeSwitch : SenderTag.AfterSwitch,
