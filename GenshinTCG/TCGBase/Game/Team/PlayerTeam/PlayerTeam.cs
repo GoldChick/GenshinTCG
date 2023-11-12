@@ -34,7 +34,7 @@
         /// <param name="cardset">经过处理确认正确的卡组</param>
         public PlayerTeam(ServerPlayerCardSet cardset, Game game, int index)
         {
-            Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i)).ToArray();
+            Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i, this)).ToArray();
             LeftCards = cardset.ActionCards.ToList();
             CardsInHand = new();
 

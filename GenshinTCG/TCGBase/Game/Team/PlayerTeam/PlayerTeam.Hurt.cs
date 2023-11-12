@@ -61,7 +61,6 @@
                 hss.AddRange(Hurt(ds, out bool one_overload, item));
                 overload = overload || one_overload;
             }
-
             List<HurtSender> selects = new();
             foreach (var hs in hss)
             {
@@ -108,12 +107,13 @@
         /// <param name="action">伤害结算后，死亡结算前结算的东西，如[风压剑]</param>
         public void MultiHurt(DamageVariable[] dvs, IDamageSource ds, Action? action = null)
         {
-            //assert dvs.all(p=>p.targetrelative)
+            //dvs.all(p=>p.targetrelative)
             DamageVariable[] dvs_person = dvs.Select(p => new DamageVariable(ds.DamageSource, p.Element, p.Damage, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
             List<HurtSender> hss = MultiHurt(ds, out bool overload, dvs_person);
             foreach (var hs in hss)
             {
                 Characters[hs.TargetIndex].HP -= hs.Damage;
+                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HurtUpdate(TeamIndex, hs.TargetIndex, hs.Element, hs.Damage));
             }
             for (int i = 0; i < Characters.Length; i++)
             {

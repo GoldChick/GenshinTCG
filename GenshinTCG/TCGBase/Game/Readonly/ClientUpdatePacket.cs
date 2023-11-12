@@ -79,17 +79,17 @@
         public enum CharacterUpdateCategory
         {
             /// <summary>
-            /// int[0]: index<br/>int[1]: element<br/>int[2]: damage
+            /// int[0]: char index<br/>int[1]: element<br/>int[2]: damage
             /// </summary>
             Hurt,
             /// <summary>
-            /// int[0]: index<br/>int[1]: amount
+            /// int[0]: char index<br/>int[1]: amount
             /// </summary>
             Heal,
             /// <summary>
-            /// int[0]: index<br/>int[1]: element
+            /// int[0]: char index<br/>int[1]: element
             /// </summary>
-            AttachElement,
+            ChangeElement,
             /// <summary>
             /// int[0]: index
             /// </summary>
@@ -98,31 +98,35 @@
             /// int[0]: index<br/>int[1]: skill index
             /// </summary>
             UseSkill,
-            PreSwitch,
             /// <summary>
-            /// int[0]: index<br/>int[1]: is forced ()1=true
+            /// int[0]: target index
             /// </summary>
             Switch
         }
         public static class CharacterUpdate
         {
-            public static ClientUpdatePacket CharacterHurtUpdate(int teamID, int index, int element, int damage) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Hurt, index, element, damage);
-            public static ClientUpdatePacket CharacterHealUpdate(int teamID, int index, int amount) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Heal, index, amount);
-            public static ClientUpdatePacket CharacterElementUpdate(int teamID, int index, int element) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.AttachElement, index, element);
-            public static ClientUpdatePacket CharacterDieUpdate(int teamID, int index) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Die, index);
-            public static ClientUpdatePacket CharacterUseSkillUpdate(int teamID, int index, int skillIndex) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.UseSkill, index, skillIndex);
-            public static ClientUpdatePacket CharacterPreSwitchUpdate(int teamID) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.PreSwitch);
-            public static ClientUpdatePacket CharacterSwitchUpdate(int teamID, int index, bool isForced) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Switch, index, isForced ? 1 : 0);
+            public static ClientUpdatePacket HurtUpdate(int teamID, int index, int element, int damage) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Hurt, index, element, damage);
+            public static ClientUpdatePacket HealUpdate(int teamID, int index, int amount) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Heal, index, amount);
+            public static ClientUpdatePacket ElementUpdate(int teamID, int index, int element) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.ChangeElement, index, element);
+            public static ClientUpdatePacket MPUpdate(int teamID, int index, int mp) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.ChangeElement, index, mp);
+            public static ClientUpdatePacket DieUpdate(int teamID, int index) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Die, index);
+            public static ClientUpdatePacket UseSkillUpdate(int teamID, int index, int skillIndex) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.UseSkill, index, skillIndex);
+            public static ClientUpdatePacket SwitchUpdate(int teamID, int target) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Switch, target);
 
         }
+        /// <summary>
+        /// int[0]: persistent position (0-9 character -1 team 11 summon 12 support)
+        /// </summary>
         public enum PersistentUpdateCategory
         {
             Act,
             Obtain,
             Lose
         }
-        /// <param name="region">persistent position (0-9 character -1 team 11 summon 12 support)</param>
-        public static ClientUpdatePacket PersistentUpdate(int teamID, PersistentUpdateCategory category, int region, string cardID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)category, new int[] { region }, new string[] { cardID });
+        public static class PersistentUpdate
+        {
+            public static ClientUpdatePacket ObtainUpdate(int teamID, int region, string cardID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, new int[] { region }, new string[] { cardID });
+        }
         public static ClientUpdatePacket DiceUpdate(int teamID, params int[] dices) => new(ClientUpdateType.Dice, 10 * teamID, dices);
         public enum CardUpdateCategory
         {
@@ -135,7 +139,7 @@
             /// </summary>
             Blend,
             /// <summary>
-            /// 凭空得到string[0]牌（只有自己能看到是什么牌）
+            /// 凭空得到(string[0]:string[1])牌（只有自己能看到是什么牌,str[0]为namespace str[1]为nameid）
             /// </summary>
             Obtain,
             /// <summary>
@@ -148,10 +152,11 @@
             /// </summary>
             Pop,
             /// <summary>
-            /// 爆牌string[0](只有自己能看到) 
+            /// 爆牌(string[0]:string[1])(只有自己能看到) 
             /// </summary>
             Broke
         }
+        public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category) => new(ClientUpdateType.Card, 10 * teamID + (int)category);
         /// <summary>
         /// for Blend and Use
         /// </summary>
@@ -159,6 +164,6 @@
         /// <summary>
         /// for Obtain and Broke
         /// </summary>
-        public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, string cardID) => new(ClientUpdateType.Card, 10 * teamID + (int)category, new string[] { cardID });
+        public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, params string[] cardIDs) => new(ClientUpdateType.Card, 10 * teamID + (int)category, cardIDs);
     }
 }

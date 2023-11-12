@@ -9,6 +9,7 @@ namespace TCGBase
     public delegate void EventPersistentSetHandler(PlayerTeam me, AbstractSender s, AbstractVariable? v);
     public class PersistentSet<T> : PersistentSet where T : AbstractCardPersistent
     {
+        private readonly Action<ClientUpdatePacket>? _updatepacket;
         private readonly List<Persistent<T>> _data;
         private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
         /// <summary>
@@ -26,13 +27,14 @@ namespace TCGBase
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
         /// </param>
-        internal PersistentSet(int region, int size = 0, bool multisame = false)
+        internal PersistentSet(int region, int size = 0, bool multisame = false, Action<ClientUpdatePacket>? updatepacket = null)
         {
             PersistentRegion = region;
             _data = new();
             _handlers = new();
             MaxSize = size;
             MultiSame = multisame;
+            _updatepacket = updatepacket;
         }
         public Persistent<T> this[int i] => _data[i];
         /// <summary>

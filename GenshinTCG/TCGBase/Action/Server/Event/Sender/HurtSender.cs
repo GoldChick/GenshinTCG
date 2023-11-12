@@ -13,7 +13,16 @@
         public ReactionTags Reaction { get; init; }
         public DamageSource DirectSource { get; init; }
         public IDamageSource RootSource { get; init; }
-
+        internal HurtSender(int teamID, int element,int damage,int targetindex, ReactionTags reaction, DamageSource directSource, IDamageSource rootSource, int initialElement) : base(teamID)
+        {
+            Element = element;
+            Damage = damage;
+            TargetIndex = targetindex;
+            Reaction = reaction;
+            DirectSource = directSource;
+            RootSource = rootSource;
+            InitialElement = initialElement;
+        }
         internal HurtSender(int teamID, DamageVariable dv, ReactionTags reaction, DamageSource directSource, IDamageSource rootSource, int initialElement) : base(teamID)
         {
             Element = dv.Element;

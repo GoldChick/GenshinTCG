@@ -2,20 +2,21 @@
 
 namespace TCGBase
 {
-    public abstract class AbstractReadonlyObject
+    public class ReadonlyObject
     {
         public string NameSpace { get; init; }
-        public string Name { get; init; }
+        public string NameID { get; init; }
         [JsonConstructor]
-        public AbstractReadonlyObject(string nameSpace,string name)
+        public ReadonlyObject(string nameSpace, string name)
         {
             NameSpace = nameSpace;
-            Name = name;
+            NameID = name;
         }
     }
-    public class ReadonlyCharacter : AbstractReadonlyObject
+    public class ReadonlyCharacter : ReadonlyObject
     {
-        public int HP { get; set; }
+        private int _hp;
+        public int HP { get => _hp; set => _hp = int.Max(0, value); }
         public int MP { get; set; }
         public int MaxHP { get; init; }
         public int MaxMP { get; init; }
@@ -23,7 +24,7 @@ namespace TCGBase
         public List<ReadonlyPersistent> Effects { get; }
         public int SkillCount { get; }
         [JsonConstructor]
-        public ReadonlyCharacter(string nameSpace, string name, int hP, int mP, int maxHP, int maxMP, int element, List<ReadonlyPersistent> effects, int skillCount) : base(nameSpace,name)
+        public ReadonlyCharacter(string nameSpace, string name, int hP, int mP, int maxHP, int maxMP, int element, List<ReadonlyPersistent> effects, int skillCount) : base(nameSpace, name)
         {
             HP = hP;
             MP = mP;
@@ -33,7 +34,7 @@ namespace TCGBase
             Effects = effects;
             SkillCount = skillCount;
         }
-        public ReadonlyCharacter(Character c) : base(c.Card.Namespace,c.Card.NameID)
+        public ReadonlyCharacter(Character c) : base(c.Card.Namespace, c.Card.NameID)
         {
             HP = c.HP;
             MP = c.MP;
@@ -44,11 +45,11 @@ namespace TCGBase
             SkillCount = c.Card.Skills.Where(s => s.Category != SkillCategory.P).Count();
         }
     }
-    public class ReadonlyPersistent : AbstractReadonlyObject
+    public class ReadonlyPersistent : ReadonlyObject
     {
         public int[] Infos { get; set; }
         [JsonConstructor]
-        public ReadonlyPersistent(string nameSpace, string name, params int[] infos) : base(nameSpace,name)
+        public ReadonlyPersistent(string nameSpace, string name, params int[] infos) : base(nameSpace, name)
         {
             Infos = infos;
         }

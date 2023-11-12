@@ -52,8 +52,10 @@
             List<HealSender> hss = MergeHeal(ds, dvs_person);
             foreach (var hs in hss)
             {
-                var old = Characters[hs.TargetIndex].HP;
-                Characters[hs.TargetIndex].HP += hs.Amount;
+                var c = Characters[hs.TargetIndex];
+                hs.Amount = int.Min(c.Card.MaxHP - c.HP, hs.Amount);
+                c.HP += hs.Amount;
+                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(TeamIndex, hs.TargetIndex, hs.Amount));
             }
             foreach (var hs in hss)
             {

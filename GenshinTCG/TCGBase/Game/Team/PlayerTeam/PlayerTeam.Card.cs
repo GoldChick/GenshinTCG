@@ -31,15 +31,14 @@
         }
         internal void GainCard(AbstractCardAction card)
         {
-            string str = $"{card.Namespace}:{card.NameID}";
             if (CardsInHand.Count >= 10)
             {
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, str));
+                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace,card.NameID));
             }
             else
             {
                 CardsInHand.Add(card);
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, str));
+                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
             }
         }
         public List<AbstractCardAction> GetCards() => CardsInHand.ToList();

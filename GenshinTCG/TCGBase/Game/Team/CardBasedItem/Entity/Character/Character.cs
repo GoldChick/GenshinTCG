@@ -9,15 +9,26 @@
         public int Index { get; init; }
         private int _hp;
         private int _mp;
+        private int _element;
+        private PlayerTeam _t;
 
         public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
-        //TODO:改变时发包？
+        /// <summary>
+        /// HP并不在改变时发包，而在治疗、受伤时发包
+        /// </summary>
         public int HP
         {
             get { return _hp; }
             set { _hp = int.Clamp(value, 0, Card.MaxHP); }
         }
-        public int MP { get => _mp; set => _mp = int.Clamp(value, 0, Card.MaxMP); }
+        public int MP
+        {
+            get => _mp; set
+            {
+                _mp = int.Clamp(value, 0, Card.MaxMP);
+                _t.Game.BroadCast(ClientUpdateCreate.CharacterUpdate.MPUpdate(_t.TeamIndex, Index, _mp));
+            }
+        }
 
         public bool Alive;
         /// <summary>
@@ -28,12 +39,21 @@
         /// <summary>
         /// 为active时可以使用技能
         /// </summary>
-        public bool Active;
-        public int Element;
-        public Character(AbstractCardCharacter character, int index)
+        public bool Active { get; set; }
+        public int Element
+        {
+            get => _element;
+            set
+            {
+                _element = value;
+                _t.Game.BroadCast(ClientUpdateCreate.CharacterUpdate.ElementUpdate(_t.TeamIndex, Index, _element));
+            }
+        }
+        public Character(AbstractCardCharacter character, int index, PlayerTeam t)
         {
             Card = character;
             Index = index;
+            _t = t;
 
             Effects = new(index);
 

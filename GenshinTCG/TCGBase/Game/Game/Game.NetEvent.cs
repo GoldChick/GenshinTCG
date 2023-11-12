@@ -98,8 +98,8 @@
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Push, cards.Select((value, index) => evt.AdditionalTargetArgs[index] == 1 ? index : -1).Where(p => p >= 0).ToArray()));
                     cards.Clear();
                     cards.AddRange(cardcash0);
-                    var over = cardcash1.Count() - Teams[currTeam].LeftCards.Count;
-                    Teams[currTeam].RollCard(cardcash1.Count());
+                    var over = cardcash1.Count - Teams[currTeam].LeftCards.Count;
+                    Teams[currTeam].RollCard(cardcash1.Count);
                     Teams[currTeam].LeftCards.AddRange(cardcash1);
                     if (over > 0)
                     {
@@ -109,6 +109,7 @@
                 case ActionType.Switch:
                 case ActionType.SwitchForced:
                     var initial = t.CurrCharacter;
+                    BroadCast(ClientUpdateCreate.CharacterUpdate.SwitchUpdate(currTeam, evt.Action.Index));
                     t.CurrCharacter = evt.Action.Index;
                     afterEventSender = new AfterSwitchSender(currTeam, initial, t.CurrCharacter);
                     afterEventVariable = new FastActionVariable(evt.Action.Type == ActionType.SwitchForced);

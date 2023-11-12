@@ -13,14 +13,14 @@ namespace TCGBase
         public ReadonlyRegion Me { get; private set; }
         public int MeID { get; }
         public List<int> Dices { get; }
-        public List<string> Cards { get; }
+        public List<ReadonlyObject> Cards { get; }
         public int LeftCardsNum { get; private set; }
         public ReadonlyRegion Enemy { get; private set; }
         public int EnemyDiceNum { get; private set; }
         public int EnemyCardNum { get; private set; }
         public int EnemyLeftCardsNum { get; private set; }
         [JsonConstructor]
-        public ReadonlyGame(int currTeam, int waitingTime, ReadonlyRegion me, int meID, List<int> dices, List<string> cards, int leftCardsNum, ReadonlyRegion enemy, int enemyDiceNum, int enemyCardNum, int enemyLeftCardsNum)
+        public ReadonlyGame(int currTeam, int waitingTime, ReadonlyRegion me, int meID, List<int> dices, List<ReadonlyObject> cards, int leftCardsNum, ReadonlyRegion enemy, int enemyDiceNum, int enemyCardNum, int enemyLeftCardsNum)
         {
             CurrTeam = currTeam;
             WaitingTime = waitingTime;
@@ -48,7 +48,7 @@ namespace TCGBase
 
             LeftCardsNum = teamMe.LeftCards.Count;
             Dices = teamMe.Dices.ToList();
-            Cards = teamMe.CardsInHand.Select(c => $"{c.Namespace}:{c.NameID}").ToList();
+            Cards = teamMe.CardsInHand.Select(c => new ReadonlyObject(c.Namespace, c.NameID)).ToList();
 
             EnemyDiceNum = teamEnemy.Dices.Count;
             EnemyCardNum = teamEnemy.CardsInHand.Count;
@@ -77,10 +77,45 @@ namespace TCGBase
                     WaitingTime = packet.Ints[0];
                     break;
                 case ClientUpdateType.Character:
-                    //TODO
+                    var charactercatagory = (ClientUpdateCreate.CharacterUpdateCategory)category;
+                    var t = new ReadonlyRegion[] { Me, Enemy }[int.Abs(MeID - teamID)];
+                    switch (charactercatagory)
+                    {
+                        case ClientUpdateCreate.CharacterUpdateCategory.Hurt:
+                            t.Characters[packet.Ints[0]].HP -= packet.Ints[2];
+                            break;
+                        case ClientUpdateCreate.CharacterUpdateCategory.Heal:
+                            t.Characters[packet.Ints[0]].HP += packet.Ints[1];
+                            break;
+                        case ClientUpdateCreate.CharacterUpdateCategory.ChangeElement:
+                            t.Characters[packet.Ints[0]].Element = packet.Ints[1];
+                            break;
+                        case ClientUpdateCreate.CharacterUpdateCategory.Die:
+                        //TODO: die ?
+                            break;
+                        case ClientUpdateCreate.CharacterUpdateCategory.UseSkill:
+                        //TODO: below
+                            break;
+                        case ClientUpdateCreate.CharacterUpdateCategory.Switch:
+                            t.CurrCharacter = packet.Ints[0];
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case ClientUpdateType.Persistent:
-                    //TODO
+                    var persistentcategory = (ClientUpdateCreate.PersistentUpdateCategory)category;
+                    switch (persistentcategory)
+                    {
+                        case ClientUpdateCreate.PersistentUpdateCategory.Act:
+                            break;
+                        case ClientUpdateCreate.PersistentUpdateCategory.Obtain:
+                            break;
+                        case ClientUpdateCreate.PersistentUpdateCategory.Lose:
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case ClientUpdateType.Dice:
                     {
@@ -96,10 +131,11 @@ namespace TCGBase
                     }
                     break;
                 case ClientUpdateType.Card:
-                    switch (category)
+                    var cardcategory = (ClientUpdateCreate.CardUpdateCategory)category;
+                    switch (cardcategory)
                     {
-                        case 0://use
-                        case 1://blend
+                        case ClientUpdateCreate.CardUpdateCategory.Use:
+                        case ClientUpdateCreate.CardUpdateCategory.Blend:
                             if (teamID == MeID)
                             {
                                 Cards.RemoveAt(packet.Ints[0]);
@@ -109,17 +145,17 @@ namespace TCGBase
                                 EnemyCardNum -= 1;
                             }
                             break;
-                        case 2://obtain
+                        case ClientUpdateCreate.CardUpdateCategory.Obtain:
                             if (teamID == MeID)
                             {
-                                Cards.Add(packet.Strings[0]);
+                                Cards.Add(new ReadonlyObject(packet.Strings[0], packet.Strings[1]));
                             }
                             else
                             {
                                 EnemyCardNum += 1;
                             }
                             break;
-                        case 3://push
+                        case ClientUpdateCreate.CardUpdateCategory.Push:
                             int cnt = packet.Ints.Length;
                             if (teamID == MeID)
                             {
@@ -136,7 +172,7 @@ namespace TCGBase
                                 EnemyCardNum -= cnt;
                             }
                             break;
-                        case 4://pop
+                        case ClientUpdateCreate.CardUpdateCategory.Pop:
                             if (teamID == MeID)
                             {
                                 LeftCardsNum -= 1;
