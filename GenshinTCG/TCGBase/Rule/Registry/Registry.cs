@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 namespace TCGBase
 {
-    public enum RegistryType
-    {
-        CharacterCard,
-        ActionCard,
-    }
+    //public enum RegistryType
+    //{
+    //    CharacterCard,
+    //    ActionCard,
+    //}
     public class Registry
     {
         private static readonly Registry _instance = new();
@@ -13,28 +13,30 @@ namespace TCGBase
         {
             CharacterCards = new();
             ActionCards = new();
-            CardCollections = new RegistryCardCollection[] { CharacterCards, ActionCards, };
+            PersistentCards = new();
+            CardCollections = new RegistryCardCollection[] { CharacterCards, ActionCards, PersistentCards };
         }
         public static Registry Instance { get => _instance; }
 
         internal List<string> Mods { get; } = new();
-        internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; } = new();
-        internal RegistryCardCollection<AbstractCardAction> ActionCards { get; } = new();
+        internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; }
+        internal RegistryCardCollection<AbstractCardAction> ActionCards { get; } 
+        internal RegistryCardCollection<AbstractCardPersistent> PersistentCards { get; }
 
         private RegistryCardCollection[] CardCollections { get; }
         //不知为何的namespace黑名单
         private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "minecraft", "equipment", "nilou", "hutao" };
 
-        public bool Contains(RegistryType type, string nameID)
-        {
-            string[] strs = nameID.Split(':');
-            return type switch
-            {
-                RegistryType.CharacterCard => CharacterCards.ContainsKey(strs[1]),
-                RegistryType.ActionCard => ActionCards.ContainsKey(strs[1]),
-                _ => false,
-            };
-        }
+        //public bool Contains(RegistryType type, string nameID)
+        //{
+        //    string[] strs = nameID.Split(':');
+        //    return type switch
+        //    {
+        //        RegistryType.CharacterCard => CharacterCards.ContainsKey(strs[1]),
+        //        RegistryType.ActionCard => ActionCards.ContainsKey(strs[1]),
+        //        _ => false,
+        //    };
+        //}
         public string[] GetMods() => Mods.ToArray();
         public List<AbstractCardCharacter> GetCharacterCards() => CharacterCards.Select(kvp=>kvp.Value).ToList();
         public List<AbstractCardAction> GetActionCards() => ActionCards.Select(kvp => kvp.Value).ToList();
@@ -53,6 +55,7 @@ namespace TCGBase
 
             reg.RegisterCharacter(CharacterCards);
             reg.RegisterActionCard(ActionCards);
+            reg.RegisterPersistent(PersistentCards);
         }
 
         public void LoadDlls(string path)

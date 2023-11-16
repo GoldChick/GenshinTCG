@@ -23,7 +23,7 @@
             {
                 me.Supports.TryRemoveAt(targetArgs[0]);
             }
-            me.Supports.Add(new Persistent<AbstractCardPersistent>(new CardPersistentSupport(this)));
+            me.Supports.Add(new Persistent<ICardPersistnet>(this));
         }
 
         /// <summary>
@@ -32,9 +32,15 @@
         public virtual int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
-        public virtual string TextureNameSpace => "minecraft";
-        public string TextureNameID => NameID;
         public virtual bool CustomDesperated { get => false; }
+        /// <summary>
+        /// 支援区默认不会有变种
+        /// </summary>
+        public int Variant => -1;
+        /// <summary>
+        /// 支援区默认不会更新
+        /// </summary>
+        public void Update<T>(Persistent<T> persistent) where T : ICardPersistnet => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
         /// <summary>
         /// 用来给客户端提供使用的表现参数
         /// </summary>

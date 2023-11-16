@@ -12,7 +12,7 @@
         private int _element;
         private PlayerTeam _t;
 
-        public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
+        public PersistentSet<ICardPersistnet> Effects { get; init; }
         /// <summary>
         /// HP并不在改变时发包，而在治疗、受伤时发包
         /// </summary>

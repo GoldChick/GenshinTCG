@@ -2,10 +2,10 @@
 {
     public partial class PlayerTeam
     {
-        public void AddEquipment(AbstractCardPersistentEquipment equip, int target)
+        public void AddEquipment(ICardPersistnet equip, int target)
         {
             var es = Characters[int.Clamp(target, 0, Characters.Length - 1)].Effects;
-            es.TryRemove(equip.TextureNameID);
+            es.TryRemove(equip.NameID);
             es.Add(new(equip));
         }
         /// <summary>
@@ -84,7 +84,7 @@
                 {
                     if (s is AbstractPassiveSkill ps)
                     {
-                        AddPersistent(new Passive(ps, i, c),i);
+                        AddPersistent(new Passive(ps, i, c), i);
                     }
                 }
             }

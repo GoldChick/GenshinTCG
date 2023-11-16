@@ -2,7 +2,7 @@
 {
     public class CatalyzeField : AbstractCardPersistentEffect
     {
-        public override string TextureNameID => PersistentTextures.Catalyze;
+        public override string NameID => "catalyze";
         public override int MaxUseTimes => 2;
 
         public override PersistentTriggerDictionary TriggerDic => new()

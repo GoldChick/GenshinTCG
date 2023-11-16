@@ -5,19 +5,19 @@
     /// </summary>
     public class SimpleSummon : AbstractCardPersistentSummon
     {
-        public override string TextureNameSpace { get; }
-        public override string TextureNameID { get; }
+        public override string Namespace { get; internal set; }
+        public override string NameID { get; }
         public override int MaxUseTimes { get; }
         private readonly int _damage;
         private readonly int _element;
         public SimpleSummon(string textureNamespace, string textureNameid, int element, int damage, int maxusetimes) : this(textureNameid, element, damage, maxusetimes)
         {
-            TextureNameSpace = textureNamespace;
+            Namespace = textureNamespace;
         }
         public SimpleSummon(string textureNameid, int element, int damage, int maxusetimes)
         {
-            TextureNameSpace = "minecraft";
-            TextureNameID = textureNameid;
+            Namespace = "minecraft";
+            NameID = textureNameid;
             _damage = damage;
             _element = element;
             MaxUseTimes = maxusetimes;

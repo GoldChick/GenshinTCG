@@ -7,7 +7,7 @@ namespace TCGBase
         public int PersistentRegion { get; init; }
     }
     public delegate void EventPersistentSetHandler(PlayerTeam me, AbstractSender s, AbstractVariable? v);
-    public class PersistentSet<T> : PersistentSet where T : AbstractCardPersistent
+    public class PersistentSet<T> : PersistentSet where T : ICardPersistnet
     {
         private readonly Action<ClientUpdatePacket>? _updatepacket;
         private readonly List<Persistent<T>> _data;
@@ -45,15 +45,17 @@ namespace TCGBase
             input.PersistentRegion = PersistentRegion;
             if (MaxSize <= 0 || _data.Count < MaxSize)
             {
-                if (!MultiSame && _data.Find(p => p.Type == input.Type) is Persistent<T> t && t.Card.TextureNameID == input.Card.TextureNameID && t.Card.TextureNameSpace == input.Card.TextureNameSpace)
+                if (!MultiSame && _data.Find(p => p.Type == input.Type) is Persistent<T> t && t.Card.NameID == input.Card.NameID && t.Card.Namespace == input.Card.Namespace)
                 {
-                    if (t.Active)
+                    if (t.Active && t.Card.Variant == input.Card.Variant)
                     {
                         t.Card.Update(t);
                     }
                     else
                     {
-                        throw new NotImplementedException($"PersistentSet.Add():更新了已经存在，但并非active的effect:{input.Type}!");
+                        t.Active = false;
+                        _data.Add(input);
+                        Register(input);
                     }
                 }
                 else
@@ -82,14 +84,16 @@ namespace TCGBase
             }
         }
         public bool Contains(Type type) => _data.Exists(e => e.Type == type);
-        public bool Contains(string textureNamespace, string textureNameID) => _data.Exists(e => e.Card.TextureNameSpace == textureNamespace && e.Card.TextureNameID == textureNameID);
+        public bool Contains(string nameSpace, string nameID, int variant) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && e.Card.Variant == variant);
+        public bool Contains(string nameSpace, string nameID) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
         /// <summary>
-        /// 通过textureNameID来比较，不过不比较textureNameSpace，因此可能会有重复
+        /// 通过nameID来比较，不过不比较nameSpace，因此可能会有重复
         /// </summary>
-        public bool Contains(string textureNameID) => _data.Exists(e => e.Card.TextureNameID == textureNameID);
+        public bool Contains(string nameID) => _data.Exists(e => e.Card.NameID == nameID);
         public Persistent<T>? Find(Type type) => _data.Find(e => e.Type == type);
-        public Persistent<T>? Find(string textureNamespace, string textureNameID) => _data.Find(e => e.Card.TextureNameSpace == textureNamespace && e.Card.TextureNameID == textureNameID);
-        public Persistent<T>? Find(string textureNameID) => _data.Find(e => e.Card.TextureNameID == textureNameID);
+        public Persistent<T>? Find(string nameSpace, string nameID) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
+        public Persistent<T>? Find(string nameSpace, string nameID, int variant) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && e.Card.Variant == variant);
+        public Persistent<T>? Find(string nameID) => _data.Find(e => e.Card.NameID == nameID);
         public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
             if (_handlers.TryGetValue(sender.SenderName, out var hs))
@@ -111,8 +115,8 @@ namespace TCGBase
             }
         }
         public void TryRemove(Type type) => RemoveSingle(_data.Find(e => e.Type == type));
-        public void TryRemove(string textureNameID) => RemoveSingle(_data.Find(e => e.Card.TextureNameID == textureNameID));
-        public void TryRemove(string textureNamespace, string textureNameID) => RemoveSingle(_data.Find(e => e.Card.TextureNameSpace == textureNamespace && e.Card.TextureNameID == textureNameID));
+        public void TryRemove(string textureNameID) => RemoveSingle(_data.Find(e => e.Card.NameID == textureNameID));
+        public void TryRemove(string textureNamespace, string textureNameID) => RemoveSingle(_data.Find(e => e.Card.Namespace == textureNamespace && e.Card.NameID == textureNameID));
         /// <param name="p">确定存在的</param>
         private void RemoveSingle(Persistent<T>? p)
         {

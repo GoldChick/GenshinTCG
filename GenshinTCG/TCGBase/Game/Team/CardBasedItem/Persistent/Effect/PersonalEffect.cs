@@ -2,9 +2,9 @@
 
 namespace TCGBase
 {
-    public class PersonalEffect : Persistent<AbstractCardPersistentEffect>
+    public class PersonalEffect : Persistent<ICardPersistnet>
     {
-        public PersonalEffect(AbstractCardPersistentEffect ef, AbstractPersistent? bind = null) : base(ef, bind)
+        public PersonalEffect(ICardPersistnet ef, AbstractPersistent? bind = null) : base(ef, bind)
         {
         }
     }

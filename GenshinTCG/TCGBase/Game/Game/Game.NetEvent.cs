@@ -122,9 +122,9 @@
                     afterEventSender = new AfterUseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
 
                     var talent = cha.Effects.Find("equipment", "talent");
-                    if (talent != null && talent.Card is CardPersistentTalent pt && pt.Skill == evt.Action.Index)
+                    if (talent != null && talent.Card is AbstractCardEquipmentOverrideSkillTalent pt && pt.Skill == evt.Action.Index)
                     {
-                        pt.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
+                        pt.TalentTriggerAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
                     }
                     else
                     {

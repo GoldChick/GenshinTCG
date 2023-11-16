@@ -2,7 +2,7 @@
 {
     public class DendroCore : AbstractCardPersistentEffect
     {
-        public override string TextureNameID => PersistentTextures.Dendro_Core;
+        public override string NameID => "dendro_core";
         public override int MaxUseTimes => 1;
 
         public override PersistentTriggerDictionary TriggerDic => new()

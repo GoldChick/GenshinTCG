@@ -47,13 +47,15 @@ namespace TCGBase
     }
     public class ReadonlyPersistent : ReadonlyObject
     {
+        public int Variant { get; }
         public int[] Infos { get; set; }
         [JsonConstructor]
-        public ReadonlyPersistent(string nameSpace, string name, params int[] infos) : base(nameSpace, name)
+        public ReadonlyPersistent(string nameSpace, string name, int variant, params int[] infos) : base(nameSpace, name)
         {
+            Variant = variant;
             Infos = infos;
         }
-        internal ReadonlyPersistent(AbstractPersistent p) : this(p.CardBase.TextureNameSpace, p.CardBase.TextureNameID, p.CardBase.Info(p))
+        internal ReadonlyPersistent(AbstractPersistent p) : this(p.CardBase.Namespace, p.CardBase.NameID, p.CardBase.Variant, p.CardBase.Info(p))
         {
         }
     }

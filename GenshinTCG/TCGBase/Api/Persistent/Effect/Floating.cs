@@ -5,6 +5,7 @@
     /// </summary>
     public class Floating : AbstractCardPersistentEffect
     {
+        public override string NameID => "floating";
         public override int MaxUseTimes => 1;
         public override bool CustomDesperated => false;
 

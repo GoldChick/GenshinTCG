@@ -5,6 +5,7 @@
     /// </summary>
     public class HeavyAttack : AbstractCardPersistentEffect
     {
+        public override string NameID => "heavy_attack";
         public override int MaxUseTimes => 1;
         public override PersistentTriggerDictionary TriggerDic => new()
         {

@@ -2,7 +2,7 @@
 {
     public class Full : AbstractCardPersistentEffect
     {
-        public override string TextureNameID => PersistentTextures.Full;
+        public override string NameID => "full";
         public override int MaxUseTimes => 1;
 
         public override PersistentTriggerDictionary TriggerDic => new()

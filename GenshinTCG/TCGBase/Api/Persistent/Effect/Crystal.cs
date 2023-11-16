@@ -2,7 +2,7 @@
 {
     public class Crystal : AbstractCardPersistentEffect
     {
-        public override string TextureNameID => PersistentTextures.Shield_Yellow;
+        public override string NameID => "crystal";
         public override int InitialUseTimes => 1;
         public override int MaxUseTimes => 2;
 

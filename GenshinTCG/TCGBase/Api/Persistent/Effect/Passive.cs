@@ -6,11 +6,11 @@
     internal class Passive : AbstractCardPersistentEffect
     {
         private readonly PersistentTriggerDictionary _triggerDic;
-        public override string TextureNameSpace => "equipment";
-        public override string TextureNameID { get; }
+        public override string Namespace => "equipment";
+        public override string NameID { get; }
         public Passive(AbstractPassiveSkill skill, int chaIndex, AbstractCardCharacter cha)
         {
-            TextureNameID = $"passive_{cha.Namespace}_{cha.NameID}";
+            NameID = $"passive_{cha.Namespace}_{cha.NameID}";
             _triggerDic = new(skill.TriggerDic.ToDictionary<string, string, EventPersistentHandler>(st => st, st =>
                 (PlayerTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v) =>
                 {
