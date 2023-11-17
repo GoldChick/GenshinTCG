@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public class Crystal : AbstractCardPersistentEffect
+    public class Crystal : AbstractCardPersistent
     {
         public override string NameID => "crystal";
         public override int InitialUseTimes => 1;

@@ -7,5 +7,4 @@
     {
         public DamageSource DamageSource => DamageSource.NoWhere;
     }
-
 }

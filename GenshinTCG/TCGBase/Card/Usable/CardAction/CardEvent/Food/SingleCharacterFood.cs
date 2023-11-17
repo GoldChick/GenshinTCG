@@ -4,7 +4,7 @@
     {
         public TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
 
-        public abstract AbstractCardPersistentEffect? AfterEatEffect { get; }
+        public abstract AbstractCardPersistent? AfterEatEffect { get; }
 
         /// <summary>
         /// 默认实现 [附属饱腹]+[附属AfterEatEffect](如果有)

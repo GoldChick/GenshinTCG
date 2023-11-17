@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System;
+
+namespace TCGBase
 {
     public partial class PlayerTeam
     {
@@ -14,7 +16,7 @@
         /// </summary>
         /// <param name="bind">绑定在某个其他persistent上供检测，只对出战状态和角色状态有效</param>
         /// <returns></returns>
-        public void AddPersistent(AbstractCardPersistentEffect per, int target = -1, AbstractPersistent? bind = null)
+        public void AddPersistent(ICardPersistnet per, int target = -1, AbstractPersistent? bind = null)
         {
             if (target == -1)
             {
@@ -30,48 +32,82 @@
             }
             Game.BroadCastRegion();
         }
+        public void AddSummon(AbstractCardPersistentSummon summon)
+        {
+            Summons.Add(new(summon));
+        }
+        public void AddSummon(int num, params AbstractCardPersistentSummon[] summons)
+        {
+            var left = summons.Where(s => !Summons.Contains(s.GetType())).ToList();
+            while (num > 0)
+            {
+                if (left.Count == 0)//全都召唤了，刷新
+                {
+                    var pool = summons.Select(p => p).ToList();
+                    for (int i = 0; i < num && pool.Count > 0; i++)
+                    {
+                        int j = Random.Next(pool.Count);
+                        Summons.Add(new(pool[j]));
+                        pool.RemoveAt(j);
+                    }
+                    break;
+                }
+                else if (!Summons.Full)
+                {
+                    var choose = Random.Next(left.Count);
+                    Summons.Add(new(left[choose]));
+                    left.RemoveAt(choose);
+                    num--;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
         /// <summary>
         /// 尝试在我方场上添加单个或多个召唤物<br/>
         /// 当我方召唤物满场时，仅在provider的召唤物全在场时会进行更新
         /// </summary>
-        public void TryAddSummon(IPersistentProvider<AbstractCardPersistentSummon> provider)
-        {
-            if (provider is ISinglePersistentProvider<AbstractCardPersistentSummon> single)
-            {
-                Summons.Add(new(single.PersistentPool));
-            }
-            else if (provider is IMultiPersistentProvider<AbstractCardPersistentSummon> mul)
-            {
-                var left = mul.PersistentPool.Where(s => !Summons.Contains(s.GetType())).ToList();
-                int num = mul.PersistentNum;
-                while (num > 0)
-                {
-                    if (left.Count == 0)//全都召唤了，刷新
-                    {
-                        var pool = mul.PersistentPool.Select(p => p).ToList();
-                        for (int i = 0; i < num && pool.Count > 0; i++)
-                        {
-                            int j = Random.Next(pool.Count);
-                            Summons.Add(new(pool[j]));
-                            pool.RemoveAt(j);
-                        }
-                        break;
-                    }
-                    else if (!Summons.Full)
-                    {
-                        var choose = Random.Next(left.Count);
-                        Summons.Add(new(left[choose]));
-                        left.RemoveAt(choose);
-                        num--;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
+        //public void TryAddSummon(IPersistentProvider<AbstractCardPersistentSummon> provider)
+        //{
+        //    if (provider is ISinglePersistentProvider<AbstractCardPersistentSummon> single)
+        //    {
+        //        Summons.Add(new(single.PersistentPool));
+        //    }
+        //    else if (provider is IMultiPersistentProvider<AbstractCardPersistentSummon> mul)
+        //    {
+        //        var left = mul.PersistentPool.Where(s => !Summons.Contains(s.GetType())).ToList();
+        //        int num = mul.PersistentNum;
+        //        while (num > 0)
+        //        {
+        //            if (left.Count == 0)//全都召唤了，刷新
+        //            {
+        //                var pool = mul.PersistentPool.Select(p => p).ToList();
+        //                for (int i = 0; i < num && pool.Count > 0; i++)
+        //                {
+        //                    int j = Random.Next(pool.Count);
+        //                    Summons.Add(new(pool[j]));
+        //                    pool.RemoveAt(j);
+        //                }
+        //                break;
+        //            }
+        //            else if (!Summons.Full)
+        //            {
+        //                var choose = Random.Next(left.Count);
+        //                Summons.Add(new(left[choose]));
+        //                left.RemoveAt(choose);
+        //                num--;
+        //            }
+        //            else
+        //            {
+        //                break;
+        //            }
+        //        }
+        //    }
 
-        }
+        //}
+
         /// <summary>
         /// 注册所有角色的被动技能，通常在游戏开始出人之前
         /// </summary>

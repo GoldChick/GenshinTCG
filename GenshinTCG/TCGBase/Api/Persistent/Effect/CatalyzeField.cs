@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public class CatalyzeField : AbstractCardPersistentEffect
+    public class CatalyzeField : AbstractCardPersistent
     {
         public override string NameID => "catalyze";
         public override int MaxUseTimes => 2;

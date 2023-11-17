@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public class Full : AbstractCardPersistentEffect
+    public class Full : AbstractCardPersistent
     {
         public override string NameID => "full";
         public override int MaxUseTimes => 1;

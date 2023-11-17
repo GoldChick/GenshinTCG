@@ -1,10 +1,21 @@
 ﻿namespace TCGBase
 {
     /// <summary>
+    /// 七圣有三大卡牌....
+    /// </summary>
+    public enum CardActionCategory
+    {
+        Event,
+        Support,
+        Equipment,
+    }
+    /// <summary>
     /// 可以拿在手中被使用的卡牌
     /// </summary>
     public abstract class AbstractCardAction : AbstractCardBase
     {
+        //TODO
+        public CardActionCategory CardCategory { get; }
         /// <summary>
         /// 允许携带的最大数量<br/>
         /// 默认为2

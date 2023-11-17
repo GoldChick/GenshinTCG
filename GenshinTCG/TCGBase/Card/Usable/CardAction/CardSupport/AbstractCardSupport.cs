@@ -26,13 +26,10 @@
             me.Supports.Add(new Persistent<ICardPersistnet>(this));
         }
 
-        /// <summary>
-        /// 产生时候的基础使用次数，默认和[最大次数]一样
-        /// </summary>
-        public virtual int InitialUseTimes { get => MaxUseTimes; }
+        public int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
-        public virtual bool CustomDesperated { get => false; }
+        public virtual bool CustomDesperated { get => true; }
         /// <summary>
         /// 支援区默认不会有变种
         /// </summary>

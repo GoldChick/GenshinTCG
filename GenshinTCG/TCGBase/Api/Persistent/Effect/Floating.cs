@@ -3,7 +3,7 @@
     /// <summary>
     /// 游戏开始时，为双方附属
     /// </summary>
-    public class Floating : AbstractCardPersistentEffect
+    public class Floating : AbstractCardPersistent
     {
         public override string NameID => "floating";
         public override int MaxUseTimes => 1;

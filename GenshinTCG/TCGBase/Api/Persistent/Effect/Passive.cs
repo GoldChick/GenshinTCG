@@ -3,10 +3,11 @@
     /// <summary>
     /// 用于触发被动技能,但里面没有检测天赋，需要自己额外写（？）
     /// </summary>
-    internal class Passive : AbstractCardPersistentEffect
+    internal class Passive : AbstractCardPersistent
     {
         private readonly PersistentTriggerDictionary _triggerDic;
-        public override string Namespace => "equipment";
+        //TODO namespace?
+        //public override string Namespace => "equipment";
         public override string NameID { get; }
         public Passive(AbstractPassiveSkill skill, int chaIndex, AbstractCardCharacter cha)
         {

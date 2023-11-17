@@ -3,7 +3,7 @@
     /// <summary>
     /// [我方行动开始前]时，为我方消除，再附属
     /// </summary>
-    public class HeavyAttack : AbstractCardPersistentEffect
+    public class HeavyAttack : AbstractCardPersistent
     {
         public override string NameID => "heavy_attack";
         public override int MaxUseTimes => 1;

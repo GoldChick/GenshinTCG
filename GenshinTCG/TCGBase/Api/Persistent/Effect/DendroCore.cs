@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public class DendroCore : AbstractCardPersistentEffect
+    public class DendroCore : AbstractCardPersistent
     {
         public override string NameID => "dendro_core";
         public override int MaxUseTimes => 1;

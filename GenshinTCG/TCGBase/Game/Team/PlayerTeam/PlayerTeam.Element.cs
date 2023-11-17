@@ -121,7 +121,7 @@
                         Enemy.AddPersistent(new DendroCore());
                         break;
                     case ReactionTags.Burning:
-                        Enemy.TryAddSummon(new Burning());
+                        Enemy.AddSummon(new Burning());
                         break;
                     case ReactionTags.Catalyze:
                         Enemy.AddPersistent(new CatalyzeField());

@@ -1,19 +1,15 @@
 ﻿namespace TCGBase
 {
     /// <summary>
-    /// 结束时，对对方出战角色造成a点b元素伤害，初始可用次数=最大可用次数=c
+    /// 结束时，对对方出战角色造成a点b元素伤害，初始可用次数=最大可用次数=c<br/>
+    /// 需要注册才能获得namespace
     /// </summary>
     public class SimpleSummon : AbstractCardPersistentSummon
     {
-        public override string Namespace { get; internal set; }
         public override string NameID { get; }
         public override int MaxUseTimes { get; }
         private readonly int _damage;
         private readonly int _element;
-        public SimpleSummon(string textureNamespace, string textureNameid, int element, int damage, int maxusetimes) : this(textureNameid, element, damage, maxusetimes)
-        {
-            Namespace = textureNamespace;
-        }
         public SimpleSummon(string textureNameid, int element, int damage, int maxusetimes)
         {
             Namespace = "minecraft";

@@ -49,7 +49,7 @@ namespace TCGBase
                 {
                     if (t.Active && t.Card.Variant == input.Card.Variant)
                     {
-                        t.Card.Update(t);
+                        input.Card.Update(t);
                     }
                     else
                     {

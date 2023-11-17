@@ -9,7 +9,7 @@
         Catalyst,
         Bow
     }
-    public abstract class AbstractCardEquipment : AbstractCardAction, ICardPersistnet, ITargetSelector
+    public abstract class AbstractCardEquipment : AbstractCardAction, ICardPersistnet, ITargetSelector,IDamageSource
     {
         string ICardPersistnet.Namespace => "equipment";
         /// <summary>
@@ -24,6 +24,8 @@
         public int Variant => -1;
 
         public bool CustomDesperated => true;
+
+        public DamageSource DamageSource => DamageSource.Addition;
 
         public abstract PersistentTriggerDictionary TriggerDic { get; }
 

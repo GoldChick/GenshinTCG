@@ -3,7 +3,7 @@
     /// <summary>
     /// 额外召唤一个召唤物，只对对方出战角色造成伤害的skill
     /// </summary>
-    public class CharacterSingleSummonQ : AbstractCardSkill, ISinglePersistentProvider<AbstractCardPersistentSummon>
+    public class CharacterSingleSummonQ : AbstractCardSkill
     {
         private readonly bool _doDamage;
         private readonly AbstractCardPersistentSummon _summon;
@@ -60,7 +60,7 @@
         {
             if (_doDamage)
             {
-                me.Enemy.Hurt(new(_element, _damage, 0), this);
+                me.Enemy.Hurt(new(_element, _damage, 0), this, () => me.AddSummon(_summon));
             }
         }
     }

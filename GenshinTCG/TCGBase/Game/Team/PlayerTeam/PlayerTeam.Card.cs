@@ -29,7 +29,7 @@
                 }
             }
         }
-        internal void GainCard(AbstractCardAction card)
+        public void GainCard(AbstractCardAction card)
         {
             if (CardsInHand.Count >= 10)
             {

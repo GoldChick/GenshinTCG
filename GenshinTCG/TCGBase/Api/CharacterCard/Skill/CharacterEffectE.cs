@@ -7,13 +7,13 @@
     {
         private readonly bool _doDamage;
         private readonly bool _oncharacter;
-        private readonly AbstractCardPersistentEffect _effect;
+        private readonly AbstractCardPersistent _effect;
 
         private readonly int[] _costs;
         private readonly int _damage;
         private readonly int _element;
         /// <param name="diceElement">默认E会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
-        public CharacterEffectE(AbstractCardPersistentEffect effect, bool onCharacter = true, int diceElement = -1)
+        public CharacterEffectE(AbstractCardPersistent effect, bool onCharacter = true, int diceElement = -1)
         {
             _effect = effect;
             _doDamage = false;
@@ -29,7 +29,7 @@
             }
         }
         /// <param name="diceElement">默认E会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
-        public CharacterEffectE(int element, int damage, AbstractCardPersistentEffect effect, bool onCharacter = true, int diceElement = -1)
+        public CharacterEffectE(int element, int damage, AbstractCardPersistent effect, bool onCharacter = true, int diceElement = -1)
         {
             _effect = effect;
             _doDamage = true;

@@ -20,7 +20,7 @@
 
         public PersistentSet<ICardPersistnet> Supports { get; init; }
         public PersistentSet<AbstractCardPersistentSummon> Summons { get; init; }
-        public PersistentSet<AbstractCardPersistentEffect> Effects { get; init; }
+        public PersistentSet<ICardPersistnet> Effects { get; init; }
 
         public int CurrCharacter { get; internal set; }
         public bool Pass { get; internal set; }

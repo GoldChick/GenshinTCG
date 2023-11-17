@@ -139,12 +139,6 @@
                     {
                         t.Characters[t.CurrCharacter].MP++;
                     }
-
-                    if (ski is IPersistentProvider<AbstractCardPersistentSummon> su)
-                    {
-                        //auto summon
-                        Teams[currTeam].TryAddSummon(su);
-                    }
                     afterEventVariable = new FastActionVariable(false);
                     break;
                 case ActionType.UseCard:
