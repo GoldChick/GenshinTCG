@@ -10,7 +10,7 @@
     /// <summary>
     /// 支援牌，打出后在支援区生成某种东西
     /// </summary>
-    public abstract class AbstractCardSupport : AbstractCardAction, ICardPersistnet
+    public abstract class AbstractCardSupport : AbstractCardAction, ICardPersistent
     {
         public abstract SupportTags SupportTag { get; }
         /// <summary>
@@ -23,7 +23,7 @@
             {
                 me.Supports.TryRemoveAt(targetArgs[0]);
             }
-            me.Supports.Add(new Persistent<ICardPersistnet>(this));
+            me.Supports.Add(new Persistent<ICardPersistent>(this));
         }
 
         public int InitialUseTimes { get => MaxUseTimes; }
@@ -37,10 +37,6 @@
         /// <summary>
         /// 支援区默认不会更新
         /// </summary>
-        public void Update<T>(Persistent<T> persistent) where T : ICardPersistnet => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
-        /// <summary>
-        /// 用来给客户端提供使用的表现参数
-        /// </summary>
-        public virtual int[] Info(AbstractPersistent p) => new int[] { p.AvailableTimes };
+        public void Update<T>(Persistent<T> persistent) where T : ICardPersistent => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
     }
 }

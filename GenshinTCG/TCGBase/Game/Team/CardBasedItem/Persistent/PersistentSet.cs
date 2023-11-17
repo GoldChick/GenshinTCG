@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TCGBase
 {
@@ -7,9 +8,8 @@ namespace TCGBase
         public int PersistentRegion { get; init; }
     }
     public delegate void EventPersistentSetHandler(PlayerTeam me, AbstractSender s, AbstractVariable? v);
-    public class PersistentSet<T> : PersistentSet where T : ICardPersistnet
+    public class PersistentSet<T> : PersistentSet where T : ICardPersistent
     {
-        private readonly Action<ClientUpdatePacket>? _updatepacket;
         private readonly List<Persistent<T>> _data;
         private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
         /// <summary>
@@ -22,19 +22,19 @@ namespace TCGBase
         public bool MultiSame { get; init; }
         public int Count => _data.Count;
         public bool Full => MaxSize > 0 && MaxSize <= Count;
-
+        internal PlayerTeam Team { get; }
         /// <param name="region">
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
         /// </param>
-        internal PersistentSet(int region, int size = 0, bool multisame = false, Action<ClientUpdatePacket>? updatepacket = null)
+        internal PersistentSet(int region, PlayerTeam team, int size = 0, bool multisame = false)
         {
             PersistentRegion = region;
             _data = new();
             _handlers = new();
             MaxSize = size;
             MultiSame = multisame;
-            _updatepacket = updatepacket;
+            Team = team;
         }
         public Persistent<T> this[int i] => _data[i];
         /// <summary>
@@ -45,42 +45,31 @@ namespace TCGBase
             input.PersistentRegion = PersistentRegion;
             if (MaxSize <= 0 || _data.Count < MaxSize)
             {
-                if (!MultiSame && _data.Find(p => p.Type == input.Type) is Persistent<T> t && t.Card.NameID == input.Card.NameID && t.Card.Namespace == input.Card.Namespace)
+                int index = _data.FindIndex(p => p.Type == input.Type);
+                if (!MultiSame && index >= 0 && _data[index] is Persistent<T> t && t.Card.NameID == input.Card.NameID && t.Card.Namespace == input.Card.Namespace)
                 {
                     if (t.Active && t.Card.Variant == input.Card.Variant)
                     {
                         input.Card.Update(t);
+                        Team.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(Team.TeamIndex, PersistentRegion, index, t.AvailableTimes));
                     }
                     else
                     {
-                        t.Active = false;
-                        _data.Add(input);
+                        TryRemoveAt(index);
                         Register(input);
                     }
                 }
                 else
                 {
-                    _data.Add(input);
                     Register(input);
                 }
             }
         }
         public void Update()
         {
-            while (true)
+            while (_data.Any(p => !p.Active))
             {
-                var disposes = _data.Where(p => !p.Active).ToList();
-                if (disposes.Count == 0)
-                {
-                    break;
-                }
-                disposes.ForEach(d =>
-                {
-                    Unregister(d);
-                    d.Childs.ForEach(c => c.Active = false);
-                    d.Father?.Childs.Remove(d);
-                });
-                _data.RemoveAll(p => !p.Active);
+                Clear(p => !p.Active);
             }
         }
         public bool Contains(Type type) => _data.Exists(e => e.Type == type);
@@ -109,43 +98,51 @@ namespace TCGBase
         public List<Persistent<T>> Copy() => _data.ToList();
         public void TryRemoveAt(int index)
         {
-            if (_data.Count > index)
+            if (_data.Count > index && index >= 0)
             {
-                RemoveSingle(_data[index]);
+                var d = _data[index];
+                d.Active = false;
+                Update();
             }
         }
-        public void TryRemove(Type type) => RemoveSingle(_data.Find(e => e.Type == type));
-        public void TryRemove(string textureNameID) => RemoveSingle(_data.Find(e => e.Card.NameID == textureNameID));
-        public void TryRemove(string textureNamespace, string textureNameID) => RemoveSingle(_data.Find(e => e.Card.Namespace == textureNamespace && e.Card.NameID == textureNameID));
-        /// <param name="p">确定存在的</param>
-        private void RemoveSingle(Persistent<T>? p)
+        internal void TryRemove(Type type) => TryRemoveAt(_data.FindIndex(e => e.Type == type));
+        //public void TryRemove(string textureNameID) => RemoveSingle(_data.Find(e => e.Card.NameID == textureNameID));
+        //public void TryRemove(string textureNamespace, string textureNameID) => RemoveSingle(_data.Find(e => e.Card.Namespace == textureNamespace && e.Card.NameID == textureNameID));
+        ///// <param name="p">确定存在的</param>
+        //private void RemoveSingle(Persistent<T>? p)
+        //{
+        //    if (p != null)
+        //    {
+        //        p.Childs.ForEach(c => c.Active = false);
+        //        p.Father?.Childs.Remove(p);
+        //        Unregister(p);
+        //        _data.Remove(p);
+        //    }
+        //}
+        internal void Clear(Func<Persistent<T>, bool>? condition = null)
         {
-            if (p != null)
+            for (int i = _data.Count - 1; i >= 0; i--)
             {
-                Unregister(p);
-                p.Childs.ForEach(c => c.Active = false);
-                p.Father?.Childs.Remove(p);
-
-                _data.Remove(p);
+                var d = _data[i];
+                if (condition == null || condition(d))
+                {
+                    d.Childs.ForEach(c => c.Active = false);
+                    d.Father?.Childs.Remove(d);
+                    Unregister(i, d);
+                }
             }
         }
-        internal void Clear()
-        {
-            _data.ForEach(d =>
-            {
-                Unregister(d);
-                d.Childs.ForEach(c => c.Active = false);
-                d.Father?.Childs.Remove(d);
-            });
-            _data.Clear();
-            _handlers.Clear();
-        }
-        private static EventPersistentSetHandler PersistentHandelerConvert(Persistent<T> p, EventPersistentHandler value)
+        private EventPersistentSetHandler PersistentHandelerConvert(Persistent<T> p, EventPersistentHandler value)
         {
             return (me, s, v) =>
             {
                 if (p.Active)
                 {
+                    int index = _data.FindIndex(d => d.Card.Equals(p));
+                    if (index >= 0)
+                    {
+                        Team.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(Team.TeamIndex, PersistentRegion, index, p.AvailableTimes));
+                    }
                     value.Invoke(me, p, s, v);
                 }
             };
@@ -153,6 +150,7 @@ namespace TCGBase
         private void Register(Persistent<T> p)
         {
             //TODO:是否需要在其他地方额外统一注册kvp.key
+            _data.Add(p);
             foreach (var kvp in p.Card.TriggerDic)
             {
                 var h = PersistentHandelerConvert(p, kvp.Value);
@@ -165,13 +163,16 @@ namespace TCGBase
                     _handlers[kvp.Key] += h;
                 }
             }
+            Team.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(Team.TeamIndex, PersistentRegion, p.Card.Variant, p.AvailableTimes, p.Card.Namespace, p.Card.NameID));
         }
-        private void Unregister(Persistent<T> p)
+        private void Unregister(int index, Persistent<T> p)
         {
             foreach (var kvp in p.Card.TriggerDic)
             {
                 _handlers[kvp.Key] -= PersistentHandelerConvert(p, kvp.Value);
             }
+            Team.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(Team.TeamIndex, PersistentRegion, index));
+            _data.RemoveAt(index);
         }
     }
 }

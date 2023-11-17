@@ -67,6 +67,7 @@ namespace TCGBase
             int teamID = packet.Category / 10;
             int category = packet.Category % 10;
 
+            var packetteam = new ReadonlyRegion[] { Me, Enemy }[int.Abs(MeID - teamID)];
             switch (packet.Type)
             {
                 case ClientUpdateType.CurrTeam:
@@ -78,26 +79,25 @@ namespace TCGBase
                     break;
                 case ClientUpdateType.Character:
                     var charactercatagory = (ClientUpdateCreate.CharacterUpdateCategory)category;
-                    var t = new ReadonlyRegion[] { Me, Enemy }[int.Abs(MeID - teamID)];
                     switch (charactercatagory)
                     {
                         case ClientUpdateCreate.CharacterUpdateCategory.Hurt:
-                            t.Characters[packet.Ints[0]].HP -= packet.Ints[2];
+                            packetteam.Characters[packet.Ints[0]].HP -= packet.Ints[2];
                             break;
                         case ClientUpdateCreate.CharacterUpdateCategory.Heal:
-                            t.Characters[packet.Ints[0]].HP += packet.Ints[1];
+                            packetteam.Characters[packet.Ints[0]].HP += packet.Ints[1];
                             break;
                         case ClientUpdateCreate.CharacterUpdateCategory.ChangeElement:
-                            t.Characters[packet.Ints[0]].Element = packet.Ints[1];
+                            packetteam.Characters[packet.Ints[0]].Element = packet.Ints[1];
                             break;
                         case ClientUpdateCreate.CharacterUpdateCategory.Die:
-                        //TODO: die ?
+                            //TODO: die ?
                             break;
                         case ClientUpdateCreate.CharacterUpdateCategory.UseSkill:
-                        //TODO: below
+                            //TODO: below
                             break;
                         case ClientUpdateCreate.CharacterUpdateCategory.Switch:
-                            t.CurrCharacter = packet.Ints[0];
+                            packetteam.CurrCharacter = packet.Ints[0];
                             break;
                         default:
                             break;
@@ -105,15 +105,23 @@ namespace TCGBase
                     break;
                 case ClientUpdateType.Persistent:
                     var persistentcategory = (ClientUpdateCreate.PersistentUpdateCategory)category;
+                    var effects = packet.Ints[0] switch
+                    {
+                        -1 => packetteam.Effects,
+                        11 => packetteam.Summons,
+                        12 => packetteam.Supports,
+                        _ => packetteam.Characters[packet.Ints[0]].Effects //-1
+                    };
                     switch (persistentcategory)
                     {
-                        case ClientUpdateCreate.PersistentUpdateCategory.Act:
-                            break;
                         case ClientUpdateCreate.PersistentUpdateCategory.Obtain:
+                            effects.Add(new(packet.Strings[0], packet.Strings[1], packet.Ints[1], packet.Ints[2]));
+                            break;
+                        case ClientUpdateCreate.PersistentUpdateCategory.Trigger:
+                            effects[packet.Ints[1]].AvailableTimes = packet.Ints[2];
                             break;
                         case ClientUpdateCreate.PersistentUpdateCategory.Lose:
-                            break;
-                        default:
+                            effects.RemoveAt(packet.Ints[1]);
                             break;
                     }
                     break;

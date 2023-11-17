@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public interface ICardPersistnet
+    public interface ICardPersistent
     {
         /// <summary>
         /// 注册时给出，仅限行动牌、角色牌、状态，默认为"minecraft"<br/>
@@ -38,10 +38,9 @@
         /// 在#Api.Persistent.PersistentTriggerl#中提供一些预设，如刷新次数，清除，黄盾，紫盾等
         /// </summary>
         public PersistentTriggerDictionary TriggerDic { get; }
-        public void Update<T>(Persistent<T> persistent) where T : ICardPersistnet;
-        public int[] Info(AbstractPersistent p);
+        public void Update<T>(Persistent<T> persistent) where T : ICardPersistent;
     }
-    public abstract class AbstractCardPersistent : AbstractCardBase, ICardPersistnet, IDamageSource
+    public abstract class AbstractCardPersistent : AbstractCardBase, ICardPersistent, IDamageSource
     {
         protected virtual DamageSource Source => DamageSource.Addition;
         /// <summary>
@@ -54,15 +53,11 @@
         public virtual bool CustomDesperated { get => false; }
         public int Variant { get; protected set; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
-        public virtual void Update<T>(Persistent<T> persistent) where T : ICardPersistnet
+        public virtual void Update<T>(Persistent<T> persistent) where T : ICardPersistent
         {
             persistent.Data = null;
             persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
         }
-        /// <summary>
-        /// 用来给客户端提供使用的表现参数
-        /// </summary>
-        public virtual int[] Info(AbstractPersistent p) => new int[] { p.AvailableTimes };
     }
     public abstract class AbstractCardPersistentSummon : AbstractCardPersistent
     {

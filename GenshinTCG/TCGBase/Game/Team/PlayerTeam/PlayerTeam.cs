@@ -18,9 +18,9 @@
         public Character[] Characters { get; protected init; }
 
 
-        public PersistentSet<ICardPersistnet> Supports { get; init; }
+        public PersistentSet<ICardPersistent> Supports { get; init; }
         public PersistentSet<AbstractCardPersistentSummon> Summons { get; init; }
-        public PersistentSet<ICardPersistnet> Effects { get; init; }
+        public PersistentSet<ICardPersistent> Effects { get; init; }
 
         public int CurrCharacter { get; internal set; }
         public bool Pass { get; internal set; }
@@ -43,12 +43,13 @@
             Dices = new();
             Random = new();//TODO:SEED
 
-            Supports = new(12, 4, true);
-            Summons = new(11, 4);
-            Effects = new(-1);
+            Summons = new(11, this, 4, false);
+            Supports = new(12, this, 4, true);
+            Effects = new(-1, this);
 
             Game = game;
             TeamIndex = index;
+            ;
         }
         /// <summary>
         /// 回合开始时最先调用，如扔骰子等

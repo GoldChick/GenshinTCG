@@ -14,7 +14,7 @@
             }
         }
 
-        public abstract ICardPersistnet CardBase { get; }
+        public abstract ICardPersistent CardBase { get; }
         /// <summary>
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
@@ -49,9 +49,9 @@
         }
 
     }
-    public class Persistent<T> : AbstractPersistent where T : ICardPersistnet
+    public class Persistent<T> : AbstractPersistent where T : ICardPersistent
     {
-        public override ICardPersistnet CardBase => Card;
+        public override ICardPersistent CardBase => Card;
         public T Card { get; protected set; }
         protected Persistent(Type type, T card, AbstractPersistent? bind = null) : base(type)
         {

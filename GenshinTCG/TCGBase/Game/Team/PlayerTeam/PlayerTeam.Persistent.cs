@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public partial class PlayerTeam
     {
-        public void AddEquipment(ICardPersistnet equip, int target)
+        internal void AddEquipment<T>(T equip, int target) where T : ICardPersistent
         {
             var es = Characters[int.Clamp(target, 0, Characters.Length - 1)].Effects;
-            es.TryRemove(equip.NameID);
+            es.TryRemove(typeof(T));
             es.Add(new(equip));
         }
         /// <summary>
@@ -16,7 +14,7 @@ namespace TCGBase
         /// </summary>
         /// <param name="bind">绑定在某个其他persistent上供检测，只对出战状态和角色状态有效</param>
         /// <returns></returns>
-        public void AddPersistent(ICardPersistnet per, int target = -1, AbstractPersistent? bind = null)
+        public void AddPersistent(ICardPersistent per, int target = -1, AbstractPersistent? bind = null)
         {
             if (target == -1)
             {

@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractCardEventSingleEffect : AbstractCardEvent, ICardPersistnet
+    public abstract class AbstractCardEventSingleEffect : AbstractCardEvent, ICardPersistent
     {
         public virtual int InitialUseTimes => MaxUseTimes;
 
@@ -12,9 +12,7 @@
 
         public abstract PersistentTriggerDictionary TriggerDic { get; }
 
-        public int[] Info(AbstractPersistent p) => new int[] { p.AvailableTimes };
-
-        public void Update<T>(Persistent<T> persistent) where T : ICardPersistnet
+        public void Update<T>(Persistent<T> persistent) where T : ICardPersistent
         {
             persistent.Data = null;
             persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);

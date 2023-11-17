@@ -26,5 +26,9 @@
             var card = c.Card;
             return c.Alive && $"{CharacterNamespace ?? Namespace}:{CharacterNameID}".Equals($"{card.Namespace}:{card.NameID}");
         }
+        public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
+        {
+            me.AddEquipment(this, targetArgs[0]);
+        }
     }
 }

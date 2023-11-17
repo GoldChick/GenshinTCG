@@ -6,8 +6,6 @@
     internal class Passive : AbstractCardPersistent
     {
         private readonly PersistentTriggerDictionary _triggerDic;
-        //TODO namespace?
-        //public override string Namespace => "equipment";
         public override string NameID { get; }
         public Passive(AbstractPassiveSkill skill, int chaIndex, AbstractCardCharacter cha)
         {

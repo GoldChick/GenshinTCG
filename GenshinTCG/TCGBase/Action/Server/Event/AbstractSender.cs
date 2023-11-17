@@ -41,7 +41,7 @@
         //附魔(重华叠霜领域)>=反应增伤(火共鸣)≈普通增伤(武器)>乘伤(泡影)>除伤(护体岩铠)>减伤(盾)
         ElementEnchant,
         /// <summary>
-        /// 反应后产生物品 TODO:妮露
+        /// 反应后产生物品
         /// </summary>
         ElementItemGenerate,
         DamageIncrease,

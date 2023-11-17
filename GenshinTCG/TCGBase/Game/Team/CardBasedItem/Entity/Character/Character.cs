@@ -12,7 +12,7 @@
         private int _element;
         private PlayerTeam _t;
 
-        public PersistentSet<ICardPersistnet> Effects { get; init; }
+        public PersistentSet<ICardPersistent> Effects { get; init; }
         /// <summary>
         /// HP并不在改变时发包，而在治疗、受伤时发包
         /// </summary>
@@ -55,7 +55,7 @@
             Index = index;
             _t = t;
 
-            Effects = new(index);
+            Effects = new(index, t);
 
             HP = Card.MaxHP;
             Alive = true;

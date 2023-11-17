@@ -119,13 +119,25 @@
         /// </summary>
         public enum PersistentUpdateCategory
         {
-            Act,
+            /// <summary>
+            /// int[1] variant int[2] availabletimes <br/>
+            /// str[0]:str[1] cardnamespace+nameid
+            /// </summary>
             Obtain,
+            /// <summary>
+            /// int[1] index;int[2] availabletimes
+            /// </summary>
+            Trigger,
+            /// <summary>
+            /// int[1] index
+            /// </summary>
             Lose
         }
         public static class PersistentUpdate
         {
-            public static ClientUpdatePacket ObtainUpdate(int teamID, int region, string cardID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, new int[] { region }, new string[] { cardID });
+            public static ClientUpdatePacket ObtainUpdate(int teamID, int region, int variant, int availabletimes, string cardNameSpace, string cardNameID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, new int[] { region, variant, availabletimes }, new string[] { cardNameID, cardNameSpace });
+            public static ClientUpdatePacket TriggerUpdate(int teamID, int region, int index, int availabletimes) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Trigger, region, index, availabletimes);
+            public static ClientUpdatePacket LoseUpdate(int teamID, int region, int index) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Lose, region, index);
         }
         public static ClientUpdatePacket DiceUpdate(int teamID, params int[] dices) => new(ClientUpdateType.Dice, 10 * teamID, dices);
         public enum CardUpdateCategory
