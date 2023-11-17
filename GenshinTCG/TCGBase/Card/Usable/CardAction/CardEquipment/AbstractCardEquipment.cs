@@ -20,7 +20,7 @@
 
         public abstract int MaxUseTimes { get; }
 
-        public int Variant => -1;
+        public abstract int Variant { get; }
 
         public bool CustomDesperated => true;
 
@@ -35,6 +35,7 @@
     public abstract class AbstractCardWeapon : AbstractCardEquipment
     {
         public abstract WeaponCategory WeaponCategory { get; }
+        public override sealed int Variant => -1;
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
             me.AddEquipment(this, targetArgs[0]);
@@ -47,6 +48,7 @@
     }
     public abstract class AbstractCardArtifact : AbstractCardEquipment
     {
+        public override sealed int Variant => -2;
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
             me.AddEquipment(this, targetArgs[0]);

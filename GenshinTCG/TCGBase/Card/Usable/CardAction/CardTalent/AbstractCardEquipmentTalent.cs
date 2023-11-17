@@ -8,12 +8,13 @@
         /// </summary>
         public override PersistentTriggerDictionary TriggerDic => new();
         public override string NameID => $"talent_{CharacterNameID}";
+        public override sealed int Variant => -3;
         /// <summary>
         /// 不指定namespace，则和本身（这张卡）的一样
         /// </summary>
         public virtual string? CharacterNamespace { get => null; }
         /// <summary>
-        /// 所属的角色的nameid
+        /// 所属的角色的nameid<br/>
         /// </summary>
         public abstract string CharacterNameID { get; }
         public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(c => $"{CharacterNamespace ?? Namespace}:{CharacterNameID}".Equals($"{c.Namespace}:{c.NameID}"));

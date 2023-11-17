@@ -17,8 +17,7 @@
         /// </summary>
         Character,
         /// <summary>
-        /// int[0]: persistent position (0-6 character 7 team 8 summon 9 support)
-        /// string[0]: name
+        /// int[0]: persistent position (0-9 character -1 team 11 summon 12 support)
         /// </summary>
         Persistent,
         /// <summary>
@@ -135,7 +134,7 @@
         }
         public static class PersistentUpdate
         {
-            public static ClientUpdatePacket ObtainUpdate(int teamID, int region, int variant, int availabletimes, string cardNameSpace, string cardNameID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, new int[] { region, variant, availabletimes }, new string[] { cardNameID, cardNameSpace });
+            public static ClientUpdatePacket ObtainUpdate(int teamID, int region, int variant, int availabletimes, string cardNameSpace, string cardNameID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, new int[] { region, variant, availabletimes }, new string[] { cardNameSpace, cardNameID });
             public static ClientUpdatePacket TriggerUpdate(int teamID, int region, int index, int availabletimes) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Trigger, region, index, availabletimes);
             public static ClientUpdatePacket LoseUpdate(int teamID, int region, int index) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Lose, region, index);
         }

@@ -18,7 +18,8 @@
         public int MaxUseTimes { get; }
         /// <summary>
         /// 用来标识是变种。0为默认种<br/>
-        /// 标号不同的变种会得到不同的文本(TODO:这个在客户端暂时还没有实现)<br/>
+        /// -1为武器 -2为圣遗物 -3为天赋<br/>()
+        /// 标号不同的变种会得到不同的文本<br/>
         /// <br/><b>
         /// 给一个区域重复添加同一个Persistent时，如果是variant相同并且旧的为active，就调用更新Update() ; 如果variant不同，就先删除再添加
         /// </b>

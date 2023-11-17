@@ -138,7 +138,7 @@ namespace TCGBase
             {
                 if (p.Active)
                 {
-                    int index = _data.FindIndex(d => d.Card.Equals(p));
+                    int index = _data.FindIndex(d => d.Equals(p));
                     if (index >= 0)
                     {
                         Team.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(Team.TeamIndex, PersistentRegion, index, p.AvailableTimes));

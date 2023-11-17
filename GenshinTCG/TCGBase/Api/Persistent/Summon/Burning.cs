@@ -1,8 +1,9 @@
 ﻿namespace TCGBase
 {
-    public class Burning : SimpleSummon
+    public class Burning : AbstractSimpleSummon
     {
-        public Burning() : base("summon_burning", 3,1, 2)
+        //TODO:?????
+        public Burning() : base( 3,1, 2)
         {
         }
     }
