@@ -1,11 +1,6 @@
 ﻿using System.Reflection;
 namespace TCGBase
 {
-    //public enum RegistryType
-    //{
-    //    CharacterCard,
-    //    ActionCard,
-    //}
     public class Registry
     {
         private static readonly Registry _instance = new();
@@ -13,15 +8,13 @@ namespace TCGBase
         {
             CharacterCards = new();
             ActionCards = new();
-            PersistentCards = new();
-            CardCollections = new RegistryCardCollection[] { CharacterCards, ActionCards, PersistentCards };
+            CardCollections = new RegistryCardCollection[] { CharacterCards, ActionCards };
         }
         public static Registry Instance { get => _instance; }
 
         internal List<string> Mods { get; } = new();
         internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; }
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; } 
-        internal RegistryCardCollection<AbstractCardPersistent> PersistentCards { get; }
 
         private RegistryCardCollection[] CardCollections { get; }
         //不知为何的namespace黑名单
@@ -55,7 +48,6 @@ namespace TCGBase
 
             reg.RegisterCharacter(CharacterCards);
             reg.RegisterActionCard(ActionCards);
-            reg.RegisterPersistent(PersistentCards);
         }
 
         public void LoadDlls(string path)

@@ -7,10 +7,10 @@ namespace TCGBase
         public string NameSpace { get; init; }
         public string NameID { get; init; }
         [JsonConstructor]
-        public ReadonlyObject(string nameSpace, string name)
+        public ReadonlyObject(string nameSpace, string nameid)
         {
             NameSpace = nameSpace;
-            NameID = name;
+            NameID = nameid;
         }
     }
     public class ReadonlyCharacter : ReadonlyObject
@@ -24,7 +24,7 @@ namespace TCGBase
         public List<ReadonlyPersistent> Effects { get; }
         public int SkillCount { get; }
         [JsonConstructor]
-        public ReadonlyCharacter(string nameSpace, string name, int hP, int mP, int maxHP, int maxMP, int element, List<ReadonlyPersistent> effects, int skillCount) : base(nameSpace, name)
+        public ReadonlyCharacter(string nameSpace, string nameid, int hP, int mP, int maxHP, int maxMP, int element, List<ReadonlyPersistent> effects, int skillCount) : base(nameSpace, nameid)
         {
             HP = hP;
             MP = mP;
@@ -50,7 +50,7 @@ namespace TCGBase
         public int Variant { get; }
         public int[] Infos { get; set; }
         [JsonConstructor]
-        public ReadonlyPersistent(string nameSpace, string name, int variant, params int[] infos) : base(nameSpace, name)
+        public ReadonlyPersistent(string nameSpace, string nameid, int variant, params int[] infos) : base(nameSpace, nameid)
         {
             Variant = variant;
             Infos = infos;

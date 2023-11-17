@@ -12,7 +12,6 @@
         private readonly int _element;
         public SimpleSummon(string textureNameid, int element, int damage, int maxusetimes)
         {
-            Namespace = "minecraft";
             NameID = textureNameid;
             _damage = damage;
             _element = element;
