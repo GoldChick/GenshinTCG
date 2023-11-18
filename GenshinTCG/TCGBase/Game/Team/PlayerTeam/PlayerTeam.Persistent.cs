@@ -140,7 +140,7 @@
         /// <summary>
         /// effect按照 (curr->curr+1->curr+2->...)角色=>团队=>召唤物=>支援区 的顺序结算
         /// </summary>
-        public void EffectTrigger(Game game, int meIndex, AbstractSender sender, AbstractVariable? variable = null)
+        public void EffectTrigger(Game game, int meIndex, AbstractSender sender, AbstractVariable? variable = null, bool update = true)
         {
             var me = game.Teams[meIndex];
             for (int i = 0; i < Characters.Length; i++)
@@ -150,7 +150,11 @@
             Effects.EffectTrigger(me, sender, variable);
             Summons.EffectTrigger(me, sender, variable);
             Supports.EffectTrigger(me, sender, variable);
-            EffectUpdate();
+            //TODO:弃置
+            if (update)
+            {
+                EffectUpdate();
+            }
         }
     }
 }

@@ -71,10 +71,10 @@
             Strings = Array.Empty<string>();
         }
     }
-    internal static class ClientUpdateCreate
+    public static class ClientUpdateCreate
     {
-        public static ClientUpdatePacket CurrTeamUpdate(int after) => new(ClientUpdateType.CurrTeam, 0, after);
-        public static ClientUpdatePacket WaitingTimeUpdate(int time) => new(ClientUpdateType.WaitingTime, 0, time);
+        internal static ClientUpdatePacket CurrTeamUpdate(int after) => new(ClientUpdateType.CurrTeam, 0, after);
+        internal static ClientUpdatePacket WaitingTimeUpdate(int time) => new(ClientUpdateType.WaitingTime, 0, time);
         public enum CharacterUpdateCategory
         {
             /// <summary>
@@ -88,7 +88,11 @@
             /// <summary>
             /// int[0]: char index<br/>int[1]: element
             /// </summary>
-            ChangeElement,
+            Element,
+            /// <summary>
+            /// int[0]: char index<br/>int[1]:mp
+            /// </summary>
+            MP,
             /// <summary>
             /// int[0]: index
             /// </summary>
@@ -102,12 +106,12 @@
             /// </summary>
             Switch
         }
-        public static class CharacterUpdate
+        internal static class CharacterUpdate
         {
             public static ClientUpdatePacket HurtUpdate(int teamID, int index, int element, int damage) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Hurt, index, element, damage);
             public static ClientUpdatePacket HealUpdate(int teamID, int index, int amount) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Heal, index, amount);
-            public static ClientUpdatePacket ElementUpdate(int teamID, int index, int element) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.ChangeElement, index, element);
-            public static ClientUpdatePacket MPUpdate(int teamID, int index, int mp) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.ChangeElement, index, mp);
+            public static ClientUpdatePacket ElementUpdate(int teamID, int index, int element) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Element, index, element);
+            public static ClientUpdatePacket MPUpdate(int teamID, int index, int mp) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.MP, index, mp);
             public static ClientUpdatePacket DieUpdate(int teamID, int index) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Die, index);
             public static ClientUpdatePacket UseSkillUpdate(int teamID, int index, int skillIndex) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.UseSkill, index, skillIndex);
             public static ClientUpdatePacket SwitchUpdate(int teamID, int target) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Switch, target);
@@ -132,13 +136,13 @@
             /// </summary>
             Lose
         }
-        public static class PersistentUpdate
+        internal static class PersistentUpdate
         {
             public static ClientUpdatePacket ObtainUpdate(int teamID, int region, int variant, int availabletimes, string cardNameSpace, string cardNameID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, new int[] { region, variant, availabletimes }, new string[] { cardNameSpace, cardNameID });
             public static ClientUpdatePacket TriggerUpdate(int teamID, int region, int index, int availabletimes) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Trigger, region, index, availabletimes);
             public static ClientUpdatePacket LoseUpdate(int teamID, int region, int index) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Lose, region, index);
         }
-        public static ClientUpdatePacket DiceUpdate(int teamID, params int[] dices) => new(ClientUpdateType.Dice, 10 * teamID, dices);
+        internal static ClientUpdatePacket DiceUpdate(int teamID, params int[] dices) => new(ClientUpdateType.Dice, 10 * teamID, dices);
         public enum CardUpdateCategory
         {
             /// <summary>
@@ -167,14 +171,14 @@
             /// </summary>
             Broke
         }
-        public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category) => new(ClientUpdateType.Card, 10 * teamID + (int)category);
+        internal static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category) => new(ClientUpdateType.Card, 10 * teamID + (int)category);
         /// <summary>
         /// for Blend and Use
         /// </summary>
-        public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, params int[] indexs) => new(ClientUpdateType.Card, 10 * teamID + (int)category, indexs);
+        internal static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, params int[] indexs) => new(ClientUpdateType.Card, 10 * teamID + (int)category, indexs);
         /// <summary>
         /// for Obtain and Broke
         /// </summary>
-        public static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, params string[] cardIDs) => new(ClientUpdateType.Card, 10 * teamID + (int)category, cardIDs);
+        internal static ClientUpdatePacket CardUpdate(int teamID, CardUpdateCategory category, params string[] cardIDs) => new(ClientUpdateType.Card, 10 * teamID + (int)category, cardIDs);
     }
 }

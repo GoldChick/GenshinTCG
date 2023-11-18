@@ -143,9 +143,9 @@
                     break;
                 case ActionType.UseCard:
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, evt.Action.Index));
-                    var c = t.CardsInHand[evt.Action.Index];
-                    t.CardsInHand.Remove(c);
+                    t.CardsInHand.RemoveAt(evt.Action.Index);
 
+                    var c = t.CardsInHand[evt.Action.Index];
                     c.AfterUseAction(t, evt.AdditionalTargetArgs);
 
                     afterEventSender = new AfterUseCardSender(currTeam, c, evt.AdditionalTargetArgs);

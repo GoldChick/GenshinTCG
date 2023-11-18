@@ -87,7 +87,7 @@ namespace TCGBase
                         case ClientUpdateCreate.CharacterUpdateCategory.Heal:
                             packetteam.Characters[packet.Ints[0]].HP += packet.Ints[1];
                             break;
-                        case ClientUpdateCreate.CharacterUpdateCategory.ChangeElement:
+                        case ClientUpdateCreate.CharacterUpdateCategory.Element:
                             packetteam.Characters[packet.Ints[0]].Element = packet.Ints[1];
                             break;
                         case ClientUpdateCreate.CharacterUpdateCategory.Die:
