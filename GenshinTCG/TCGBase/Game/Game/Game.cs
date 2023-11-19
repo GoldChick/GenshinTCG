@@ -170,6 +170,11 @@
                 BroadCastRegion();
             }
         }
+        public void EffectUpdate()
+        {
+            Teams[CurrTeam].EffectUpdate();
+            Teams[1 - CurrTeam].EffectUpdate();
+        }
         public bool IsGameOver() => Round > 15 || Teams.Any(t => t.Characters.All(c => !c.Alive));
         public int GetWinner()
         {

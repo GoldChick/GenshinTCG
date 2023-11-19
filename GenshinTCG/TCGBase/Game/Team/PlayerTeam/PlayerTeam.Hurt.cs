@@ -87,12 +87,12 @@
                 Character target = Characters[curr];
                 if (target.Predie)
                 {
-                    EffectTrigger(Game, TeamIndex, new DieSender(TeamIndex, curr), null);
+                    Game.EffectTrigger(new DieSender(TeamIndex, curr), null);
                     target.Predie = false;
-                    target.Alive = false;
 
                     target.MP = 0;
                     target.Effects.Clear();
+                    Game.Records.Last().Add(new DieRecord(TeamIndex, target));
                 }
             }
             if (Characters.All(p => !p.Alive))
@@ -107,7 +107,6 @@
         /// <param name="action">伤害结算后，死亡结算前结算的东西，如[风压剑]</param>
         public void MultiHurt(DamageVariable[] dvs, IDamageSource ds, Action? action = null)
         {
-            //dvs.all(p=>p.targetrelative)
             DamageVariable[] dvs_person = dvs.Select(p => new DamageVariable(ds.DamageSource, p.Element, p.Damage, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
             List<HurtSender> hss = MultiHurt(ds, out bool overload, dvs_person);
             foreach (var hs in hss)
@@ -115,16 +114,23 @@
                 Characters[hs.TargetIndex].HP -= hs.Damage;
                 Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HurtUpdate(TeamIndex, hs.TargetIndex, hs.Element, hs.Damage));
             }
+            if (overload)
+            {
+                SwitchToNext();
+            }
+            action?.Invoke();
             for (int i = 0; i < Characters.Length; i++)
             {
                 int curr = (i + CurrCharacter) % Characters.Length;
                 var cha = Characters[curr];
-                if (cha.HP == 0 && cha.Alive && !cha.Predie)
+                if (cha.HP == 0 && cha.Alive)
                 {
                     Game.EffectTrigger(new DieSender(TeamIndex, curr, true), null);
                     if (cha.HP == 0)
                     {
                         cha.Predie = true;
+                        cha.Alive = false;
+                        cha.Element = 0;
                     }
                 }
             }
@@ -141,11 +147,6 @@
                 t0.Start();
                 t1.Start();
                 Task.WaitAll(t0, t1);
-            }
-            action?.Invoke();
-            if (overload)
-            {
-                SwitchToNext();
             }
             foreach (var hs in hss)
             {

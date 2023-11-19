@@ -1,8 +1,9 @@
-﻿namespace TCGBase
+﻿using TCGBase;
+
+namespace Minecraft
 {
     public class Full : AbstractCardPersistent
     {
-        public override string NameID => "full";
         public override int MaxUseTimes => 1;
 
         public override PersistentTriggerDictionary TriggerDic => new()

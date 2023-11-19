@@ -118,7 +118,7 @@
                 {
                     if (s is AbstractPassiveSkill ps)
                     {
-                        AddPersistent(new Passive(ps, i, c), i);
+                        AddPersistent(ps, i);
                     }
                 }
             }

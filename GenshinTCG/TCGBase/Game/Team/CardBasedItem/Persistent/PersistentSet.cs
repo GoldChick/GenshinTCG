@@ -73,16 +73,13 @@ namespace TCGBase
             }
         }
         public bool Contains(Type type) => _data.Exists(e => e.Type == type);
+        public bool Contains(int variant) => _data.Exists(e => e.Card.Variant == variant);
         public bool Contains(string nameSpace, string nameID, int variant) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && e.Card.Variant == variant);
         public bool Contains(string nameSpace, string nameID) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
-        /// <summary>
-        /// 通过nameID来比较，不过不比较nameSpace，因此可能会有重复
-        /// </summary>
-        public bool Contains(string nameID) => _data.Exists(e => e.Card.NameID == nameID);
         public Persistent<T>? Find(Type type) => _data.Find(e => e.Type == type);
         public Persistent<T>? Find(string nameSpace, string nameID) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
         public Persistent<T>? Find(string nameSpace, string nameID, int variant) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && e.Card.Variant == variant);
-        public Persistent<T>? Find(string nameID) => _data.Find(e => e.Card.NameID == nameID);
+        public Persistent<T>? Find(int variant) => _data.Find(e => e.Card.Variant == variant);
         public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
         {
             if (_handlers.TryGetValue(sender.SenderName, out var hs))
@@ -106,6 +103,7 @@ namespace TCGBase
             }
         }
         internal void TryRemove(Type type) => TryRemoveAt(_data.FindIndex(e => e.Type == type));
+        internal void TryRemove(int variant) => TryRemoveAt(_data.FindIndex(e => e.Card.Variant == variant));
         //public void TryRemove(string textureNameID) => RemoveSingle(_data.Find(e => e.Card.NameID == textureNameID));
         //public void TryRemove(string textureNamespace, string textureNameID) => RemoveSingle(_data.Find(e => e.Card.Namespace == textureNamespace && e.Card.NameID == textureNameID));
         ///// <param name="p">确定存在的</param>
@@ -149,7 +147,6 @@ namespace TCGBase
         }
         private void Register(Persistent<T> p)
         {
-            //TODO:是否需要在其他地方额外统一注册kvp.key
             _data.Add(p);
             foreach (var kvp in p.Card.TriggerDic)
             {

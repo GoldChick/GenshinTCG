@@ -116,11 +116,10 @@
                     break;
                 case ActionType.UseSKill:
                     var cha = t.Characters[t.CurrCharacter];
-                    var skis = cha.Card.Skills;
-                    var ski = skis[evt.Action.Index];
+                    var ski = cha.Card.Skills[evt.Action.Index];
                     //考虑AfterUseAction中可能让角色位置改变的
-                    afterEventSender = new AfterUseSkillSender(currTeam, t.CurrCharacter, ski, evt.AdditionalTargetArgs);
-
+                    afterEventSender = new AfterUseSkillSender(currTeam, cha, ski, evt.AdditionalTargetArgs);
+                    //TODO: talent
                     var talent = cha.Effects.Find("equipment", "talent");
                     if (talent != null && talent.Card is AbstractCardEquipmentOverrideSkillTalent pt && pt.Skill == evt.Action.Index)
                     {
@@ -177,7 +176,20 @@
                     BroadCast(ClientUpdateCreate.CurrTeamUpdate(CurrTeam));
                 }
             }
-            Records.Last().Add((currTeam, fight_action, evt));
+            NetEventRecord record;
+            if (afterEventSender is AfterUseSkillSender ss)
+            {
+                record = new UseSkillRecord(currTeam, evt, fight_action, ss.Character, ss.Skill);
+            }
+            else if (afterEventSender is AfterUseCardSender cs)
+            {
+                record = new UseCardRecord(currTeam, evt, fight_action, cs.Card);
+            }
+            else
+            {
+                record = new(currTeam, evt, fight_action);
+            }
+            Records.Last().Add(record);
         }
     }
 }

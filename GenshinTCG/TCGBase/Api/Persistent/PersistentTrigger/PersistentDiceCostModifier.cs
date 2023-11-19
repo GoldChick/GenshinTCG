@@ -4,7 +4,7 @@
     /// 用于处理加费减费问题<br/>
     /// 需要注意的是加费减费有[实际触发]和[模拟触发]两种情况
     /// </summary>
-    public class PersistentDiceCostModifier<T> : PersistentTrigger where T: AbstractUseDiceSender
+    public class PersistentDiceCostModifier<T> : PersistentTrigger where T : AbstractUseDiceSender
     {
         private readonly Func<PlayerTeam, AbstractPersistent, T, AbstractVariable?, bool> _condition;
         private readonly int _element;
@@ -18,20 +18,22 @@
         /// element:-1=杂色骰 0=有效骰 1-7=冰水火雷岩草风<br/>
         /// num:至少1
         /// </summary>
-        public PersistentDiceCostModifier(Func<PlayerTeam, AbstractPersistent, T, AbstractVariable?, bool> condition, int element, int num,bool costaftertrigger=true,Action<PlayerTeam, AbstractPersistent, T, AbstractVariable?>? optionalActionIfTrigger=null)
+        public PersistentDiceCostModifier(Func<PlayerTeam, AbstractPersistent, T, AbstractVariable?, bool> condition, int element, int num, bool costaftertrigger = true, Action<PlayerTeam, AbstractPersistent, T, AbstractVariable?>? optionalActionIfTrigger = null)
         {
             _condition = condition;
             _element = int.Clamp(element, -1, 7);
             _num = int.Max(num, 1);
-            _costafteruse= costaftertrigger;
-            _action= optionalActionIfTrigger;
+            _costafteruse = costaftertrigger;
+            _action = optionalActionIfTrigger;
         }
         /// <summary>
-        /// 需要available才能减费
+        /// 需要available才能减费<br/>
+        /// 对teamid默认无要求
         /// </summary>
         public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
-            if (me.TeamIndex == sender.TeamID && persitent.AvailableTimes>0 && sender is T uds)
+            //TODO:不知道对于负数会有什么反应
+            if (persitent.AvailableTimes > 0 && sender is T uds)
             {
                 if (_condition.Invoke(me, persitent, uds, variable) && variable is DiceCostVariable dcv)
                 {
@@ -90,10 +92,13 @@
                         act = false;
                     }
 
-                    if (uds.IsRealAction && _costafteruse && act)
+                    if (uds.IsRealAction && act)
                     {
-                        persitent.AvailableTimes--;
-                        _action?.Invoke(me,persitent,uds,variable);
+                        if (_costafteruse)
+                        {
+                            persitent.AvailableTimes--;
+                        }
+                        _action?.Invoke(me, persitent, uds, variable);
                     }
                 }
             }

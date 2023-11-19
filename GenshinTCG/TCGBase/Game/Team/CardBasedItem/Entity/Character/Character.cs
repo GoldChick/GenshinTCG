@@ -19,7 +19,10 @@
         public int HP
         {
             get { return _hp; }
-            set { _hp = int.Clamp(value, 0, Card.MaxHP); }
+            set
+            {
+                _hp = int.Clamp(value, 0, Card.MaxHP);
+            }
         }
         public int MP
         {

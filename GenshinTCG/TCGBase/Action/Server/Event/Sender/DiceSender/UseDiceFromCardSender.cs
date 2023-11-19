@@ -8,12 +8,12 @@
     {
         public override string SenderName => SenderTag.UseDiceFromCard.ToString();
         /// <summary>
-        /// BeforeUseCard: card index
+        /// BeforeUseCard: card 
         /// </summary>
-        public int CardIndex { get; }
-        internal UseDiceFromCardSender(int teamID, int cardindex, bool isrealaction) : base(isrealaction, teamID)
+        public AbstractCardAction Card { get; }
+        internal UseDiceFromCardSender(int teamID, AbstractCardAction card, bool isrealaction) : base(isrealaction, teamID)
         {
-            CardIndex = cardindex;
+            Card = card;
         }
     }
 }

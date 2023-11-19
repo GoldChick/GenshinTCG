@@ -6,13 +6,13 @@
     public class AfterUseSkillSender : AbstractAfterActionSender
     {
         public override string SenderName => SenderTag.AfterUseSkill.ToString();
-        public int CharIndex { get; set; }
+        public Character Character { get; set; }
         public AbstractCardSkill Skill { get; set; }
         public int[]? AdditionalTargetArgs { get; set; }
 
-        public AfterUseSkillSender(int teamID, int charIndex, AbstractCardSkill skill, int[]? targetArgs = null) : base(teamID)
+        public AfterUseSkillSender(int teamID, Character character, AbstractCardSkill skill, int[]? targetArgs = null) : base(teamID)
         {
-            CharIndex = charIndex;
+            Character = character;
             Skill = skill;
             AdditionalTargetArgs = targetArgs;
         }

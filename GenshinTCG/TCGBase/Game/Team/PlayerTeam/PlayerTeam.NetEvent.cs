@@ -98,12 +98,12 @@
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
                     AbstractCardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
                     c = new(skill.CostSame, skill.Costs);
-                    Game.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, CurrCharacter, action.Index % chaCard.Skills.Length, realAction), c, false);
+                    Game.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
                     break;
                 case ActionType.UseCard:
                     var card = CardsInHand[action.Index % CardsInHand.Count];
                     c = new(card.CostSame, card.Costs);
-                    Game.EffectTrigger(new UseDiceFromCardSender(TeamIndex, action.Index % CardsInHand.Count, realAction), c, false);
+                    Game.EffectTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
                     break;
                 case ActionType.Blend:
                     int[] ints = new int[8];

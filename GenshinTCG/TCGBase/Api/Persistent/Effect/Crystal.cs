@@ -1,14 +1,13 @@
-﻿namespace TCGBase
+﻿using TCGBase;
+
+namespace Minecraft
 {
-    public class Crystal : AbstractCardPersistent
+    public class Crystal : AbstractPersistentShieldYellow
     {
-        public override string NameID => "crystal";
         public override int InitialUseTimes => 1;
         public override int MaxUseTimes => 2;
-
-        public override PersistentTriggerDictionary TriggerDic => new()
+        public Crystal() : base()
         {
-            { SenderTag.HurtDecrease.ToString(),new PersistentYellowShield()}
-        };
+        }
     }
 }

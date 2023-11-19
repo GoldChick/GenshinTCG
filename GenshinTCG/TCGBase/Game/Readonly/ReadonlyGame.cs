@@ -73,7 +73,6 @@ namespace TCGBase
                 case ClientUpdateType.CurrTeam:
                     CurrTeam = packet.Ints[0];
                     break;
-                //TODO:有必要吗
                 case ClientUpdateType.WaitingTime:
                     WaitingTime = packet.Ints[0];
                     break;

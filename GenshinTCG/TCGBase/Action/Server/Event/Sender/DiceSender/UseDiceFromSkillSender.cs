@@ -8,17 +8,17 @@
     {
         public override string SenderName => SenderTag.UseDiceFromSkill.ToString();
         /// <summary>
-        /// BeforeUseSkill: character index<br/>
+        /// BeforeUseSkill: character<br/>
         /// </summary>
-        public int ChaIndex { get; }
+        public Character Character { get; }
         /// <summary>
-        /// BeforeUseSkill: skill index<br/>
+        /// BeforeUseSkill: skill<br/>
         /// </summary>
-        public int SkillIndex { get; }
-        internal UseDiceFromSkillSender(int teamID, int chaindex, int skillindex, bool isrealaction) : base(isrealaction, teamID)
+        public AbstractCardSkill Skill { get; }
+        internal UseDiceFromSkillSender(int teamID, Character cha, AbstractCardSkill skill, bool isrealaction) : base(isrealaction, teamID)
         {
-            ChaIndex = chaindex;
-            SkillIndex = skillindex;
+            Character = cha;
+            Skill = skill;
         }
     }
 }

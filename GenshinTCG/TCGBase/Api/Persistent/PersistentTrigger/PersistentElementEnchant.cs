@@ -11,12 +11,12 @@
         /// <summary>
         /// 是否参与使用次数计数，如果是则会触发后减少使用次数
         /// </summary>
-        private bool _counter;
+        private bool _decreaseAfterUse;
 
-        public PersistentElementEnchant(int element, bool round = false, int adddamage = 0)
+        public PersistentElementEnchant(int element, bool decreaseAfterUse = false, int adddamage = 0)
         {
             _toward = int.Clamp(element, 0, 7);
-            _counter = round;
+            _decreaseAfterUse = decreaseAfterUse;
             _adddamage = adddamage;
         }
         public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
@@ -29,7 +29,7 @@
                     {
                         dv.Element = _toward;
                         dv.Damage += _adddamage;
-                        if (_counter)
+                        if (_decreaseAfterUse)
                         {
                             persitent.AvailableTimes--;
                         }

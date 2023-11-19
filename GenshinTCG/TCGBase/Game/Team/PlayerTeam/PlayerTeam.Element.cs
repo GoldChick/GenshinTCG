@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using Minecraft;
+
+namespace TCGBase
 {
     public partial class PlayerTeam
     {
