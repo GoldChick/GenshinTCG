@@ -2,9 +2,12 @@
 
 namespace TCGBase
 {
-    public abstract class AbstractCardFoodSingle : AbstractCardEvent, ICardFood, ITargetSelector
+    public abstract class AbstractCardFoodSingle : AbstractCardEvent, ICardFood
     {
-        public TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
+        public override TargetDemand[] TargetDemands => new TargetDemand[]
+        {
+            new(TargetEnum.Character_Me,CanBeUsed)
+        };
 
         public virtual int InitialUseTimes => MaxUseTimes;
         /// <summary>
@@ -37,13 +40,16 @@ namespace TCGBase
         public override bool CanBeUsed(PlayerTeam me, int[] targetArgs)
         {
             var c = me.Characters[targetArgs[0]];
-            return c.Alive && !c.Effects.Contains("minecraft","full");
+            return c.Alive && !c.Effects.Contains("minecraft", "full");
         }
 
-        public void Update<T>(Persistent<T> persistent) where T : ICardPersistent
+        public void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent
         {
             persistent.Data = null;
             persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
+        }
+        public virtual void OnDesperated(PlayerTeam me, int region)
+        {
         }
     }
 }

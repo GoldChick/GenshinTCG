@@ -6,7 +6,7 @@
         E,
         Q,
         /// <summary>
-        /// 不应当直接使用此Category，请考虑继承<see cref="AbstractPassiveSkill"/>
+        /// 不应当直接使用此Category，请考虑继承<see cref="AbstractCardSkillPassive"/>
         /// </summary>
         P
     }
@@ -16,12 +16,12 @@
         /// 使用后是否加充能，默认加
         /// </summary>
         public virtual bool GiveMP { get => true; }
+        public abstract int[] Costs { get; }
         /// <summary>
         /// 对于无色骰，是否需要消耗同色，默认为否，即杂色
         /// </summary>
         public virtual bool CostSame { get => false; }
         public abstract SkillCategory Category { get; }
-        public abstract int[] Costs { get; }
         /// <summary>
         /// 使用后发生什么<br/>
         /// targetargs是可能的自定义Additionaltargetargs(需要自己维护)<br/><br/>

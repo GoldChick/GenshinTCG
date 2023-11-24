@@ -1,8 +1,9 @@
-﻿namespace TCGBase
+﻿using TCGBase;
+
+namespace Minecraft
 {
     public class Burning : AbstractSimpleSummon
     {
-        //TODO:?????
         public Burning() : base( 3,1, 2)
         {
         }

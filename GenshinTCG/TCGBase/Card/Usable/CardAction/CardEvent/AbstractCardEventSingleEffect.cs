@@ -12,7 +12,7 @@
 
         public abstract PersistentTriggerDictionary TriggerDic { get; }
 
-        public void Update<T>(Persistent<T> persistent) where T : ICardPersistent
+        public void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent
         {
             persistent.Data = null;
             persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
@@ -20,6 +20,10 @@
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
             me.AddPersistent(this);
+        }
+
+        public virtual void OnDesperated(PlayerTeam me, int region)
+        {
         }
     }
 }

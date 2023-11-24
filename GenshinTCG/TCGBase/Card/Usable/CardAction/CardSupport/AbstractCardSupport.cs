@@ -37,6 +37,10 @@
         /// <summary>
         /// 支援区默认不会更新
         /// </summary>
-        public void Update<T>(Persistent<T> persistent) where T : ICardPersistent => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
+        public void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
+
+        public virtual void OnDesperated(PlayerTeam me, int region)
+        {
+        }
     }
 }

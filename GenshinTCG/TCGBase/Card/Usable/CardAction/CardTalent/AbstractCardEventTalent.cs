@@ -22,7 +22,7 @@
         {
             var c = me.Characters[targetArgs[0]];
             var index = Skill % c.Card.Skills.Length;
-            if (c.Card.Skills[index] is not AbstractPassiveSkill)
+            if (c.Card.Skills[index] is not AbstractCardSkillPassive)
             {
                 me.Game.HandleEvent(new NetEvent(new NetAction(ActionType.UseSKill, index)), me.TeamIndex);
             }
@@ -36,7 +36,7 @@
             var c = me.Characters[targetArgs[0]];
             var card = c.Card;
             var sks = card.Skills;
-            return c.Alive && $"{CharacterNamespace ?? Namespace}:{CharacterNameID}".Equals($"{card.Namespace}:{card.NameID}") && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length] is AbstractPassiveSkill);
+            return c.Alive && $"{CharacterNamespace ?? Namespace}:{CharacterNameID}".Equals($"{card.Namespace}:{card.NameID}") && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length] is AbstractCardSkillPassive);
         }
     }
 }

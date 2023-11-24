@@ -4,7 +4,6 @@ namespace TCGBase
 {
     public class DiceRollingVariable : AbstractVariable
     {
-        public override string VariableName => VariableTags.DICE_ROLLING;
 
         /// <summary>
         /// 为正表示新扔的骰子，为负表示重投已有

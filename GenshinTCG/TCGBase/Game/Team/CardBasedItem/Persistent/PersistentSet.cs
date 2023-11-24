@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
 namespace TCGBase
@@ -8,9 +8,10 @@ namespace TCGBase
         public int PersistentRegion { get; init; }
     }
     public delegate void EventPersistentSetHandler(PlayerTeam me, AbstractSender s, AbstractVariable? v);
-    public class PersistentSet<T> : PersistentSet where T : ICardPersistent
+    public class PersistentSet<T> : PersistentSet, IEnumerable<Persistent<T>> where T : ICardPersistent
     {
         private readonly List<Persistent<T>> _data;
+        private readonly PlayerTeam _me;
         private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
         /// <summary>
         /// 为正代表最多x个，为负或0代表无限制
@@ -22,7 +23,6 @@ namespace TCGBase
         public bool MultiSame { get; init; }
         public int Count => _data.Count;
         public bool Full => MaxSize > 0 && MaxSize <= Count;
-        internal PlayerTeam Team { get; }
         /// <param name="region">
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
@@ -34,24 +34,25 @@ namespace TCGBase
             _handlers = new();
             MaxSize = size;
             MultiSame = multisame;
-            Team = team;
+            _me = team;
         }
         public Persistent<T> this[int i] => _data[i];
         /// <summary>
         /// 无则加入（未满），有则刷新
         /// </summary>
-        public void Add([NotNull] Persistent<T> input)
+        internal void Add([NotNull] Persistent<T> input)
         {
             input.PersistentRegion = PersistentRegion;
+            Update();
             if (MaxSize <= 0 || _data.Count < MaxSize)
             {
                 int index = _data.FindIndex(p => p.Type == input.Type);
                 if (!MultiSame && index >= 0 && _data[index] is Persistent<T> t && t.Card.NameID == input.Card.NameID && t.Card.Namespace == input.Card.Namespace)
                 {
-                    if (t.Active && t.Card.Variant == input.Card.Variant)
+                    if (t.Active && (t.Card.Variant % 10) == (input.Card.Variant % 10))
                     {
-                        input.Card.Update(t);
-                        Team.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(Team.TeamIndex, PersistentRegion, index, t.AvailableTimes));
+                        input.Card.Update(_me, t);
+                        _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, t.AvailableTimes));
                     }
                     else
                     {
@@ -73,24 +74,26 @@ namespace TCGBase
             }
         }
         public bool Contains(Type type) => _data.Exists(e => e.Type == type);
-        public bool Contains(int variant) => _data.Exists(e => e.Card.Variant == variant);
-        public bool Contains(string nameSpace, string nameID, int variant) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && e.Card.Variant == variant);
+        public bool Contains(int variant) => _data.Exists(e => (e.Card.Variant % 10) == variant);
+        public bool Contains(string nameSpace, string nameID, int variant) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && (e.Card.Variant % 10) == variant);
         public bool Contains(string nameSpace, string nameID) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
         public Persistent<T>? Find(Type type) => _data.Find(e => e.Type == type);
         public Persistent<T>? Find(string nameSpace, string nameID) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
-        public Persistent<T>? Find(string nameSpace, string nameID, int variant) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && e.Card.Variant == variant);
-        public Persistent<T>? Find(int variant) => _data.Find(e => e.Card.Variant == variant);
-        public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
+        public Persistent<T>? Find(string nameSpace, string nameID, int variant) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && (e.Card.Variant % 10) == variant);
+        public Persistent<T>? Find(int variant) => _data.Find(e => (e.Card.Variant % 10) == variant);
+        internal EventPersistentSetHandler? GetPersistentHandlers(AbstractSender sender)
         {
+            EventPersistentSetHandler? acs = null;
             if (_handlers.TryGetValue(sender.SenderName, out var hs))
             {
-                hs?.Invoke(me, sender, variable);
+                acs += hs;
             }
             //任意行动的主体必须是队伍
             if (sender.TeamID != -1 && _handlers.TryGetValue(SenderTag.AfterAnyAction.ToString(), out hs))
             {
-                hs?.Invoke(me, sender, variable);
+                acs += hs;
             }
+            return acs;
         }
         public List<Persistent<T>> Copy() => _data.ToList();
         public void TryRemoveAt(int index)
@@ -103,20 +106,7 @@ namespace TCGBase
             }
         }
         internal void TryRemove(Type type) => TryRemoveAt(_data.FindIndex(e => e.Type == type));
-        internal void TryRemove(int variant) => TryRemoveAt(_data.FindIndex(e => e.Card.Variant == variant));
-        //public void TryRemove(string textureNameID) => RemoveSingle(_data.Find(e => e.Card.NameID == textureNameID));
-        //public void TryRemove(string textureNamespace, string textureNameID) => RemoveSingle(_data.Find(e => e.Card.Namespace == textureNamespace && e.Card.NameID == textureNameID));
-        ///// <param name="p">确定存在的</param>
-        //private void RemoveSingle(Persistent<T>? p)
-        //{
-        //    if (p != null)
-        //    {
-        //        p.Childs.ForEach(c => c.Active = false);
-        //        p.Father?.Childs.Remove(p);
-        //        Unregister(p);
-        //        _data.Remove(p);
-        //    }
-        //}
+        internal void TryRemove(int variant) => TryRemoveAt(_data.FindIndex(e => (e.Card.Variant % 10) == variant));
         internal void Clear(Func<Persistent<T>, bool>? condition = null)
         {
             for (int i = _data.Count - 1; i >= 0; i--)
@@ -136,11 +126,11 @@ namespace TCGBase
             {
                 if (p.Active)
                 {
-                    int index = _data.FindIndex(d => d.Equals(p));
                     value.Invoke(me, p, s, v);
+                    int index = _data.FindIndex(d => d == p);
                     if (index >= 0)
                     {
-                        Team.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(Team.TeamIndex, PersistentRegion, index, p.AvailableTimes));
+                        _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, p.AvailableTimes));
                     }
                 }
             };
@@ -160,7 +150,7 @@ namespace TCGBase
                     _handlers[kvp.Key] += h;
                 }
             }
-            Team.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(Team.TeamIndex, PersistentRegion, p.Card.Variant, p.AvailableTimes, p.Card.Namespace, p.Card.NameID));
+            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, PersistentRegion, p.Card.Variant, p.AvailableTimes, p.Card.Namespace, p.Card.NameID));
         }
         private void Unregister(int index, Persistent<T> p)
         {
@@ -168,8 +158,15 @@ namespace TCGBase
             {
                 _handlers[kvp.Key] -= PersistentHandelerConvert(p, kvp.Value);
             }
-            Team.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(Team.TeamIndex, PersistentRegion, index));
+            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
             _data.RemoveAt(index);
+
+            p.Card.OnDesperated(_me, p.PersistentRegion);
+            _me.Game.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.Card), null);
         }
+
+        public IEnumerator<Persistent<T>> GetEnumerator() => _data.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
     }
 }

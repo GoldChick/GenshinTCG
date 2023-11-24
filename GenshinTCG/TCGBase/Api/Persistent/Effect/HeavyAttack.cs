@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using TCGBase;
+
+namespace Minecraft
 {
     /// <summary>
     /// [我方行动开始前]时，为我方消除，再附属

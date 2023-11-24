@@ -5,7 +5,6 @@
     /// </summary>
     public class ElementGenerateVariable : AbstractVariable
     {
-        public override string VariableName => VariableTags.ELEMENT_GENERATE;
         /// <summary>
         /// 是否覆写最初的产生
         /// </summary>

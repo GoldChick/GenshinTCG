@@ -1,4 +1,4 @@
-﻿namespace TCGBase
+﻿namespace Minecraft
 {
     internal class Frozen
     {

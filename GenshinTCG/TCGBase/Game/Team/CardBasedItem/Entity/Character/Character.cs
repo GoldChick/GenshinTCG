@@ -38,7 +38,7 @@
         /// 濒死状态，生命值降为0，又不被“免于被击倒”治疗会使其为true<br/>
         /// 真死了之后又为false
         /// </summary>
-        public bool Predie;
+        internal bool Predie;
         /// <summary>
         /// 为active时可以使用技能
         /// </summary>
@@ -63,13 +63,6 @@
             HP = Card.MaxHP;
             Alive = true;
             Active = true;
-        }
-        public void EffectTrigger(PlayerTeam me, AbstractSender sender, AbstractVariable? variable)
-        {
-            if (Alive)
-            {
-                Effects.EffectTrigger(me, sender, variable);
-            }
         }
     }
 }

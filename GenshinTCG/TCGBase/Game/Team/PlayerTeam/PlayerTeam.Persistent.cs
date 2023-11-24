@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System.Runtime.InteropServices;
+
+namespace TCGBase
 {
     public partial class PlayerTeam
     {
@@ -25,7 +27,7 @@
                 var cha = Characters[int.Clamp(target, 0, Characters.Length - 1)];
                 if (cha.Alive)
                 {
-                    cha.Effects.Add(new PersonalEffect(per, bind));
+                    cha.Effects.Add(new(per, bind));
                 }
             }
             Game.BroadCastRegion();
@@ -64,49 +66,6 @@
             }
         }
         /// <summary>
-        /// 尝试在我方场上添加单个或多个召唤物<br/>
-        /// 当我方召唤物满场时，仅在provider的召唤物全在场时会进行更新
-        /// </summary>
-        //public void TryAddSummon(IPersistentProvider<AbstractCardPersistentSummon> provider)
-        //{
-        //    if (provider is ISinglePersistentProvider<AbstractCardPersistentSummon> single)
-        //    {
-        //        Summons.Add(new(single.PersistentPool));
-        //    }
-        //    else if (provider is IMultiPersistentProvider<AbstractCardPersistentSummon> mul)
-        //    {
-        //        var left = mul.PersistentPool.Where(s => !Summons.Contains(s.GetType())).ToList();
-        //        int num = mul.PersistentNum;
-        //        while (num > 0)
-        //        {
-        //            if (left.Count == 0)//全都召唤了，刷新
-        //            {
-        //                var pool = mul.PersistentPool.Select(p => p).ToList();
-        //                for (int i = 0; i < num && pool.Count > 0; i++)
-        //                {
-        //                    int j = Random.Next(pool.Count);
-        //                    Summons.Add(new(pool[j]));
-        //                    pool.RemoveAt(j);
-        //                }
-        //                break;
-        //            }
-        //            else if (!Summons.Full)
-        //            {
-        //                var choose = Random.Next(left.Count);
-        //                Summons.Add(new(left[choose]));
-        //                left.RemoveAt(choose);
-        //                num--;
-        //            }
-        //            else
-        //            {
-        //                break;
-        //            }
-        //        }
-        //    }
-
-        //}
-
-        /// <summary>
         /// 注册所有角色的被动技能，通常在游戏开始出人之前
         /// </summary>
         internal void RegisterPassive()
@@ -116,7 +75,7 @@
                 var c = Characters[i].Card;
                 foreach (var s in c.Skills)
                 {
-                    if (s is AbstractPassiveSkill ps)
+                    if (s is AbstractCardSkillPassive ps && ps.MaxUseTimes >= 0)
                     {
                         AddPersistent(ps, i);
                     }
@@ -140,17 +99,18 @@
         /// <summary>
         /// effect按照 (curr->curr+1->curr+2->...)角色=>团队=>召唤物=>支援区 的顺序结算
         /// </summary>
-        public void EffectTrigger(Game game, int meIndex, AbstractSender sender, AbstractVariable? variable = null, bool update = true)
+        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool update = true)
         {
-            var me = game.Teams[meIndex];
+            EventPersistentSetHandler? hs = null;
             for (int i = 0; i < Characters.Length; i++)
             {
-                Characters[(i + Characters.Length + CurrCharacter) % Characters.Length].EffectTrigger(me, sender, variable);
+                hs += Characters[(i + Characters.Length + CurrCharacter) % Characters.Length].Effects.GetPersistentHandlers(sender);
             }
-            Effects.EffectTrigger(me, sender, variable);
-            Summons.EffectTrigger(me, sender, variable);
-            Supports.EffectTrigger(me, sender, variable);
-            //TODO:弃置
+            hs += Effects.GetPersistentHandlers(sender);
+            hs += Summons.GetPersistentHandlers(sender);
+            hs += Supports.GetPersistentHandlers(sender);
+            hs?.Invoke(this, sender, variable);
+            
             if (update)
             {
                 EffectUpdate();

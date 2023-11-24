@@ -4,7 +4,6 @@ namespace TCGBase
 {
     public class DiceCostVariable : AbstractVariable
     {
-        public override string VariableName => VariableTags.DICE_COST;
         /// <summary>
         /// 支持"X黑"、"X白"、"{x1,x2...}{风，岩...}+X黑"
         /// <br/>

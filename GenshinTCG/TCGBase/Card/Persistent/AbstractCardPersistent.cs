@@ -19,7 +19,8 @@
         /// <summary>
         /// 用来标识是变种。0为默认种<br/>
         /// -1为武器 -2为圣遗物 -3为天赋 -4为被动<br/>()
-        /// 标号不同的变种会得到不同的文本<br/>
+        /// 标号%10 不同的变种视作不同的状态，会得到不同的文本<br/>
+        /// 标号/10 不同的变种视作相同的状态，用来给染色召唤物提供不同的材质
         /// <br/><b>
         /// 给一个区域重复添加同一个Persistent时，如果是variant相同并且旧的为active，就调用更新Update() ; 如果variant不同，就先删除再添加
         /// </b>
@@ -39,7 +40,8 @@
         /// 在#Api.Persistent.PersistentTriggerl#中提供一些预设，如刷新次数，清除，黄盾，紫盾等
         /// </summary>
         public PersistentTriggerDictionary TriggerDic { get; }
-        public void Update<T>(Persistent<T> persistent) where T : ICardPersistent;
+        public void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent;
+        public void OnDesperated(PlayerTeam me, int region);
     }
     public abstract class AbstractCardPersistent : AbstractCardBase, ICardPersistent, IDamageSource
     {
@@ -54,10 +56,13 @@
         public virtual bool CustomDesperated { get => false; }
         public int Variant { get; protected set; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
-        public virtual void Update<T>(Persistent<T> persistent) where T : ICardPersistent
+        public virtual void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent
         {
             persistent.Data = null;
             persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
+        }
+        public virtual void OnDesperated(PlayerTeam me, int region)
+        {
         }
     }
     public abstract class AbstractCardPersistentSummon : AbstractCardPersistent

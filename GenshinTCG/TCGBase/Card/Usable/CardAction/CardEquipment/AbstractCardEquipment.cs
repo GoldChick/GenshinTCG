@@ -14,7 +14,10 @@
         /// <summary>
         /// 默认给自己的角色装备（可修改）
         /// </summary>
-        public virtual TargetEnum[] TargetEnums => new TargetEnum[] { TargetEnum.Character_Me };
+        public virtual TargetDemand[] TargetDemands => new TargetDemand[]
+        {
+            new(TargetEnum.Character_Me,CanBeUsed)
+        };
 
         public virtual int InitialUseTimes => MaxUseTimes;
 
@@ -30,7 +33,15 @@
 
         public override bool CanBeUsed(PlayerTeam me, int[] targetArgs) => me.Characters[targetArgs[0]].Alive;
 
-        public void Update<T1>(Persistent<T1> persistent) where T1 : ICardPersistent => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
+        public void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
+
+        public virtual void OnDesperated(PlayerTeam me, int region)
+        {
+        }
+
+        protected AbstractCardEquipment()
+        {
+        }
     }
     public abstract class AbstractCardWeapon : AbstractCardEquipment
     {

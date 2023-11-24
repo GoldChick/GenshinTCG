@@ -1,8 +1,10 @@
-﻿namespace TCGBase
+﻿using TCGBase;
+
+namespace Minecraft
 {
     public class CatalyzeField : AbstractCardPersistent
     {
-        public override string NameID => "catalyze";
+        public override string NameID => "effect_catalyze";
         public override int MaxUseTimes => 2;
 
         public override PersistentTriggerDictionary TriggerDic => new()

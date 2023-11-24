@@ -6,7 +6,7 @@
         /// 输入的dv需要绝对坐标<br/>
         /// split出的healsender都为alive的角色上的
         /// </summary>
-        private List<HealSender> SplitHeal(IDamageSource ds, DamageVariable d)
+        private List<HealSender> SplitHeal(IDamageSource ds, HealVariable d)
         {
             List<HealSender> hss = new();
             if (d.TargetExcept)
@@ -17,7 +17,7 @@
                     int index = (i + CurrCharacter) % Characters.Length;
                     if (index != d.TargetIndex)
                     {
-                        hss.AddRange(SplitHeal(ds, new(d.DirectSource, d.Element, d.Damage, index)));
+                        hss.AddRange(SplitHeal(ds, new(d.DirectSource, d.Amount, index)));
                     }
                 }
             }
@@ -27,11 +27,11 @@
                 // not necessary now
 
                 //Game.EffectTrigger(new PreHurSender(1 - TeamIndex, ds, SenderTag.ElementEnchant), d);
-                hss.Add(new(TeamIndex, d));
+                hss.Add(new(TeamIndex, d.Amount, d.TargetIndex));
             }
             return hss;
         }
-        private List<HealSender> MergeHeal(IDamageSource ds, params DamageVariable[] dvs_person)
+        private List<HealSender> MergeHeal(IDamageSource ds, params HealVariable[] dvs_person)
         {
             List<HealSender> hss = new();
             foreach (var item in dvs_person)
@@ -46,9 +46,9 @@
         /// 为了偷懒，使用了DamageVariable作为了治疗<br/>
         /// 仅TargetIndex TargetExcept Damage有效
         /// </summary>
-        public void Heal(IDamageSource ds, params DamageVariable[] dvs)
+        public void Heal(IDamageSource ds, params HealVariable[] dvs)
         {
-            DamageVariable[] dvs_person = dvs.Select(p => new DamageVariable(ds.DamageSource, p.Element, p.Damage, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
+            HealVariable[] dvs_person = dvs.Select(p => new HealVariable(ds.DamageSource, p.Amount, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
             List<HealSender> hss = MergeHeal(ds, dvs_person);
             foreach (var hs in hss)
             {

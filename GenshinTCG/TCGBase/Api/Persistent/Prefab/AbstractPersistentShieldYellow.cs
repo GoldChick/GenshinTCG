@@ -15,7 +15,7 @@
                 {
                     if (p.AvailableTimes > 0 && v is DamageVariable dv && s.TeamID == me.TeamIndex)
                     {
-                        if (p is not PersonalEffect || me.CurrCharacter == p.PersistentRegion)
+                        if (p.PersistentRegion<0 || p.PersistentRegion>10 || me.CurrCharacter == p.PersistentRegion)
                         {
                             if (dv.Element >= 0)
                             {

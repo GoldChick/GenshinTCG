@@ -14,7 +14,7 @@
             base.AfterUseAction(me, targetArgs);
             var c = me.Characters[targetArgs[0]];
             var index = Skill % c.Card.Skills.Length;
-            if (c.Card.Skills[index] is not AbstractPassiveSkill)
+            if (c.Card.Skills[index] is not AbstractCardSkillPassive)
             {
                 me.Game.HandleEvent(new NetEvent(new NetAction(ActionType.UseSKill, index)), me.TeamIndex);
             }
@@ -30,7 +30,7 @@
         {
             var c = me.Characters[targetArgs[0]];
             var sks = c.Card.Skills;
-            return base.CanBeUsed(me, targetArgs) && targetArgs[0] == me.CurrCharacter && sks[Skill % sks.Length] is not AbstractPassiveSkill && c.Active;
+            return base.CanBeUsed(me, targetArgs) && targetArgs[0] == me.CurrCharacter && sks[Skill % sks.Length] is not AbstractCardSkillPassive && c.Active;
         }
     }
 }

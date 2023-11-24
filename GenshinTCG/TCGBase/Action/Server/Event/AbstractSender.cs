@@ -45,8 +45,14 @@
         /// </summary>
         ElementItemGenerate,
         DamageIncrease,
+        /// <summary>
+        /// 只会对自己的队伍调用，用于[护盾]
+        /// </summary>
         HurtDecrease,
         DamageMul,
+        /// <summary>
+        /// 只会对自己的队伍调用，用于[护体岩铠]
+        /// </summary>
         HurtMul,
         #endregion
         #region 某个Player Action结算后
@@ -62,17 +68,17 @@
         /// </summary>
         AfterAnyAction,
         /// <summary>
-        /// 受到伤害（可能有元素附着）后
+        /// 受到可能有元素附着、可能有伤害的东西后，发出Sender: HurtSender或NoDamageHurtSender
         /// </summary>
         AfterHurt,
         /// <summary>
-        /// 受到元素附着，但是没有伤害后
-        /// </summary>
-        AfterNoDamageHurt,
-        /// <summary>
-        /// 受到治疗后
+        /// 受到治疗后，发出Sender: HealSender
         /// </summary>
         AfterHeal,
+        /// <summary>
+        /// 有<b>别的</b>状态被弃置，发出Sender : PersistentDesperatedSender
+        /// </summary>
+        AfterPersistentOtherDesperated,
         #endregion
         #region 处理击倒
         /// <summary>

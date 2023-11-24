@@ -4,16 +4,16 @@
     {
         public void RequestAndHandleEvent(int teamid, int millisecondsTimeout, ActionType demand, string help_txt = "Null")
         {
-            HandleEvent(RequestEvent(teamid, millisecondsTimeout, demand, help_txt), teamid);
+            HandleEvent(RequestEvent(teamid, millisecondsTimeout, demand), teamid);
         }
         /// <summary>
         /// 向对应客户端请求一个valid的事件，或者default的事件
         /// </summary>
         /// <returns>返回的必然是有效事件</returns>
-        private NetEvent RequestEvent(int teamid, int millisecondsTimeout, ActionType demand, string help_txt = "Null")
+        private NetEvent RequestEvent(int teamid, int millisecondsTimeout, ActionType demand)
         {
             CancellationTokenSource ts = new();
-            var t = new Task<NetEvent>(() => Clients[teamid].RequestEvent(demand, help_txt), ts.Token);
+            var t = new Task<NetEvent>(() => Clients[teamid].RequestEvent(demand), ts.Token);
             Clients[1 - teamid].RequestEnemyEvent(demand);
             t.Start();
 
@@ -77,7 +77,7 @@
             t.CostDices(evt.CostArgs);
 
             AbstractSender afterEventSender = new SimpleSender(currTeam, evt.Action.Type.ToSenderTags());
-            FastActionVariable? afterEventVariable = null;
+            FastActionVariable? afterEventFastActionVariable = null;
 
             switch (evt.Action.Type)
             {
@@ -112,15 +112,14 @@
                     BroadCast(ClientUpdateCreate.CharacterUpdate.SwitchUpdate(currTeam, evt.Action.Index));
                     t.CurrCharacter = evt.Action.Index;
                     afterEventSender = new AfterSwitchSender(currTeam, initial, t.CurrCharacter);
-                    afterEventVariable = new FastActionVariable(evt.Action.Type == ActionType.SwitchForced);
+                    afterEventFastActionVariable = new FastActionVariable(evt.Action.Type == ActionType.SwitchForced);
                     break;
                 case ActionType.UseSKill:
                     var cha = t.Characters[t.CurrCharacter];
                     var ski = cha.Card.Skills[evt.Action.Index];
                     //考虑AfterUseAction中可能让角色位置改变的
                     afterEventSender = new AfterUseSkillSender(currTeam, cha, ski, evt.AdditionalTargetArgs);
-                    //TODO: talent
-                    var talent = cha.Effects.Find("equipment", "talent");
+                    var talent = cha.Effects.Find(-3);
                     if (talent != null && talent.Card is AbstractCardEquipmentOverrideSkillTalent pt && pt.Skill == evt.Action.Index)
                     {
                         pt.TalentTriggerAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
@@ -132,29 +131,30 @@
 
                     if (ski.Category == SkillCategory.Q)
                     {
+                        //TODO:考虑其他需要充能的东西
                         t.Characters[t.CurrCharacter].MP = 0;
                     }
                     else if (ski.GiveMP)
                     {
                         t.Characters[t.CurrCharacter].MP++;
                     }
-                    afterEventVariable = new FastActionVariable(false);
+                    afterEventFastActionVariable = new FastActionVariable(false);
                     break;
                 case ActionType.UseCard:
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, evt.Action.Index));
-                    t.CardsInHand.RemoveAt(evt.Action.Index);
 
                     var c = t.CardsInHand[evt.Action.Index];
                     c.AfterUseAction(t, evt.AdditionalTargetArgs);
+                    t.CardsInHand.RemoveAt(evt.Action.Index);
 
                     afterEventSender = new AfterUseCardSender(currTeam, c, evt.AdditionalTargetArgs);
-                    afterEventVariable = new FastActionVariable(true);
+                    afterEventFastActionVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Blend://调和
                     t.TryRemoveCard(evt.Action.Index);
 
                     t.AddSingleDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
-                    afterEventVariable = new FastActionVariable(true);
+                    afterEventFastActionVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Pass://空过
                     t.Pass = true;
@@ -164,8 +164,8 @@
                     throw new Exception($"玩家{currTeam}选择了没有NotImplement的Action！");
             }
             //after_xx 在这里结算是否是战斗行动
-            EffectTrigger(afterEventSender, afterEventVariable);
-            bool fight_action = !(afterEventVariable?.Fast ?? false) && CurrTeam == currTeam;
+            EffectTrigger(afterEventSender, afterEventFastActionVariable);
+            bool fight_action = !(afterEventFastActionVariable?.Fast ?? false) && CurrTeam == currTeam;
 
             if (fight_action)
             {

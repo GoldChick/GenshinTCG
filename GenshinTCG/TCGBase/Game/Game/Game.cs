@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using Minecraft;
+
+namespace TCGBase
 {
     public enum GameStage
     {
@@ -93,8 +95,8 @@
                 Teams[i].RegisterPassive();
                 Teams[i].RollCard(5);
             }
-            var t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, ActionType.ReRollCard, "reroll card"));
-            var t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, ActionType.ReRollCard, "reroll card"));
+            var t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, ActionType.ReRollCard));
+            var t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, ActionType.ReRollCard));
             t0.Start();
             t1.Start();
             Task.WaitAll(t0, t1);
@@ -102,8 +104,8 @@
             HandleEvent(t0.Result, 0);
             HandleEvent(t1.Result, 1);
 
-            t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, ActionType.SwitchForced, "Game Start"));
-            t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, ActionType.SwitchForced, "Game Start"));
+            t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, ActionType.SwitchForced));
+            t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, ActionType.SwitchForced));
             t0.Start();
             t1.Start();
             Task.WaitAll(t0, t1);
@@ -163,8 +165,8 @@
         /// </summary>
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
         {
-            Teams[CurrTeam].EffectTrigger(this, CurrTeam, sender, variable);
-            Teams[1 - CurrTeam].EffectTrigger(this, 1 - CurrTeam, sender, variable);
+            Teams[CurrTeam].EffectTrigger(sender, variable);
+            Teams[1 - CurrTeam].EffectTrigger(sender, variable);
             if (broadcast)
             {
                 BroadCastRegion();

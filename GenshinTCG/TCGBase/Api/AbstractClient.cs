@@ -6,7 +6,6 @@
     /// </summary>
     public abstract class AbstractClient
     {
-        public ClientSetting ClientSetting { get; protected set; }
         public ServerSetting ServerSetting { get; protected set; }
 
         public ReadonlyGame Game { get; protected set; }
@@ -27,13 +26,16 @@
         /// 客户端=>服务端
         /// 游戏进行中调用索取对应行动
         /// </summary>
-        public abstract NetEvent RequestEvent(ActionType demand, string help_txt = "Null");
+        public abstract NetEvent RequestEvent(ActionType demand);
         /// <summary>
         /// 表示正在向对方request需要的event
         /// </summary>
         public virtual void RequestEnemyEvent(ActionType demand) { }
-        public List<TargetEnum> GetTargetEnums(NetAction action) => Me.GetTargetEnums(action);
+        public List<TargetEnum> GetCardTargetEnums(int cardindex) => Me.GetCardTargetEnums(cardindex);
+        public List<int> GetCardNextValidTargets(int cardindex, int[] already_params) => Me.GetNextValidTargets(cardindex, already_params);
         public DiceCostVariable GetEventFinalDiceRequirement(NetAction action) => Me.GetEventFinalDiceRequirement(action);
+        public (DiceCostVariable, int) GetCardCostRequirement(int index) => (Me.GetEventFinalDiceRequirement(new(ActionType.UseCard, index)), Me.CardsInHand[index] is IEnergyConsumer ec ? ec.MPNum : 0);
+        public (DiceCostVariable, int) GetSkillCostRequirement(int index) => (Me.GetEventFinalDiceRequirement(new(ActionType.UseSKill, index)), Me.Characters[Me.CurrCharacter].Card is AbstractCardCharacter c && c.Skills[index].Category == SkillCategory.Q ? c.MaxMP : 0);
         public bool IsEventValid(NetEvent evt) => Me.IsEventValid(evt);
         /// <summary>
         /// 服务端=>客户端

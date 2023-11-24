@@ -106,10 +106,10 @@ namespace TCGBase
                     var persistentcategory = (ClientUpdateCreate.PersistentUpdateCategory)category;
                     var effects = packet.Ints[0] switch
                     {
-                        -1 => packetteam.Effects,
+                        -1 => packetteam.Effects,//-1
                         11 => packetteam.Summons,
                         12 => packetteam.Supports,
-                        _ => packetteam.Characters[packet.Ints[0]].Effects //-1
+                        _ => packetteam.Characters[packet.Ints[0]].Effects 
                     };
                     switch (persistentcategory)
                     {

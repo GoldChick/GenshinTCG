@@ -14,7 +14,7 @@
         /// 切换到的角色在队伍中的index
         /// </summary>
         public int Target { get; init; }
-        public AfterSwitchSender(int teamID, int source, int target) : base(teamID)
+        internal AfterSwitchSender(int teamID, int source, int target) : base(teamID)
         {
             Source = source;
             Target = target;

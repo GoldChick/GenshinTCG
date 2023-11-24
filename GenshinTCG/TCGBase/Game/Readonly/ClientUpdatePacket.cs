@@ -104,7 +104,11 @@
             /// <summary>
             /// int[0]: target index
             /// </summary>
-            Switch
+            Switch,
+            /// <summary>
+            /// int[0]:  index<br/> int[1]: reaction index
+            /// </summary>
+            ElementReaction
         }
         internal static class CharacterUpdate
         {
@@ -115,6 +119,7 @@
             public static ClientUpdatePacket DieUpdate(int teamID, int index) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Die, index);
             public static ClientUpdatePacket UseSkillUpdate(int teamID, int index, int skillIndex) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.UseSkill, index, skillIndex);
             public static ClientUpdatePacket SwitchUpdate(int teamID, int target) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Switch, target);
+            public static ClientUpdatePacket ElementReactionUpdate(int teamID, int index, ReactionTags reaction) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Switch, index, (int)reaction);
 
         }
         /// <summary>

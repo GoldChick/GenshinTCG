@@ -85,18 +85,17 @@ namespace TCGBase
 
             return reactiontag;
         }
-        /// <summary>
-        /// 偷懒使用了damagevariable<br/>
-        /// 只有TargetIndex TargetExcept和Element有效
-        /// </summary>
-        public void AttachElement(IDamageSource source, DamageVariable dv)
+        public void AttachElement(IDamageSource source, int element, params int[] targetRelativeIndexs)
         {
-            var cha = Characters[(dv.TargetIndex + CurrCharacter) % Characters.Length];
-            //TODO: except?
-            ReactionTags tag = GetReaction(cha.Element, dv.Element, out int nextElement);
-            int oldelement = cha.Element;
-            cha.Element = nextElement;
-            if (ReactionItemGenerate(dv.TargetIndex, tag, source, oldelement))
+            var chas = targetRelativeIndexs.Distinct().Select(i => Characters[(i + CurrCharacter) % Characters.Length]);
+            var tags = chas.Select(c => (GetReaction(c.Element, element, out int nextElement), nextElement));
+            var overload = chas.Select((c, index) => ReactionItemGenerate(c.Index, tags.ElementAt(index).Item1, source, c.Element)).Any(p => p);
+            for (int i = 0; i < chas.Count(); i++)
+            {
+                chas.ElementAt(i).Element = tags.ElementAt(i).nextElement;
+            }
+            //TODO:broadcast
+            if (overload)
             {
                 SwitchToNext();
             }

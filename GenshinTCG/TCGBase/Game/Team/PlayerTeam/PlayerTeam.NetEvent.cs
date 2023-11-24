@@ -1,34 +1,49 @@
-﻿namespace TCGBase
+﻿using System;
+
+namespace TCGBase
 {
     public partial class PlayerTeam
     {
-        internal bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Action) && IsTargetValid(evt) && IsDiceValid(evt);
+        internal bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Action) && IsAdditionalTargetValid(evt) && IsCostValid(evt);
         /// <summary>
         /// 判断action.Index是否在合适范围
         /// </summary>
         private bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
         {
-            ActionType.ReRollDice or ActionType.ReRollCard => true,
+            ActionType.ReRollDice or ActionType.ReRollCard or ActionType.Pass => true,
             ActionType.Switch or ActionType.SwitchForced =>
-                action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].HP > 0,
+                action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
             ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length && (Characters[CurrCharacter].Card.Skills[action.Index].Category != SkillCategory.Q || Characters[CurrCharacter].MP == Characters[CurrCharacter].Card.MaxMP),
-            ActionType.UseCard => action.Index < CardsInHand.Count,
-            ActionType.Blend => action.Index < CardsInHand.Count,
-            ActionType.Pass => true,
+            ActionType.UseCard or ActionType.Blend => action.Index < CardsInHand.Count,
             _ => false
         };
-        private bool IsTargetValid(NetEvent evt)
+        private bool IsAdditionalTargetValid(NetEvent evt)
         {
-            List<TargetEnum> enums = GetTargetEnums(evt.Action);
-            return enums.Count == (evt.AdditionalTargetArgs.Length)
-            && enums.Select((e, index) => IsTargetValid(e, evt.AdditionalTargetArgs[index])).All(e => e)
-            && evt.Action.Type switch
+            bool temp = true;
+            switch (evt.Action.Type)
             {
-                ActionType.UseCard => CardsInHand[evt.Action.Index].CanBeUsed(this, evt.AdditionalTargetArgs),
-                _ => true
-            };
+                case ActionType.ReRollDice:
+                    temp = Dices.Count == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs.All(i => i == 0 || i == 1);
+                    break;
+                case ActionType.ReRollCard:
+                    temp = CardsInHand.Count == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs.All(i => i == 0 || i == 1);
+                    break;
+                case ActionType.UseCard:
+                    var actioncard = CardsInHand[evt.Action.Index];
+                    if (actioncard is ITargetSelector se)
+                    {
+                        temp = se.TargetDemands.Length == evt.AdditionalTargetArgs.Length && IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs);
+                    }
+                    else if (actioncard is AbstractCardSupport && Supports.Full)
+                    {
+                        temp = 1 == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs[0] >= 0 && evt.AdditionalTargetArgs[0] < Supports.Count;
+                    }
+                    temp &= actioncard.CanBeUsed(this, evt.AdditionalTargetArgs);
+                    break;
+            }
+            return temp;
         }
-        private bool IsDiceValid(NetEvent evt)
+        private bool IsCostValid(NetEvent evt)
         {
             if (evt.Action.Type == ActionType.Blend)
             {
@@ -36,56 +51,89 @@
             }
             else
             {
-                return GetEventFinalDiceRequirement(evt.Action).EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
+                bool temp = true;
+                if (evt.Action.Type == ActionType.UseCard && CardsInHand[evt.Action.Index] is IEnergyConsumer ec)
+                {
+                    temp = evt.AdditionalTargetArgs.Length > ec.MPCharacterIndexInAdditionalTargetArgs && Characters[evt.AdditionalTargetArgs[ec.MPCharacterIndexInAdditionalTargetArgs]].MP >= ec.MPNum;
+                }
+                return temp && GetEventFinalDiceRequirement(evt.Action).EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
             }
-        }/// <summary>
-         /// 返回经过处理的targetenums们<br/>
-         /// 不过有效的处理似乎只有场地满了
-         /// </summary>
-         /// <param name="evt"></param>
-         /// <returns></returns>
-        internal List<TargetEnum> GetTargetEnums(NetAction action)
+        }
+        /// <summary>
+        /// 返回经过处理的TargetEnumForNetEvent们<br/>
+        /// </summary>
+        internal List<TargetEnum> GetCardTargetEnums(int cardindex)
         {
             List<TargetEnum> enums = new();
-            switch (action.Type)
+            var actioncard = CardsInHand[cardindex];
+            if (actioncard is ITargetSelector se)
             {
-                case ActionType.ReRollDice:
-                    for (int i = 0; i < Dices.Count; i++)
-                    {
-                        enums.Add(TargetEnum.Dice_Optional);
-                    }
-                    break;
-                case ActionType.ReRollCard:
-                    for (int i = 0; i < CardsInHand.Count; i++)
-                    {
-                        enums.Add(TargetEnum.Card_Optional);
-                    }
-                    break;
-                case ActionType.UseSKill:
-                    if (Characters[CurrCharacter].Card.Skills[action.Index] is ITargetSelector selector)
-                    {
-                        enums.AddRange(selector.TargetEnums);
-                    }
-                    break;
-                case ActionType.UseCard:
-                    var actioncard = CardsInHand[action.Index];
-                    if (actioncard is ITargetSelector se1)
-                    {
-                        enums.AddRange(se1.TargetEnums);
-                    }
-                    if (actioncard is AbstractCardSupport && Supports.Full)
-                    {
-                        enums.Add(TargetEnum.Support_Me);
-                    }
-                    break;
+                enums.AddRange(se.TargetDemands.Select(d => d.Target));
+            }
+            else if (actioncard is AbstractCardSupport && Supports.Full)
+            {
+                enums.Add(TargetEnum.Support_Me);
             }
             return enums;
         }
+        protected bool IsManyTargetDemandValid(IEnumerable<TargetDemand> demands, int[] parameters)
+        {
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                var d = demands.ElementAt(i);
+                if (parameters[i] >= 0 && parameters[i] < GetTargetEnumMaxCount(d.Target) && d.Condition(this, parameters[..(i + 1)]))
+                {
+                    continue;
+                }
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// 返回有效的使用对象们<br/>
+        /// </summary>
+        //internal List<TargetValid> GetTargetValids(NetAction action)
+        //{
+        //    List<TargetValid> enums = new();
+        //    switch (action.Type)
+        //    {
+        //        case ActionType.ReRollDice:
+        //            for (int i = 0; i < Dices.Count; i++)
+        //            {
+        //                enums.Add(new(TargetEnumEvent.Dice_Optional, Enumerable.Range(0, Dices.Count)));
+        //            }
+        //            break;
+        //        case ActionType.ReRollCard:
+        //            for (int i = 0; i < CardsInHand.Count; i++)
+        //            {
+        //                enums.Add(new(TargetEnumEvent.Card_Optional, Enumerable.Range(0, CardsInHand.Count)));
+        //            }
+        //            break;
+        //        case ActionType.UseSKill:
+        //            if (Characters[CurrCharacter].Card.Skills[action.Index] is ITargetSelector selector)
+        //            {
+        //                enums.AddRange(TargetDemandToAllTargetValid(selector.TargetDemands));
+        //            }
+        //            break;
+        //        case ActionType.UseCard:
+        //            var actioncard = CardsInHand[action.Index];
+        //            if (actioncard is ITargetSelector se1)
+        //            {
+        //                enums.AddRange(TargetDemandToAllTargetValid(se1.TargetDemands));
+        //            }
+        //            if (actioncard is AbstractCardSupport && Supports.Full)
+        //            {
+        //                enums.AddRange(TargetDemandToAllTargetValid(new TargetDemand[] { new(TargetEnumEvent.Support_Me, (me, indexs) => true) }));
+        //            }
+        //            break;
+        //    }
+        //    return enums;
+        //}
 
         /// <summary>
         /// 返回经过各种减费结算的
         /// </summary>
-        internal virtual DiceCostVariable GetEventFinalDiceRequirement(NetAction action, bool realAction = false)
+        internal DiceCostVariable GetEventFinalDiceRequirement(NetAction action, bool realAction = false)
         {
             DiceCostVariable c;
             switch (action.Type)
@@ -124,22 +172,59 @@
             }
             return c;
         }
-
         /// <summary>
-        /// 判断targetenum所需要的targetarg是否合理
+        /// 通过client调用，返回下一些可用目标
         /// </summary>
-        protected virtual bool IsTargetValid(TargetEnum e, int arg) => e switch
+        internal List<int> GetNextValidTargets(int cardindex, int[] parameters_already)
         {
-            TargetEnum.Card_Enemy => throw new Exception("PlayerTeam.IsTargetValid:Card_Enemy根本没做"),
-            TargetEnum.Card_Me => arg >= 0 && arg < CardsInHand.Count,
-            TargetEnum.Character_Enemy => arg >= 0 && arg < Enemy.Characters.Length,
-            TargetEnum.Character_Me => arg >= 0 && arg < Characters.Length,
-            TargetEnum.Dice_Optional or TargetEnum.Card_Optional => arg == 0 || arg == 1,
-            TargetEnum.Summon_Enemy => arg >= 0 && arg < Enemy.Summons.Count,
-            TargetEnum.Summon_Me => arg >= 0 && arg < Summons.Count,
-            TargetEnum.Support_Enemy => arg >= 0 && arg < Enemy.Supports.Count,
-            TargetEnum.Support_Me => arg >= 0 && arg < Supports.Count,
-            _ => false
+            List<int> ints = new();
+            if (CardsInHand[cardindex] is ITargetSelector se && se.TargetDemands.Length > parameters_already.Length)
+            {
+                var curr_d = se.TargetDemands[parameters_already.Length];
+                for (int i = 0; i < GetTargetEnumMaxCount(curr_d.Target); i++)
+                {
+                    if (curr_d.Condition(this, parameters_already.Append(i).ToArray()))
+                    {
+                        ints.Add(i);
+                    }
+                }
+            }
+            return ints;
+        }
+        internal List<TargetValid> TargetDemandToAllTargetValid(IEnumerable<TargetDemand> demand)
+            => GetTargetValid(demand).Select((ints, index) => new TargetValid(demand.ElementAt(index).Target, ints)).ToList();
+        private IEnumerable<List<int>> GetTargetValid(IEnumerable<TargetDemand> demand, int depth = 0, List<int>? curr = null)
+        {
+            curr ??= new();
+            if (depth == demand.Count())
+            {
+                yield return curr;
+                yield break;
+            }
+            var nums = Enumerable.Range(0, GetTargetEnumMaxCount(demand.ElementAt(depth).Target));
+            foreach (var d in nums)
+            {
+                curr.Add(d);
+                if (demand.ElementAt(depth).Condition.Invoke(this, curr.ToArray()))
+                {
+                    foreach (var item in GetTargetValid(demand, depth + 1, curr))
+                    {
+                        yield return item;
+                    }
+                }
+                curr.Remove(d);
+            }
+        }
+        protected int GetTargetEnumMaxCount(TargetEnum e) => e switch
+        {
+            //TargetEnum.Card_Me => CardsInHand.Count,
+            TargetEnum.Character_Enemy => Enemy.Characters.Length,
+            TargetEnum.Character_Me => Characters.Length,
+            TargetEnum.Summon_Enemy => Enemy.Summons.Count,
+            TargetEnum.Summon_Me => Summons.Count,
+            TargetEnum.Support_Enemy => Enemy.Supports.Count,
+            TargetEnum.Support_Me => Supports.Count,
+            _ => throw new Exception("PlayerTeam.NetEvent.TargetEnumToEnumrable():不支持的TargetEnum!")
         };
     }
 }

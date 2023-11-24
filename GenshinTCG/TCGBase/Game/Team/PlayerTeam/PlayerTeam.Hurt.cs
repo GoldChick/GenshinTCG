@@ -34,9 +34,9 @@
                 if (d.Element != -1)
                 {
                     Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease, initialelement), d);
-                    Game.EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtDecrease, initialelement), d);
                     Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul, initialelement), d);
-                    Game.EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtMul, initialelement), d);
+                    EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtMul, initialelement), d, false);
+                    EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtDecrease, initialelement), d, false);
                 }
 
                 hss.Add(new(TeamIndex, d, d.Reaction, d.DirectSource, ds, initialelement));
@@ -125,7 +125,7 @@
                 var cha = Characters[curr];
                 if (cha.HP == 0 && cha.Alive)
                 {
-                    Game.EffectTrigger(new DieSender(TeamIndex, curr, true), null);
+                    EffectTrigger(new DieSender(TeamIndex, curr, true), null);
                     if (cha.HP == 0)
                     {
                         cha.Predie = true;

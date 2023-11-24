@@ -9,7 +9,7 @@
         public AbstractCardAction Card { get; set; }
         public int[]? AdditionalTargetArgs { get; set; }
 
-        public AfterUseCardSender(int teamID, AbstractCardAction card, int[]? targetArgs = null) : base(teamID)
+        internal AfterUseCardSender(int teamID, AbstractCardAction card, int[]? targetArgs = null) : base(teamID)
         {
             Card = card;
             AdditionalTargetArgs = targetArgs;

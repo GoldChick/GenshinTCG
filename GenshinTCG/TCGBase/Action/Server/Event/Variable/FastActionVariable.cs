@@ -5,7 +5,6 @@
     /// </summary>
     public class FastActionVariable : AbstractVariable
     {
-        public override string VariableName => VariableTags.FAST_ACTION;
         public bool Fast { get; set; }
         public FastActionVariable(bool fast = false) 
         {

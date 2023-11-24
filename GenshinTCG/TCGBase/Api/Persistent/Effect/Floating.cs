@@ -1,5 +1,8 @@
-﻿namespace TCGBase
+﻿using TCGBase;
+
+namespace Minecraft
 {
+    //TODO: check it
     /// <summary>
     /// 游戏开始时，为双方附属
     /// </summary>

@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using TCGBase;
+
+namespace Minecraft
 {
     public class DendroCore : AbstractCardPersistent
     {
