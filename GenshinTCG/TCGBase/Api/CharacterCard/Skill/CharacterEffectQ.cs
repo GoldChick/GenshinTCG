@@ -3,7 +3,7 @@
     /// <summary>
     /// 额外召唤一个召唤物，只对对方出战角色造成伤害的skill
     /// </summary>
-    public class CharacterEffectQ : AbstractCardSkill
+    public class CharacterEffectQ : AbstractCardSkill, IEnergyConsumer
     {
         private readonly bool _doDamage;
         private readonly bool _oncharacter;
@@ -13,7 +13,7 @@
         private readonly int _damage;
         private readonly int _element;
         /// <param name="diceElement">默认Q会消耗至少3有效；如果不填，则默认为element；如果element不为某种元素，则为至少3白</param>
-        public CharacterEffectQ(ICardPersistent effect, bool onCharacter = true, int diceElement = -1, int diceNum = 3)
+        public CharacterEffectQ(ICardPersistent effect, bool onCharacter = true, int diceElement = -1, int diceNum = 3, int costmp = 2)
         {
             _effect = effect;
             _doDamage = false;
@@ -28,9 +28,10 @@
             {
                 _costs[0] = diceNum;
             }
+            CostMP = costmp;
         }
         /// <param name="diceElement">默认E会消耗3有效；如果不填，则默认为element；如果element不为某种元素，则为3白</param>
-        public CharacterEffectQ(int element, int damage, ICardPersistent effect, bool onCharacter = true, int diceElement = -1, int diceNum = 3)
+        public CharacterEffectQ(int element, int damage, ICardPersistent effect, bool onCharacter = true, int diceElement = -1, int diceNum = 3, int costmp = 2)
         {
             _effect = effect;
             _doDamage = true;
@@ -51,6 +52,7 @@
             {
                 _costs[0] = diceNum;
             }
+            CostMP = costmp;
         }
         public override int[] Costs => _costs;
 
@@ -58,6 +60,8 @@
 
         public override SkillCategory Category => SkillCategory.Q;
 
+        public int CostMP { get; }
+        public override bool GiveMP => false;
         public override void AfterUseAction(PlayerTeam me, Character c, int[] targetArgs)
         {
             if (_doDamage)

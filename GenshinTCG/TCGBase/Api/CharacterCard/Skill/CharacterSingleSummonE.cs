@@ -52,8 +52,6 @@
 
         public override bool CostSame => true;
 
-        public AbstractCardPersistentSummon PersistentPool => _summon;
-
         public override SkillCategory Category => SkillCategory.E;
 
         public override void AfterUseAction(PlayerTeam me, Character c, int[] targetArgs)
@@ -61,6 +59,10 @@
             if (_doDamage)
             {
                 me.Enemy.Hurt(new(_element, _damage, 0), this, () => me.AddSummon(_summon));
+            }
+            else
+            {
+                me.AddSummon(_summon);
             }
         }
     }

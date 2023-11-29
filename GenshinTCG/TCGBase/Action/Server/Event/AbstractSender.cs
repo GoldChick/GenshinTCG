@@ -16,6 +16,10 @@
         /// </summary>
         RoundOver,
         /// <summary>
+        /// 即将切换下一个回合，没有队伍参数，所有回合状态应该在这里更新回合数
+        /// </summary>
+        RoundStep,
+        /// <summary>
         /// 我方行动开始前，如[天狐霆雷]
         /// </summary>
         RoundMeStart,

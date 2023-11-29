@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
-namespace TCGBase
+﻿namespace TCGBase
 {
     public static class Normalize
     {
@@ -23,8 +21,5 @@ namespace TCGBase
                 if (destination[i] < 0)
                     destination[i] = 0;
         }
-
-        public static string StringNormalize(string? str, [NotNull] string defaultStr = "minecraft")
-        => string.IsNullOrEmpty(str) ? defaultStr : Regex.Replace(str, @"[^\w]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)).ToLower();
     }
 }

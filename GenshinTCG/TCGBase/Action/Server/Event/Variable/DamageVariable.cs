@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System.Xml.Linq;
+
+namespace TCGBase
 {
     public enum DamageSource
     {
@@ -44,7 +46,7 @@
         /// 此处为伤害的<b>直接、额外来源</b>，比如扩散伤害在此处视为[Addition]，但是根本来源不一定，其在一开始就被创建<br/>
         /// 根本来源<see cref="IDamageSource"/>
         /// </summary>
-        public DamageSource DirectSource { get; internal set; }
+        public DamageSource DirectSource { get; private set; }
         /// <summary>
         /// 伤害的承受者总是[角色]
         /// </summary>
@@ -54,7 +56,7 @@
         /// 在各种TCGMod中创建的伤害都应该为相对坐标<br/>
         /// 结算伤害时，会转化为绝对坐标
         /// </summary>
-        public bool TargetRelative { get; init; }
+        public bool TargetRelative { get; private set; }
         /// <summary>
         /// 为true时，改为对target以外的所有角色造成伤害<br/>
         /// </summary>
@@ -64,9 +66,13 @@
         /// </summary>
         public ReactionTags Reaction { get; internal set; }
         /// <summary>
+        /// 伤害结算过程中可能创建的子伤害，当然创建之初为相对坐标（
+        /// </summary>
+        public DamageVariable? SubDamage { get; set; }
+        /// <summary>
         /// 通过public方法创建的dmg的targetindex为相对坐标
         /// </summary>
-        public DamageVariable(int element, int basedamage, int relativeTarget=0, bool targetExcept = false)
+        public DamageVariable(int element, int basedamage, int relativeTarget = 0, bool targetExcept = false)
         {
             Element = int.Clamp(element, -1, 7);
             Damage = int.Max(0, basedamage);
@@ -78,7 +84,7 @@
         /// <summary>
         /// 通过internal方法创建的dmg的targetindex为绝对坐标
         /// </summary>
-        internal DamageVariable(DamageSource source, int element, int basedamage, int absoluteTarget, bool targetExcept = false)
+        internal DamageVariable(DamageSource source, int element, int basedamage, int absoluteTarget, bool targetExcept, DamageVariable? sub = null)
         {
             Element = int.Clamp(element, -1, 7);
             Damage = int.Max(0, basedamage);
@@ -86,6 +92,18 @@
             TargetIndex = absoluteTarget;
             TargetRelative = false;
             TargetExcept = targetExcept;
+            SubDamage = sub;
+        }
+        internal void ToAbsoluteIndex(int currCharacter, int characterLength)
+        {
+            TargetIndex = (TargetIndex + currCharacter) % characterLength;
+            TargetRelative = false;
+            SubDamage?.ToAbsoluteIndex(currCharacter, characterLength);
+        }
+        internal void ToSource(DamageSource source)
+        {
+            DirectSource = source;
+            SubDamage?.ToSource(source);
         }
     }
 }

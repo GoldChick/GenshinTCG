@@ -13,7 +13,7 @@ namespace TCGBase
             ActionType.ReRollDice or ActionType.ReRollCard or ActionType.Pass => true,
             ActionType.Switch or ActionType.SwitchForced =>
                 action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
-            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length && (Characters[CurrCharacter].Card.Skills[action.Index].Category != SkillCategory.Q || Characters[CurrCharacter].MP == Characters[CurrCharacter].Card.MaxMP),
+            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length,
             ActionType.UseCard or ActionType.Blend => action.Index < CardsInHand.Count,
             _ => false
         };
@@ -52,9 +52,34 @@ namespace TCGBase
             else
             {
                 bool temp = true;
-                if (evt.Action.Type == ActionType.UseCard && CardsInHand[evt.Action.Index] is IEnergyConsumer ec)
+                if (evt.Action.Type == ActionType.UseCard)
                 {
-                    temp = evt.AdditionalTargetArgs.Length > ec.MPCharacterIndexInAdditionalTargetArgs && Characters[evt.AdditionalTargetArgs[ec.MPCharacterIndexInAdditionalTargetArgs]].MP >= ec.MPNum;
+                    var card = CardsInHand[evt.Action.Index];
+                    if (card is IEnergyConsumerCard ec)
+                    {
+                        temp = evt.AdditionalTargetArgs.Length > ec.CostMPFromCharacterIndexInArgs && Characters[evt.AdditionalTargetArgs[ec.CostMPFromCharacterIndexInArgs]].MP >= ec.CostMP;
+                    }
+                    else if (card is AbstractCardEquipmentOverrideSkillTalent talent && evt.AdditionalTargetArgs.Length > 0)
+                    {
+                        var c = Characters[evt.AdditionalTargetArgs[0]];
+                        if (c.Card.Skills[talent.Skill % c.Card.Skills.Length].Category == SkillCategory.Q)
+                        {
+                            temp = c.MP == c.Card.MaxMP;
+                        }
+                    }
+                }
+                else if (evt.Action.Type == ActionType.UseSKill)
+                {
+                    var c = Characters[CurrCharacter];
+                    var skill = c.Card.Skills[evt.Action.Index];
+                    if (skill is IEnergyConsumer iec)
+                    {
+                        temp = c.MP >= iec.CostMP;
+                    }
+                    else if (skill.Category == SkillCategory.Q)
+                    {
+                        temp = c.MP >= c.Card.MaxMP;
+                    }
                 }
                 return temp && GetEventFinalDiceRequirement(evt.Action).EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
             }

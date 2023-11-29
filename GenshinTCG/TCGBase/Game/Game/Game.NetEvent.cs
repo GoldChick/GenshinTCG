@@ -117,10 +117,11 @@
                 case ActionType.UseSKill:
                     var cha = t.Characters[t.CurrCharacter];
                     var ski = cha.Card.Skills[evt.Action.Index];
+                    t.AddPersistent(new Effect_RoundSkillCounter(evt.Action.Index), t.CurrCharacter);
                     //考虑AfterUseAction中可能让角色位置改变的
                     afterEventSender = new AfterUseSkillSender(currTeam, cha, ski, evt.AdditionalTargetArgs);
-                    var talent = cha.Effects.Find(-3);
-                    if (talent != null && talent.Card is AbstractCardEquipmentOverrideSkillTalent pt && pt.Skill == evt.Action.Index)
+
+                    if (cha.Effects.Find(-3)?.Card is AbstractCardEquipmentOverrideSkillTalent pt && pt.Skill == evt.Action.Index)
                     {
                         pt.TalentTriggerAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
                     }
@@ -129,15 +130,19 @@
                         ski.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
                     }
 
-                    if (ski.Category == SkillCategory.Q)
+                    if (ski is IEnergyConsumer ec)
                     {
-                        //TODO:考虑其他需要充能的东西
+                        t.Characters[t.CurrCharacter].MP -= ec.CostMP;
+                    }
+                    else if (ski.Category == SkillCategory.Q)
+                    {
                         t.Characters[t.CurrCharacter].MP = 0;
                     }
                     else if (ski.GiveMP)
                     {
                         t.Characters[t.CurrCharacter].MP++;
                     }
+
                     afterEventFastActionVariable = new FastActionVariable(false);
                     break;
                 case ActionType.UseCard:
@@ -173,7 +178,6 @@
                 if (!Teams[1 - CurrTeam].Pass)
                 {
                     CurrTeam = 1 - CurrTeam;
-                    BroadCast(ClientUpdateCreate.CurrTeamUpdate(CurrTeam));
                 }
             }
             NetEventRecord record;

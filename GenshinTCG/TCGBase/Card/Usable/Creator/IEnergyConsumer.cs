@@ -6,10 +6,14 @@
     /// </summary>
     public interface IEnergyConsumer
     {
-        public int MPNum { get; }
+        public int CostMP { get; }
+    }
+    public interface IEnergyConsumerCard: IEnergyConsumer
+    {
         /// <summary>
-        /// 消耗的充能来源的角色对应的index在AdditionalArgs中的index
+        /// 消耗的充能来源的角色对应的index在AdditionalArgs中的index<br/>
+        /// 只对Card有效
         /// </summary>
-        public int MPCharacterIndexInAdditionalTargetArgs { get; }
+        public int CostMPFromCharacterIndexInArgs { get; }
     }
 }

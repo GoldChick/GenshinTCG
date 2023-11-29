@@ -21,8 +21,15 @@ namespace TCGBase
         public GameStage Stage { get; private set; }
 
         public int Round { get; private set; }
-
-        public int CurrTeam { get; protected set; }
+        private int _currteam;
+        public int CurrTeam
+        {
+            get => _currteam; protected set
+            {
+                _currteam = value;
+                BroadCast(ClientUpdateCreate.CurrTeamUpdate(value));
+            }
+        }
 
         public Game()
         {
@@ -140,16 +147,16 @@ namespace TCGBase
                     }
                     if (oldteam == CurrTeam)
                     {
-                        RequestAndHandleEvent(CurrTeam, 30000, ActionType.Trival, "Your Turn");
+                        RequestAndHandleEvent(CurrTeam, 30000, ActionType.Trival);
                     }
                 }
 
                 Stage = GameStage.Ending;
                 CurrTeam = 1 - CurrTeam;
                 EffectTrigger(new SimpleSender(SenderTag.RoundOver));
-
-                Array.ForEach(Teams, t => t.RoundEnd());
-                BroadCast(ClientUpdateCreate.CurrTeamUpdate(CurrTeam));
+                Teams[CurrTeam].RoundEnd();
+                Teams[1 - CurrTeam].RoundEnd();
+                EffectTrigger(new SimpleSender(SenderTag.RoundStep));
             }
         }
         protected void InitTeam(ServerPlayerCardSet set0, ServerPlayerCardSet set1)

@@ -12,6 +12,7 @@
         {
             List<HurtSender> hss = new();
             overload = false;
+
             if (d.TargetExcept)
             {
                 //except to non-except
@@ -20,7 +21,7 @@
                     int index = (i + CurrCharacter) % Characters.Length;
                     if (index != d.TargetIndex)
                     {
-                        DamageVariable dv_person = new(d.DirectSource, d.Element, d.Damage, index);
+                        DamageVariable dv_person = new(d.DirectSource, d.Element, d.Damage, index, false, d.SubDamage);
                         hss.AddRange(Hurt(ds, out bool one_overload, dv_person));
                         overload = overload || one_overload;
                     }
@@ -30,7 +31,7 @@
             {
                 //only one target
                 Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.ElementEnchant), d);
-                int initialelement = GetDamageReaction(d, out var mul);
+                int initialelement = GetDamageReaction(d);
                 if (d.Element != -1)
                 {
                     Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease, initialelement), d);
@@ -42,17 +43,21 @@
                 hss.Add(new(TeamIndex, d, d.Reaction, d.DirectSource, ds, initialelement));
                 //生成effect等
                 overload = ReactionItemGenerate(d.TargetIndex, d.Reaction, ds, initialelement);
+            }
 
-                if (mul != null)
+            if (d.SubDamage != null)
+            {
+                if (d.SubDamage.TargetRelative)
                 {
-                    hss.AddRange(Hurt(ds, out bool one_overload, mul));
-                    overload = overload || one_overload;
+                    d.SubDamage.ToAbsoluteIndex(CurrCharacter, Characters.Length);
                 }
+                hss.AddRange(Hurt(ds, out bool one_overload, d.SubDamage));
+                overload = overload || one_overload;
             }
             return hss;
         }
         /// <returns>经过merge的hurtsender们</returns>
-        private List<HurtSender> MultiHurt(IDamageSource ds, out bool overload, params DamageVariable[] dvs)
+        private List<HurtSender> MultiHurt(IDamageSource ds, out bool overload, IEnumerable<DamageVariable> dvs)
         {
             overload = false;
             List<HurtSender> hss = new();
@@ -101,13 +106,15 @@
             }
             if (!Characters[CurrCharacter].Alive)
             {
-                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced, "Character Died");
+                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced);
             }
         }
         /// <param name="action">伤害结算后，死亡结算前结算的东西，如[风压剑]</param>
         public void MultiHurt(DamageVariable[] dvs, IDamageSource ds, Action? action = null)
         {
-            DamageVariable[] dvs_person = dvs.Select(p => new DamageVariable(ds.DamageSource, p.Element, p.Damage, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
+            List<DamageVariable> dvs_person = dvs.ToList();
+            dvs_person.ForEach(d => { d.ToSource(ds.DamageSource); d.ToAbsoluteIndex(CurrCharacter, Characters.Length); });
+
             List<HurtSender> hss = MultiHurt(ds, out bool overload, dvs_person);
             foreach (var hs in hss)
             {
@@ -125,7 +132,7 @@
                 var cha = Characters[curr];
                 if (cha.HP == 0 && cha.Alive)
                 {
-                    EffectTrigger(new DieSender(TeamIndex, curr, true), null);
+                    EffectTrigger(new DieSender(TeamIndex, curr, true), null, false);
                     if (cha.HP == 0)
                     {
                         cha.Predie = true;
@@ -134,6 +141,8 @@
                     }
                 }
             }
+            Game.EffectUpdate();
+
             if (Characters.All(p => p.HP == 0))
             {
                 throw new GameOverException();
@@ -142,8 +151,8 @@
             if (Characters[CurrCharacter].HP == 0 && Enemy.Characters[Enemy.CurrCharacter].HP == 0)
             {
                 //双方出战角色都被击倒 进入选择角色出战
-                var t0 = new Task(() => Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced, "Die Together"));
-                var t1 = new Task(() => Game.RequestAndHandleEvent(1 - TeamIndex, 30000, ActionType.SwitchForced, "Die Together"));
+                var t0 = new Task(() => Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced));
+                var t1 = new Task(() => Game.RequestAndHandleEvent(1 - TeamIndex, 30000, ActionType.SwitchForced));
                 t0.Start();
                 t1.Start();
                 Task.WaitAll(t0, t1);

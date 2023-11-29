@@ -12,7 +12,7 @@
     public abstract class AbstractCardEquipment : AbstractCardAction, ICardPersistent, ITargetSelector, IDamageSource
     {
         /// <summary>
-        /// 默认给自己的角色装备（可修改）
+        /// 默认给自己的角色装备（可修改，但是修改了的Q天赋要实现IEnergyConsumer来额外指定消耗谁的能量，或者不消耗）
         /// </summary>
         public virtual TargetDemand[] TargetDemands => new TargetDemand[]
         {

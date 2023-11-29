@@ -13,7 +13,9 @@
     public abstract class AbstractCardSkill : IDamageSource
     {
         /// <summary>
-        /// 使用后是否加充能，默认加
+        /// 使用后是否加充能，默认加<br/>
+        /// 如果实现<see cref="IEnergyConsumer"/>，表明需要消耗充能，则会忽略此属性，不产生充能<br/>
+        /// 或者如果Category为Q，为元素爆发，也会不产生充能，并消耗所有充能
         /// </summary>
         public virtual bool GiveMP { get => true; }
         public abstract int[] Costs { get; }

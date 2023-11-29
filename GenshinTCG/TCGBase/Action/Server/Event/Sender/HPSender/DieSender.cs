@@ -3,7 +3,7 @@
     /// <summary>
     /// PRE_DIE和DIE共用
     /// </summary>
-    internal class DieSender : AbstractSender
+    public class DieSender : AbstractSender
     {
         public override string SenderName {  get; }
         public int Cha_Index { get;  }

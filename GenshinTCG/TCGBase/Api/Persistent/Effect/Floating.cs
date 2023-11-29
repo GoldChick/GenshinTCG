@@ -13,8 +13,8 @@ namespace Minecraft
         public override bool CustomDesperated => false;
 
         public override PersistentTriggerDictionary TriggerDic => new() {
-            {TCGBase.SenderTag.AfterAnyAction.ToString(), new PersistentSimpleConsume()} ,
-            {SenderTag.AfterSwitch, new PersistentSimpleUpdate()}
+            //{TCGBase.SenderTag.AfterAnyAction.ToString(), new PersistentSimpleConsume()} ,
+            //{SenderTag.AfterSwitch, new PersistentSimpleUpdate()}
              };
     }
 }

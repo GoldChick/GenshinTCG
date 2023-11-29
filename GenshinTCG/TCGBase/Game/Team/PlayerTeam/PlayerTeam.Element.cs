@@ -131,7 +131,7 @@ namespace TCGBase
             }
             return false;
         }
-        internal int GetDamageReaction(DamageVariable dvToPerson, out DamageVariable? mul)
+        internal int GetDamageReaction(DamageVariable dvToPerson)
         {
             var cha = Characters[dvToPerson.TargetIndex];
             ReactionTags tag = GetReaction(cha.Element, dvToPerson.Element, out int nextElement);
@@ -142,7 +142,7 @@ namespace TCGBase
                 ReactionTags.Bloom or ReactionTags.Burning or ReactionTags.Catalyze or ReactionTags.Crystallize => 1,
                 _ => 0
             };
-            mul = tag switch
+            dvToPerson.SubDamage = tag switch
             {
                 ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.NoWhere, -1, 1, dvToPerson.TargetIndex, true),
                 ReactionTags.Swirl => new(DamageSource.Addition, (cha.Element - 1) % 4 + 1, 1, dvToPerson.TargetIndex, true),

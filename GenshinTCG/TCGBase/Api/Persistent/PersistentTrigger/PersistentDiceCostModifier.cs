@@ -7,22 +7,33 @@
     public class PersistentDiceCostModifier<T> : PersistentTrigger where T : AbstractUseDiceSender
     {
         private readonly Func<PlayerTeam, AbstractPersistent, T, AbstractVariable?, bool> _condition;
+        private readonly Func<PlayerTeam, AbstractPersistent, T, int>? _dynamicNum;
         private readonly int _element;
         private readonly int _num;
         private readonly bool _costafteruse;
-        private readonly Action<PlayerTeam, AbstractPersistent, T, AbstractVariable?>? _action;
+        private readonly Action<PlayerTeam, AbstractPersistent, T>? _action;
         /// <summary>
-        /// 减费成功（指确认的行动之后、消耗骰子之前的判定）后是否消耗使用次数
+        /// 减费动态个骰子成功
         /// </summary>
-        /// <summary>
-        /// element:-1=杂色骰 0=有效骰 1-7=冰水火雷岩草风<br/>
-        /// num:至少1
-        /// </summary>
-        public PersistentDiceCostModifier(Func<PlayerTeam, AbstractPersistent, T, AbstractVariable?, bool> condition, int element, int num, bool costaftertrigger = true, Action<PlayerTeam, AbstractPersistent, T, AbstractVariable?>? optionalActionIfTrigger = null)
+        public PersistentDiceCostModifier(Func<PlayerTeam, AbstractPersistent, T, AbstractVariable?, bool> condition, int element, Func<PlayerTeam, AbstractPersistent, T, int>? dynamicNum, bool costaftertrigger = true, Action<PlayerTeam, AbstractPersistent, T>? optionalActionIfTrigger = null)
         {
             _condition = condition;
             _element = int.Clamp(element, -1, 7);
-            _num = int.Max(num, 1);
+            _dynamicNum = dynamicNum;
+            _num = 0;
+            _costafteruse = costaftertrigger;
+            _action = optionalActionIfTrigger;
+        }
+        /// <summary>
+        /// 减费成功（指确认的行动之后、消耗骰子之前的判定）<br/>
+        /// element:-1=杂色骰 0=有效骰 1-7=冰水火雷岩草风
+        /// </summary>
+        public PersistentDiceCostModifier(Func<PlayerTeam, AbstractPersistent, T, AbstractVariable?, bool> condition, int element, int num, bool costaftertrigger = true, Action<PlayerTeam, AbstractPersistent, T>? optionalActionIfTrigger = null)
+        {
+            _condition = condition;
+            _element = int.Clamp(element, -1, 7);
+            _num = num;
+            _dynamicNum = null;
             _costafteruse = costaftertrigger;
             _action = optionalActionIfTrigger;
         }
@@ -37,13 +48,15 @@
             {
                 if (_condition.Invoke(me, persitent, uds, variable) && variable is DiceCostVariable dcv)
                 {
+                    int num = _dynamicNum?.Invoke(me, persitent, uds) ?? _num;
+
                     bool act = true;
 
                     if (_element > 0)
                     {
-                        int a = _num;
+                        int a = num;
                         int min = int.Min(dcv.Costs[_element], a);
-                        if (min > 0)
+                        if (min >= 0)
                         {
                             a -= min;
                             dcv.Costs[_element] -= min;
@@ -62,7 +75,7 @@
                         }
                         else
                         {
-                            int a = _num;
+                            int a = num;
                             for (int i = 1; i < 8; i++)
                             {
                                 if (a == 0)
@@ -85,7 +98,7 @@
                     }
                     else if (_element == -1 && dcv.Costs[0] > 0)
                     {
-                        dcv.Costs[0] -= int.Min(dcv.Costs[0], _num);
+                        dcv.Costs[0] -= int.Min(dcv.Costs[0], num);
                     }
                     else
                     {
@@ -98,7 +111,7 @@
                         {
                             persitent.AvailableTimes--;
                         }
-                        _action?.Invoke(me, persitent, uds, variable);
+                        _action?.Invoke(me, persitent, uds);
                     }
                 }
             }
