@@ -5,7 +5,6 @@
     /// </summary>
     public class CharacterSimpleA : AbstractCardSkill
     {
-        private readonly int[] _costs;
         private readonly int _damage;
         private readonly int _element;
         /// <param name="diceElement">默认A会消耗2杂+1有效，如果不填，则默认为element</param>
@@ -13,8 +12,8 @@
         {
             _damage = int.Max(0, damage);
             _element = int.Clamp(element, -1, 7);
-            _costs = new int[8];
-            _costs[0] = 2;
+            var _costs = new int[9];
+            _costs[8] = 2;
             if (diceElement > 0 && diceElement < 8)
             {
                 _costs[diceElement] = 1;
@@ -23,12 +22,12 @@
             {
                 _costs[_element] = 1;
             }
+            Cost = new(_costs, _damage);
         }
-        public override int[] Costs => _costs;
-
-        public override bool CostSame => false;
 
         public override SkillCategory Category => SkillCategory.A;
+
+        public override CostInit Cost { get; }
 
         public override void AfterUseAction(PlayerTeam me, Character c, int[] targetArgs)
         {

@@ -3,8 +3,7 @@
     public abstract class AbstractCardSkillPassive : AbstractCardSkill, ICardPersistent
     {
         public override sealed SkillCategory Category => SkillCategory.P;
-        public override sealed int[] Costs => Array.Empty<int>();
-        public override sealed bool CostSame => false;
+        public override sealed CostInit Cost => new();
         public override sealed bool GiveMP => false;
         /// <summary>
         /// 为true时，[此技能]只会在开场时触发一次<br/>

@@ -2,10 +2,7 @@
 {
     public partial class Game
     {
-        public void RequestAndHandleEvent(int teamid, int millisecondsTimeout, ActionType demand, string help_txt = "Null")
-        {
-            HandleEvent(RequestEvent(teamid, millisecondsTimeout, demand), teamid);
-        }
+        public void RequestAndHandleEvent(int teamid, int millisecondsTimeout, ActionType demand) => HandleEvent(RequestEvent(teamid, millisecondsTimeout, demand), teamid);
         /// <summary>
         /// 向对应客户端请求一个valid的事件，或者default的事件
         /// </summary>
@@ -121,6 +118,15 @@
                     //考虑AfterUseAction中可能让角色位置改变的
                     afterEventSender = new AfterUseSkillSender(currTeam, cha, ski, evt.AdditionalTargetArgs);
 
+                    if (ski.Cost.MPCost > 0)
+                    {
+                        t.Characters[t.CurrCharacter].MP -= ski.Cost.MPCost;
+                    }
+                    else if (ski.GiveMP)
+                    {
+                        t.Characters[t.CurrCharacter].MP++;
+                    }
+
                     if (cha.Effects.Find(-3)?.Card is AbstractCardEquipmentOverrideSkillTalent pt && pt.Skill == evt.Action.Index)
                     {
                         pt.TalentTriggerAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
@@ -129,26 +135,24 @@
                     {
                         ski.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
                     }
-
-                    if (ski is IEnergyConsumer ec)
-                    {
-                        t.Characters[t.CurrCharacter].MP -= ec.CostMP;
-                    }
-                    else if (ski.Category == SkillCategory.Q)
-                    {
-                        t.Characters[t.CurrCharacter].MP = 0;
-                    }
-                    else if (ski.GiveMP)
-                    {
-                        t.Characters[t.CurrCharacter].MP++;
-                    }
-
                     afterEventFastActionVariable = new FastActionVariable(false);
                     break;
                 case ActionType.UseCard:
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, evt.Action.Index));
 
                     var c = t.CardsInHand[evt.Action.Index];
+
+                    if (c.Cost.MPCost > 0)
+                    {
+                        if (c is IEnergyConsumerCard iec && evt.AdditionalTargetArgs.Length > iec.CostMPFromCharacterIndexInArgs)
+                        {
+                            t.Characters[t.CurrCharacter].MP -= c.Cost.MPCost;
+                        }
+                        else
+                        {
+                            t.Characters[t.CurrCharacter].MP -= c.Cost.MPCost;
+                        }
+                    }
                     c.AfterUseAction(t, evt.AdditionalTargetArgs);
                     t.CardsInHand.RemoveAt(evt.Action.Index);
 

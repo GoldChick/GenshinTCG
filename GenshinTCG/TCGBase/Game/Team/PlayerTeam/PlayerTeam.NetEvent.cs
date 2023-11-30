@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public partial class PlayerTeam
     {
@@ -57,31 +55,19 @@ namespace TCGBase
                     var card = CardsInHand[evt.Action.Index];
                     if (card is IEnergyConsumerCard ec)
                     {
-                        temp = evt.AdditionalTargetArgs.Length > ec.CostMPFromCharacterIndexInArgs && Characters[evt.AdditionalTargetArgs[ec.CostMPFromCharacterIndexInArgs]].MP >= ec.CostMP;
+                        temp = evt.AdditionalTargetArgs.Length > ec.CostMPFromCharacterIndexInArgs && Characters[evt.AdditionalTargetArgs[ec.CostMPFromCharacterIndexInArgs]].MP >= card.Cost.MPCost;
                     }
-                    else if (card is AbstractCardEquipmentOverrideSkillTalent talent && evt.AdditionalTargetArgs.Length > 0)
+                    else
                     {
-                        var c = Characters[evt.AdditionalTargetArgs[0]];
-                        if (c.Card.Skills[talent.Skill % c.Card.Skills.Length].Category == SkillCategory.Q)
-                        {
-                            temp = c.MP == c.Card.MaxMP;
-                        }
+                        temp = CurrCharacter >= 0 && Characters[CurrCharacter].MP >= card.Cost.MPCost;
                     }
                 }
                 else if (evt.Action.Type == ActionType.UseSKill)
                 {
                     var c = Characters[CurrCharacter];
-                    var skill = c.Card.Skills[evt.Action.Index];
-                    if (skill is IEnergyConsumer iec)
-                    {
-                        temp = c.MP >= iec.CostMP;
-                    }
-                    else if (skill.Category == SkillCategory.Q)
-                    {
-                        temp = c.MP >= c.Card.MaxMP;
-                    }
+                    temp = c.MP >= c.Card.Skills[evt.Action.Index].Cost.MPCost;
                 }
-                return temp && GetEventFinalDiceRequirement(evt.Action).EqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
+                return temp && GetEventFinalDiceRequirement(evt.Action).DiceEqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
             }
         }
         /// <summary>
@@ -158,24 +144,24 @@ namespace TCGBase
         /// <summary>
         /// 返回经过各种减费结算的
         /// </summary>
-        internal DiceCostVariable GetEventFinalDiceRequirement(NetAction action, bool realAction = false)
+        internal CostVariable GetEventFinalDiceRequirement(NetAction action, bool realAction = false)
         {
-            DiceCostVariable c;
+            CostVariable c;
             switch (action.Type)
             {
                 case ActionType.Switch:
-                    c = new(false, 1);
+                    c = new CostInit().Void(1).ToCostInit().ToCostVariable();
                     Game.EffectTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
                     break;
                 case ActionType.UseSKill:
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
                     AbstractCardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
-                    c = new(skill.CostSame, skill.Costs);
+                    c = new(skill.Cost);
                     Game.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
                     break;
                 case ActionType.UseCard:
                     var card = CardsInHand[action.Index % CardsInHand.Count];
-                    c = new(card.CostSame, card.Costs);
+                    c = new(card.Cost);
                     Game.EffectTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
                     break;
                 case ActionType.Blend:
@@ -189,10 +175,10 @@ namespace TCGBase
                         ints[(int)Characters[CurrCharacter].Card.CharacterElement] = 1;
                     }
                     //对于Blend并不是需要该种元素，而是不能是该种元素
-                    c = new(false, ints);
+                    c = new(ints, 0);
                     break;
                 default:
-                    c = new(false);
+                    c = new();
                     break;
             }
             return c;

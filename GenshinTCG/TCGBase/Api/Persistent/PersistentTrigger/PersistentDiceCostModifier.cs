@@ -44,9 +44,11 @@
         public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             //TODO:不知道对于负数会有什么反应
+
+            //TODO: 0不再是杂色
             if (persitent.AvailableTimes > 0 && sender is T uds)
             {
-                if (_condition.Invoke(me, persitent, uds, variable) && variable is DiceCostVariable dcv)
+                if (_condition.Invoke(me, persitent, uds, variable) && variable is CostVariable dcv)
                 {
                     int num = _dynamicNum?.Invoke(me, persitent, uds) ?? _num;
 
@@ -55,21 +57,21 @@
                     if (_element > 0)
                     {
                         int a = num;
-                        int min = int.Min(dcv.Costs[_element], a);
+                        int min = int.Min(dcv.DiceCost[_element], a);
                         if (min >= 0)
                         {
                             a -= min;
-                            dcv.Costs[_element] -= min;
+                            dcv.DiceCost[_element] -= min;
                         }
-                        else if (dcv.Costs[0] == 0)
+                        else if (dcv.DiceCost[0] == 0)
                         {
                             act = false;
                         }
-                        dcv.Costs[0] -= int.Min(dcv.Costs[0], a);
+                        dcv.DiceCost[0] -= int.Min(dcv.DiceCost[0], a);
                     }
                     else if (_element == 0)
                     {
-                        if (dcv.Costs.Sum() == 0)
+                        if (dcv.DiceCost.Sum() == 0)
                         {
                             act = false;
                         }
@@ -82,23 +84,23 @@
                                 {
                                     break;
                                 }
-                                int min = int.Min(dcv.Costs[i], a);
+                                int min = int.Min(dcv.DiceCost[i], a);
                                 if (min > 0)
                                 {
                                     a -= min;
-                                    dcv.Costs[i] -= min;
+                                    dcv.DiceCost[i] -= min;
                                 }
                             }
                             if (a > 0)
                             {
-                                int min = int.Min(dcv.Costs[0], a);
-                                dcv.Costs[0] -= min;
+                                int min = int.Min(dcv.DiceCost[0], a);
+                                dcv.DiceCost[0] -= min;
                             }
                         }
                     }
-                    else if (_element == -1 && dcv.Costs[0] > 0)
+                    else if (_element == -1 && dcv.DiceCost[0] > 0)
                     {
-                        dcv.Costs[0] -= int.Min(dcv.Costs[0], num);
+                        dcv.DiceCost[0] -= int.Min(dcv.DiceCost[0], num);
                     }
                     else
                     {

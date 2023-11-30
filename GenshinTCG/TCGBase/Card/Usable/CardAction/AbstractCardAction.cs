@@ -19,8 +19,7 @@
         /// 默认为2
         /// </summary>
         public virtual int MaxNumPermitted { get => 2; }
-        public abstract int[] Costs { get; }
-        public virtual bool CostSame { get => true; }
+        public abstract CostInit Cost { get; }
 
         public abstract void AfterUseAction(PlayerTeam me, int[] targetArgs);
         /// <summary>

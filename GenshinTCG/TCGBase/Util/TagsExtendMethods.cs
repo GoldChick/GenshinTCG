@@ -8,7 +8,7 @@
         /// <br/>
         /// before_sendertag:
         /// <br/>
-        /// 若带有Variable为<see cref="DiceCostVariable"/>则说明为减费
+        /// 若带有Variable为<see cref="CostInit"/>则说明为减费
         /// 若不带有任何Variable，说明只是通知一次xx行动要开始了
         /// <br/>
         /// after_sendertag:
