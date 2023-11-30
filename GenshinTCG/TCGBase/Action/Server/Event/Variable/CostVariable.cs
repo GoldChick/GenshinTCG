@@ -47,7 +47,7 @@ namespace TCGBase
                 {
                     //杂色+某(几)种指定颜色
                     //只需要满足 总数量相同+万能能够满足缺少的元素
-                    return supply[0] >= _costs.Select((c, index) => c -= int.Min(c, supply.ElementAtOrDefault(index))).ToArray()[1..].Sum();
+                    return supply[0] >= _costs.Select((c, index) => c -= int.Min(c, supply.ElementAtOrDefault(index))).ToArray()[1..8].Sum();
                 }
             }
             return false;
