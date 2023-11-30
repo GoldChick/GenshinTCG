@@ -150,7 +150,7 @@
             switch (action.Type)
             {
                 case ActionType.Switch:
-                    c = new CostInit().Void(1).ToCostInit().ToCostVariable();
+                    c = new CostCreate().Void(1).ToCostInit().ToCostVariable();
                     Game.EffectTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
                     break;
                 case ActionType.UseSKill:

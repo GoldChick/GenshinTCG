@@ -57,7 +57,7 @@ namespace TCGBase
     /// 为卡牌、技能构建CostInit的中间态，经过处理后得到最终结果<br/><br/>
     /// 特殊规则<b>需要[同色]时，不能再需要[杂色]或[元素骰]</b>
     /// </summary>
-    public class CostMid
+    public class CostCreate
     {
         protected int[] _costs;
         /// <summary>
@@ -69,7 +69,7 @@ namespace TCGBase
         /// 对于[卡牌]，需要实现<see cref="IEnergyConsumerCard"/>，指定额外Target的中角色的index（天赋卡默认index=0），否则默认为出战角色
         /// </summary>
         public int MPCost { get; protected set; }
-        protected CostMid()
+        public CostCreate()
         {
             _costs = new int[9];
         }
@@ -84,66 +84,65 @@ namespace TCGBase
             }
             return new(_costs, MPCost);
         }
-        public CostMid Void(int num)
+        public CostCreate Void(int num)
         {
             _costs[8] += num;
             return this;
         }
-        public CostMid Same(int num)
+        public CostCreate Same(int num)
         {
             _costs[0] += num;
             return this;
         }
-        public CostMid Cryo(int num)
+        public CostCreate Cryo(int num)
         {
             _costs[1] += num;
             return this;
         }
-        public CostMid Hydro(int num)
+        public CostCreate Hydro(int num)
         {
             _costs[2] += num;
             return this;
         }
-        public CostMid Pyro(int num)
+        public CostCreate Pyro(int num)
         {
             _costs[3] += num;
             return this;
         }
-        public CostMid Electro(int num)
+        public CostCreate Electro(int num)
         {
             _costs[4] += num;
             return this;
         }
-        public CostMid Geo(int num)
+        public CostCreate Geo(int num)
         {
             _costs[5] += num;
             return this;
         }
-        public CostMid Dendro(int num)
+        public CostCreate Dendro(int num)
         {
             _costs[6] += num;
             return this;
         }
-        public CostMid Anemo(int num)
+        public CostCreate Anemo(int num)
         {
             _costs[7] += num;
             return this;
         }
-        public CostMid MP(int num)
+        public CostCreate MP(int num)
         {
             MPCost += num;
             return this;
         }
     }
     /// <summary>
-    /// 描述卡牌、技能费用的Variable，应该通过内部的方法来设定初始值<br/><br/>
+    /// 创建[费用]，<see cref="CostCreate"/><br/><br/>
     /// 特殊规则<b>需要[同色]时，不能再需要[杂色]或[元素骰]</b>
     /// </summary>
-    public class CostInit : CostMid
+    public class CostInit : CostCreate
     {
-        public CostInit() : base()
+        public CostInit():base()
         {
-
         }
         internal CostInit(int[] dicecost, int mpcost) : base()
         {
