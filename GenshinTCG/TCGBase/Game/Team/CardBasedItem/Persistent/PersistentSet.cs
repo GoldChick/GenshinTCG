@@ -76,14 +76,14 @@ namespace TCGBase
         /// <summary>
         /// 是否包含某type的子类
         /// </summary>
-        public bool Contains(Type type) => _data.Exists(e => e.Type.IsSubclassOf(type));
+        public bool Contains(Type type) => _data.Exists(e => e.Type.IsAssignableTo(type));
         public bool Contains(int variant) => _data.Exists(e => (e.Card.Variant % 10) == variant);
         public bool Contains(string nameSpace, string nameID, int variant) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && (e.Card.Variant % 10) == variant);
         public bool Contains(string nameSpace, string nameID) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
         /// <summary>
         /// 找到第一个某type的子类
         /// </summary>
-        public Persistent<T>? Find(Type type) => _data.Find(e => e.Type.IsSubclassOf(type));
+        public Persistent<T>? Find(Type type) => _data.Find(e => e.Type.IsAssignableTo(type));
         public Persistent<T>? Find(string nameSpace, string nameID) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
         public Persistent<T>? Find(string nameSpace, string nameID, int variant) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && (e.Card.Variant % 10) == variant);
         public Persistent<T>? Find(int variant) => _data.Find(e => (e.Card.Variant % 10) == variant);

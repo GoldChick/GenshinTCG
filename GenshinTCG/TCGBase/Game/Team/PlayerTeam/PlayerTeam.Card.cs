@@ -7,7 +7,7 @@
         /// </summary>
         public void RollCard(Type type)
         {
-            var col = LeftCards.Where(c => c.GetType() == type || c.GetType().IsSubclassOf(type));
+            var col = LeftCards.Where(c => c.GetType().IsAssignableTo(type));
             if (col.Any())
             {
                 var c = col.ElementAt(Random.Next(col.Count()));

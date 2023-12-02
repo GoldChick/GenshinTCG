@@ -72,6 +72,7 @@
                 var hurt = selects.Find(h => h.TargetIndex == hs.TargetIndex && h.Element == hs.Element);
                 if (hurt != null)
                 {
+                    //merge
                     hurt.Damage += hs.Damage;
                 }
                 else
@@ -138,6 +139,7 @@
                         cha.Predie = true;
                         cha.Alive = false;
                         cha.Element = 0;
+                        //TODO:清除装备牌
                     }
                 }
             }
@@ -156,6 +158,7 @@
                 t0.Start();
                 t1.Start();
                 Task.WaitAll(t0, t1);
+                //TODO:其实不该执行，应该都选择出战之后才能执行...
             }
             foreach (var hs in hss)
             {

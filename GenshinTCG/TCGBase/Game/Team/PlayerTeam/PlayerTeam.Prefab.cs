@@ -5,6 +5,11 @@ namespace TCGBase
     public partial class PlayerTeam
     {
         /// <summary>
+        /// 切换到对方的回合<br/>
+        /// 需要是在自己的回合才行<br/>
+        /// </summary>
+        public void TrySwitchSide() => Game.TrySwitchSide(TeamIndex);
+        /// <summary>
         /// 强制切换到某一个角色（绝对坐标）
         /// </summary>
         public void SwitchToIndex(int index)

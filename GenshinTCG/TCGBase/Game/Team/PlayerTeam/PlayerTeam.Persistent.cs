@@ -32,6 +32,17 @@ namespace TCGBase
             }
             Game.BroadCastRegion();
         }
+        /// <summary>
+        /// 自己检测满了没有，也不一定添加成功
+        /// </summary>
+        public void AddSupport(AbstractCardSupport support, int replace = -1)
+        {
+            if (Supports.Full)
+            {
+                Supports.TryRemoveAt(replace);
+            }
+            Supports.Add(new(support));
+        }
         public void AddSummon(AbstractCardPersistentSummon summon)
         {
             Summons.Add(new(summon));
@@ -110,7 +121,7 @@ namespace TCGBase
             hs += Summons.GetPersistentHandlers(sender);
             hs += Supports.GetPersistentHandlers(sender);
             hs?.Invoke(this, sender, variable);
-            
+
             if (update)
             {
                 EffectUpdate();

@@ -20,7 +20,7 @@
 
             for (int i = 0; i < rolling.DiceNum; i++)
                 randoms.Add(Random.Next(8));
-            
+
             AddDiceRange(randoms);
         }
 
@@ -29,10 +29,18 @@
         /// </summary>
         public int[] GetDices()
         {
-            int[] nums = { 0, 0, 0, 0, 0, 0, 0, 0 };
-            foreach (int i in Dices)
-                nums[i]++;
-            return nums;
+            int[] dices = new int[8];
+            foreach (var d in Dices)
+            {
+                dices[d]++;
+            }
+            return dices;
+        }
+        public List<(int count, int element)> GetSortedDices()
+        {
+            var dices = GetDices().Select((d, element) => (d, element)).ToList();
+            dices.Sort((d1, d2) => d2.d - d1.d + d2.element == 0 ? -100 : 0);
+            return dices;
         }
         /// <summary>
         /// 获得某一种骰子的数量
@@ -84,10 +92,17 @@
             Dices.Sort();
             Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
+        public void TryRemoveDice(int element)
+        {
+            if (Dices.Contains(element))
+            {
+                Dices.Remove(element);
+            }
+        }
         /// <summary>
         /// 数组每一位表示该元素消耗的数量
         /// </summary>
-        public void CostDices(params int[]? costs)
+        internal void CostDices(params int[]? costs)
         {
             for (int i = 0; i < costs?.Length; i++)
             {

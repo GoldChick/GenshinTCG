@@ -2,6 +2,11 @@
 
 namespace TCGBase
 {
+    /// <summary>
+    /// 描述可增减的花费<br/>
+    /// 不过请不要直接操作属性来加减dice数量，因为有特殊规则<br/>
+    /// 考虑使用<see cref="CostModifier{T}"/> where T : AbstractUseDiceSender
+    /// </summary>
     public class CostVariable : AbstractVariable
     {
         protected int[] _costs;
@@ -53,6 +58,123 @@ namespace TCGBase
             return false;
         }
     }
+    public enum DiceModifierType
+    {
+        Same,
+        Cryo,
+        Hydro,
+        Pyro,
+        Electro,
+        Geo,
+        Dendro,
+        Anemo,
+        Void
+    }
+
+    public class CostModifier
+    {
+        protected DiceModifierType Type { get; }
+        protected int Num { get; set; }
+        public CostModifier(DiceModifierType type, int num)
+        {
+            Type = type;
+            Num = num;
+        }
+        public bool Modifier(CostVariable dcv)
+        {
+            bool act = true;
+
+            if (dcv.DiceCost[0] > 0)
+            {
+                if (Type == DiceModifierType.Same || Num <= 0)
+                {
+                    dcv.DiceCost[(int)Type] -= int.Min(dcv.DiceCost[(int)Type], Num);
+                }
+                else
+                {
+                    act = false;
+                }
+            }
+            //否则 abcd颜色+x杂色
+            else if (Type == DiceModifierType.Same)
+            {
+                //[有色骰]消耗只能减少不能增加
+                if (dcv.DiceCost.Any(i => i > 0))
+                {
+                    if (Num >= 0)
+                    {
+                        int a = Num;
+                        for (int i = 1; i < 9; i++)
+                        {
+                            if (a == 0)
+                            {
+                                break;
+                            }
+                            int min = int.Min(dcv.DiceCost[i], a);
+                            a -= min;
+                            dcv.DiceCost[i] -= min;
+                        }
+                    }
+                }
+                else if (Num != 0)
+                {
+                    act = false;
+                }
+            }
+            else if (Type == DiceModifierType.Void)
+            {
+                if (dcv.DiceCost[8] > 0 || Num <= 0)
+                {
+                    dcv.DiceCost[8] -= int.Min(dcv.DiceCost[8], Num);
+                }
+                else
+                {
+                    act = false;
+                }
+            }
+            else
+            {
+                if (dcv.DiceCost[(int)Type] > 0 || Num <= 0)
+                {
+                    var min = int.Min(dcv.DiceCost[(int)Type], Num);
+                    Num -= min;
+                    dcv.DiceCost[(int)Type] -= min;
+
+                    min = int.Min(dcv.DiceCost[8], Num);
+                    Num -= min;
+                    dcv.DiceCost[8] -= min;
+                }
+                else if (dcv.DiceCost[8] > 0)
+                {
+                    var min = int.Min(dcv.DiceCost[8], Num);
+                    Num -= min;
+                    dcv.DiceCost[8] -= min;
+                }
+                else
+                {
+                    act = false;
+                }
+            }
+
+            return act;
+        }
+    }
+    public class CostModifier<T> : CostModifier where T : AbstractUseDiceSender
+    {
+        public Func<PlayerTeam, AbstractPersistent, T, int>? DynamicNum { get; }
+        public CostModifier(DiceModifierType type, int num) : base(type, num)
+        {
+        }
+        public CostModifier(DiceModifierType type, Func<PlayerTeam, AbstractPersistent, T, int>? dynamicNum) : base(type, 0)
+        {
+            DynamicNum = dynamicNum;
+        }
+        public bool Modifier(PlayerTeam me, AbstractPersistent p, T uds, CostVariable dcv)
+        {
+            Num = DynamicNum?.Invoke(me, p, uds) ?? Num;
+            return Modifier(dcv);
+        }
+    }
     /// <summary>
     /// 为卡牌、技能构建CostInit的中间态，经过处理后得到最终结果<br/><br/>
     /// 特殊规则<b>需要[同色]时，不能再需要[杂色]或[元素骰]</b>
@@ -63,12 +185,12 @@ namespace TCGBase
         /// <summary>
         /// 同色 冰水火雷岩草风 杂色
         /// </summary>
-        public int[] DiceCost { get => _costs; }
+        internal int[] DiceCost { get => _costs; }
         /// <summary>
         /// 对于[技能]，直接填写数值即可<br/>
         /// 对于[卡牌]，需要实现<see cref="IEnergyConsumerCard"/>，指定额外Target的中角色的index（天赋卡默认index=0），否则默认为出战角色
         /// </summary>
-        public int MPCost { get; protected set; }
+        internal int MPCost { get; private protected set; }
         public CostCreate()
         {
             _costs = new int[9];
@@ -141,7 +263,7 @@ namespace TCGBase
     /// </summary>
     public class CostInit : CostCreate
     {
-        public CostInit():base()
+        public CostInit() : base()
         {
         }
         internal CostInit(int[] dicecost, int mpcost) : base()
@@ -152,6 +274,14 @@ namespace TCGBase
             }
             MPCost = mpcost;
         }
+        /// <summary>
+        ///  0 同色(有同色则其他骰都为0)<br/>
+        ///  1-7 冰水火雷岩草风<br/>
+        ///  8 杂色<br/>
+        ///  9 充能<br/>
+        /// </summary>
+        /// <returns></returns>
+        public int[] GetCost() => DiceCost.Append(MPCost).ToArray();
         public CostVariable ToCostVariable() => new(this);
     }
 }

@@ -54,57 +54,47 @@
             }
             return evt;
         }
-
         ///<summary>
-        /// 这里处理的事件全都是已经确定valid的
-        /// 所以不会进行任何检测
+        /// 处理<b>VALID</b>时间，但是不涉及任何[after_xx状态触发] <br/>
+        /// 需要注意的是最好还是触发一下（
         /// </summary>
-        /// <param name="evt">已经证明是valid的NetEvent</param>
-        /// <returns>是否是战斗行动</returns>
-        public virtual void HandleEvent(NetEvent evt, int currTeam)
+        internal void EventProcess(NetEvent evt, int currTeam, out AbstractSender afterEventSender, out FastActionVariable? afterEventFastActionVariable)
         {
             var t = Teams[currTeam];
 
-            //用于给减费的persistent减少使用次数
-            t.GetEventFinalDiceRequirement(evt.Action, true);
-
-            //before_xx 通知要发生一个xx事件，[常九爷]等可以开始检测，检测到after_xx之后判定
-            EffectTrigger(new SimpleSender(currTeam, evt.Action.Type.ToSenderTags(true)));
-            //cost
-            t.CostDices(evt.CostArgs);
-
-            AbstractSender afterEventSender = new SimpleSender(currTeam, evt.Action.Type.ToSenderTags());
-            FastActionVariable? afterEventFastActionVariable = null;
+            afterEventSender = new SimpleSender(currTeam, evt.Action.Type.ToSenderTags());
+            afterEventFastActionVariable = null;
 
             switch (evt.Action.Type)
             {
                 case ActionType.ReRollDice:
-                    var dices = Teams[currTeam].Dices;
+                    var dices = t.Dices;
                     int cnt = dices.Count;
                     var dicecash = dices.Where((value, index) => evt.AdditionalTargetArgs[index] == 0).ToList();
                     dices.Clear();
                     dices.AddRange(dicecash);
                     DiceRollingVariable dvr = new(cnt - dicecash.Count);
                     EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeRerollDice), dvr);
-                    Teams[currTeam].ReRollDice(dvr);
+                    t.ReRollDice(dvr);
                     break;
                 case ActionType.ReRollCard:
-                    var cards = Teams[currTeam].CardsInHand;
+                    var cards = t.CardsInHand;
                     var cardcash0 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 0).ToList();
                     var cardcash1 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 1).ToList();
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Push, cards.Select((value, index) => evt.AdditionalTargetArgs[index] == 1 ? index : -1).Where(p => p >= 0).ToArray()));
                     cards.Clear();
                     cards.AddRange(cardcash0);
-                    var over = cardcash1.Count - Teams[currTeam].LeftCards.Count;
-                    Teams[currTeam].RollCard(cardcash1.Count);
-                    Teams[currTeam].LeftCards.AddRange(cardcash1);
+                    var over = cardcash1.Count - t.LeftCards.Count;
+                    t.RollCard(cardcash1.Count);
+                    t.LeftCards.AddRange(cardcash1);
                     if (over > 0)
                     {
-                        Teams[currTeam].RollCard(over);
+                        t.RollCard(over);
                     }
                     break;
                 case ActionType.Switch:
                 case ActionType.SwitchForced:
+                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeSwitch));
                     var initial = t.CurrCharacter;
                     BroadCast(ClientUpdateCreate.CharacterUpdate.SwitchUpdate(currTeam, evt.Action.Index));
                     t.CurrCharacter = evt.Action.Index;
@@ -112,9 +102,10 @@
                     afterEventFastActionVariable = new FastActionVariable(evt.Action.Type == ActionType.SwitchForced);
                     break;
                 case ActionType.UseSKill:
+                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseSkill));
                     var cha = t.Characters[t.CurrCharacter];
                     var ski = cha.Card.Skills[evt.Action.Index];
-                    t.AddPersistent(new Effect_RoundSkillCounter(evt.Action.Index), t.CurrCharacter);
+                    t.AddPersistent(new Effect_RoundSkillCounter(ski), t.CurrCharacter);
                     //考虑AfterUseAction中可能让角色位置改变的
                     afterEventSender = new AfterUseSkillSender(currTeam, cha, ski, evt.AdditionalTargetArgs);
 
@@ -138,6 +129,7 @@
                     afterEventFastActionVariable = new FastActionVariable(false);
                     break;
                 case ActionType.UseCard:
+                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseCard));
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, evt.Action.Index));
 
                     var c = t.CardsInHand[evt.Action.Index];
@@ -162,42 +154,70 @@
                 case ActionType.Blend://调和
                     t.TryRemoveCard(evt.Action.Index);
 
-                    t.AddSingleDice((int)Teams[currTeam].Characters[Teams[currTeam].CurrCharacter].Card.CharacterElement);
+                    t.AddSingleDice((int)t.Characters[t.CurrCharacter].Card.CharacterElement);
                     afterEventFastActionVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Pass://空过
                     t.Pass = true;
                     break;
-                default:
-                    t.Pass = true;
-                    throw new Exception($"玩家{currTeam}选择了没有NotImplement的Action！");
-            }
-            //after_xx 在这里结算是否是战斗行动
-            EffectTrigger(afterEventSender, afterEventFastActionVariable);
-            bool fight_action = !(afterEventFastActionVariable?.Fast ?? false) && CurrTeam == currTeam;
-
-            if (fight_action)
-            {
-                //必须是当前行动的队伍才有意义做出战斗行动
-                if (!Teams[1 - CurrTeam].Pass)
-                {
-                    CurrTeam = 1 - CurrTeam;
-                }
             }
             NetEventRecord record;
             if (afterEventSender is AfterUseSkillSender ss)
             {
-                record = new UseSkillRecord(currTeam, evt, fight_action, ss.Character, ss.Skill);
+                record = new UseSkillRecord(currTeam, evt, ss.Character, ss.Skill);
             }
             else if (afterEventSender is AfterUseCardSender cs)
             {
-                record = new UseCardRecord(currTeam, evt, fight_action, cs.Card);
+                record = new UseCardRecord(currTeam, evt, cs.Card);
             }
             else
             {
-                record = new(currTeam, evt, fight_action);
+                record = new(currTeam, evt);
             }
             Records.Last().Add(record);
+        }
+        ///<summary>
+        /// 这里处理的事件全都是已经确定valid的
+        /// 所以不会进行任何检测
+        /// </summary>
+        /// <param name="evt">已经证明是valid的NetEvent</param>
+        /// <returns>是否是战斗行动</returns>
+        internal void HandleEvent(NetEvent evt, int currTeam)
+        {
+            var t = Teams[currTeam];
+            //用于给减费的persistent减少使用次数
+            t.GetEventFinalDiceRequirement(evt.Action, true);
+            //扣除骰子，所以判断重击应该在这之前的 UseDiceFrom<T>Sender
+            t.CostDices(evt.CostArgs);
+
+            //before_xx 通知要发生一个xx事件，[常九爷]等可以开始检测，检测到after_xx之后判定; 发生在process里
+            EventProcess(evt, currTeam, out var afterEventSender, out var afterEventFastActionVariable);
+            //after_xx 并在这里结算是否是战斗行动
+            EffectTrigger(afterEventSender, afterEventFastActionVariable);
+
+            //必须是当前行动的队伍才有意义做出[战斗行动]并且发生[队伍交替]
+            if (!(afterEventFastActionVariable?.Fast ?? false) && CurrTeam == currTeam && !Teams[1 - CurrTeam].Pass)
+            {
+                CurrTeam = 1 - CurrTeam;
+            }
+        }
+        public void TryHandleEvent(NetEvent evt, int teamid)
+        {
+            if (Teams[teamid].IsEventValid(evt))
+            {
+                HandleEvent(evt, teamid);
+            }
+        }
+        /// <summary>
+        /// teamme: 发起换边请求的队伍<br/>
+        /// 当这个队伍是当前队伍时，才能有效切换
+        /// </summary>
+        internal void TrySwitchSide(int teamme)
+        {
+            if (CurrTeam == teamme)
+            {
+                CurrTeam = 1 - teamme;
+            }
         }
     }
 }

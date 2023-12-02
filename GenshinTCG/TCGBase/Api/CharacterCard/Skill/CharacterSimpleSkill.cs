@@ -30,7 +30,7 @@
         {
             if (_dvs.Any())
             {
-                me.MultiHurt(_dvs, this, () => _skillaction?.Invoke(this, me, c, targetArgs));
+                me.Enemy.MultiHurt(_dvs, this, () => _skillaction?.Invoke(this, me, c, targetArgs));
             }
             else
             {

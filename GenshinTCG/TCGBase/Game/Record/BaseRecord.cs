@@ -11,11 +11,9 @@
     public record NetEventRecord : BaseRecord
     {
         public NetEvent NetEvent { get; }
-        public bool FightAction { get; }
-        public NetEventRecord(int teamid, NetEvent netEvent, bool fightaction) : base(teamid)
+        public NetEventRecord(int teamid, NetEvent netEvent) : base(teamid)
         {
             NetEvent = netEvent;
-            FightAction = fightaction;
         }
     }
     public record UseSkillRecord : NetEventRecord
@@ -23,7 +21,7 @@
         public Character Character { get; }
         public AbstractCardSkill Skill { get; }
 
-        public UseSkillRecord(int teamid, NetEvent netEvent, bool fightAction, Character character, AbstractCardSkill skill) : base(teamid, netEvent, fightAction)
+        public UseSkillRecord(int teamid, NetEvent netEvent, Character character, AbstractCardSkill skill) : base(teamid, netEvent)
         {
             Character = character;
             Skill = skill;
@@ -32,7 +30,7 @@
     public record UseCardRecord : NetEventRecord
     {
         public AbstractCardAction Card { get; }
-        public UseCardRecord(int teamid, NetEvent netEvent, bool fightAction, AbstractCardAction card) : base(teamid, netEvent, fightAction)
+        public UseCardRecord(int teamid, NetEvent netEvent, AbstractCardAction card) : base(teamid, netEvent)
         {
             Card = card;
         }

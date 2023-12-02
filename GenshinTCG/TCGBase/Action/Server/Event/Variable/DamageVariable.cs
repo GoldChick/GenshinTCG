@@ -25,12 +25,23 @@ namespace TCGBase
     {
         private int _damage;
         private int _element;
-        public int Damage { get => _damage; set => _damage = int.Max(0, value); }
-
+        /// <summary>
+        /// [物理伤害]和[元素伤害]能够增加
+        /// </summary>
+        public int Damage
+        {
+            get => _damage; set
+            {
+                if (_element >= 0)
+                {
+                    _damage = int.Max(0, value);
+                }
+            }
+        }
         /// <summary>
         /// 0-7 物理 冰水火雷岩草风<br/>
         /// -1 穿透<br/>
-        /// 只有物理伤害能被附魔
+        /// 只有[物理伤害]能被附魔
         /// </summary>
         public int Element
         {

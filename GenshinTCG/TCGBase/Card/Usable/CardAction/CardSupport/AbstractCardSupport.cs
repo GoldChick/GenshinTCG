@@ -10,21 +10,15 @@
     /// <summary>
     /// 支援牌，打出后在支援区生成某种东西
     /// </summary>
-    public abstract class AbstractCardSupport : AbstractCardAction, ICardPersistent
+    public abstract class AbstractCardSupport : AbstractCardAction, ICardPersistent, IDamageSource
     {
         public abstract SupportTags SupportTag { get; }
+        public DamageSource DamageSource => DamageSource.NoWhere;
         /// <summary>
         /// default do nothing for Support Card<br/>
         /// 或许可以用来加个入场效果
         /// </summary>
-        public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
-        {
-            if (me.Supports.Full)
-            {
-                me.Supports.TryRemoveAt(targetArgs[0]);
-            }
-            me.Supports.Add(new Persistent<ICardPersistent>(this));
-        }
+        public override void AfterUseAction(PlayerTeam me, int[] targetArgs) => me.AddSupport(this, targetArgs.ElementAtOrDefault(0));
 
         public int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
