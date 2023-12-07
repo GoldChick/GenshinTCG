@@ -1,5 +1,8 @@
 ﻿namespace TCGBase
 {
+    /// <summary>
+    /// default add effect to team
+    /// </summary>
     public abstract class AbstractCardEventSingleEffect : AbstractCardEvent, ICardPersistent
     {
         public virtual int InitialUseTimes => MaxUseTimes;

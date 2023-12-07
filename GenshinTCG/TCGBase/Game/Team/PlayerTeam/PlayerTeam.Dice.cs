@@ -2,6 +2,7 @@
 {
     public partial class PlayerTeam
     {
+        public int DiceNum => Dices.Count;
         public void RollDice(DiceRollingVariable rolling)
         {
             //TODO:是对的吗
@@ -23,7 +24,6 @@
 
             AddDiceRange(randoms);
         }
-
         /// <summary>
         /// 返回int[8],第i个成员表示第i种元素骰的数量(默认顺序:万能 冰水火雷岩草风)
         /// </summary>
@@ -39,7 +39,8 @@
         public List<(int count, int element)> GetSortedDices()
         {
             var dices = GetDices().Select((d, element) => (d, element)).ToList();
-            dices.Sort((d1, d2) => d2.d - d1.d + d2.element == 0 ? -100 : 0);
+            //by the way, 这高能==的优先级怎么是这样的
+            dices.Sort((d1, d2) => d2.d - d1.d + (d2.element == 0 ? -100 : 0));
             return dices;
         }
         /// <summary>

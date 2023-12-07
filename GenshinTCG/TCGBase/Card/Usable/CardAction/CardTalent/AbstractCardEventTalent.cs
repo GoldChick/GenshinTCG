@@ -6,7 +6,7 @@
         /// <summary>
         /// 不指定namespace，则和本身（这张卡）的一样
         /// </summary>
-        public virtual string? CharacterNamespace { get => null; }
+        public virtual string CharacterNamespace { get => Namespace; }
         /// <summary>
         /// 所属的角色的nameid
         /// </summary>
@@ -27,7 +27,7 @@
                 me.Game.HandleEvent(new NetEvent(new NetAction(ActionType.UseSKill, index)), me.TeamIndex);
             }
         }
-        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(c => $"{CharacterNamespace ?? Namespace}:{CharacterNameID}".Equals($"{c.Namespace}:{c.NameID}"));
+        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(c => $"{CharacterNamespace}:{CharacterNameID}".Equals($"{c.Namespace}:{c.NameID}"));
         /// <summary>
         /// 默认实现为需要是本人的天赋，并且为被动技能/该角色在前台
         /// </summary>
@@ -36,7 +36,7 @@
             var c = me.Characters[targetArgs[0]];
             var card = c.Card;
             var sks = card.Skills;
-            return c.Alive && $"{CharacterNamespace ?? Namespace}:{CharacterNameID}".Equals($"{card.Namespace}:{card.NameID}") && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length] is AbstractCardSkillPassive);
+            return c.Alive && $"{CharacterNamespace}:{CharacterNameID}".Equals($"{card.Namespace}:{card.NameID}") && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length] is AbstractCardSkillPassive);
         }
     }
 }

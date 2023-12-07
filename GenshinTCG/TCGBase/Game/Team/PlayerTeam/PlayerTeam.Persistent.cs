@@ -11,6 +11,30 @@ namespace TCGBase
             es.Add(new(equip));
         }
         /// <summary>
+        /// 根据对于[出战角色]的[相对坐标]来附着[角色状态]
+        /// </summary>
+        public void AddPersonalEffect(ICardPersistent per, int relativeIndex = 0, AbstractPersistent? bind = null)
+        {
+            Character cha = Characters[(relativeIndex + CurrCharacter) % Characters.Length];
+            if (cha.Alive)
+            {
+                cha.Effects.Add(new(per, bind));
+            }
+        }
+        /// <summary>
+        /// 根据对于[出战角色]的[相对坐标]来附着[已经存在]的[角色状态]<br/>
+        /// <b>如果没有特殊需要，请使用上面的方法创建新的persistent</b>
+        /// </summary>
+        public void AddPersonalEffect(Persistent<ICardPersistent> per, int relativeIndex = 0)
+        {
+            Character cha = Characters[(relativeIndex + CurrCharacter) % Characters.Length];
+            if (cha.Alive)
+            {
+                cha.Effects.Add(per);
+            }
+        }
+        public void AddTeamEffect(ICardPersistent per, AbstractPersistent? bind = null) => Effects.Add(new(per, bind));
+        /// <summary>
         /// 增加一个effect
         /// IEffect -1:团队 0-(characters.count-1):个人
         /// </summary>
@@ -43,11 +67,11 @@ namespace TCGBase
             }
             Supports.Add(new(support));
         }
-        public void AddSummon(AbstractCardPersistentSummon summon)
+        public void AddSummon(AbstractCardSummon summon)
         {
             Summons.Add(new(summon));
         }
-        public void AddSummon(int num, params AbstractCardPersistentSummon[] summons)
+        public void AddSummon(int num, params AbstractCardSummon[] summons)
         {
             var left = summons.Where(s => !Summons.Contains(s.GetType())).ToList();
             while (num > 0)

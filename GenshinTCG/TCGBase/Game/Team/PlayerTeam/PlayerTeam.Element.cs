@@ -116,16 +116,16 @@ namespace TCGBase
                     case ReactionTags.Overloaded:
                         return targetindex == CurrCharacter;
                     case ReactionTags.Crystallize:
-                        Enemy.AddPersistent(new Crystal());
+                        Enemy.AddPersistent(new Effect_Crystal());
                         break;
                     case ReactionTags.Bloom:
-                        Enemy.AddPersistent(new DendroCore());
+                        Enemy.AddPersistent(new Effect_DendroCore());
                         break;
                     case ReactionTags.Burning:
-                        Enemy.AddSummon(new Burning());
+                        Enemy.AddSummon(new Summon_Burning());
                         break;
                     case ReactionTags.Catalyze:
-                        Enemy.AddPersistent(new CatalyzeField());
+                        Enemy.AddPersistent(new Effect_CatalyzeField());
                         break;
                 }
             }

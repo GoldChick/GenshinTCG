@@ -87,6 +87,29 @@ namespace TCGBase
         public Persistent<T>? Find(string nameSpace, string nameID) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
         public Persistent<T>? Find(string nameSpace, string nameID, int variant) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && (e.Card.Variant % 10) == variant);
         public Persistent<T>? Find(int variant) => _data.Find(e => (e.Card.Variant % 10) == variant);
+        /// <summary>
+        /// 找到第一个某type的子类
+        /// </summary>
+        public bool TryFind(Type type, [NotNullWhen(true)] out Persistent<T>? p)
+        {
+            p = _data.Find(e => e.Type.IsAssignableTo(type));
+            return p != null;
+        }
+        public bool TryFind(string nameSpace, string nameID, [NotNullWhen(true)] out Persistent<T>? p)
+        {
+            p = _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
+            return p != null;
+        }
+        public bool TryFind(string nameSpace, string nameID, int variant, [NotNullWhen(true)] out Persistent<T>? p)
+        {
+            p = _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && (e.Card.Variant % 10) == variant);
+            return p != null;
+        }
+        public bool TryFind(int variant, [NotNullWhen(true)] out Persistent<T>? p)
+        {
+            p = _data.Find(e => (e.Card.Variant % 10) == variant);
+            return p != null;
+        }
         internal EventPersistentSetHandler? GetPersistentHandlers(AbstractSender sender)
         {
             EventPersistentSetHandler? acs = null;
@@ -111,8 +134,15 @@ namespace TCGBase
                 Update();
             }
         }
-        internal void TryRemove(Type type) => TryRemoveAt(_data.FindIndex(e => e.Type == type));
-        internal void TryRemove(int variant) => TryRemoveAt(_data.FindIndex(e => (e.Card.Variant % 10) == variant));
+        /// <summary>
+        /// 尝试清除第一个指定Type及其子类
+        /// </summary>
+        /// <param name="type"></param>
+        public void TryRemove(Type type) => TryRemoveAt(_data.FindIndex(e => e.Type.IsAssignableTo(type)));
+        /// <summary>
+        /// 用来清理第一个[武器][装备][圣遗物]
+        /// </summary>
+        public void TryRemove(int variant) => TryRemoveAt(_data.FindIndex(e => (e.Card.Variant % 10) == variant));
         internal void Clear(Func<Persistent<T>, bool>? condition = null)
         {
             for (int i = _data.Count - 1; i >= 0; i--)

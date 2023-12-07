@@ -28,7 +28,7 @@ namespace TCGBase
         /// </summary>
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
-            me.AddPersistent(new Full(), targetArgs[0]);
+            me.AddPersistent(new Effect_Full(), targetArgs[0]);
             if (MaxUseTimes > 0)
             {
                 me.AddPersistent(this, targetArgs[0]);

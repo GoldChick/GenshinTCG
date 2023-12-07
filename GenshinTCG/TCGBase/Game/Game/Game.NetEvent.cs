@@ -175,6 +175,9 @@
                 record = new(currTeam, evt);
             }
             Records.Last().Add(record);
+
+            t.SpecialState.HeavyStrike = t.DiceNum % 2 == 0;
+            t.SpecialState.DownStrike = evt.Action.Type == ActionType.SwitchForced || evt.Action.Type == ActionType.Switch;
         }
         ///<summary>
         /// 这里处理的事件全都是已经确定valid的

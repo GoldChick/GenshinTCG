@@ -3,7 +3,7 @@
     /// <summary>
     /// 可染色(借助于persistent.Data)召唤物，默认元素为风，且[我方]引发扩散反应后染色(离场前限一次)
     /// </summary>
-    public abstract class AbstractColorfulSummon : AbstractCardPersistentSummon
+    public abstract class AbstractColorfulSummon : AbstractCardSummon
     {
         public override int MaxUseTimes { get; }
         protected readonly int _damage;

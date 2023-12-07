@@ -19,9 +19,9 @@
 
 
         public PersistentSet<ICardPersistent> Supports { get; init; }
-        public PersistentSet<AbstractCardPersistentSummon> Summons { get; init; }
+        public PersistentSet<AbstractCardSummon> Summons { get; init; }
         public PersistentSet<ICardPersistent> Effects { get; init; }
-
+        public TeamSpecialState SpecialState { get; init; }
         public int CurrCharacter { get; internal set; }
         public bool Pass { get; internal set; }
 
@@ -34,6 +34,8 @@
         /// <param name="cardset">经过处理确认正确的卡组</param>
         public PlayerTeam(ServerPlayerCardSet cardset, Game game, int index)
         {
+            SpecialState = new();
+
             Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i, this)).ToArray();
             LeftCards = cardset.ActionCards.ToList();
             CardsInHand = new();

@@ -4,7 +4,7 @@
     /// 能被双岩增加的abstract护盾类<br/>
     /// 添加黄盾请考虑继承此类
     /// </summary>
-    public abstract class AbstractPersistentShieldYellow : AbstractCardPersistentSummon
+    public abstract class AbstractPersistentShieldYellow : AbstractCardEffect
     {
         public override sealed PersistentTriggerDictionary TriggerDic { get; }
         public AbstractPersistentShieldYellow(Action<PlayerTeam, AbstractPersistent, AbstractSender, AbstractVariable?>? aftertriggeraction = null)

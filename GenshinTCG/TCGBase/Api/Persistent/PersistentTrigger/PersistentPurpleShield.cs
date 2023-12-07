@@ -3,7 +3,7 @@
     /// <summary>
     /// only for Hurt_Add
     /// </summary>
-    public class PersistentPurpleShield : PersistentTrigger
+    public class PersistentPurpleShield : IPersistentTrigger
     {
         private readonly int _line;
         private readonly int _protect;
@@ -14,7 +14,10 @@
             _line = line;
             _protect = protectNum;
         }
-        public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+
+        public SenderTag Tag => SenderTag.HurtDecrease;
+
+        public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             if (persitent.AvailableTimes > 0 && variable is DamageVariable dv && sender.TeamID == me.TeamIndex)
             {

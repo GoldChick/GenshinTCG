@@ -4,7 +4,7 @@
     /// only for Element_Enchant<br/>
     /// 元素附魔，如果是a，则变为b
     /// </summary>
-    public class PersistentElementEnchant : PersistentTrigger
+    public class PersistentElementEnchant : IPersistentTrigger
     {
         private int _toward;
         private int _adddamage;
@@ -19,7 +19,9 @@
             _decreaseAfterUse = decreaseAfterUse;
             _adddamage = adddamageIfEnchant;
         }
-        public override void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+
+        public SenderTag Tag => SenderTag.ElementEnchant;
+        public  void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             if (persitent.AvailableTimes > 0 && variable is DamageVariable dv && sender.TeamID == me.TeamIndex)
             {

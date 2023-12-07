@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 namespace TCGBase
 {
     /// <param name="me">team me</param>
@@ -15,12 +16,14 @@ namespace TCGBase
         }
         public PersistentTriggerDictionary(Dictionary<string, EventPersistentHandler> dic) { _dic = dic; }
         public void Add(SenderTag st, EventPersistentHandler h) => Add(st.ToString(), h);
-        public void Add(SenderTag st, PersistentTrigger t) => Add(st.ToString(), t);
+        public void Add(SenderTag st, IPersistentTrigger t) => Add(st.ToString(), t);
         public void Add(string st, EventPersistentHandler h) => _dic.Add(st, h);
-        public void Add(string st, PersistentTrigger t) => _dic.Add(st, t.Trigger);
+        public void Add(string st, IPersistentTrigger t) => _dic.Add(st, t.Trigger);
+        public void Add(IPersistentTrigger t) => _dic.Add(t.Tag.ToString(), t.Trigger);
+
         public EventPersistentHandler this[string st] => _dic[st];
-        public bool TryGetValue(string st,out EventPersistentHandler? h) => _dic.TryGetValue(st, out h);
-        public bool ContainsKey(string st)=> _dic.ContainsKey(st);
+        public bool TryGetValue(string st, [NotNullWhen(returnValue: true)] out EventPersistentHandler? h) => _dic.TryGetValue(st, out h);
+        public bool ContainsKey(string st) => _dic.ContainsKey(st);
         public IEnumerator<KeyValuePair<string, EventPersistentHandler>> GetEnumerator() => _dic.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _dic.GetEnumerator();
     }

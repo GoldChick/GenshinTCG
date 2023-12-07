@@ -6,7 +6,7 @@
     /// 
     /// AbstractCardSkill: skill ; int: used times (this round)
     /// </summary>
-    public class Effect_RoundSkillCounter : AbstractCardPersistent
+    public class Effect_RoundSkillCounter : AbstractCardEffect
     {
         public AbstractCardSkill Skill { get; }
         public Effect_RoundSkillCounter(AbstractCardSkill skill)

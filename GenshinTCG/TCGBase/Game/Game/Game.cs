@@ -140,11 +140,6 @@ namespace TCGBase
                     //wait until both pass
                     var oldteam = CurrTeam;
                     EffectTrigger(new SimpleSender(CurrTeam, SenderTag.RoundMeStart));
-                    var t = Teams[CurrTeam];
-                    if (t.Dices.Count % 2 == 0)
-                    {
-                        t.AddPersistent(new HeavyAttack());
-                    }
                     if (oldteam == CurrTeam)
                     {
                         RequestAndHandleEvent(CurrTeam, 30000, ActionType.Trival);

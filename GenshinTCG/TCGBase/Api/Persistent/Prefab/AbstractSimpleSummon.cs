@@ -3,7 +3,7 @@
     /// <summary>
     /// 结束时，对对方出战角色造成a点b元素伤害，初始可用次数=最大可用次数=c<br/>
     /// </summary>
-    public abstract class AbstractSimpleSummon : AbstractCardPersistentSummon
+    public abstract class AbstractSimpleSummon : AbstractCardSummon
     {
         public override int MaxUseTimes { get; }
         private readonly int _damage;

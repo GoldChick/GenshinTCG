@@ -1,7 +1,6 @@
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\bin\Release\net7.0\GenshinTCG.deps.json
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\bin\Release\net7.0\GenshinTCG.dll
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\bin\Release\net7.0\GenshinTCG.pdb
-C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.csproj.AssemblyReference.cache
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.AssemblyInfoInputs.cache
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.AssemblyInfo.cs
@@ -10,3 +9,4 @@ C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.dll
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\refint\GenshinTCG.dll
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.pdb
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\ref\GenshinTCG.dll
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.sourcelink.json
