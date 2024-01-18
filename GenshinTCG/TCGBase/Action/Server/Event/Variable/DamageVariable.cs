@@ -1,25 +1,19 @@
-﻿using System.Xml.Linq;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
+    /// <summary>
+    /// 用于表明是直接伤害，还是间接伤害(扩散、超导等引发的额外伤害)
+    /// </summary>
     public enum DamageSource
     {
-        /// <summary>
-        /// 来源不明的伤害，如[轰轰火花]\[愚人众伏兵]
-        /// </summary>
-        NoWhere,
+        Direct,
+        Indirect,
+
         /// <summary>
         /// 直接由[对方]的[角色技能]造成的伤害
+        /// 
+        /// TODO: remove it
         /// </summary>
         Character,
-        /// <summary>
-        /// 直接由[对方]的[召唤物]造成的伤害
-        /// </summary>
-        Summon,
-        /// <summary>
-        /// [对方]造成的，但不属于以上两种来源的伤害，如[扩散]\[旋火轮]
-        /// </summary>
-        Addition
     }
     public class DamageVariable : AbstractVariable
     {
@@ -77,20 +71,22 @@ namespace TCGBase
         /// </summary>
         public ReactionTags Reaction { get; internal set; }
         /// <summary>
-        /// 伤害结算过程中可能创建的子伤害，当然创建之初为相对坐标（
+        /// 伤害结算过程中可能创建的子伤害，当然创建之初为相对坐标（<br/>
+        /// 伤害将以宽度优先的方式，从主伤害开始结算，
         /// </summary>
-        public DamageVariable? SubDamage { get; set; }
+        internal DamageVariable? SubDamage { get; set; }
         /// <summary>
         /// 通过public方法创建的dmg的targetindex为相对坐标
         /// </summary>
-        public DamageVariable(int element, int basedamage, int relativeTarget = 0, bool targetExcept = false)
+        public DamageVariable(int element, int basedamage, int relativeTarget = 0, bool targetExcept = false, DamageVariable? subdamage = null)
         {
             Element = int.Clamp(element, -1, 7);
             Damage = int.Max(0, basedamage);
-            DirectSource = DamageSource.NoWhere;
+            DirectSource = DamageSource.Direct;
             TargetIndex = relativeTarget;
             TargetRelative = true;
             TargetExcept = targetExcept;
+            SubDamage = subdamage;
         }
         /// <summary>
         /// 通过internal方法创建的dmg的targetindex为绝对坐标
@@ -105,16 +101,19 @@ namespace TCGBase
             TargetExcept = targetExcept;
             SubDamage = sub;
         }
+        /// <summary>
+        /// 如果是相对坐标，就改成绝对坐标
+        /// </summary>
+        /// <param name="currCharacter"></param>
+        /// <param name="characterLength"></param>
         internal void ToAbsoluteIndex(int currCharacter, int characterLength)
         {
-            TargetIndex = (TargetIndex + currCharacter) % characterLength;
-            TargetRelative = false;
-            SubDamage?.ToAbsoluteIndex(currCharacter, characterLength);
-        }
-        internal void ToSource(DamageSource source)
-        {
-            DirectSource = source;
-            SubDamage?.ToSource(source);
+            if (TargetRelative)
+            {
+                TargetIndex = (TargetIndex + currCharacter) % characterLength;
+                TargetRelative = false;
+                SubDamage?.ToAbsoluteIndex(currCharacter, characterLength);
+            }
         }
     }
 }

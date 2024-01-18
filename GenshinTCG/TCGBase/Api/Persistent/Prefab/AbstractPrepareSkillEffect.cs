@@ -6,10 +6,6 @@
     public abstract class AbstractPrepareSkillEffect : AbstractCardPersistent
     {
         public override int MaxUseTimes => 1;
-        /// <summary>
-        /// 这个没用，不要在hurt()中使用this，而应该去找指定的技能
-        /// </summary>
-        public sealed override DamageSource DamageSource => DamageSource.Character;
 
         private readonly Action<PlayerTeam, AbstractPersistent, AbstractSender, AbstractVariable?> _action;
         /// <summary>

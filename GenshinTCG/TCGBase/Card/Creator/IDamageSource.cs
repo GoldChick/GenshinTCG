@@ -1,11 +1,10 @@
 ﻿namespace TCGBase
 {
     /// <summary>
-    /// 表示伤害的根本来源，现在包括:
-    /// Skill Summon Effect
+    /// 表示可作为伤害的来源的东西:
     /// </summary>
     public interface IDamageSource
     {
-        public DamageSource DamageSource { get; }
+        public SkillCategory DamageSkillCategory { get; }
     }
 }

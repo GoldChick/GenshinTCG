@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractCardEventTalent : AbstractCardEvent, ICardTalent
+    public abstract class AbstractCardEventTalent : AbstractCardEventNoEffect, ICardTalent
     {
         public override string NameID => $"talent_{CharacterNameID}";
         /// <summary>
@@ -27,7 +27,7 @@
                 me.Game.HandleEvent(new NetEvent(new NetAction(ActionType.UseSKill, index)), me.TeamIndex);
             }
         }
-        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(c => $"{CharacterNamespace}:{CharacterNameID}".Equals($"{c.Namespace}:{c.NameID}"));
+        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(((ICardTalent)this).IsFor);
         /// <summary>
         /// 默认实现为需要是本人的天赋，并且为被动技能/该角色在前台
         /// </summary>
@@ -36,7 +36,7 @@
             var c = me.Characters[targetArgs[0]];
             var card = c.Card;
             var sks = card.Skills;
-            return c.Alive && $"{CharacterNamespace}:{CharacterNameID}".Equals($"{card.Namespace}:{card.NameID}") && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length] is AbstractCardSkillPassive);
+            return c.Alive && ((ICardTalent)this).IsFor(card) && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length] is AbstractCardSkillPassive);
         }
     }
 }

@@ -23,7 +23,7 @@
         public HealVariable(int baseamount, int relativeTarget = 0, bool targetExcept = false)
         {
             Amount = int.Max(0, baseamount);
-            DirectSource = DamageSource.NoWhere;
+            DirectSource = DamageSource.Direct;
             TargetIndex = relativeTarget;
             TargetExcept = targetExcept;
         }

@@ -53,7 +53,7 @@
     {
         public override ICardPersistent CardBase => Card;
         public T Card { get; protected set; }
-        protected Persistent(Type type, T card, AbstractPersistent? bind = null) : base(type)
+        private protected Persistent(Type type, T card, AbstractPersistent? bind = null) : base(type)
         {
             Card = card;
             AvailableTimes = card.InitialUseTimes;

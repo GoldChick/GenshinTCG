@@ -90,7 +90,7 @@ namespace TCGBase
         {
             var chas = targetRelativeIndexs.Distinct().Select(i => Characters[(i + CurrCharacter) % Characters.Length]);
             var tags = chas.Select(c => (GetReaction(c.Element, element, out int nextElement), nextElement));
-            var overload = chas.Select((c, index) => ReactionItemGenerate(c.Index, tags.ElementAt(index).Item1, source, c.Element)).Any(p => p);
+            var overload = chas.Select((c, index) => ReactionItemGenerate(c.PersistentRegion, tags.ElementAt(index).Item1, source, c.Element)).Any(p => p);
             for (int i = 0; i < chas.Count(); i++)
             {
                 chas.ElementAt(i).Element = tags.ElementAt(i).nextElement;
@@ -145,8 +145,8 @@ namespace TCGBase
             };
             dvToPerson.SubDamage = tag switch
             {
-                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.NoWhere, -1, 1, dvToPerson.TargetIndex, true),
-                ReactionTags.Swirl => new(DamageSource.Addition, (cha.Element - 1) % 4 + 1, 1, dvToPerson.TargetIndex, true),
+                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.Indirect, -1, 1, dvToPerson.TargetIndex, true),
+                ReactionTags.Swirl => new(DamageSource.Indirect, (cha.Element - 1) % 4 + 1, 1, dvToPerson.TargetIndex, true),
                 _ => null
             };
             int initialelement = cha.Element;

@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public partial class PlayerTeam
     {
@@ -132,21 +130,60 @@ namespace TCGBase
             Supports.Update();
         }
         /// <summary>
-        /// effect按照 (curr->curr+1->curr+2->...)角色=>团队=>召唤物=>支援区 的顺序结算
+        /// 用于被击倒角色的受到伤害结算
         /// </summary>
-        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
+        private void EffectTriggerWithoutCharacter(EventPersistentSetHandler? hs, AbstractSender sender, AbstractVariable? variable = null)
         {
-            EventPersistentSetHandler? hs = null;
-            for (int i = 0; i < Characters.Length; i++)
-            {
-                hs += Characters[(i + Characters.Length + CurrCharacter) % Characters.Length].Effects.GetPersistentHandlers(sender);
-            }
             hs += Effects.GetPersistentHandlers(sender);
             hs += Summons.GetPersistentHandlers(sender);
             hs += Supports.GetPersistentHandlers(sender);
             hs?.Invoke(this, sender, variable);
-
             EffectUpdate();
+        }
+        /// <summary>
+        /// effect按照 (curr->curr+1->curr+2->...)角色=>团队=>召唤物=>支援区 的顺序结算<br/>
+        /// 如果不是diesender，就在结算前进行免于被击倒的结算<br/>
+        /// <b>NOTE:"免于被击倒的结算"一定要在结算前消耗次数</b>
+        /// </summary>
+        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
+        {
+            if (sender is not DieSender)
+            {
+                for (int i = 0; i < Characters.Length; i++)
+                {
+                    int curr = (i + CurrCharacter) % Characters.Length;
+                    var cha = Characters[curr];
+                    if (cha.HP == 0 && cha.Alive)
+                    {
+                        EffectTrigger(new DieSender(TeamIndex, curr, true));
+                        if (cha.HP == 0)
+                        {
+                            cha.Predie = true;
+                            cha.Alive = false;
+                            cha.Element = 0;
+                            //TODO:alive的处理
+                        }
+                    }
+                }
+                if (Characters.All(p => p.HP == 0))
+                {
+                    throw new GameOverException();
+                }
+            }
+            EventPersistentSetHandler? hs = null;
+            for (int i = 0; i < Characters.Length; i++)
+            {
+                var c = Characters[(i + Characters.Length + CurrCharacter) % Characters.Length];
+                if (c.Alive)
+                {
+                    if (c.Card.TriggerDic.TryGetValue(sender.SenderName, out var h))
+                    {
+                        hs += (me, s, v) => h.Trigger(me, c, s, v);
+                    }
+                    hs += c.Effects.GetPersistentHandlers(sender);
+                }
+            }
+            EffectTriggerWithoutCharacter(hs, sender, variable);
         }
     }
 }

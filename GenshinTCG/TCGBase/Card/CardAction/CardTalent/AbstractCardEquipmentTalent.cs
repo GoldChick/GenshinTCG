@@ -20,15 +20,14 @@
         /// 所属的角色的nameid<br/>
         /// </summary>
         public abstract string CharacterNameID { get; }
-        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(c => $"{CharacterNamespace}:{CharacterNameID}".Equals($"{c.Namespace}:{c.NameID}"));
+        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(((ICardTalent)this).IsFor);
         /// <summary>
         /// 默认实现为需要是本人的天赋，并且为被动技能/该角色在前台
         /// </summary>
         public override bool CanBeUsed(PlayerTeam me, int[] targetArgs)
         {
             var c = me.Characters[targetArgs[0]];
-            var card = c.Card;
-            return c.Alive && $"{CharacterNamespace}:{CharacterNameID}".Equals($"{card.Namespace}:{card.NameID}");
+            return c.Alive && ((ICardTalent)this).IsFor(c.Card);
         }
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {

@@ -30,6 +30,7 @@ namespace TCGBase
             }
             public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable) => _h.Invoke(me, persitent, sender, variable);
         }
+        internal void Add(SenderTagInner st, EventPersistentHandler h) => Add(new PersistentTrigger(st.ToString(), h));
         public void Add(SenderTag st, EventPersistentHandler h) => Add(new PersistentTrigger(st.ToString(), h));
         public void Add(string st, EventPersistentHandler h) => _dic.Add(st, new PersistentTrigger(st, h));
         public void Add(IPersistentTrigger t) => _dic.Add(t.Tag.ToString(), t);
@@ -37,6 +38,7 @@ namespace TCGBase
         public IPersistentTrigger this[string st] => _dic[st];
         public bool TryGetValue(string st, [NotNullWhen(returnValue: true)] out IPersistentTrigger? h) => _dic.TryGetValue(st, out h);
         public bool ContainsKey(string st) => _dic.ContainsKey(st);
+        public bool Any() => _dic.Any();
         public IEnumerator<KeyValuePair<string, IPersistentTrigger>> GetEnumerator() => _dic.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _dic.GetEnumerator();
     }

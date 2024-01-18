@@ -20,8 +20,6 @@
         };
         public override bool CustomDesperated => true;
 
-        public override DamageSource DamageSource => DamageSource.Addition;
-
         public override bool CanBeUsed(PlayerTeam me, int[] targetArgs) => me.Characters[targetArgs[0]].Alive;
 
         public override void Update<T>(PlayerTeam me, Persistent<T> persistent) => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);

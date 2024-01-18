@@ -44,16 +44,12 @@
     }
     public abstract class AbstractCardPersistent : AbstractCardBase, ICardPersistent, IDamageSource
     {
-        /// <summary>
-        /// 默认为addition，表示[旋火轮]等上来不直接来源于角色，但仍然是我方造成的伤害<br/>
-        /// 可以继承改为nowhere，表示自己莫名其妙受到的伤害，以此实现不能被对方增伤加伤
-        /// </summary>
-        public abstract DamageSource DamageSource { get; }
         public virtual int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
         public virtual bool CustomDesperated { get => false; }
         public int Variant { get; protected set; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
+        public SkillCategory DamageSkillCategory => SkillCategory.P;
         private protected AbstractCardPersistent()
         {
         }
@@ -65,10 +61,8 @@
     }
     public abstract class AbstractCardSummon : AbstractCardPersistent
     {
-        public sealed override DamageSource DamageSource => DamageSource.Summon;
     }
     public abstract class AbstractCardEffect : AbstractCardPersistent
     {
-        public sealed override DamageSource DamageSource => DamageSource.NoWhere;
     }
 }

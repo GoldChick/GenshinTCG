@@ -8,19 +8,17 @@ namespace TCGBase
         {
             new(TargetEnum.Character_Me,CanBeUsed)
         };
-
         /// <summary>
-        /// 如果可用次数<b>大于0</b>，代表有状态可使用，于是额外附加状态<br/>
-        /// 否则没有额外状态
+        /// 如果triggerdic中有内容，就添加状态给制定目标
         /// </summary>
-        //public abstract int MaxUseTimes { get; }
+        public override PersistentTriggerDictionary TriggerDic => new();
         /// <summary>
         /// 默认实现 [附属饱腹]+[附属AfterEatEffect](如果有)
         /// </summary>
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
             me.AddPersistent(new Effect_Full(), targetArgs[0]);
-            if (MaxUseTimes > 0)
+            if (TriggerDic.Any())
             {
                 me.AddPersistent(this, targetArgs[0]);
             }
@@ -32,15 +30,6 @@ namespace TCGBase
         {
             var c = me.Characters[targetArgs[0]];
             return c.Alive && !c.Effects.Contains("minecraft", "full");
-        }
-
-        public void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent
-        {
-            persistent.Data = null;
-            persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
-        }
-        public virtual void OnDesperated(PlayerTeam me, int region)
-        {
         }
     }
 }

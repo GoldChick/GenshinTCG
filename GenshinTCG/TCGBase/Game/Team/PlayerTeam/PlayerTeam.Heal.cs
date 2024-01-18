@@ -48,7 +48,7 @@
         /// </summary>
         public void Heal(IDamageSource ds, params HealVariable[] dvs)
         {
-            HealVariable[] dvs_person = dvs.Select(p => new HealVariable(ds.DamageSource, p.Amount, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
+            HealVariable[] dvs_person = dvs.Select(p => new HealVariable(p.Amount, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
             List<HealSender> hss = MergeHeal(ds, dvs_person);
             foreach (var hs in hss)
             {

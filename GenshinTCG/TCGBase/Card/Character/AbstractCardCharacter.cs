@@ -21,7 +21,7 @@
         /// </summary>
         QQ
     }
-    public abstract class AbstractCardCharacter : AbstractCardBase
+    public abstract class AbstractCardCharacter : AbstractCardPersistent
     {
         public virtual int MaxHP { get => 10; }
         public virtual int MaxMP { get => 2; }
@@ -41,13 +41,43 @@
         /// 角色卡的户口
         /// </summary>
         public abstract CharacterRegion CharacterRegion { get; }
-
+        public override sealed bool CustomDesperated => true;
+        public override sealed int MaxUseTimes => 0;
+        public override PersistentTriggerDictionary TriggerDic { get; }
         /// <summary>
         /// 角色卡的(生物)种类，默认为HUMAN人类
         /// </summary>
         public virtual CharacterCategory CharacterCategory { get => CharacterCategory.Human; }
-        protected AbstractCardCharacter() 
+        protected AbstractCardCharacter()
         {
+            TriggerDic = new()
+            {
+                { SenderTag.RoundStart,(me,p,s,v)=>
+                {
+                    if (p is Character c)
+                    {
+                        c.SkillCounter.Clear();
+                    }
+                }
+                },
+                { SenderTagInner.Use,(me,p,s,v)=>
+                { 
+                    //TODO: use index
+                }
+                },
+                { SenderTag.AfterUseSkill,(me,p,s,v)=>
+                {
+                    if (me.TeamIndex==s.TeamID && s is AfterUseSkillSender ss)
+                    {
+                        int idx=Array.FindIndex(Skills,s=>s==ss.Skill);
+                        if (idx>=0 && p is Character c)
+                        {
+                            c.SkillCounter[idx]++;
+                        }
+                    }
+                }
+                }
+            };
             Tags.Add(CharacterElement.ToTags());
             Tags.Add(WeaponCategory.ToTags());
             Tags.Add(CharacterRegion.ToTags());
