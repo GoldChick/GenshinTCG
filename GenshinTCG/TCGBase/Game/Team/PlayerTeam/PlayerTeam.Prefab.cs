@@ -5,47 +5,47 @@ namespace TCGBase
     public partial class PlayerTeam
     {
         /// <summary>
-        /// 切换到对方的回合<br/>
-        /// 需要是在自己的回合才行<br/>
+        /// 尝试使用出战角色技能，自动clamp，注意：不是行动
         /// </summary>
-        public void TrySwitchSide() => Game.TrySwitchSide(TeamIndex);
-        /// <summary>
-        /// 强制切换到某一个角色（绝对坐标）
-        /// </summary>
-        public void SwitchToIndex(int index)
+        public void TryUseSkill(int skill)
         {
-            if (Characters[index].Alive)
+            if (CurrCharacter >= 0)
             {
-                Game.HandleEvent(new NetEvent(new NetAction(ActionType.SwitchForced, index)), TeamIndex);
+                var c = Characters[CurrCharacter];
+                if (c.Alive && c.Active && c.Card.Skills.Length > 0)
+                {
+                    skill = int.Clamp(skill, 0, c.Card.Skills.Length);
+                    Game.TryProcessEvent(new NetEvent(new NetAction(ActionType.UseSKill, skill)), TeamIndex);
+                }
             }
         }
         /// <summary>
-        /// 强制切换下一个角色(没有则不切换)
+        /// 强制切换到某一个[活]角色（可指定绝对坐标或相对坐标，默认绝对）<br/>
+        /// 注意：不是行动
         /// </summary>
-        public void SwitchToNext()
+        public void TrySwitchToIndex(int index, bool relative = false)
         {
-            Debug.Assert(Characters.Any(c => c.Alive), "AbstractTeam.Prefab.SwitchToNext():所有角色都已经死亡!");
+            Debug.Assert(Characters.Any(c => c.Alive), "AbstractTeam.Prefab.SwitchToIndex():所有角色都已经死亡!");
             int curr = CurrCharacter;
-            do
+            if (relative)
             {
-                curr = (curr + 1) % Characters.Length;
+                if (index % Characters.Length != 0)
+                {
+                    do
+                    {
+                        curr = (curr + index) % Characters.Length;
+                    }
+                    while (!Characters[curr].Alive);
+                }
             }
-            while (!Characters[curr].Alive);
-            Game.HandleEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
-        }
-        /// <summary>
-        /// 强制切换上一个角色(没有则不切换)
-        /// </summary>
-        public void SwitchToLast()
-        {
-            Debug.Assert(Characters.Any(c => c.Alive), "AbstractTeam.Prefab.SwitchToLast():所有角色都已经死亡!");
-            int curr = CurrCharacter;
-            do
+            else
             {
-                curr = (curr - 1) % Characters.Length;
+                curr = index;
             }
-            while (!Characters[curr].Alive);
-            Game.HandleEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
+            if (Characters[curr].Alive)
+            {
+                Game.TryProcessEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
+            }
         }
         /// <summary>
         /// 找到失去生命值最多的角色，默认值为当前出战
@@ -56,14 +56,14 @@ namespace TCGBase
             int currhplost = 0;
             for (int i = 0; i < Characters.Length; i++)
             {
-                if (i!=except)
+                if (i != except)
                 {
                     var c = Characters[i];
                     int hplost = c.Card.MaxHP - c.HP;
                     if (hplost > currhplost)
                     {
                         currid = i;
-                        currhplost=hplost;
+                        currhplost = hplost;
                     }
                 }
             }

@@ -17,12 +17,19 @@
         /// </summary>
         public Character[] Characters { get; protected init; }
 
-
         public PersistentSet<ICardPersistent> Supports { get; init; }
         public PersistentSet<AbstractCardSummon> Summons { get; init; }
         public PersistentSet<ICardPersistent> Effects { get; init; }
         public TeamSpecialState SpecialState { get; init; }
-        public int CurrCharacter { get; internal set; }
+        private int _currcharacter;
+        public int CurrCharacter
+        {
+            get => _currcharacter; internal set
+            {
+                _currcharacter = value;
+                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.SwitchUpdate(TeamIndex, value));
+            }
+        }
         public bool Pass { get; internal set; }
 
         internal List<AbstractCardAction> LeftCards { get; init; }
@@ -34,24 +41,22 @@
         /// <param name="cardset">经过处理确认正确的卡组</param>
         public PlayerTeam(ServerPlayerCardSet cardset, Game game, int index)
         {
+            Game = game;
+            TeamIndex = index;
             SpecialState = new();
 
             Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i, this)).ToArray();
             LeftCards = cardset.ActionCards.ToList();
             CardsInHand = new();
 
-            CurrCharacter = -1;
             Pass = false;
             Dices = new();
             Random = new();//TODO:SEED
-
             Summons = new(11, this, 4, false);
             Supports = new(12, this, 4, true);
             Effects = new(-1, this);
 
-            Game = game;
-            TeamIndex = index;
-            ;
+            _currcharacter = -1;
         }
         /// <summary>
         /// 回合开始时最先调用，如扔骰子等

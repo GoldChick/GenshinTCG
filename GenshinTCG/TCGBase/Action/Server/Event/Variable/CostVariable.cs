@@ -75,6 +75,11 @@ namespace TCGBase
     {
         protected DiceModifierType Type { get; }
         protected int Num { get; set; }
+        /// <summary>
+        /// 骰子原始消耗只有 [同色] | [杂色+一些指定颜色] 两种搭配<br/><br/>
+        /// 切换角色视为杂色骰<br/><br/>
+        /// 通过[Same]对[有色骰]消耗进行更改时，只能减少不能增加<br/>
+        /// </summary>
         public CostModifier(DiceModifierType type, int num)
         {
             Type = type;
@@ -98,7 +103,7 @@ namespace TCGBase
             //否则 abcd颜色+x杂色
             else if (Type == DiceModifierType.Same)
             {
-                //[有色骰]消耗只能减少不能增加
+                //通过[Same]对[有色骰]消耗进行更改，只能减少不能增加
                 if (dcv.DiceCost.Any(i => i > 0))
                 {
                     if (Num >= 0)

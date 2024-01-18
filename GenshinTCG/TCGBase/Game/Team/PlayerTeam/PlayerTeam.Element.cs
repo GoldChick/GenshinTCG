@@ -1,4 +1,5 @@
 ﻿using Minecraft;
+using System.Diagnostics;
 
 namespace TCGBase
 {
@@ -97,7 +98,7 @@ namespace TCGBase
             //TODO:broadcast
             if (overload)
             {
-                SwitchToNext();
+                TrySwitchToIndex(1, true);
             }
         }
         internal bool ReactionItemGenerate(int targetindex, ReactionTags tag, IDamageSource source, int initialelement)

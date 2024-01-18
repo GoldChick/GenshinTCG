@@ -55,7 +55,7 @@
         public virtual bool CustomDesperated { get => false; }
         public int Variant { get; protected set; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
-        protected AbstractCardPersistent()
+        private protected AbstractCardPersistent()
         {
         }
         public virtual void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent

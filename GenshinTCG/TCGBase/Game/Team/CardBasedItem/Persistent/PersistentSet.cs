@@ -147,22 +147,26 @@ namespace TCGBase
         {
             for (int i = _data.Count - 1; i >= 0; i--)
             {
-                var d = _data[i];
-                if (condition == null || condition(d))
+                //TODO:似乎有很多的循环调用，比如Ondesperated
+                if (_data.Count>i)
                 {
-                    d.Childs.ForEach(c => c.Active = false);
-                    d.Father?.Childs.Remove(d);
-                    Unregister(i, d);
+                    var d = _data[i];
+                    if (condition == null || condition(d))
+                    {
+                        d.Childs.ForEach(c => c.Active = false);
+                        d.Father?.Childs.Remove(d);
+                        Unregister(i, d);
+                    }
                 }
             }
         }
-        private EventPersistentSetHandler PersistentHandelerConvert(Persistent<T> p, EventPersistentHandler value)
+        private EventPersistentSetHandler PersistentHandelerConvert(Persistent<T> p, IPersistentTrigger value)
         {
             return (me, s, v) =>
             {
                 if (p.Active)
                 {
-                    value.Invoke(me, p, s, v);
+                    value.Trigger(me, p, s, v);
                     int index = _data.FindIndex(d => d == p);
                     if (index >= 0)
                     {

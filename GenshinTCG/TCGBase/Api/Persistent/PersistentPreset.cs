@@ -2,7 +2,7 @@
 {
     public interface IPersistentTrigger
     {
-        public SenderTag Tag { get; }
+        public string Tag { get; }
         /// <summary>
         /// 结算或预结算一次效果<br/>
         /// 次数的减少需要自己维护
@@ -20,7 +20,7 @@
     {
         public class AfterUseSkill : IPersistentTrigger
         {
-            public SenderTag Tag => SenderTag.AfterUseSkill;
+            public string Tag => SenderTag.AfterUseSkill.ToString();
             public Action<PlayerTeam, AbstractPersistent, AfterUseSkillSender, AbstractVariable?> _action;
             public AfterUseSkill(Action<PlayerTeam, AbstractPersistent, AfterUseSkillSender, AbstractVariable?> action)
             {
@@ -37,7 +37,7 @@
         }
         public class AfterSkillTriggered : IPersistentTrigger
         {
-            public SenderTag Tag => SenderTag.AfterUseSkill;
+            public string Tag => SenderTag.AfterUseSkill.ToString();
             public Action<PlayerTeam, AbstractPersistent, AfterUseSkillSender, AbstractVariable?> _action;
             public AfterSkillTriggered(Action<PlayerTeam, AbstractPersistent, AfterUseSkillSender, AbstractVariable?> action)
             {
@@ -56,7 +56,7 @@
         /// </summary>
         public class RoundStepReset : IPersistentTrigger
         {
-            public SenderTag Tag => SenderTag.RoundStep;
+            public string Tag => SenderTag.RoundStep.ToString();
 
             public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
             {
@@ -65,7 +65,7 @@
         }
         public class RoundStepDecrease : IPersistentTrigger
         {
-            public SenderTag Tag => SenderTag.RoundStep;
+            public string Tag => SenderTag.RoundStep.ToString();
 
             public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
             {
@@ -74,7 +74,7 @@
         }
         public class WeaponDamageIncrease : IPersistentTrigger
         {
-            public SenderTag Tag => SenderTag.DamageIncrease;
+            public string Tag => SenderTag.DamageIncrease.ToString();
             private readonly int _increase;
             private readonly Func<PlayerTeam, AbstractPersistent, PreHurtSender, DamageVariable, int>? _dynamic_increase;
             public WeaponDamageIncrease(int increase = 1)
@@ -96,36 +96,37 @@
                 }
             }
         }
-        /// <summary>
-        /// 默认_condition为me.TeamIndex == sender.TeamID<br/>
-        /// 默认_costmodifier为1个有效骰<br/>
-        /// 默认_aftertriggeraction为-1可用次数
-        /// </summary>
         public class UseDiceModifier<T> : IPersistentTrigger where T : AbstractUseDiceSender
         {
-            public SenderTag Tag { get; }
+            public string Tag { get; }
             private readonly Func<PlayerTeam, AbstractPersistent, T, CostVariable, bool> _condition;
             private readonly Func<PlayerTeam, AbstractPersistent, T, CostVariable, CostModifier> _costmodifier;
-            private readonly Action<PlayerTeam, AbstractPersistent, T, CostVariable> _aftertriggeraction;
+            private readonly Action<PlayerTeam, AbstractPersistent, T, CostVariable>? _aftertriggeraction;
             /// <summary>
             /// 默认_condition为me.TeamIndex == sender.TeamID<br/>
             /// 默认_costmodifier为1个有效骰<br/>
-            /// 默认_aftertriggeraction为-1可用次数<br/>
+            /// 默认_aftertriggeraction为空<br/>
+            /// <b>默认decreaseAvailabletimes为true，即成功触发后会减少次数（在aftertriggeraction之后）</b>
             /// <b>如果想使用默认值，就置为null</b>
             /// </summary>
             public UseDiceModifier(Func<PlayerTeam, AbstractPersistent, T, CostVariable, bool>? condition = null,
                 Func<PlayerTeam, AbstractPersistent, T, CostVariable, CostModifier>? costmodifier = null,
-                Action<PlayerTeam, AbstractPersistent, T, CostVariable>? aftertriggeraction = null)
+                Action<PlayerTeam, AbstractPersistent, T, CostVariable>? aftertriggeraction = null,
+                bool decreaseAvailabletimes = true)
             {
                 Tag = typeof(T).Name.ToString() switch
                 {
-                    "UseDiceFromCardSender" => SenderTag.UseDiceFromCard,
-                    "UseDiceFromSkillSender" => SenderTag.UseDiceFromSkill,
-                    _ => SenderTag.UseDiceFromSwitch
+                    "UseDiceFromCardSender" => SenderTag.UseDiceFromCard.ToString(),
+                    "UseDiceFromSkillSender" => SenderTag.UseDiceFromSkill.ToString(),
+                    _ => SenderTag.UseDiceFromSwitch.ToString()
                 };
                 _condition = condition ?? ((me, p, s, v) => me.TeamIndex == s.TeamID);
                 _costmodifier = costmodifier ?? ((me, p, s, v) => new CostModifier(DiceModifierType.Same, 1));
-                _aftertriggeraction = aftertriggeraction ?? ((me, p, s, v) => p.AvailableTimes--);
+                _aftertriggeraction = aftertriggeraction;
+                if (decreaseAvailabletimes)
+                {
+                    _aftertriggeraction += ((me, p, s, v) => p.AvailableTimes--);
+                }
             }
             public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
             {
@@ -133,10 +134,68 @@
                 {
                     if (_condition.Invoke(me, persitent, ss, cv) && _costmodifier.Invoke(me, persitent, ss, cv).Modifier(cv))
                     {
-                        _aftertriggeraction.Invoke(me, persitent, ss, cv);
+                        _aftertriggeraction?.Invoke(me, persitent, ss, cv);
                     }
                 }
             }
         }
+        public class HurtDecreasePurpleShield : IPersistentTrigger
+        {
+            private readonly int _line;
+            private readonly int _protect;
+            /// <summary>
+            /// 我方[附属该[角色状态]的角色]/[角色]受到伤害时，如果此状态可用次数>0，并且受到不为穿透伤害就触发；一次只能消耗一个次数<br/><br/>
+            /// line 结算到此buff，伤害大于等于_line时才触发<br/>
+            /// protectNum 一次抵挡多少伤害
+            ///  </summary>
+            public HurtDecreasePurpleShield(int protectNum, int line = 1)
+            {
+                _line = line;
+                _protect = protectNum;
+            }
+
+            public string Tag => SenderTag.HurtDecrease.ToString();
+
+            public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            {
+                if (persitent.AvailableTimes > 0 && sender.TeamID == me.TeamIndex && variable is DamageVariable dv)
+                {
+                    if (persitent.PersistentRegion < 0 || persitent.PersistentRegion > 10 || me.CurrCharacter == persitent.PersistentRegion)
+                    {
+                        if (dv.Element >= 0 && dv.Damage >= _line)
+                        {
+                            dv.Damage -= _protect;
+                            persitent.AvailableTimes--;
+                        }
+                    }
+                }
+            }
+        }
+        public class HurtDecreaseYellowShield : IPersistentTrigger
+        {
+            public HurtDecreaseYellowShield()
+            {
+            }
+
+            public string Tag => SenderTag.HurtDecrease.ToString();
+
+            public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+            {
+                if (persitent.AvailableTimes > 0 && sender.TeamID == me.TeamIndex && variable is DamageVariable dv)
+                {
+                    if (persitent.PersistentRegion < 0 || persitent.PersistentRegion > 10 || me.CurrCharacter == persitent.PersistentRegion)
+                    {
+                        if (dv.Element >= 0)
+                        {
+                            int a = int.Min(persitent.AvailableTimes, dv.Damage);
+                            dv.Damage -= a;
+                            persitent.AvailableTimes -= a;
+                            //aftertriggeraction?.Invoke(me, p, s, v);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

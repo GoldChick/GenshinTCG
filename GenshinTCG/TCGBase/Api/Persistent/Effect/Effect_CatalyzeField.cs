@@ -9,7 +9,7 @@ namespace Minecraft
 
         public override PersistentTriggerDictionary TriggerDic => new()
         {
-            {SenderTag.DamageIncrease.ToString(),(me,p,s,v)=>
+            {SenderTag.DamageIncrease,(me,p,s,v)=>
                 {
                     if (s.TeamID==me.TeamIndex && v is DamageVariable dv && dv.TargetIndex==me.CurrCharacter && (dv.Element==4||dv.Element==6))
                     {

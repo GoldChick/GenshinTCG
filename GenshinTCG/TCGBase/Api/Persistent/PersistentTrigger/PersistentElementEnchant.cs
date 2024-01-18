@@ -20,7 +20,7 @@
             _adddamage = adddamageIfEnchant;
         }
 
-        public SenderTag Tag => SenderTag.ElementEnchant;
+        public string Tag => SenderTag.ElementEnchant.ToString();
         public  void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             if (persitent.AvailableTimes > 0 && variable is DamageVariable dv && sender.TeamID == me.TeamIndex)

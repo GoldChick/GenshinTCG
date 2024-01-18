@@ -46,5 +46,12 @@
         /// 角色卡的(生物)种类，默认为HUMAN人类
         /// </summary>
         public virtual CharacterCategory CharacterCategory { get => CharacterCategory.Human; }
+        protected AbstractCardCharacter() 
+        {
+            Tags.Add(CharacterElement.ToTags());
+            Tags.Add(WeaponCategory.ToTags());
+            Tags.Add(CharacterRegion.ToTags());
+            Tags.Add(CharacterCategory.ToTags());
+        }
     }
 }

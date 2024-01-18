@@ -4,6 +4,9 @@ namespace TCGBase
 {
     public enum ActionType
     {
+        /// <summary>
+        /// 无意义...
+        /// </summary>
         Trival,
         /// <summary>
         /// Index:0表示不重投，1表示重投<br/>
@@ -15,16 +18,16 @@ namespace TCGBase
         /// 选择任意卡牌重投
         /// </summary>
         ReRollCard,
-
-        /// <summary>
-        /// Index:Target Character Index
-        /// </summary>
-        Switch,
         /// <summary>
         /// Index:Target Character Index <br/>
         /// 出战、死亡导致的免费、快速切人
         /// </summary>
         SwitchForced,
+
+        /// <summary>
+        /// Index:Target Character Index
+        /// </summary>
+        Switch,
         /// <summary>
         /// Index:Skill Index 
         /// </summary>
@@ -38,6 +41,13 @@ namespace TCGBase
         /// CostArg in NetEvent:Dice Cost(only one)
         /// </summary>
         Blend,
+        /// <summary>
+        /// 切换到对面行动，但是不结束
+        /// </summary>
+        Break,
+        /// <summary>
+        /// 结束回合
+        /// </summary>
         Pass,
     }
     public class NetAction

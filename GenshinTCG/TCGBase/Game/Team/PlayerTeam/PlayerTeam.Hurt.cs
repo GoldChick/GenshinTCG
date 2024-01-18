@@ -98,7 +98,7 @@
 
                     target.MP = 0;
                     target.Effects.Clear();
-                    Game.Records.Last().Add(new DieRecord(TeamIndex, target));
+                    Game.NetEventRecords.Last().Add(new DieRecord(TeamIndex, target));
                 }
             }
             if (Characters.All(p => !p.Alive))
@@ -124,7 +124,7 @@
             }
             if (overload)
             {
-                SwitchToNext();
+                TrySwitchToIndex(1, true);
             }
             action?.Invoke();
             for (int i = 0; i < Characters.Length; i++)

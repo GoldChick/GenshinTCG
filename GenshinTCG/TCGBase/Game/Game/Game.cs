@@ -35,7 +35,7 @@ namespace TCGBase
         {
             Teams = new PlayerTeam[2];
             Clients = new();
-            Records = new();
+            NetEventRecords = new();
         }
         public void AddClient(AbstractClient c) => Clients.Add(c);
         /// <summary>
@@ -65,23 +65,8 @@ namespace TCGBase
                     }
                     InitTeam(c[0], c[1]);
 
-                    try
-                    {
-                        Gaming();
-                    }
-                    catch (GameOverException)
-                    {
-
-                    }
-                    //catch (Exception ex)
-                    //{
-                    //    throw new Exception($"Game Fatal! ex:{ex.Message} \n {ex.StackTrace}");
-                    //}
-                    finally
-                    {
-                        Stage = GameStage.PreGame;
-                        //throw new Exception($"Final Winner={GetWinner()}");
-                    }
+                    Gaming();
+                    Stage = GameStage.PreGame;
                 }
                 else
                 {
@@ -96,7 +81,7 @@ namespace TCGBase
 
         public virtual void Gaming()
         {
-            Records.Add(new());
+            NetEventRecords.Add(new());
             for (int i = 0; i < 2; i++)
             {
                 Teams[i].RegisterPassive();
@@ -125,7 +110,7 @@ namespace TCGBase
             while (!IsGameOver())
             {
                 Round++;
-                Records.Add(new());
+                NetEventRecords.Add(new());
 
                 Stage = GameStage.Rolling;
                 Task.WaitAll(Task.Run(() => Teams[0].RoundStart()), Task.Run(() => Teams[1].RoundStart()));

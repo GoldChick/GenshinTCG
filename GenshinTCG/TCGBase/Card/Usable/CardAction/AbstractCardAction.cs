@@ -19,6 +19,10 @@
         /// 默认为2
         /// </summary>
         public virtual int MaxNumPermitted { get => 2; }
+        /// <summary>
+        /// 是否快速行动，默认为true
+        /// </summary>
+        public virtual bool FastAction { get => true; }
         public abstract CostInit Cost { get; }
 
         public abstract void AfterUseAction(PlayerTeam me, int[] targetArgs);

@@ -10,5 +10,6 @@
         /// </summary>
         public string CharacterNamespace { get; }
         public string CharacterNameID { get; }
+        public bool IsFor(AbstractCardCharacter cha) => CharacterNameID == cha.NameID && CharacterNamespace == cha.Namespace;
     }
 }
