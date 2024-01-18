@@ -9,20 +9,11 @@ namespace TCGBase
             new(TargetEnum.Character_Me,CanBeUsed)
         };
 
-        public virtual int InitialUseTimes => MaxUseTimes;
         /// <summary>
         /// 如果可用次数<b>大于0</b>，代表有状态可使用，于是额外附加状态<br/>
         /// 否则没有额外状态
         /// </summary>
-        public abstract int MaxUseTimes { get; }
-
-        public int Variant => 0;
-
-        public bool CustomDesperated => false;
-
-        public virtual PersistentTriggerDictionary TriggerDic => new();
-
-
+        //public abstract int MaxUseTimes { get; }
         /// <summary>
         /// 默认实现 [附属饱腹]+[附属AfterEatEffect](如果有)
         /// </summary>

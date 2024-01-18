@@ -11,10 +11,13 @@ namespace TCGBase
 
     public class PersistentTriggerDictionary : IEnumerable<KeyValuePair<string, IPersistentTrigger>>
     {
+        public static PersistentTriggerDictionary EmptyTriggerDic => _emptytriggerdic;
+        private static PersistentTriggerDictionary _emptytriggerdic;
         private readonly Dictionary<string, IPersistentTrigger> _dic;
         public PersistentTriggerDictionary()
         {
             _dic = new();
+            _emptytriggerdic ??= new();
         }
         private class PersistentTrigger : IPersistentTrigger
         {

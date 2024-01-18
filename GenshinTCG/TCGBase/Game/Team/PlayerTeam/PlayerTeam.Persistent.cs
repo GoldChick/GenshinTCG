@@ -134,7 +134,7 @@ namespace TCGBase
         /// <summary>
         /// effect按照 (curr->curr+1->curr+2->...)角色=>团队=>召唤物=>支援区 的顺序结算
         /// </summary>
-        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool update = true)
+        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
             EventPersistentSetHandler? hs = null;
             for (int i = 0; i < Characters.Length; i++)
@@ -146,10 +146,7 @@ namespace TCGBase
             hs += Supports.GetPersistentHandlers(sender);
             hs?.Invoke(this, sender, variable);
 
-            if (update)
-            {
-                EffectUpdate();
-            }
+            EffectUpdate();
         }
     }
 }

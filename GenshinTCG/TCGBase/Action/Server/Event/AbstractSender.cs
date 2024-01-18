@@ -1,5 +1,15 @@
 ﻿namespace TCGBase
 {
+    /// <summary>
+    /// 仅供内部使用，外部不可调用
+    /// </summary>
+    internal enum SenderTagInner
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        Use,
+    }
     public enum SenderTag
     {
         GameStart,

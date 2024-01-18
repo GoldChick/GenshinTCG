@@ -13,10 +13,16 @@
     public abstract class AbstractCardSkill : IDamageSource
     {
         /// <summary>
-        /// 使用后是否加充能，默认加<br/>
+        /// 使用后加多少充能，默认加1<br/>
         /// 如果Cost中CostMP>0，表明需要消耗充能，则会忽略此属性，不产生充能<br/>
+        /// [准备技能]和[被动技能]默认不产生充能
         /// </summary>
-        public virtual bool GiveMP { get => true; }
+        public virtual int GiveMP => 1; 
+        /// <summary>
+        /// 是否触发使用技能后，默认触发<br/>
+        /// [准备技能]和[被动技能]默认触发
+        /// </summary>
+        public virtual bool TriggerAfterUseSkill => true;
         public abstract CostInit Cost { get; }
         public abstract SkillCategory Category { get; }
         /// <summary>

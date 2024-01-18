@@ -41,7 +41,6 @@
         /// </summary>
         public PersistentTriggerDictionary TriggerDic { get; }
         public void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent;
-        public void OnDesperated(PlayerTeam me, int region);
     }
     public abstract class AbstractCardPersistent : AbstractCardBase, ICardPersistent, IDamageSource
     {
@@ -62,9 +61,6 @@
         {
             persistent.Data = null;
             persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
-        }
-        public virtual void OnDesperated(PlayerTeam me, int region)
-        {
         }
     }
     public abstract class AbstractCardSummon : AbstractCardPersistent

@@ -36,8 +36,8 @@
                 {
                     Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease, initialelement), d);
                     Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul, initialelement), d);
-                    EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtMul, initialelement), d, false);
-                    EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtDecrease, initialelement), d, false);
+                    EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtMul, initialelement), d);
+                    EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtDecrease, initialelement), d);
                 }
 
                 hss.Add(new(TeamIndex, d, d.Reaction, d.DirectSource, ds, initialelement));
@@ -82,34 +82,6 @@
             }
             return selects;
         }
-        /// <summary>
-        /// 确定死亡的角色
-        /// </summary>
-        private void CheckDie()
-        {
-            for (int i = 0; i < Characters.Length; i++)
-            {
-                int curr = (i + CurrCharacter) % Characters.Length;
-                Character target = Characters[curr];
-                if (target.Predie)
-                {
-                    Game.EffectTrigger(new DieSender(TeamIndex, curr), null);
-                    target.Predie = false;
-
-                    target.MP = 0;
-                    target.Effects.Clear();
-                    Game.NetEventRecords.Last().Add(new DieRecord(TeamIndex, target));
-                }
-            }
-            if (Characters.All(p => !p.Alive))
-            {
-                throw new GameOverException();
-            }
-            if (!Characters[CurrCharacter].Alive)
-            {
-                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced);
-            }
-        }
         /// <param name="action">伤害结算后，死亡结算前结算的东西，如[风压剑]</param>
         public void MultiHurt(DamageVariable[] dvs, IDamageSource ds, Action? action = null)
         {
@@ -133,23 +105,20 @@
                 var cha = Characters[curr];
                 if (cha.HP == 0 && cha.Alive)
                 {
-                    EffectTrigger(new DieSender(TeamIndex, curr, true), null, false);
+                    EffectTrigger(new DieSender(TeamIndex, curr, true));
                     if (cha.HP == 0)
                     {
                         cha.Predie = true;
                         cha.Alive = false;
                         cha.Element = 0;
-                        //TODO:清除装备牌
                     }
                 }
             }
-            Game.EffectUpdate();
-
             if (Characters.All(p => p.HP == 0))
             {
                 throw new GameOverException();
             }
-            //判断共死
+            //TODO:判断共死
             if (Characters[CurrCharacter].HP == 0 && Enemy.Characters[Enemy.CurrCharacter].HP == 0)
             {
                 //双方出战角色都被击倒 进入选择角色出战
@@ -164,9 +133,36 @@
             {
                 Game.EffectTrigger(hs, null);
             }
-            CheckDie();
+            //check die ...
+            for (int i = 0; i < Characters.Length; i++)
+            {
+                int curr = (i + CurrCharacter) % Characters.Length;
+                Character target = Characters[curr];
+                if (target.Predie)
+                {
+                    Game.EffectTrigger(new DieSender(TeamIndex, curr), null);
+                    target.Predie = false;
+
+                    target.MP = 0;
+                    target.Effects.Clear();
+                    //TODO:弃置装备牌
+                    Game.NetEventRecords.Last().Add(new DieRecord(TeamIndex, target));
+                }
+            }
+            if (Characters.All(p => !p.Alive))
+            {
+                throw new GameOverException();
+            }
+            if (!Characters[CurrCharacter].Alive)
+            {
+                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced);
+            }
         }
         /// <param name="action">伤害结算后，死亡结算前结算的东西</param>
         public void Hurt(DamageVariable dv, IDamageSource ds, Action? action = null) => MultiHurt(new DamageVariable[] { dv }, ds, action);
+        public void DoDamage()
+        {
+            //TODO...
+        }
     }
 }

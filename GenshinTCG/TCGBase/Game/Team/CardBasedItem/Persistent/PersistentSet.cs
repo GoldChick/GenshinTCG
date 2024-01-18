@@ -201,7 +201,6 @@ namespace TCGBase
             _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
             _data.RemoveAt(index);
 
-            p.Card.OnDesperated(_me, p.PersistentRegion);
             _me.Game.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.Card), null);
         }
 

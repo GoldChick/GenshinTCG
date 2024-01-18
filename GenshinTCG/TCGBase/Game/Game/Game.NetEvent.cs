@@ -84,9 +84,9 @@
                     {
                         t.Characters[t.CurrCharacter].MP -= ski.Cost.MPCost;
                     }
-                    else if (ski.GiveMP)
+                    else
                     {
-                        t.Characters[t.CurrCharacter].MP++;
+                        t.Characters[t.CurrCharacter].MP+= ski.GiveMP;
                     }
 
                     if (cha.Effects.Find(-3)?.Card is AbstractCardEquipmentOverrideSkillTalent pt && pt.Skill == evt.Action.Index)

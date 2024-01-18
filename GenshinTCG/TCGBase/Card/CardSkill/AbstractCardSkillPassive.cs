@@ -4,7 +4,8 @@
     {
         public override sealed SkillCategory Category => SkillCategory.P;
         public override sealed CostInit Cost => new();
-        public override sealed bool GiveMP => false;
+        public override  int GiveMP => 0;
+        public override bool TriggerAfterUseSkill =>false;
         /// <summary>
         /// 为true时，[此技能]只会在开场时触发一次<br/>
         /// 为false时，复活也会重新触发<br/>
