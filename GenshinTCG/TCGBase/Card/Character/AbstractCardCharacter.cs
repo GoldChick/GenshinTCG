@@ -61,18 +61,19 @@
                 }
                 },
                 { SenderTagInner.Use,(me,p,s,v)=>
-                { 
-                    //TODO: use index
-                }
-                },
-                { SenderTag.AfterUseSkill,(me,p,s,v)=>
                 {
-                    if (me.TeamIndex==s.TeamID && s is AfterUseSkillSender ss)
+                    if (p is Character c && s is ActionUseSkillSender ss &&  c.Card.GetType()==ss.Character.GetType())
                     {
-                        int idx=Array.FindIndex(Skills,s=>s==ss.Skill);
-                        if (idx>=0 && p is Character c)
+                        if (ss.Skill>=0 && ss.Skill<Skills.Length)
                         {
-                            c.SkillCounter[idx]++;
+                            var skill=Skills[ss.Skill];
+                            //TODO: talent
+                            skill.AfterUseAction(me,c);
+                            c.SkillCounter[ss.Skill]++;
+                            if (skill.TriggerAfterUseSkill)
+                            {
+                                me.Game.EffectTrigger(new AfterUseSkillSender(me.TeamIndex,c,skill));
+                            }
                         }
                     }
                 }

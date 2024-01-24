@@ -110,7 +110,8 @@
                 {
                     if (s is AbstractCardSkillPassive ps && ps.MaxUseTimes >= 0)
                     {
-                        AddPersistent(ps, i);
+                        //TODO:?
+                        //AddPersistent(ps, i);
                     }
                 }
             }
@@ -147,43 +148,51 @@
         /// </summary>
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
-            if (sender is not DieSender)
+            if (Game.InstantTrigger)
             {
-                for (int i = 0; i < Characters.Length; i++)
+                if (sender is not DieSender)
                 {
-                    int curr = (i + CurrCharacter) % Characters.Length;
-                    var cha = Characters[curr];
-                    if (cha.HP == 0 && cha.Alive)
+                    for (int i = 0; i < Characters.Length; i++)
                     {
-                        EffectTrigger(new DieSender(TeamIndex, curr, true));
-                        if (cha.HP == 0)
+                        int curr = (i + CurrCharacter) % Characters.Length;
+                        var cha = Characters[curr];
+                        if (cha.HP == 0 && cha.Alive)
                         {
-                            cha.Predie = true;
-                            cha.Alive = false;
-                            cha.Element = 0;
-                            //TODO:alive的处理
+                            EffectTrigger(new DieSender(TeamIndex, curr, true));
+                            if (cha.HP == 0)
+                            {
+                                cha.Predie = true;
+                                cha.Alive = false;
+                                cha.Element = 0;
+                                //TODO:alive的处理
+                            }
                         }
                     }
-                }
-                if (Characters.All(p => p.HP == 0))
-                {
-                    throw new GameOverException();
-                }
-            }
-            EventPersistentSetHandler? hs = null;
-            for (int i = 0; i < Characters.Length; i++)
-            {
-                var c = Characters[(i + Characters.Length + CurrCharacter) % Characters.Length];
-                if (c.Alive)
-                {
-                    if (c.Card.TriggerDic.TryGetValue(sender.SenderName, out var h))
+                    if (Characters.All(p => p.HP == 0))
                     {
-                        hs += (me, s, v) => h.Trigger(me, c, s, v);
+                        throw new GameOverException();
                     }
-                    hs += c.Effects.GetPersistentHandlers(sender);
                 }
+
+                EventPersistentSetHandler? hs = null;
+                for (int i = 0; i < Characters.Length; i++)
+                {
+                    var c = Characters[(i + Characters.Length + CurrCharacter) % Characters.Length];
+                    if (c.Alive)
+                    {
+                        if (c.Card.TriggerDic.TryGetValue(sender.SenderName, out var h))
+                        {
+                            hs += (me, s, v) => h.Trigger(me, c, s, v);
+                        }
+                        hs += c.Effects.GetPersistentHandlers(sender);
+                    }
+                }
+                EffectTriggerWithoutCharacter(hs, sender, variable);
             }
-            EffectTriggerWithoutCharacter(hs, sender, variable);
+            else
+            {
+                Game.DelayedTriggerStack.Push(() => EffectTrigger(sender, variable));
+            }
         }
     }
 }

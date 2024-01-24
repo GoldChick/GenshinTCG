@@ -22,7 +22,7 @@
         /// <summary>
         /// override以覆写原先技能
         /// </summary>
-        public virtual void TalentTriggerAction(PlayerTeam me, Character c, int[] targetArgs) => c.Card.Skills[Skill % c.Card.Skills.Length].AfterUseAction(me, c, targetArgs);
+        public virtual void TalentTriggerAction(PlayerTeam me, Character c) => c.Card.Skills[Skill % c.Card.Skills.Length].AfterUseAction(me, c);
         /// <summary>
         /// 默认实现为需要是本人的天赋，并且为被动技能/该角色在前台
         /// </summary>

@@ -8,13 +8,11 @@
         public override string SenderName => SenderTag.AfterUseSkill.ToString();
         public Character Character { get; set; }
         public AbstractCardSkill Skill { get; set; }
-        public int[]? AdditionalTargetArgs { get; set; }
 
-        internal AfterUseSkillSender(int teamID, Character character, AbstractCardSkill skill, int[]? targetArgs = null) : base(teamID)
+        internal AfterUseSkillSender(int teamID, Character character, AbstractCardSkill skill) : base(teamID)
         {
             Character = character;
             Skill = skill;
-            AdditionalTargetArgs = targetArgs;
         }
     }
 }

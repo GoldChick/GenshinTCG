@@ -3,23 +3,30 @@ namespace TCGBase
 {
     public class Registry
     {
-        private static readonly Registry _instance = new();
+        private static Registry _instance;
+        public static Registry Instance
+        {
+            get
+            {
+                _instance ??= new();
+                return _instance;
+            }
+        }
         private Registry()
         {
             CharacterCards = new();
             ActionCards = new();
         }
-        public static Registry Instance { get => _instance; }
 
         internal List<string> Mods { get; } = new();
         internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; }
-        internal RegistryCardCollection<AbstractCardAction> ActionCards { get; } 
+        internal RegistryCardCollection<AbstractCardAction> ActionCards { get; }
 
         //不知为何的namespace黑名单
         private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "minecraft", "equipment", "nilou", "hutao" };
 
         public string[] GetMods() => Mods.ToArray();
-        public List<AbstractCardCharacter> GetCharacterCards() => CharacterCards.Select(kvp=>kvp.Value).ToList();
+        public List<AbstractCardCharacter> GetCharacterCards() => CharacterCards.Select(kvp => kvp.Value).ToList();
         public List<AbstractCardAction> GetActionCards() => ActionCards.Select(kvp => kvp.Value).ToList();
         internal void Register(AbstractModUtil util)
         {

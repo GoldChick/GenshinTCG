@@ -30,7 +30,8 @@ namespace TCGBase
                 BroadCast(ClientUpdateCreate.CurrTeamUpdate(value));
             }
         }
-
+        internal bool InstantTrigger { get; set; }
+        internal Stack<Action> DelayedTriggerStack { get; set; }
         public Game()
         {
             Teams = new PlayerTeam[2];

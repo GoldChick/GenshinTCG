@@ -77,8 +77,7 @@
                     var cha = t.Characters[t.CurrCharacter];
                     var ski = cha.Card.Skills[evt.Action.Index];
                     t.AddPersistent(new Effect_RoundSkillCounter(ski), t.CurrCharacter);
-                    //考虑AfterUseAction中可能让角色位置改变的
-                    afterEventSender = new AfterUseSkillSender(currTeam, cha, ski, evt.AdditionalTargetArgs);
+                    afterEventSender = new AfterUseSkillSender(currTeam, cha, ski);
 
                     if (ski.Cost.MPCost > 0)
                     {
@@ -86,17 +85,9 @@
                     }
                     else
                     {
-                        t.Characters[t.CurrCharacter].MP+= ski.GiveMP;
+                        t.Characters[t.CurrCharacter].MP += ski.GiveMP;
                     }
-
-                    if (cha.Effects.Find(-3)?.Card is AbstractCardEquipmentOverrideSkillTalent pt && pt.Skill == evt.Action.Index)
-                    {
-                        pt.TalentTriggerAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
-                    }
-                    else
-                    {
-                        ski.AfterUseAction(t, t.Characters[t.CurrCharacter], evt.AdditionalTargetArgs);
-                    }
+                    EffectTrigger(new ActionUseSkillSender(t.TeamIndex, cha.Card, evt.Action.Index));
                     break;
                 case ActionType.UseCard:
                     EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseCard));

@@ -48,43 +48,76 @@
             }
             return hss;
         }
+        private void TestTriggerForDMG(List<HurtSender> hss, List<int> predie_indexs)
+        {
+            List<HurtSender> predies = new();
+            foreach (var hs in hss)
+            {
+                if (predie_indexs.Contains(hs.TargetIndex))
+                {
+                    predies.Add(hs);
+                }
+                else
+                {
+                    Game.EffectTrigger(hs, null);
+                }
+            }
+            foreach (var hs in predies)
+            {
+                Character target = Characters[hs.TargetIndex];
+                if (target.Predie && predie_indexs.Contains(hs.TargetIndex))
+                {
+                    EffectTriggerWithoutCharacter(null, hs);
+                    Enemy.EffectTrigger(hs, null);
+                    if (hs.Deadly && target.Predie)
+                    {
+                        target.Predie = false;
 
+                        //TODO:弃置装备牌
+                        target.MP = 0;
+                        target.Effects.Clear();
+                        Game.NetEventRecords.Last().Add(new DieRecord(TeamIndex, target));
+                        Game.EffectTrigger(new DieSender(TeamIndex, hs.TargetIndex), null);
+                    }
+                }
+            }
+        }
         private void InnerHurt(DamageVariable dv, IDamageSource ds, Action? action = null, bool fromEnemy = true)
         {
             dv.ToAbsoluteIndex(CurrCharacter, Characters.Length);
 
             List<HurtSender> hss = InnerHurtCompute(ds, out bool overload, dv);
+
+            List<int> predies = new();
             foreach (var hs in hss)
             {
-                Characters[hs.TargetIndex].HP -= hs.Damage;
+                var c = Characters[hs.TargetIndex];
+                if (c.HP >= 0)
+                {
+                    c.HP -= hs.Damage;
+                    if (c.HP == 0)
+                    {
+                        hs.Deadly = true;
+                        predies.Add(hs.TargetIndex);
+                    }
+                }
                 Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HurtUpdate(TeamIndex, hs.TargetIndex, hs.Element, hs.Damage));
             }
+            Game.DelayedTriggerStack.Push(() => TestTriggerForDMG(hss, predies));
+            
+            Game.InstantTrigger = false;
             if (overload)
             {
                 TrySwitchToIndex(1, true);
             }
             action?.Invoke();
-
-            foreach (var hs in hss)
+            //TODO:check undie
+            Game.InstantTrigger = true;
+            while (Game.DelayedTriggerStack.TryPop(out var trigger))
             {
-                Game.EffectTrigger(hs, null);
+                trigger.Invoke();
             }
-            //check die ...
-            for (int i = 0; i < Characters.Length; i++)
-            {
-                int curr = (i + CurrCharacter) % Characters.Length;
-                Character target = Characters[curr];
-                if (target.Predie)
-                {
-                    Game.EffectTrigger(new DieSender(TeamIndex, curr), null);
-                    target.Predie = false;
 
-                    target.MP = 0;
-                    target.Effects.Clear();
-                    //TODO:弃置装备牌
-                    Game.NetEventRecords.Last().Add(new DieRecord(TeamIndex, target));
-                }
-            }
             if (!Characters[CurrCharacter].Alive)
             {
                 if (Characters.All(p => !p.Alive))

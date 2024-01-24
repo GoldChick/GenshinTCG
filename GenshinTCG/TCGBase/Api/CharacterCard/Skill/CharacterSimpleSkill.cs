@@ -15,26 +15,26 @@
         /// character: skill owner<br/>
         /// int[]: possible args (nothing)
         /// </summary>
-        private readonly Action<AbstractCardSkill, PlayerTeam, Character, int[]>? _skillaction;
+        private readonly Action<AbstractCardSkill, PlayerTeam, Character>? _skillaction;
         public CharacterSimpleSkill(SkillCategory category, CostInit cost, DamageVariable? dv = null)
         {
             Category = category;
             Cost = cost ?? new();
             _dv = dv;
         }
-        public CharacterSimpleSkill(SkillCategory category, CostInit cost, Action<AbstractCardSkill, PlayerTeam, Character, int[]> skillaction, DamageVariable? dv = null) : this(category, cost, dv)
+        public CharacterSimpleSkill(SkillCategory category, CostInit cost, Action<AbstractCardSkill, PlayerTeam, Character> skillaction, DamageVariable? dv = null) : this(category, cost, dv)
         {
             _skillaction = skillaction;
         }
-        public override void AfterUseAction(PlayerTeam me, Character c, int[] targetArgs)
+        public override void AfterUseAction(PlayerTeam me, Character c)
         {
             if (_dv != null)
             {
-                me.Enemy.Hurt(_dv, this, () => _skillaction?.Invoke(this, me, c, targetArgs));
+                me.Enemy.Hurt(_dv, this, () => _skillaction?.Invoke(this, me, c));
             }
             else
             {
-                _skillaction?.Invoke(this, me, c, targetArgs);
+                _skillaction?.Invoke(this, me, c);
             }
         }
     }
