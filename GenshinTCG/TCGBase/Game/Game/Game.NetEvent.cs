@@ -2,7 +2,7 @@
 {
     public partial class Game
     {
-        public void RequestAndHandleEvent(int teamid, int millisecondsTimeout, ActionType demand) => HandleEvent(RequestEvent(teamid, millisecondsTimeout, demand), teamid);
+        internal void RequestAndHandleEvent(int teamid, int millisecondsTimeout, ActionType demand) => HandleEvent(RequestEvent(teamid, millisecondsTimeout, demand), teamid);
         /// <summary>
         /// 向对应客户端请求一个valid的事件，或者default的事件
         /// </summary>
@@ -225,10 +225,7 @@
                 HandleEvent(evt, teamid);
             }
         }
-        /// <summary>
-        /// 这里处理所有被动的行为，并且默认行为可行（不是行动！）
-        /// </summary>
-        public void TryProcessEvent(NetEvent evt, int teamid)
+        public override void TryProcessEvent(NetEvent evt, int teamid)
         {
             if ((int)evt.Action.Type >= 4)
             {

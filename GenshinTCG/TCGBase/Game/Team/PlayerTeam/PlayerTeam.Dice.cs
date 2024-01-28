@@ -60,7 +60,7 @@
             {
                 Dices.Add(int.Clamp(d, 0, 7));
                 Dices.Sort();
-                Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+                RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
             }
         }
         public void AddDiceRange(params int[] ds)
@@ -74,7 +74,7 @@
                 Dices.Add(int.Clamp(ds[i], 0, 7));
             }
             Dices.Sort();
-            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+            RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
         /// <summary>
         /// 获得很多骰子<br/>
@@ -91,7 +91,7 @@
                 Dices.Add(int.Clamp(ds.ElementAt(i), 0, 7));
             }
             Dices.Sort();
-            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+            RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
         public void TryRemoveDice(int element)
         {
@@ -112,7 +112,7 @@
                     Dices.Remove(i);
                 }
             }
-            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+            RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
         /// <summary>
         /// 是否包含所需要的骰子

@@ -23,7 +23,9 @@
                 {
                     _action.Invoke(me,p,s,v);
                     p.Active=false;
-                    me.Game.HandleEvent(new NetEvent(new NetAction(ActionType.Break)),me.TeamIndex);
+                    //TODO: prepare skill?
+
+                    //me.RealGame.HandleEvent(new NetEvent(new NetAction(ActionType.Break)),me.TeamIndex);
                 }
             }
             },

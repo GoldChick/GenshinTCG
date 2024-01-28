@@ -40,7 +40,7 @@
         public void BindTeam(PlayerTeam me)
         {
             Me = me;
-            Game = new(me.Game, me.TeamIndex);
+            Game = new(me.RealGame, me.TeamIndex);
             BindInit(Game);
         }
         public virtual void BindInit(ReadonlyGame game)

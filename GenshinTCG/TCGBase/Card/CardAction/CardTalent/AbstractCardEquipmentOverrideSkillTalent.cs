@@ -16,7 +16,8 @@
             var index = Skill % c.Card.Skills.Length;
             if (c.Card.Skills[index] is not AbstractCardSkillPassive)
             {
-                me.Game.HandleEvent(new NetEvent(new NetAction(ActionType.UseSKill, index)), me.TeamIndex);
+                //TODO:天赋的use skill
+                //me.RealGame.HandleEvent(new NetEvent(new NetAction(ActionType.UseSKill, index)), me.TeamIndex);
             }
         }
         /// <summary>

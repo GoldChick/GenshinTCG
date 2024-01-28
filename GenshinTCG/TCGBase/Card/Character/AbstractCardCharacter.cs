@@ -72,7 +72,8 @@
                             c.SkillCounter[ss.Skill]++;
                             if (skill.TriggerAfterUseSkill)
                             {
-                                me.Game.EffectTrigger(new AfterUseSkillSender(me.TeamIndex,c,skill));
+                                //TODO:天赋的ue skill
+                                //me.RealGame.EffectTrigger(new AfterUseSkillSender(me.TeamIndex,c,skill));
                             }
                         }
                     }

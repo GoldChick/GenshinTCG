@@ -46,7 +46,7 @@
         /// 为了偷懒，使用了DamageVariable作为了治疗<br/>
         /// 仅TargetIndex TargetExcept Damage有效
         /// </summary>
-        public void Heal(IDamageSource ds, params HealVariable[] dvs)
+        public override void Heal(IDamageSource ds, params HealVariable[] dvs)
         {
             HealVariable[] dvs_person = dvs.Select(p => new HealVariable(p.Amount, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
             List<HealSender> hss = MergeHeal(ds, dvs_person);
@@ -55,11 +55,11 @@
                 var c = Characters[hs.TargetIndex];
                 hs.Amount = int.Min(c.Card.MaxHP - c.HP, hs.Amount);
                 c.HP += hs.Amount;
-                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(TeamIndex, hs.TargetIndex, hs.Amount));
+                RealGame.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(TeamIndex, hs.TargetIndex, hs.Amount));
             }
             foreach (var hs in hss)
             {
-                Game.EffectTrigger(hs, null);
+                RealGame.EffectTrigger(hs, null);
             }
         }
     }

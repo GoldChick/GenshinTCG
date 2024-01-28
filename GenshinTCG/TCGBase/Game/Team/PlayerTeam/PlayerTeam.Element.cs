@@ -1,11 +1,9 @@
 ﻿using Minecraft;
-using System.Diagnostics;
-
 namespace TCGBase
 {
     public partial class PlayerTeam
     {
-        public static ReactionTags GetReaction(int currElement, int elementToApply, out int nextElement)
+        private static ReactionTags GetReaction(int currElement, int elementToApply, out int nextElement)
         {
             ReactionTags reactiontag = ReactionTags.None;
             //角色身上附着的元素(只允许附着 无0 冰1 水2 火3 雷4 草6 <b>冰+草5</b>
@@ -86,25 +84,10 @@ namespace TCGBase
 
             return reactiontag;
         }
-        public void AttachElement(IDamageSource source, int element, params int[] targetRelativeIndexs)
-        {
-            var chas = targetRelativeIndexs.Distinct().Select(i => Characters[(i + CurrCharacter) % Characters.Length]);
-            var tags = chas.Select(c => (GetReaction(c.Element, element, out int nextElement), nextElement));
-            var overload = chas.Select((c, index) => ReactionItemGenerate(c.PersistentRegion, tags.ElementAt(index).Item1, source, c.Element)).Any(p => p);
-            for (int i = 0; i < chas.Count(); i++)
-            {
-                chas.ElementAt(i).Element = tags.ElementAt(i).nextElement;
-            }
-            //TODO:broadcast
-            if (overload)
-            {
-                TrySwitchToIndex(1, true);
-            }
-        }
-        internal bool ReactionItemGenerate(int targetindex, ReactionTags tag, IDamageSource source, int initialelement)
+        private bool ReactionItemGenerate(int targetindex, ReactionTags tag, IDamageSource source, int initialelement)
         {
             var egv = new ElementGenerateVariable(false, null);
-            Game.EffectTrigger(new PreHurtSender(TeamIndex, source, SenderTag.ElementItemGenerate, initialelement), egv);
+            RealGame.EffectTrigger(new PreHurtSender(TeamIndex, source, SenderTag.ElementItemGenerate, initialelement), egv);
 
             egv.GenerateAction?.Invoke(this, targetindex);
             if (!egv.OverrideInitialGenerator)
@@ -132,7 +115,7 @@ namespace TCGBase
             }
             return false;
         }
-        internal int GetDamageReaction(DamageVariable dvToPerson)
+        private int GetDamageReaction(DamageVariable dvToPerson)
         {
             var cha = Characters[dvToPerson.TargetIndex];
             ReactionTags tag = GetReaction(cha.Element, dvToPerson.Element, out int nextElement);
@@ -155,5 +138,21 @@ namespace TCGBase
             dvToPerson.Reaction = tag;
             return initialelement;
         }
+        public override void AttachElement(IDamageSource source, int element, params int[] targetRelativeIndexs)
+        {
+            var chas = targetRelativeIndexs.Distinct().Select(i => Characters[(i + CurrCharacter) % Characters.Length]);
+            var tags = chas.Select(c => (GetReaction(c.Element, element, out int nextElement), nextElement));
+            var overload = chas.Select((c, index) => ReactionItemGenerate(c.PersistentRegion, tags.ElementAt(index).Item1, source, c.Element)).Any(p => p);
+            for (int i = 0; i < chas.Count(); i++)
+            {
+                chas.ElementAt(i).Element = tags.ElementAt(i).nextElement;
+            }
+            //TODO:broadcast
+            if (overload)
+            {
+                TrySwitchToIndex(1, true);
+            }
+        }
+
     }
 }

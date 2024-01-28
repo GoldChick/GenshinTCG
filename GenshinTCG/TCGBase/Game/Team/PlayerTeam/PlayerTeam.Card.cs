@@ -12,7 +12,7 @@
             {
                 var c = col.ElementAt(Random.Next(col.Count()));
                 LeftCards.Remove(c);
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop));
+                RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop));
                 GainCard(c);
             }
         }
@@ -24,7 +24,7 @@
                 {
                     var c = LeftCards[Random.Next(LeftCards.Count)];
                     LeftCards.Remove(c);
-                    Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop));
+                    RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop));
                     GainCard(c);
                 }
             }
@@ -33,12 +33,12 @@
         {
             if (CardsInHand.Count >= 10)
             {
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace,card.NameID));
+                RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace,card.NameID));
             }
             else
             {
                 CardsInHand.Add(card);
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
+                RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
             }
         }
         public List<AbstractCardAction> GetCards() => CardsInHand.ToList();
@@ -50,7 +50,7 @@
             if (index >= 0 && index < CardsInHand.Count)
             {
                 CardsInHand.RemoveAt(index);
-                Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, index));
+                RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, index));
             }
         }
         /// <summary>
@@ -64,7 +64,7 @@
                 if (predicate.Invoke(CardsInHand[i]))
                 {
                     CardsInHand.RemoveAt(i);
-                    Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, i));
+                    RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, i));
                 }
             }
         }

@@ -29,12 +29,12 @@
                 else
                 {
                     //only one target
-                    Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.ElementEnchant), dv);
+                    RealGame.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.ElementEnchant), dv);
                     int initialelement = GetDamageReaction(dv);
                     if (dv.Element != -1)
                     {
-                        Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease, initialelement), dv);
-                        Game.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul, initialelement), dv);
+                        RealGame.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease, initialelement), dv);
+                        RealGame.EffectTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul, initialelement), dv);
                         EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtMul, initialelement), dv);
                         EffectTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtDecrease, initialelement), dv);
                     }
@@ -48,6 +48,46 @@
             }
             return hss;
         }
+        private void TestTriggerForDMG(List<HurtSender> hss, List<int> predie_indexs, List<EmptyTeam> predie_teams)
+        {
+            List<HurtSender> predies = new();
+            Action? die = null;
+            foreach (var hs in hss)
+            {
+                var index = predie_indexs.FindIndex(i => i == hs.TargetIndex);
+                if (index >= 0)
+                {
+                    die += () =>
+                    {
+                        Character target = Characters[hs.TargetIndex];
+                        if (target.Predie)
+                        {
+                            //EffectTriggerWithoutCharacter(null, hs);
+                            //Enemy.EffectTrigger(hs, null);
+                            predie_teams[index].EffectTrigger(hs);
+
+                            if (hs.Deadly && target.Predie)
+                            {
+                                //TODO:到这里的原本team角色已经被击倒，正在结算emptyteam角色
+                                target.Predie = false;
+
+                                //TODO:弃置装备牌
+                                target.MP = 0;
+                                target.Effects.Clear();
+                                RealGame.NetEventRecords.Last().Add(new DieRecord(TeamIndex, target));
+                                RealGame.EffectTrigger(new DieSender(TeamIndex, hs.TargetIndex), null);
+                            }
+                        }
+                    };
+                    predies.Add(hs);
+                }
+                else
+                {
+                    RealGame.EffectTrigger(hs, null);
+                }
+            }
+            die?.Invoke();
+        }
         private void TestTriggerForDMG(List<HurtSender> hss, List<int> predie_indexs)
         {
             List<HurtSender> predies = new();
@@ -59,7 +99,7 @@
                 }
                 else
                 {
-                    Game.EffectTrigger(hs, null);
+                    RealGame.EffectTrigger(hs, null);
                 }
             }
             foreach (var hs in predies)
@@ -76,8 +116,8 @@
                         //TODO:弃置装备牌
                         target.MP = 0;
                         target.Effects.Clear();
-                        Game.NetEventRecords.Last().Add(new DieRecord(TeamIndex, target));
-                        Game.EffectTrigger(new DieSender(TeamIndex, hs.TargetIndex), null);
+                        RealGame.NetEventRecords.Last().Add(new DieRecord(TeamIndex, target));
+                        RealGame.EffectTrigger(new DieSender(TeamIndex, hs.TargetIndex), null);
                     }
                 }
             }
@@ -89,35 +129,55 @@
             List<HurtSender> hss = InnerHurtCompute(ds, out bool overload, dv);
 
             List<int> predies = new();
+            List<EmptyTeam> predie_teams = new();
+            List<Persistent<AbstractCardPersistent>> antidie_effects = new();
             foreach (var hs in hss)
             {
                 var c = Characters[hs.TargetIndex];
-                if (c.HP >= 0)
+                if (c.HP > 0)
                 {
                     c.HP -= hs.Damage;
                     if (c.HP == 0)
                     {
-                        hs.Deadly = true;
-                        predies.Add(hs.TargetIndex);
+                        if (c.Effects.TryFind(e => e.Card.Tags.Contains(PersistentTag.AntiDie.ToString()), out var p) && p.Card.TriggerDic.ContainsKey(SenderTag.PreDie.ToString()))
+                        {
+                            antidie_effects.Add(p);
+                        }
+                        else
+                        {
+                            c.Predie = true;
+                            hs.Deadly = true;
+                            predies.Add(hs.TargetIndex);
+                            predie_teams.Add(ToEmpty(c));
+                        }
                     }
                 }
-                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HurtUpdate(TeamIndex, hs.TargetIndex, hs.Element, hs.Damage));
+                RealGame.BroadCast(ClientUpdateCreate.CharacterUpdate.HurtUpdate(TeamIndex, hs.TargetIndex, hs.Element, hs.Damage));
             }
-            Game.DelayedTriggerStack.Push(() => TestTriggerForDMG(hss, predies));
-            
-            Game.InstantTrigger = false;
+            RealGame.InstantTrigger = false;
             if (overload)
             {
                 TrySwitchToIndex(1, true);
             }
             action?.Invoke();
-            //TODO:check undie
-            Game.InstantTrigger = true;
-            while (Game.DelayedTriggerStack.TryPop(out var trigger))
+            foreach (var die_effect in antidie_effects)
+            {
+                if (die_effect.Card.TriggerDic.TryGetValue(SenderTag.PreDie.ToString(), out var h))
+                {
+                    h.Trigger(this, die_effect, new SimpleSender(TeamIndex, SenderTag.PreDie), null);
+                }
+            }
+            //TODO: gain MP
+            RealGame.InstantTrigger = true;
+            //暂时放在这里来触发白术护盾
+            RealGame.EffectTrigger(new SimpleSender(SenderTag.AfterHitLanded));
+
+            while (RealGame.DelayedTriggerQueue.TryDequeue(out var trigger))
             {
                 trigger.Invoke();
             }
-
+            TestTriggerForDMG(hss, predies, predie_teams);
+            TestTriggerForDMG(hss, predies);
             if (!Characters[CurrCharacter].Alive)
             {
                 if (Characters.All(p => !p.Alive))
@@ -128,8 +188,8 @@
                 {
                     throw new Exception("共死其实还没做.....");
                     //双方出战角色都被击倒 进入选择角色出战
-                    var t0 = new Task(() => Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced));
-                    var t1 = new Task(() => Game.RequestAndHandleEvent(1 - TeamIndex, 30000, ActionType.SwitchForced));
+                    var t0 = new Task(() => RealGame.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced));
+                    var t1 = new Task(() => RealGame.RequestAndHandleEvent(1 - TeamIndex, 30000, ActionType.SwitchForced));
                     t0.Start();
                     t1.Start();
                     Task.WaitAll(t0, t1);
@@ -137,7 +197,7 @@
                 }
                 else
                 {
-                    Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced);
+                    RealGame.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced);
                 }
             }
         }
@@ -146,10 +206,10 @@
         /// 不会被对方队伍的增伤影响
         /// </summary>
         /// <param name="action">伤害结算后，死亡结算前结算的东西</param>
-        public void Hurt(DamageVariable dv, IDamageSource ds, Action? action = null) => InnerHurt(dv, ds, action, false);
+        public override void Hurt(DamageVariable dv, IDamageSource ds, Action? action = null) => InnerHurt(dv, ds, action, false);
         /// <summary>
         /// 对<b>对方队伍</b>造成伤害
         /// </summary>
-        public void DoDamage(DamageVariable dv, IDamageSource ds, Action? action = null) => Enemy.InnerHurt(dv, ds, action);
+        public override void DoDamage(DamageVariable dv, IDamageSource ds, Action? action = null) => Enemy.InnerHurt(dv, ds, action);
     }
 }

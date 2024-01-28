@@ -40,7 +40,8 @@
         };
         public static string ToTags(this ElementCategory category) => $"elementcategory:{category}";
         public static string ToTags(this WeaponCategory category) => $"weaponcategory:{category}";
-        public static string ToTags(this CharacterRegion region) => $"characterregion:{region}";
+        public static string ToTags(this CharacterRegion region) => $"characterregion:{region}"; 
         public static string ToTags(this CharacterCategory category) => $"charactercategory:{category}";
+        public static string ToTags(this PersistentTag tag) => $"minecrafttag:{tag}";
     }
 }

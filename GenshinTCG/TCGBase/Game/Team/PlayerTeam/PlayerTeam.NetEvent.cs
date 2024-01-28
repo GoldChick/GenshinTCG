@@ -151,18 +151,18 @@
             {
                 case ActionType.Switch:
                     c = new CostCreate().Void(1).ToCostInit().ToCostVariable();
-                    Game.EffectTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
+                    RealGame.EffectTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
                     break;
                 case ActionType.UseSKill:
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
                     AbstractCardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
                     c = new(skill.Cost);
-                    Game.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
+                    RealGame.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
                     break;
                 case ActionType.UseCard:
                     var card = CardsInHand[action.Index % CardsInHand.Count];
                     c = new(card.Cost);
-                    Game.EffectTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
+                    RealGame.EffectTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
                     break;
                 case ActionType.Blend:
                     int[] ints = new int[8];

@@ -1,5 +1,17 @@
 ﻿namespace TCGBase
 {
+    public enum PersistentTag
+    {
+        /// <summary>
+        /// 具有该Tag的<b>[角色状态]</b>，会在造成伤害的[扣血]时被检测，然后稍后触发<br/>
+        /// 注意：需要搭配治疗使用，否则会产生0血活角色，引起难以预料的游戏bug！<br/>
+        /// </summary>
+        AntiDie,
+        /// <summary>
+        /// 具有该Tag的状态，被标记为护盾，用于[双岩共鸣]、[贯虹]的检测
+        /// </summary>
+        YellowShield,
+    }
     public interface ICardPersistent
     {
         /// <summary>

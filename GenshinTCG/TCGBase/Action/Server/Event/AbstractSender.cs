@@ -78,6 +78,10 @@
         AfterUseSkill,
         AfterPass,
         /// <summary>
+        /// 一次hit生效后的[获得充能]后，清空[结算栈]前
+        /// </summary>
+        AfterHitLanded,
+        /// <summary>
         /// 仅用于触发effect，而且仅在[双方进行任意行动后]的时候触发
         /// </summary>
         AfterAnyAction,

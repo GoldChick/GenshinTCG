@@ -15,7 +15,7 @@ namespace TCGBase
                 if (c.Alive && c.Active && c.Card.Skills.Length > 0)
                 {
                     skill = int.Clamp(skill, 0, c.Card.Skills.Length);
-                    Game.TryProcessEvent(new NetEvent(new NetAction(ActionType.UseSKill, skill)), TeamIndex);
+                    RealGame.TryProcessEvent(new NetEvent(new NetAction(ActionType.UseSKill, skill)), TeamIndex);
                 }
             }
         }
@@ -44,7 +44,7 @@ namespace TCGBase
             }
             if (Characters[curr].Alive)
             {
-                Game.TryProcessEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
+                RealGame.TryProcessEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
             }
         }
         /// <summary>

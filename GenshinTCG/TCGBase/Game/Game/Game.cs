@@ -1,6 +1,4 @@
-﻿using Minecraft;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public enum GameStage
     {
@@ -10,7 +8,7 @@ namespace TCGBase
         Gaming,
         Ending,
     }
-    public partial class Game
+    public partial class Game : AbstractGame
     {
         public PlayerTeam[] Teams { get; init; }
         /// <summary>
@@ -22,7 +20,7 @@ namespace TCGBase
 
         public int Round { get; private set; }
         private int _currteam;
-        public int CurrTeam
+        public override int CurrTeam
         {
             get => _currteam; protected set
             {
@@ -30,13 +28,13 @@ namespace TCGBase
                 BroadCast(ClientUpdateCreate.CurrTeamUpdate(value));
             }
         }
-        internal bool InstantTrigger { get; set; }
-        internal Stack<Action> DelayedTriggerStack { get; set; }
+
         public Game()
         {
             Teams = new PlayerTeam[2];
             Clients = new();
             NetEventRecords = new();
+            ActionRecords = new();
         }
         public void AddClient(AbstractClient c) => Clients.Add(c);
         /// <summary>
@@ -79,7 +77,6 @@ namespace TCGBase
                 throw new Exception($"此局游戏已经启动！目前游戏状态：{Stage}");
             }
         }
-
         public virtual void Gaming()
         {
             NetEventRecords.Add(new());
@@ -151,7 +148,7 @@ namespace TCGBase
         /// <summary>
         /// 如果你确信此次effecttrigger不会改变variable，那么可以不检测teamid
         /// </summary>
-        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
+        public override void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
         {
             Teams[CurrTeam].EffectTrigger(sender, variable);
             Teams[1 - CurrTeam].EffectTrigger(sender, variable);
@@ -159,11 +156,6 @@ namespace TCGBase
             {
                 BroadCastRegion();
             }
-        }
-        public void EffectUpdate()
-        {
-            Teams[CurrTeam].EffectUpdate();
-            Teams[1 - CurrTeam].EffectUpdate();
         }
         public bool IsGameOver() => Round > 15 || Teams.Any(t => t.Characters.All(c => !c.Alive));
         public int GetWinner()

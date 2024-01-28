@@ -52,7 +52,7 @@ namespace TCGBase
                     if (t.Card.Variant % 10 == input.Card.Variant % 10)
                     {
                         input.Card.Update(_me, t);
-                        _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, t.AvailableTimes));
+                        _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, t.AvailableTimes));
                     }
                     else
                     {
@@ -80,6 +80,7 @@ namespace TCGBase
         public bool Contains(int variant) => _data.Exists(e => (e.Card.Variant % 10) == variant);
         public bool Contains(string nameSpace, string nameID, int variant) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && (e.Card.Variant % 10) == variant);
         public bool Contains(string nameSpace, string nameID) => _data.Exists(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
+        public Persistent<T>? Find(Predicate<Persistent<T>> condition) => _data.Find(condition);
         /// <summary>
         /// 找到第一个某type的子类
         /// </summary>
@@ -87,6 +88,11 @@ namespace TCGBase
         public Persistent<T>? Find(string nameSpace, string nameID) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID);
         public Persistent<T>? Find(string nameSpace, string nameID, int variant) => _data.Find(e => e.Card.Namespace == nameSpace && e.Card.NameID == nameID && (e.Card.Variant % 10) == variant);
         public Persistent<T>? Find(int variant) => _data.Find(e => (e.Card.Variant % 10) == variant);
+        public bool TryFind(Predicate<Persistent<T>> condition, [NotNullWhen(true)] out Persistent<T>? p)
+        {
+            p = _data.Find(condition);
+            return p != null;
+        }
         /// <summary>
         /// 找到第一个某type的子类
         /// </summary>
@@ -148,7 +154,7 @@ namespace TCGBase
             for (int i = _data.Count - 1; i >= 0; i--)
             {
                 //TODO:似乎有很多的循环调用，比如Ondesperated
-                if (_data.Count>i)
+                if (_data.Count > i)
                 {
                     var d = _data[i];
                     if (condition == null || condition(d))
@@ -170,7 +176,7 @@ namespace TCGBase
                     int index = _data.FindIndex(d => d == p);
                     if (index >= 0)
                     {
-                        _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, p.AvailableTimes));
+                        _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, p.AvailableTimes));
                     }
                 }
             };
@@ -190,7 +196,7 @@ namespace TCGBase
                     _handlers[kvp.Key] += h;
                 }
             }
-            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, PersistentRegion, p.Card.Variant, p.AvailableTimes, p.Card.Namespace, p.Card.NameID));
+            _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, PersistentRegion, p.Card.Variant, p.AvailableTimes, p.Card.Namespace, p.Card.NameID));
         }
         private void Unregister(int index, Persistent<T> p)
         {
@@ -198,10 +204,10 @@ namespace TCGBase
             {
                 _handlers[kvp.Key] -= PersistentHandelerConvert(p, kvp.Value);
             }
-            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
+            _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
             _data.RemoveAt(index);
 
-            _me.Game.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.Card), null);
+            _me.RealGame.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.Card), null);
         }
 
         public IEnumerator<Persistent<T>> GetEnumerator() => _data.GetEnumerator();

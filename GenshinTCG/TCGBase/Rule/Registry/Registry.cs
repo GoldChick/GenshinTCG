@@ -3,15 +3,8 @@ namespace TCGBase
 {
     public class Registry
     {
-        private static Registry _instance;
-        public static Registry Instance
-        {
-            get
-            {
-                _instance ??= new();
-                return _instance;
-            }
-        }
+        private static Registry _instance = new();
+        public static Registry Instance => _instance;
         private Registry()
         {
             CharacterCards = new();

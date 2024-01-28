@@ -2,7 +2,7 @@
 {
     public partial class PlayerTeam
     {
-        internal void AddEquipment<T>(T equip, int target) where T : ICardPersistent
+        internal void AddEquipment<T>(T equip, int target) where T : AbstractCardPersistent
         {
             var es = Characters[int.Clamp(target, 0, Characters.Length - 1)].Effects;
             es.TryRemove(typeof(T));
@@ -11,7 +11,7 @@
         /// <summary>
         /// 根据对于[出战角色]的[相对坐标]来附着[角色状态]
         /// </summary>
-        public void AddPersonalEffect(ICardPersistent per, int relativeIndex = 0, AbstractPersistent? bind = null)
+        public void AddPersonalEffect(AbstractCardPersistent per, int relativeIndex = 0, AbstractPersistent? bind = null)
         {
             Character cha = Characters[(relativeIndex + CurrCharacter) % Characters.Length];
             if (cha.Alive)
@@ -23,7 +23,7 @@
         /// 根据对于[出战角色]的[相对坐标]来附着[已经存在]的[角色状态]<br/>
         /// <b>如果没有特殊需要，请使用上面的方法创建新的persistent</b>
         /// </summary>
-        public void AddPersonalEffect(Persistent<ICardPersistent> per, int relativeIndex = 0)
+        public void AddPersonalEffect(Persistent<AbstractCardPersistent> per, int relativeIndex = 0)
         {
             Character cha = Characters[(relativeIndex + CurrCharacter) % Characters.Length];
             if (cha.Alive)
@@ -38,7 +38,7 @@
         /// </summary>
         /// <param name="bind">绑定在某个其他persistent上供检测，只对出战状态和角色状态有效</param>
         /// <returns></returns>
-        public void AddPersistent(ICardPersistent per, int target = -1, AbstractPersistent? bind = null)
+        public void AddPersistent(AbstractCardPersistent per, int target = -1, AbstractPersistent? bind = null)
         {
             if (target == -1)
             {
@@ -52,7 +52,7 @@
                     cha.Effects.Add(new(per, bind));
                 }
             }
-            Game.BroadCastRegion();
+            RealGame.BroadCastRegion();
         }
         /// <summary>
         /// 自己检测满了没有，也不一定添加成功
@@ -146,34 +146,10 @@
         /// 如果不是diesender，就在结算前进行免于被击倒的结算<br/>
         /// <b>NOTE:"免于被击倒的结算"一定要在结算前消耗次数</b>
         /// </summary>
-        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
+        public override void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
-            if (Game.InstantTrigger)
+            if (RealGame.InstantTrigger)
             {
-                if (sender is not DieSender)
-                {
-                    for (int i = 0; i < Characters.Length; i++)
-                    {
-                        int curr = (i + CurrCharacter) % Characters.Length;
-                        var cha = Characters[curr];
-                        if (cha.HP == 0 && cha.Alive)
-                        {
-                            EffectTrigger(new DieSender(TeamIndex, curr, true));
-                            if (cha.HP == 0)
-                            {
-                                cha.Predie = true;
-                                cha.Alive = false;
-                                cha.Element = 0;
-                                //TODO:alive的处理
-                            }
-                        }
-                    }
-                    if (Characters.All(p => p.HP == 0))
-                    {
-                        throw new GameOverException();
-                    }
-                }
-
                 EventPersistentSetHandler? hs = null;
                 for (int i = 0; i < Characters.Length; i++)
                 {
@@ -191,7 +167,7 @@
             }
             else
             {
-                Game.DelayedTriggerStack.Push(() => EffectTrigger(sender, variable));
+                RealGame.DelayedTriggerQueue.Enqueue(() => EffectTrigger(sender, variable));
             }
         }
     }
