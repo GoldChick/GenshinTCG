@@ -7,11 +7,11 @@ namespace TCGBase
     {
         public int PersistentRegion { get; init; }
     }
-    public delegate void EventPersistentSetHandler(PlayerTeam me, AbstractSender s, AbstractVariable? v);
+    public delegate void EventPersistentSetHandler(AbstractTeam me, AbstractSender s, AbstractVariable? v);
     public class PersistentSet<T> : PersistentSet, IEnumerable<Persistent<T>> where T : ICardPersistent
     {
         private readonly List<Persistent<T>> _data;
-        private readonly PlayerTeam _me;
+        private readonly PlayerTeam? _me;
         private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
         /// <summary>
         /// 为正代表最多x个，为负或0代表无限制
@@ -27,14 +27,18 @@ namespace TCGBase
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
         /// </param>
-        internal PersistentSet(int region, PlayerTeam team, int size = 0, bool multisame = false)
+        internal PersistentSet(int region, AbstractTeam team, int size = 0, bool multisame = false)
         {
             PersistentRegion = region;
             _data = new();
             _handlers = new();
             MaxSize = size;
             MultiSame = multisame;
-            _me = team;
+            //TODO: check it :可能会引起什么报错，不过暂时不关心
+            if (team is PlayerTeam pt)
+            {
+                _me = pt;
+            }
         }
         public Persistent<T> this[int i] => _data[i];
         /// <summary>
@@ -66,7 +70,7 @@ namespace TCGBase
                 }
             }
         }
-        public void Update()
+        internal void Update()
         {
             while (_data.Any(p => !p.Active))
             {
@@ -133,6 +137,7 @@ namespace TCGBase
         public List<Persistent<T>> Copy() => _data.ToList();
         public void TryRemoveAt(int index)
         {
+            //TODO:弃置状态..
             if (_data.Count > index && index >= 0)
             {
                 var d = _data[index];
@@ -206,7 +211,7 @@ namespace TCGBase
             }
             _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
             _data.RemoveAt(index);
-
+            //TODO: unregister here
             _me.RealGame.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.Card), null);
         }
 

@@ -9,13 +9,13 @@ namespace TCGBase
     public static class PersistentFunc
     {
         /// <returns>当[对方角色]受到伤害时，是否为带有[某种状态]的[我方角色]造成，最好用于Element_Enchant、Hurt_Add和Hurt_Mul</returns>
-        public static bool IsCurrCharacterDamage(PlayerTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v, [NotNullWhen(returnValue: true)] out DamageVariable? dv)
+        public static bool IsCurrCharacterDamage(AbstractTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v, [NotNullWhen(returnValue: true)] out DamageVariable? dv)
          => (dv = v as DamageVariable) != null && s.TeamID == me.TeamIndex && dv.DirectSource == DamageSource.Character
                 && (p.PersistentRegion < 0 || p.PersistentRegion > 10 || me.CurrCharacter == p.PersistentRegion);
 
         /// <returns>当[对方角色]受到伤害时，是否为带有[某种状态]的[我方角色]的某种[技能]造成，最好用于Element_Enchant、Hurt_Add和Hurt_Mul</returns>
-        public static bool IsCurrCharacterSkill(PlayerTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v, SkillCategory category, [NotNullWhen(returnValue: true)] out DamageVariable? dv)
-         => (dv = v as DamageVariable) != null && s.TeamID == me.TeamIndex && dv.DirectSource == DamageSource.Character && s is PreHurtSender hs && hs.RootSource is AbstractCardSkill skill && skill.Category == category
+        public static bool IsCurrCharacterSkill(AbstractTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v, SkillCategory category, [NotNullWhen(returnValue: true)] out DamageVariable? dv)
+         => (dv = v as DamageVariable) != null && s.TeamID == me.TeamIndex && dv.DirectSource == DamageSource.Character && s is PreHurtSender hs && hs.RootSource is AbstractCardSkill skill && skill.DamageSkillCategory == category
                 && (p.PersistentRegion < 0 || p.PersistentRegion > 10 || me.CurrCharacter == p.PersistentRegion);
 
     }

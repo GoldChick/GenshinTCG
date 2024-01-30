@@ -7,11 +7,11 @@
     {
         public override int MaxUseTimes => 1;
 
-        private readonly Action<PlayerTeam, AbstractPersistent, AbstractSender, AbstractVariable?> _action;
+        private readonly Action<AbstractTeam, AbstractPersistent, AbstractSender, AbstractVariable?> _action;
         /// <summary>
         /// 准备技能使用成功后默认消除
         /// </summary>
-        public AbstractPrepareSkillEffect(Action<PlayerTeam, AbstractPersistent, AbstractSender, AbstractVariable?> action)
+        public AbstractPrepareSkillEffect(Action<AbstractTeam, AbstractPersistent, AbstractSender, AbstractVariable?> action)
         {
             _action = action;
         }

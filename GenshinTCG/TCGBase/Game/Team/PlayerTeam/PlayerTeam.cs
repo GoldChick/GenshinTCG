@@ -8,11 +8,8 @@
         /// <summary>
         /// 用于pvp模式仅限3个角色(然而设计模式似乎允许使用最多10个角色 Warning:未经测试)
         /// </summary>
-        public Character[] Characters { get; protected init; }
+        public override Character[] Characters { get; protected init; }
 
-        public PersistentSet<ICardPersistent> Supports { get; init; }
-        public PersistentSet<AbstractCardSummon> Summons { get; init; }
-        public PersistentSet<ICardPersistent> Effects { get; init; }
         private int _currcharacter;
         public override int CurrCharacter
         {
@@ -41,9 +38,7 @@
 
             Pass = false;
             Dices = new();
-            Summons = new(11, this, 4, false);
-            Supports = new(12, this, 4, true);
-            Effects = new(-1, this);
+
 
             _currcharacter = -1;
         }

@@ -19,11 +19,7 @@ namespace TCGBase
                 }
             }
         }
-        /// <summary>
-        /// 强制切换到某一个[活]角色（可指定绝对坐标或相对坐标，默认绝对）<br/>
-        /// 注意：不是行动
-        /// </summary>
-        public void TrySwitchToIndex(int index, bool relative = false)
+        public override void TrySwitchToIndex(int index, bool relative = false)
         {
             Debug.Assert(Characters.Any(c => c.Alive), "AbstractTeam.Prefab.SwitchToIndex():所有角色都已经死亡!");
             int curr = CurrCharacter;
@@ -40,17 +36,14 @@ namespace TCGBase
             }
             else
             {
-                curr = index;
+                curr = (index + Characters.Length) % Characters.Length;
             }
             if (Characters[curr].Alive)
             {
                 RealGame.TryProcessEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
             }
         }
-        /// <summary>
-        /// 找到失去生命值最多的角色，默认值为当前出战
-        /// </summary>
-        public int FindHPLostMost(int except = -1)
+        public override int FindHPLostMost(int except = -1)
         {
             int currid = CurrCharacter;
             int currhplost = 0;

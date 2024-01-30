@@ -128,8 +128,8 @@ namespace TCGBase
             };
             dvToPerson.SubDamage = tag switch
             {
-                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.Indirect, -1, 1, dvToPerson.TargetIndex, true),
-                ReactionTags.Swirl => new(DamageSource.Indirect, (cha.Element - 1) % 4 + 1, 1, dvToPerson.TargetIndex, true),
+                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.Indirect, -1, 1, dvToPerson.TargetIndex, true,dvToPerson.DamageTargetCategory),
+                ReactionTags.Swirl => new(DamageSource.Indirect, (cha.Element - 1) % 4 + 1, 1, dvToPerson.TargetIndex, true, dvToPerson.DamageTargetCategory),
                 _ => null
             };
             int initialelement = cha.Element;

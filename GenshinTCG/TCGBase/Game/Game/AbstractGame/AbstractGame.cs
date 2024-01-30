@@ -2,13 +2,24 @@
 {
     public abstract class AbstractGame
     {
-        internal bool InstantTrigger { get; set; }
-        internal Queue<Action> DelayedTriggerQueue { get; set; }
+        /// <summary>
+        /// 不为null时，会存储非立即结算状态
+        /// </summary>
+        internal Queue<Action>? TempDelayedTriggerQueue { get; set; }
         public abstract int CurrTeam { get; protected set; }
-
+        /// <summary>
+        /// 用来存储[队伍做出的]行动
+        /// </summary>
+        public List<List<BaseRecord>> NetEventRecords { get; }
+        /// <summary>
+        /// @desperated<br/>
+        /// 用来存储[客观发生的]行动
+        /// </summary>
+        public List<List<BaseRecord>> ActionRecords { get; }
         protected private AbstractGame()
         {
-            DelayedTriggerQueue = new();
+            NetEventRecords = new();
+            ActionRecords = new();
         }
         public virtual void BroadCast(ClientUpdatePacket packet)
         {

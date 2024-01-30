@@ -65,7 +65,7 @@
                 else if (evt.Action.Type == ActionType.UseSKill)
                 {
                     var c = Characters[CurrCharacter];
-                    temp = c.MP >= c.Card.Skills[evt.Action.Index].Cost.MPCost;
+                    temp = c.MP >= c.Card.Skills[evt.Action.Index].DamageCost.MPCost;
                 }
                 return temp && GetEventFinalDiceRequirement(evt.Action).DiceEqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
             }
@@ -156,7 +156,7 @@
                 case ActionType.UseSKill:
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
                     AbstractCardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
-                    c = new(skill.Cost);
+                    c = new(skill.DamageCost);
                     RealGame.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
                     break;
                 case ActionType.UseCard:

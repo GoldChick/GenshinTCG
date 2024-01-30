@@ -6,7 +6,7 @@ namespace TCGBase
     /// <param name="p">this buff</param>
     /// <param name="s">the message sender</param>
     /// <param name="v">possible things to change</param>
-    public delegate void EventPersistentHandler(PlayerTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v);
+    public delegate void EventPersistentHandler(AbstractTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v);
 
 
     public class PersistentTriggerDictionary : IEnumerable<KeyValuePair<string, IPersistentTrigger>>
@@ -16,23 +16,23 @@ namespace TCGBase
         {
             _dic = new();
         }
-        private class PersistentTrigger : IPersistentTrigger
+        internal class PersistentTrigger : IPersistentTrigger
         {
-            private readonly EventPersistentHandler _h;
+            public EventPersistentHandler Handler;
             public string Tag { get; }
             public PersistentTrigger(string tag, EventPersistentHandler h)
             {
                 Tag = tag;
-                _h = h;
+                Handler = h;
             }
-            public void Trigger(PlayerTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable) => _h.Invoke(me, persitent, sender, variable);
+            public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable) => Handler.Invoke(me, persitent, sender, variable);
         }
         internal void Add(SenderTagInner st, EventPersistentHandler h) => Add(new PersistentTrigger(st.ToString(), h));
         public void Add(SenderTag st, EventPersistentHandler h) => Add(new PersistentTrigger(st.ToString(), h));
         public void Add(string st, EventPersistentHandler h) => _dic.Add(st, new PersistentTrigger(st, h));
         public void Add(IPersistentTrigger t) => _dic.Add(t.Tag.ToString(), t);
 
-        public IPersistentTrigger this[string st] => _dic[st];
+        public IPersistentTrigger this[string st] { get => _dic[st]; internal set => _dic[st] = value; }
         public bool TryGetValue(string st, [NotNullWhen(returnValue: true)] out IPersistentTrigger? h) => _dic.TryGetValue(st, out h);
         public bool ContainsKey(string st) => _dic.ContainsKey(st);
         public bool Any() => _dic.Any();

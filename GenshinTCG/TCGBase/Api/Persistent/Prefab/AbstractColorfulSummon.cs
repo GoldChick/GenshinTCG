@@ -20,7 +20,7 @@
 
             if (!customRoundOver)
             {
-                TriggerDic.Add(SenderTag.RoundOver, (me, p, s, v) => me.Enemy.Hurt(new(p.Data is int element ? element : _init_element, _damage, 0), this, () => p.AvailableTimes--));
+                TriggerDic.Add(SenderTag.RoundOver, (me, p, s, v) => me.DoDamage(new(p.Data is int element ? element : _init_element, _damage, 0), this, () => p.AvailableTimes--));
             }
             if (!customChangeColor)
             {

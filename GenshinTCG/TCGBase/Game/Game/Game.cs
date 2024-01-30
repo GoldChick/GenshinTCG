@@ -33,8 +33,6 @@
         {
             Teams = new PlayerTeam[2];
             Clients = new();
-            NetEventRecords = new();
-            ActionRecords = new();
         }
         public void AddClient(AbstractClient c) => Clients.Add(c);
         /// <summary>
@@ -150,8 +148,25 @@
         /// </summary>
         public override void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
         {
-            Teams[CurrTeam].EffectTrigger(sender, variable);
-            Teams[1 - CurrTeam].EffectTrigger(sender, variable);
+            if (TempDelayedTriggerQueue != null)
+            {
+                TempDelayedTriggerQueue.Enqueue(() => InstantTrigger(sender, variable, broadcast));
+            }
+            else
+            {
+                InstantTrigger(sender, variable);
+            }
+        }
+        /// <summary>
+        /// 按照 当前队伍-另一队伍；角色-出战-召唤-支援 顺序，依次<b>立即</b>触发双方所有状态<br/>
+        /// 这里的状态都不会改变CurrTeam
+        /// </summary>
+        internal void InstantTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
+        {
+            EventPersistentSetHandler? hsC = (Teams[CurrTeam].GetCharacterEffectHandlers(sender) + Teams[CurrTeam].GetOtherEffectHandlers(sender));
+            EventPersistentSetHandler? hsO = (Teams[1 - CurrTeam].GetCharacterEffectHandlers(sender) + Teams[1 - CurrTeam].GetOtherEffectHandlers(sender));
+            hsC?.Invoke(Teams[CurrTeam], sender, variable);
+            hsO?.Invoke(Teams[1 - CurrTeam], sender, variable);
             if (broadcast)
             {
                 BroadCastRegion();

@@ -2,30 +2,22 @@
 {
     public partial class PlayerTeam
     {
+        public override int CardNum => CardsInHand.Count;
         /// <summary>
-        /// 究极定向检索，检索type类型和type的子类
+        /// 抽取num张<br/>
+        /// 若指定type : 究极定向检索，检索type类型和type的子类
         /// </summary>
-        public void RollCard(Type type)
+        public override void RollCard(int num, Type? type = null)
         {
-            var col = LeftCards.Where(c => c.GetType().IsAssignableTo(type));
-            if (col.Any())
-            {
-                var c = col.ElementAt(Random.Next(col.Count()));
-                LeftCards.Remove(c);
-                RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop));
-                GainCard(c);
-            }
-        }
-        public void RollCard(int num)
-        {
+            var collection = type == null ? LeftCards : LeftCards.Where(c => c.GetType().IsAssignableTo(type));
             for (int i = 0; i < num; i++)
             {
-                if (LeftCards.Count > 0)
+                if (collection.Any())
                 {
-                    var c = LeftCards[Random.Next(LeftCards.Count)];
-                    LeftCards.Remove(c);
+                    int index = Random.Next(collection.Count());
                     RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop));
-                    GainCard(c);
+                    GainCard(collection.ElementAt(index));
+                    LeftCards.RemoveAt(index);
                 }
             }
         }
@@ -33,7 +25,7 @@
         {
             if (CardsInHand.Count >= 10)
             {
-                RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace,card.NameID));
+                RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace, card.NameID));
             }
             else
             {

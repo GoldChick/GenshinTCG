@@ -2,7 +2,7 @@
 {
     public partial class PlayerTeam
     {
-        public int DiceNum => Dices.Count;
+        public override int DiceNum => Dices.Count;
         public void RollDice(DiceRollingVariable rolling)
         {
             //TODO:是对的吗
@@ -24,10 +24,7 @@
 
             AddDiceRange(randoms);
         }
-        /// <summary>
-        /// 返回int[8],第i个成员表示第i种元素骰的数量(默认顺序:万能 冰水火雷岩草风)
-        /// </summary>
-        public int[] GetDices()
+        public override int[] GetDicesArray()
         {
             int[] dices = new int[8];
             foreach (var d in Dices)
@@ -36,9 +33,9 @@
             }
             return dices;
         }
-        public List<(int count, int element)> GetSortedDices()
+        public override List<(int count, int element)> GetSortedDices()
         {
-            var dices = GetDices().Select((d, element) => (d, element)).ToList();
+            var dices = GetDicesArray().Select((d, element) => (d, element)).ToList();
             //by the way, 这高能==的优先级怎么是这样的
             dices.Sort((d1, d2) => d2.d - d1.d + (d2.element == 0 ? -100 : 0));
             return dices;
@@ -63,19 +60,20 @@
                 RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
             }
         }
-        public void AddDiceRange(params int[] ds)
+        public override void GainDice(params int[] dices)
         {
-            for (int i = 0; i < ds.Length; i++)
+            foreach (var d in dices)
             {
                 if (Dices.Count >= 16)
                 {
                     break;
                 }
-                Dices.Add(int.Clamp(ds[i], 0, 7));
+                Dices.Add(int.Clamp(d, 0, 7));
             }
             Dices.Sort();
             RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
+
         /// <summary>
         /// 获得很多骰子<br/>
         /// 会进行broadcast
@@ -93,7 +91,7 @@
             Dices.Sort();
             RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
-        public void TryRemoveDice(int element)
+        public override void TryRemoveDice(int element)
         {
             if (Dices.Contains(element))
             {

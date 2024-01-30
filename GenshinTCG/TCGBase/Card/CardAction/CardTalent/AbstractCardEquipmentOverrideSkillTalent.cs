@@ -33,7 +33,7 @@
             var sks = c.Card.Skills;
             var skill = sks[Skill % sks.Length];
             return base.CanBeUsed(me, targetArgs) && targetArgs[0] == me.CurrCharacter && skill is not AbstractCardSkillPassive && c.Active
-                && (skill.Category!=SkillCategory.Q||c.MP==c.Card.MaxMP);
+                && (skill.DamageSkillCategory!=SkillCategory.Q||c.MP==c.Card.MaxMP);
         }
     }
 }

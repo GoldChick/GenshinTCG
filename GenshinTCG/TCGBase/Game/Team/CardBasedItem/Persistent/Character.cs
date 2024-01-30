@@ -9,7 +9,7 @@ namespace TCGBase
         private int _element;
         private readonly AbstractTeam _t;
 
-        public PersistentSet<AbstractCardPersistent> Effects { get; internal set; }
+        public PersistentSet<AbstractCardPersistent> Effects { get; }
         /// <summary>
         /// HP并不在改变时发包，而在治疗、受伤时发包
         /// </summary>
@@ -74,7 +74,8 @@ namespace TCGBase
             Active = true;
         }
         /// <summary>
-        /// 被击倒角色会在异次元空间中参与结算......
+        /// 被击倒角色会在异次元空间中参与结算......<br/>
+        /// 此时仍然alive，但是predie
         /// </summary>
         internal Character ToDieLimbo(EmptyTeam emptyTeam)
         {
@@ -86,8 +87,7 @@ namespace TCGBase
             HP = 0;
             MP = 0;
             Element = 0;
-            Alive = false;
-            Predie = false;
+            Predie = true;
             return limbo_c;
         }
         /// <summary>
@@ -104,6 +104,40 @@ namespace TCGBase
             Alive = false;
             Active = false;
             //TODO: check it
+        }
+        internal EventPersistentSetHandler? GetPersistentHandlers(AbstractSender sender)
+        {
+            EventPersistentSetHandler? hs = null;
+            if (Card.TriggerDic.TryGetValue(sender.SenderName, out var h))
+            {
+                hs += (me, s, v) => h.Trigger(me, this, sender, v);
+            }
+            hs += Effects.GetPersistentHandlers(sender);
+            return hs;
+        }
+        /// <summary>
+        /// 只有活着的时候，并且添加的是普通的effect，才能添加状态<br/>
+        /// 如果添加的是圣遗物或武器，还会顶掉原来的
+        /// </summary>
+        public void AddEffect(Persistent<AbstractCardPersistent> effect)
+        {
+            if (Alive && !Predie)
+            {
+                if (effect.CardBase is AbstractCardArtifact)
+                {
+                    Effects.TryRemove(typeof(AbstractCardArtifact));
+                    Effects.Add(effect);
+                }
+                else if (effect.CardBase is AbstractCardWeapon)
+                {
+                    Effects.TryRemove(typeof(AbstractCardWeapon));
+                    Effects.Add(effect);
+                }
+                else if (effect.CardBase is AbstractCardEffect)
+                {
+                    Effects.Add(effect);
+                }
+            }
         }
     }
 }

@@ -15,6 +15,11 @@
         /// </summary>
         Character,
     }
+    public enum DamageTargetCategory
+    {
+        Enemy,
+        Me
+    }
     public class DamageVariable : AbstractVariable
     {
         private int _damage;
@@ -52,8 +57,9 @@
         /// 根本来源<see cref="IDamageSource"/>
         /// </summary>
         public DamageSource DirectSource { get; private set; }
+        public DamageTargetCategory DamageTargetCategory { get; private set; }
         /// <summary>
-        /// 伤害的承受者总是[角色]
+        /// 目标角色的index，绝对坐标还是相对坐标参见<see cref="TargetRelative"/>
         /// </summary>
         public int TargetIndex { get; set; }
         /// <summary>
@@ -76,30 +82,38 @@
         /// </summary>
         internal DamageVariable? SubDamage { get; set; }
         /// <summary>
-        /// 通过public方法创建的dmg的targetindex为相对坐标
+        /// 通过public方法创建的dmg的targetindex为相对坐标(相对出战角色)
         /// </summary>
-        public DamageVariable(int element, int basedamage, int relativeTarget = 0, bool targetExcept = false, DamageVariable? subdamage = null)
+        public DamageVariable(int element, int basedamage, DamageTargetCategory damageTargetCategory) : this(element, basedamage, 0, false, null, damageTargetCategory)
+        {
+        }
+        /// <summary>
+        /// 通过public方法创建的dmg的targetindex为相对坐标(相对出战角色)
+        /// </summary>
+        public DamageVariable(int element, int basedamage, int relativeTarget = 0, bool targetExcept = false, DamageVariable? subdamage = null, DamageTargetCategory damageTargetCategory = DamageTargetCategory.Enemy)
         {
             Element = int.Clamp(element, -1, 7);
             Damage = int.Max(0, basedamage);
             DirectSource = DamageSource.Direct;
+            DamageTargetCategory = damageTargetCategory;
             TargetIndex = relativeTarget;
             TargetRelative = true;
             TargetExcept = targetExcept;
             SubDamage = subdamage;
         }
         /// <summary>
-        /// 通过internal方法创建的dmg的targetindex为绝对坐标
+        /// 通过internal方法创建的dmg的targetindex为绝对坐标，并且没有子伤害
         /// </summary>
-        internal DamageVariable(DamageSource source, int element, int basedamage, int absoluteTarget, bool targetExcept, DamageVariable? sub = null)
+        internal DamageVariable(DamageSource source, int element, int basedamage, int absoluteTarget, bool targetExcept, DamageTargetCategory damageTargetCategory)
         {
             Element = int.Clamp(element, -1, 7);
             Damage = int.Max(0, basedamage);
             DirectSource = source;
+            DamageTargetCategory = damageTargetCategory;
             TargetIndex = absoluteTarget;
             TargetRelative = false;
             TargetExcept = targetExcept;
-            SubDamage = sub;
+            SubDamage = null;
         }
         /// <summary>
         /// 如果是相对坐标，就改成绝对坐标

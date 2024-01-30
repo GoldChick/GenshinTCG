@@ -62,6 +62,8 @@
         public int Variant { get; protected set; }
         public abstract PersistentTriggerDictionary TriggerDic { get; }
         public SkillCategory DamageSkillCategory => SkillCategory.P;
+        public CostInit DamageCost => new CostCreate().ToCostInit();
+
         private protected AbstractCardPersistent()
         {
         }

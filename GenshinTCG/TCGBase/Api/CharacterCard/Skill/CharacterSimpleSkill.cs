@@ -5,9 +5,9 @@
     /// </summary>
     public class CharacterSimpleSkill : AbstractCardSkill
     {
-        public override CostInit Cost { get; }
+        public override CostInit DamageCost { get; }
 
-        public override SkillCategory Category { get; }
+        public override SkillCategory DamageSkillCategory { get; }
         private readonly DamageVariable? _dv;
         /// <summary>
         /// skill: this<br/>
@@ -15,22 +15,22 @@
         /// character: skill owner<br/>
         /// int[]: possible args (nothing)
         /// </summary>
-        private readonly Action<AbstractCardSkill, PlayerTeam, Character>? _skillaction;
+        private readonly Action<AbstractCardSkill, AbstractTeam, Character>? _skillaction;
         public CharacterSimpleSkill(SkillCategory category, CostInit cost, DamageVariable? dv = null)
         {
-            Category = category;
-            Cost = cost ?? new();
+            DamageSkillCategory = category;
+            DamageCost = cost ?? new();
             _dv = dv;
         }
-        public CharacterSimpleSkill(SkillCategory category, CostInit cost, Action<AbstractCardSkill, PlayerTeam, Character> skillaction, DamageVariable? dv = null) : this(category, cost, dv)
+        public CharacterSimpleSkill(SkillCategory category, CostInit cost, Action<AbstractCardSkill, AbstractTeam, Character> skillaction, DamageVariable? dv = null) : this(category, cost, dv)
         {
             _skillaction = skillaction;
         }
-        public override void AfterUseAction(PlayerTeam me, Character c)
+        public override void AfterUseAction(AbstractTeam me, Character c)
         {
             if (_dv != null)
             {
-                me.Enemy.Hurt(_dv, this, () => _skillaction?.Invoke(this, me, c));
+                me.DoDamage(_dv, this, () => _skillaction?.Invoke(this, me, c));
             }
             else
             {

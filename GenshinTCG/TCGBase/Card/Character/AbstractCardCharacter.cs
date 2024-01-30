@@ -47,7 +47,7 @@
         /// <summary>
         /// 角色卡的(生物)种类，默认为HUMAN人类
         /// </summary>
-        public virtual CharacterCategory CharacterCategory { get => CharacterCategory.Human; }
+        public virtual CharacterCategory CharacterCategory => CharacterCategory.Human;
         protected AbstractCardCharacter()
         {
             TriggerDic = new()
@@ -64,22 +64,41 @@
                 {
                     if (p is Character c && s is ActionUseSkillSender ss &&  c.Card.GetType()==ss.Character.GetType())
                     {
-                        if (ss.Skill>=0 && ss.Skill<Skills.Length)
+                        if (ss.Skill>=0 && ss.Skill<Skills.Length && me is PlayerTeam pt)
                         {
                             var skill=Skills[ss.Skill];
-                            //TODO: talent
-                            skill.AfterUseAction(me,c);
-                            c.SkillCounter[ss.Skill]++;
-                            if (skill.TriggerAfterUseSkill)
+                            if (skill.DamageSkillCategory!=SkillCategory.Q)
                             {
-                                //TODO:天赋的ue skill
-                                //me.RealGame.EffectTrigger(new AfterUseSkillSender(me.TeamIndex,c,skill));
+                                //TODO: talent override?
+                                skill.AfterUseAction(pt,c);
+
+                                c.SkillCounter[ss.Skill]++;
+                                if (skill.Hidden)
+                                {
+                                    //TODO:天赋的ue skill
+                                    me.Game.EffectTrigger(new AfterUseSkillSender(me.TeamIndex,c,skill));
+                                }
                             }
                         }
                     }
                 }
                 }
             };
+            //初始化被动技能 
+            foreach (var s in Skills)
+            {
+                if (s is AbstractCardSkillPassive passive)
+                {
+                    if (TriggerDic.TryGetValue(passive.TriggerSenderTag, out var ipt) && ipt is PersistentTriggerDictionary.PersistentTrigger pt)
+                    {
+                        pt.Handler += passive.AfterTriggerAction;
+                    }
+                    else
+                    {
+                        TriggerDic.Add(passive.TriggerSenderTag, passive.AfterTriggerAction);
+                    }
+                }
+            }
             Tags.Add(CharacterElement.ToTags());
             Tags.Add(WeaponCategory.ToTags());
             Tags.Add(CharacterRegion.ToTags());

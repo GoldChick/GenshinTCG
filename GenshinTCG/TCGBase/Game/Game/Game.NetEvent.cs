@@ -79,13 +79,16 @@
                     t.AddPersistent(new Effect_RoundSkillCounter(ski), t.CurrCharacter);
                     afterEventSender = new AfterUseSkillSender(currTeam, cha, ski);
 
-                    if (ski.Cost.MPCost > 0)
+                    if (ski.DamageCost.MPCost > 0)
                     {
-                        t.Characters[t.CurrCharacter].MP -= ski.Cost.MPCost;
+                        //TODO: cost mp?
+                        t.Characters[t.CurrCharacter].MP -= ski.DamageCost.MPCost;
                     }
                     else
                     {
-                        t.Characters[t.CurrCharacter].MP += ski.GiveMP;
+                        //TODO:give mp?
+                        
+                        //t.Characters[t.CurrCharacter].MP += ski.GiveMP;
                     }
                     EffectTrigger(new ActionUseSkillSender(t.TeamIndex, cha.Card, evt.Action.Index));
                     break;

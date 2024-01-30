@@ -17,7 +17,7 @@
 
         public override PersistentTriggerDictionary TriggerDic => new()
         {
-            { SenderTag.RoundOver,(me, p, s, v) => { me.Enemy.Hurt(new(_element, _damage, 0), this); p.AvailableTimes --; }}
+            { SenderTag.RoundOver,(me, p, s, v) => me.DoDamage(new(_element, _damage, 0), this,()=>p.AvailableTimes --)}
         };
     }
 }

@@ -63,11 +63,10 @@
         /// 只会对自己的队伍调用，用于[护盾]
         /// </summary>
         HurtDecrease,
-        DamageMul,
         /// <summary>
-        /// 只会对自己的队伍调用，用于[护体岩铠]
+        /// 乘除，如[泡影][护体岩铠]
         /// </summary>
-        HurtMul,
+        DamageMul,
         #endregion
         #region 某个Player Action结算后
         AfterRerollDice,
@@ -77,10 +76,6 @@
         AfterUseCard,
         AfterUseSkill,
         AfterPass,
-        /// <summary>
-        /// 一次hit生效后的[获得充能]后，清空[结算栈]前
-        /// </summary>
-        AfterHitLanded,
         /// <summary>
         /// 仅用于触发effect，而且仅在[双方进行任意行动后]的时候触发
         /// </summary>

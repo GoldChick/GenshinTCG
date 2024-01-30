@@ -29,9 +29,5 @@
             var c = me.Characters[targetArgs[0]];
             return c.Alive && ((ICardTalent)this).IsFor(c.Card);
         }
-        public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
-        {
-            me.AddEquipment(this, targetArgs[0]);
-        }
     }
 }
