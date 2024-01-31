@@ -13,11 +13,9 @@
         {
             base.AfterUseAction(me, targetArgs);
             var c = me.Characters[targetArgs[0]];
-            var index = Skill % c.Card.Skills.Length;
-            if (c.Card.Skills[index] is not AbstractCardSkillPassive)
+            if (c.Card.Skills[Skill] is not AbstractCardSkillPassive)
             {
-                //TODO:天赋的use skill
-                //me.RealGame.HandleEvent(new NetEvent(new NetAction(ActionType.UseSKill, index)), me.TeamIndex);
+                me.EffectTrigger(new ActionUseSkillSender(me.TeamIndex, c, Skill));
             }
         }
         /// <summary>
