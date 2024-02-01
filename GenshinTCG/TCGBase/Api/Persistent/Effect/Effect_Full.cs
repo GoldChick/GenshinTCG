@@ -6,7 +6,7 @@ namespace Minecraft
     {
         public override int MaxUseTimes => 1;
 
-        public override PersistentTriggerDictionary TriggerDic => new()
+        public override PersistentTriggerList TriggerList => new()
         {
             { SenderTag.RoundOver,(me,p,s,v)=>p.AvailableTimes--}
         };

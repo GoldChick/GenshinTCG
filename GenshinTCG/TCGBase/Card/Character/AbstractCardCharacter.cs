@@ -43,14 +43,14 @@
         public abstract CharacterRegion CharacterRegion { get; }
         public override sealed bool CustomDesperated => true;
         public override sealed int MaxUseTimes => 0;
-        public override PersistentTriggerDictionary TriggerDic { get; }
+        public override PersistentTriggerList TriggerList { get; }
         /// <summary>
         /// 角色卡的(生物)种类，默认为HUMAN人类
         /// </summary>
         public virtual CharacterCategory CharacterCategory => CharacterCategory.Human;
         protected AbstractCardCharacter()
         {
-            TriggerDic = new()
+            TriggerList = new()
             {
                 { SenderTag.RoundStart,(me,p,s,v)=>
                 {
@@ -89,13 +89,13 @@
             {
                 if (s is AbstractCardSkillPassive passive)
                 {
-                    if (TriggerDic.TryGetValue(passive.TriggerSenderTag, out var ipt) && ipt is PersistentTriggerDictionary.PersistentTrigger pt)
+                    if (TriggerList.TryGetValue(passive.TriggerSenderTag, out var ipt) && ipt is PersistentTriggerList.PersistentTrigger pt)
                     {
                         pt.Handler += passive.AfterTriggerAction;
                     }
                     else
                     {
-                        TriggerDic.Add(passive.TriggerSenderTag, passive.AfterTriggerAction);
+                        TriggerList.Add(passive.TriggerSenderTag, passive.AfterTriggerAction);
                     }
                 }
             }

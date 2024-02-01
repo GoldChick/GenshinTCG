@@ -189,25 +189,25 @@ namespace TCGBase
         private void Register(Persistent<T> p)
         {
             _data.Add(p);
-            foreach (var kvp in p.Card.TriggerDic)
+            foreach (var trigger in p.Card.TriggerList)
             {
-                var h = PersistentHandelerConvert(p, kvp.Value);
-                if (!_handlers.ContainsKey(kvp.Key))
+                var h = PersistentHandelerConvert(p, trigger);
+                if (!_handlers.ContainsKey(trigger.Tag))
                 {
-                    _handlers.Add(kvp.Key, h);
+                    _handlers.Add(trigger.Tag, h);
                 }
                 else
                 {
-                    _handlers[kvp.Key] += h;
+                    _handlers[trigger.Tag] += h;
                 }
             }
             _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, PersistentRegion, p.Card.Variant, p.AvailableTimes, p.Card.Namespace, p.Card.NameID));
         }
         private void Unregister(int index, Persistent<T> p)
         {
-            foreach (var kvp in p.Card.TriggerDic)
+            foreach (var trigger in p.Card.TriggerList)
             {
-                _handlers[kvp.Key] -= PersistentHandelerConvert(p, kvp.Value);
+                _handlers[trigger.Tag] -= PersistentHandelerConvert(p, trigger);
             }
             _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
             _data.RemoveAt(index);

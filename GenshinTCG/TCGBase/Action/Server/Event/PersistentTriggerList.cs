@@ -9,12 +9,12 @@ namespace TCGBase
     public delegate void EventPersistentHandler(AbstractTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v);
 
 
-    public class PersistentTriggerDictionary : IEnumerable<KeyValuePair<string, IPersistentTrigger>>
+    public class PersistentTriggerList : IEnumerable<IPersistentTrigger>
     {
-        private readonly Dictionary<string, IPersistentTrigger> _dic;
-        public PersistentTriggerDictionary()
+        private readonly List<IPersistentTrigger> _list;
+        public PersistentTriggerList()
         {
-            _dic = new();
+            _list = new();
         }
         internal class PersistentTrigger : IPersistentTrigger
         {
@@ -29,14 +29,13 @@ namespace TCGBase
         }
         internal void Add(SenderTagInner st, EventPersistentHandler h) => Add(new PersistentTrigger(st.ToString(), h));
         public void Add(SenderTag st, EventPersistentHandler h) => Add(new PersistentTrigger(st.ToString(), h));
-        public void Add(string st, EventPersistentHandler h) => _dic.Add(st, new PersistentTrigger(st, h));
-        public void Add(IPersistentTrigger t) => _dic.Add(t.Tag.ToString(), t);
-
-        public IPersistentTrigger this[string st] { get => _dic[st]; internal set => _dic[st] = value; }
-        public bool TryGetValue(string st, [NotNullWhen(returnValue: true)] out IPersistentTrigger? h) => _dic.TryGetValue(st, out h);
-        public bool ContainsKey(string st) => _dic.ContainsKey(st);
-        public bool Any() => _dic.Any();
-        public IEnumerator<KeyValuePair<string, IPersistentTrigger>> GetEnumerator() => _dic.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => _dic.GetEnumerator();
+        public void Add(string st, EventPersistentHandler h) => _list.Add(new PersistentTrigger(st, h));
+        public void Add(IPersistentTrigger t) => _list.Add(t);
+        //public IPersistentTrigger this[string st] { get => _list[st]; internal set => _list[st] = value; }
+        public bool TryGetValue(string st, [NotNullWhen(returnValue: true)] out IPersistentTrigger? h) => (h = _list.Find(p => p.Tag == st)) != null;
+        public bool ContainsKey(string st) => _list.Any(p => p.Tag == st);
+        public bool Any() => _list.Any();
+        public IEnumerator<IPersistentTrigger> GetEnumerator() => _list.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _list.GetEnumerator();
     }
 }

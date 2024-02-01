@@ -15,7 +15,7 @@
         {
             _action = action;
         }
-        public sealed override PersistentTriggerDictionary TriggerDic => new()
+        public sealed override PersistentTriggerList TriggerList => new()
         {
             { SenderTag.RoundMeStart,(me,p,s,v)=>
             {

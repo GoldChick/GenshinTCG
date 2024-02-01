@@ -15,7 +15,7 @@
             MaxUseTimes = maxusetimes;
         }
 
-        public override PersistentTriggerDictionary TriggerDic => new()
+        public override PersistentTriggerList TriggerList => new()
         {
             { SenderTag.RoundOver,(me, p, s, v) => me.DoDamage(new(_element, _damage, 0), this,()=>p.AvailableTimes --)}
         };

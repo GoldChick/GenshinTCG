@@ -7,7 +7,7 @@ namespace Minecraft
         public override string NameID => "effect_catalyze";
         public override int MaxUseTimes => 2;
 
-        public override PersistentTriggerDictionary TriggerDic => new()
+        public override PersistentTriggerList TriggerList => new()
         {
             {SenderTag.DamageIncrease,(me,p,s,v)=>
                 {

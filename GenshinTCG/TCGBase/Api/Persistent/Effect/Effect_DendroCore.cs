@@ -7,7 +7,7 @@ namespace Minecraft
         public override string NameID => "dendro_core";
         public override int MaxUseTimes => 1;
 
-        public override PersistentTriggerDictionary TriggerDic => new()
+        public override PersistentTriggerList TriggerList => new()
         {
             { SenderTag.DamageIncrease, (me,p,s,v)=>
                 {

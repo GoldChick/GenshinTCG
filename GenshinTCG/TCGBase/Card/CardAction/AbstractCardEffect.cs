@@ -24,6 +24,11 @@
         /// </summary>
         public string NameID { get; }
         /// <summary>
+        /// 对于[角色/出战状态]是是否可见，对于[角色]是是否可选择，对于其他无意义<br/>
+        /// 默认为false
+        /// </summary>
+        public bool Hidden { get; }
+        /// <summary>
         /// 产生时候的基础使用次数，默认和[最大次数]一样
         /// </summary>
         public int InitialUseTimes { get; }
@@ -48,10 +53,10 @@
         /// <summary>
         /// team: team me<br/>
         /// persistent: this buff<br/>
-        /// 通过此方式结算伤害时，对角色index的描述皆为绝对坐标，并且均为单体伤害<br/>
         /// 在#Api.Persistent.PersistentTriggerl#中提供一些预设，如刷新次数，清除，黄盾，紫盾等
         /// </summary>
-        public PersistentTriggerDictionary TriggerDic { get; }
+        public PersistentTriggerList TriggerList { get; }
+
         public void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent;
     }
     public abstract class AbstractCardPersistent : AbstractCardBase, ICardPersistent, IDamageSource
@@ -60,7 +65,8 @@
         public abstract int MaxUseTimes { get; }
         public virtual bool CustomDesperated { get => false; }
         public int Variant { get; protected set; }
-        public abstract PersistentTriggerDictionary TriggerDic { get; }
+        public virtual bool Hidden => false;
+        public abstract PersistentTriggerList TriggerList { get; }
         public SkillCategory DamageSkillCategory => SkillCategory.P;
         public CostInit DamageCost => new CostCreate().ToCostInit();
 
@@ -75,6 +81,7 @@
     }
     public abstract class AbstractCardSummon : AbstractCardPersistent
     {
+        public override sealed bool Hidden => base.Hidden;
     }
     public abstract class AbstractCardEffect : AbstractCardPersistent
     {

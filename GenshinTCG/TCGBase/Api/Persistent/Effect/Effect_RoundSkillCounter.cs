@@ -15,7 +15,7 @@
             Variant = -4;
         }
         public override int MaxUseTimes => 1;
-        public override PersistentTriggerDictionary TriggerDic => new()
+        public override PersistentTriggerList TriggerList => new()
         {
             { SenderTag.RoundStep,(me,p,s,v)=>p.Active=false},
             { SenderTag.RoundMeStart,(me,p,s,v)=>

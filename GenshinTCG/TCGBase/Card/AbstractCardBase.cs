@@ -9,5 +9,9 @@
         {
             Tags = new();
         }
+        internal AbstractCardBase(BaseCardRecord record)
+        {
+            Tags = record.Tags;
+        }
     }
 }

@@ -16,15 +16,15 @@
             _damage = int.Min(damage, 1);
             _init_element = initial_element;
             MaxUseTimes = maxusetimes;
-            TriggerDic = new();
+            TriggerList = new();
 
             if (!customRoundOver)
             {
-                TriggerDic.Add(SenderTag.RoundOver, (me, p, s, v) => me.DoDamage(new(p.Data is int element ? element : _init_element, _damage, 0), this, () => p.AvailableTimes--));
+                TriggerList.Add(SenderTag.RoundOver, (me, p, s, v) => me.DoDamage(new(p.Data is int element ? element : _init_element, _damage, 0), this, () => p.AvailableTimes--));
             }
             if (!customChangeColor)
             {
-                TriggerDic.Add(SenderTag.AfterHurt, (me, p, s, v) =>
+                TriggerList.Add(SenderTag.AfterHurt, (me, p, s, v) =>
                 {
                     if (p.Data == null && me.TeamIndex == s.TeamID && s is NoDamageHurtSender hs && hs.Reaction == ReactionTags.Swirl)
                     {
@@ -34,7 +34,7 @@
                 });
             }
         }
-        public override PersistentTriggerDictionary TriggerDic { get; }
+        public override PersistentTriggerList TriggerList { get; }
         public override void Update<T>(PlayerTeam me, Persistent<T> persistent)
         {
             base.Update(me, persistent);

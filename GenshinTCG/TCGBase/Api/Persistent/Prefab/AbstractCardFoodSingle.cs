@@ -11,14 +11,14 @@ namespace TCGBase
         /// <summary>
         /// 如果triggerdic中有内容，就添加状态给制定目标
         /// </summary>
-        public override PersistentTriggerDictionary TriggerDic => new();
+        public override PersistentTriggerList TriggerList => new();
         /// <summary>
         /// 默认实现 [附属饱腹]+[附属AfterEatEffect](如果有)
         /// </summary>
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
             me.AddPersistent(new Effect_Full(), targetArgs[0]);
-            if (TriggerDic.Any())
+            if (TriggerList.Any())
             {
                 me.AddPersistent(this, targetArgs[0]);
             }

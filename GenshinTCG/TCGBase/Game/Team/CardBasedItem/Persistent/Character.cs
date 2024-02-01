@@ -108,10 +108,11 @@ namespace TCGBase
         internal EventPersistentSetHandler? GetPersistentHandlers(AbstractSender sender)
         {
             EventPersistentSetHandler? hs = null;
-            if (Card.TriggerDic.TryGetValue(sender.SenderName, out var h))
-            {
-                hs += (me, s, v) => h.Trigger(me, this, sender, v);
-            }
+            //TODO: check it 如何触发自己？
+            //if (Card.TriggerList.TryGetValue(sender.SenderName, out var h))
+            //{
+            //    hs += (me, s, v) => h.Trigger(me, this, sender, v);
+            //}
             hs += Effects.GetPersistentHandlers(sender);
             return hs;
         }

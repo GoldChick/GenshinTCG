@@ -7,7 +7,7 @@ namespace Minecraft
         public override int InitialUseTimes => 1;
         public override int MaxUseTimes => 2;
 
-        public override PersistentTriggerDictionary TriggerDic => new()
+        public override PersistentTriggerList TriggerList => new()
         {
             new PersistentPreset.HurtDecreaseYellowShield()
         };

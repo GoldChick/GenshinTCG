@@ -128,8 +128,9 @@
                     c.HP -= hs.Damage;
                     if (c.HP == 0)
                     {
-                        if (c.Effects.TryFind(e => e.Card.Tags.Contains(PersistentTag.AntiDie.ToString()), out var p) && p.Card.TriggerDic.ContainsKey(SenderTag.PreDie.ToString()))
+                        if (c.Effects.TryFind(e => e.Card.Tags.Contains(PersistentTag.AntiDie.ToString()), out var p) )
                         {
+                            //TODO:check it?  && p.Card.TriggerList.ContainsKey(SenderTag.PreDie.ToString())
                             antidie_effects.Add(p);
                         }
                         else
@@ -151,7 +152,7 @@
             specialAction?.Invoke();
             foreach (var die_effect in antidie_effects)
             {
-                if (die_effect.Card.TriggerDic.TryGetValue(SenderTag.PreDie.ToString(), out var h))
+                if (die_effect.Card.TriggerList.TryGetValue(SenderTag.PreDie.ToString(), out var h))
                 {
                     h.Trigger(this, die_effect, new SimpleSender(TeamIndex, SenderTag.PreDie), null);
                 }

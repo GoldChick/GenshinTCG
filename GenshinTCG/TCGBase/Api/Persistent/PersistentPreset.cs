@@ -12,10 +12,6 @@
         /// <param name="variable">可以被改写的东西,如[消耗的骰子们],[伤害] <b>(不应改变类型)</b></param>
         public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable);
     }
-    public interface IMultiPersistentTrigger
-    {
-        public List<IPersistentTrigger> Triggers { get; }
-    }
     public static class PersistentPreset
     {
         public class AfterUseSkill : IPersistentTrigger

@@ -90,7 +90,7 @@
                         
                         //t.Characters[t.CurrCharacter].MP += ski.GiveMP;
                     }
-                    EffectTrigger(new ActionUseSkillSender(t.TeamIndex, cha.Card, evt.Action.Index));
+                    EffectTrigger(new ActionUseSkillSender(t.TeamIndex, cha, evt.Action.Index));
                     break;
                 case ActionType.UseCard:
                     EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseCard));

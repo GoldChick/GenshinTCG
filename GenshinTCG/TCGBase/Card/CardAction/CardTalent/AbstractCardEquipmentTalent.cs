@@ -10,7 +10,7 @@
         /// <summary>
         /// 默认的TriggerDic为空，但也不排除特殊情况，如[迪西雅]天赋
         /// </summary>
-        public override PersistentTriggerDictionary TriggerDic => new();
+        public override PersistentTriggerList TriggerList => new();
         public override string NameID => $"talent_{CharacterNameID}";
         /// <summary>
         /// 不指定namespace，则和本身（这张卡）的一样

@@ -6,6 +6,6 @@
     public abstract class AbstractCardEventNoEffect : AbstractCardEvent
     {
         public override int MaxUseTimes => 0;
-        public override PersistentTriggerDictionary TriggerDic => new();
+        public override PersistentTriggerList TriggerList => new();
     }
 }
