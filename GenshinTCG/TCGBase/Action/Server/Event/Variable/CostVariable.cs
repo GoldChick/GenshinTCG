@@ -58,29 +58,16 @@ namespace TCGBase
             return false;
         }
     }
-    public enum DiceModifierType
-    {
-        Same,
-        Cryo,
-        Hydro,
-        Pyro,
-        Electro,
-        Geo,
-        Dendro,
-        Anemo,
-        Void
-    }
-
     public class CostModifier
     {
-        protected DiceModifierType Type { get; }
+        protected ElementCategory Type { get; }
         protected int Num { get; set; }
         /// <summary>
         /// 骰子原始消耗只有 [同色] | [杂色+一些指定颜色] 两种搭配<br/><br/>
         /// 切换角色视为杂色骰<br/><br/>
         /// 通过[Same]对[有色骰]消耗进行更改时，只能减少不能增加<br/>
         /// </summary>
-        public CostModifier(DiceModifierType type, int num)
+        public CostModifier(ElementCategory type, int num)
         {
             Type = type;
             Num = num;
@@ -91,7 +78,7 @@ namespace TCGBase
 
             if (dcv.DiceCost[0] > 0)
             {
-                if (Type == DiceModifierType.Same || Num <= 0)
+                if (Type == ElementCategory.Trival || Num <= 0)
                 {
                     dcv.DiceCost[(int)Type] -= int.Min(dcv.DiceCost[(int)Type], Num);
                 }
@@ -101,7 +88,7 @@ namespace TCGBase
                 }
             }
             //否则 abcd颜色+x杂色
-            else if (Type == DiceModifierType.Same)
+            else if (Type == ElementCategory.Trival)
             {
                 //通过[Same]对[有色骰]消耗进行更改，只能减少不能增加
                 if (dcv.DiceCost.Any(i => i > 0))
@@ -126,7 +113,7 @@ namespace TCGBase
                     act = false;
                 }
             }
-            else if (Type == DiceModifierType.Void)
+            else if (Type == ElementCategory.Void)
             {
                 if (dcv.DiceCost[8] > 0 || Num <= 0)
                 {
@@ -167,10 +154,10 @@ namespace TCGBase
     public class CostModifier<T> : CostModifier where T : AbstractUseDiceSender
     {
         public Func<PlayerTeam, AbstractPersistent, T, int>? DynamicNum { get; }
-        public CostModifier(DiceModifierType type, int num) : base(type, num)
+        public CostModifier(ElementCategory type, int num) : base(type, num)
         {
         }
-        public CostModifier(DiceModifierType type, Func<PlayerTeam, AbstractPersistent, T, int>? dynamicNum) : base(type, 0)
+        public CostModifier(ElementCategory type, Func<PlayerTeam, AbstractPersistent, T, int>? dynamicNum) : base(type, 0)
         {
             DynamicNum = dynamicNum;
         }
@@ -188,17 +175,18 @@ namespace TCGBase
     {
         protected int[] _costs;
         /// <summary>
-        /// 同色 冰水火雷岩草风 杂色
+        /// 同色 冰水火雷岩草风 杂色 充能 秘传点
         /// </summary>
         internal int[] DiceCost { get => _costs; }
         /// <summary>
         /// 对于[技能]，直接填写数值即可<br/>
         /// 对于[卡牌]，需要实现<see cref="IEnergyConsumerCard"/>，指定额外Target的中角色的index（天赋卡默认index=0），否则默认为出战角色
         /// </summary>
-        internal int MPCost { get; private protected set; }
+        internal int MPCost { get => _costs[9]; }
+        //TODO:desperated mpcost
         public CostCreate()
         {
-            _costs = new int[9];
+            _costs = new int[11];
         }
         public CostInit ToCostInit()
         {
@@ -209,7 +197,7 @@ namespace TCGBase
                     _costs[i] = 0;
                 }
             }
-            return new(_costs, MPCost);
+            return new(_costs);
         }
         public CostCreate Void(int num)
         {
@@ -258,7 +246,7 @@ namespace TCGBase
         }
         public CostCreate MP(int num)
         {
-            MPCost += num;
+            _costs[9] += num;
             return this;
         }
     }
@@ -271,22 +259,28 @@ namespace TCGBase
         public CostInit() : base()
         {
         }
-        internal CostInit(int[] dicecost, int mpcost) : base()
+        /// <summary>
+        ///  0 同色(有同色则其他骰都为0)<br/>
+        ///  1-7 冰水火雷岩草风<br/>
+        ///  8 杂色<br/>
+        ///  9 充能<br/>
+        ///  10 秘传
+        /// </summary>
+        internal CostInit(int[] dicecost) : base()
         {
-            for (int i = 0; i < 9 && i < dicecost.Length; i++)
+            for (int i = 0; i < 11 && i < dicecost.Length; i++)
             {
                 _costs[i] = dicecost[i];
             }
-            MPCost = mpcost;
         }
         /// <summary>
         ///  0 同色(有同色则其他骰都为0)<br/>
         ///  1-7 冰水火雷岩草风<br/>
         ///  8 杂色<br/>
         ///  9 充能<br/>
+        ///  10 秘传
         /// </summary>
-        /// <returns></returns>
-        public int[] GetCost() => DiceCost.Append(MPCost).ToArray();
+        public int[] GetCost() => DiceCost.ToArray();
         public CostVariable ToCostVariable() => new(this);
     }
 }

@@ -7,33 +7,30 @@ namespace TCGBase
     /// <param name="s">the message sender</param>
     /// <param name="v">possible things to change</param>
     public delegate void EventPersistentHandler(AbstractTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v);
-
-
     public class PersistentTriggerList : IEnumerable<IPersistentTrigger>
     {
         private readonly List<IPersistentTrigger> _list;
-        public PersistentTriggerList()
+        public PersistentTriggerList(List<IPersistentTrigger>? list = null)
         {
-            _list = new();
-        }
-        internal class PersistentTrigger : IPersistentTrigger
-        {
-            public EventPersistentHandler Handler;
-            public string Tag { get; }
-            public PersistentTrigger(string tag, EventPersistentHandler h)
-            {
-                Tag = tag;
-                Handler = h;
-            }
-            public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable) => Handler.Invoke(me, persitent, sender, variable);
+            _list = list ?? new();
         }
         internal void Add(SenderTagInner st, EventPersistentHandler h) => Add(new PersistentTrigger(st.ToString(), h));
         public void Add(SenderTag st, EventPersistentHandler h) => Add(new PersistentTrigger(st.ToString(), h));
         public void Add(string st, EventPersistentHandler h) => _list.Add(new PersistentTrigger(st, h));
         public void Add(IPersistentTrigger t) => _list.Add(t);
-        //public IPersistentTrigger this[string st] { get => _list[st]; internal set => _list[st] = value; }
-        public bool TryGetValue(string st, [NotNullWhen(returnValue: true)] out IPersistentTrigger? h) => (h = _list.Find(p => p.Tag == st)) != null;
-        public bool ContainsKey(string st) => _list.Any(p => p.Tag == st);
+        /// <summary>
+        /// 找到第index个满足要求的触发，自动clamp到0-(size-1)
+        /// </summary>
+        public bool TryGetValue(string st, [NotNullWhen(returnValue: true)] out IPersistentTrigger? h, int index = 0)
+        {
+            var targets = _list.Where(p => p.Tag == st);
+            h = targets.ElementAt(int.Clamp(index, 0, targets.Count() - 1));
+            return targets.Any();
+        }
+        /// <summary>
+        /// 查看是否有count个tag满足要求的触发，自动count>=1
+        /// </summary>
+        public bool ContainsKey(string st, int count = 1) => _list.Where(p => p.Tag == st).Count() == int.Min(1, count);
         public bool Any() => _list.Any();
         public IEnumerator<IPersistentTrigger> GetEnumerator() => _list.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _list.GetEnumerator();

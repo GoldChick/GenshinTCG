@@ -2,7 +2,7 @@
 {
     public abstract class AbstractCardEventTalent : AbstractCardEventNoEffect, ICardTalent
     {
-        public override string NameID => $"talent_{CharacterNameID}";
+        //public override string NameID => $"talent_{CharacterNameID}";
         /// <summary>
         /// 不指定namespace，则和本身（这张卡）的一样
         /// </summary>

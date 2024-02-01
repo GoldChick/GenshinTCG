@@ -5,7 +5,6 @@
     /// </summary>
     public interface IDamageSource
     {
-        public CostInit DamageCost { get; }
-        public SkillCategory DamageSkillCategory { get; }
+        public CostInit Cost { get; }
     }
 }

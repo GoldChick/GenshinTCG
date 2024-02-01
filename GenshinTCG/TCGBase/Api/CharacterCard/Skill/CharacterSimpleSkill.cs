@@ -5,9 +5,9 @@
     /// </summary>
     public class CharacterSimpleSkill : AbstractCardSkill
     {
-        public override CostInit DamageCost { get; }
+        public override CostInit Cost { get; }
 
-        public override SkillCategory DamageSkillCategory { get; }
+        public override SkillCategory SkillCategory { get; }
         private readonly DamageVariable? _dv;
         /// <summary>
         /// skill: this<br/>
@@ -18,8 +18,8 @@
         private readonly Action<AbstractCardSkill, AbstractTeam, Character>? _skillaction;
         public CharacterSimpleSkill(SkillCategory category, CostInit cost, DamageVariable? dv = null)
         {
-            DamageSkillCategory = category;
-            DamageCost = cost ?? new();
+            SkillCategory = category;
+            Cost = cost ?? new();
             _dv = dv;
         }
         public CharacterSimpleSkill(SkillCategory category, CostInit cost, Action<AbstractCardSkill, AbstractTeam, Character> skillaction, DamageVariable? dv = null) : this(category, cost, dv)

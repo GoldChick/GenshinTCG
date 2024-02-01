@@ -100,16 +100,16 @@ namespace TCGBase
                     case ReactionTags.Overloaded:
                         return targetindex == CurrCharacter;
                     case ReactionTags.Crystallize:
-                        Enemy.AddPersistent(new Effect_Crystal());
+                        //Enemy.AddPersistent(new Effect_Crystal());
                         break;
                     case ReactionTags.Bloom:
-                        Enemy.AddPersistent(new Effect_DendroCore());
+                        //Enemy.AddPersistent(new Effect_DendroCore());
                         break;
                     case ReactionTags.Burning:
-                        Enemy.AddSummon(new Summon_Burning());
+                        //Enemy.AddSummon(new Summon_Burning());
                         break;
                     case ReactionTags.Catalyze:
-                        Enemy.AddPersistent(new Effect_CatalyzeField());
+                        //Enemy.AddPersistent(new Effect_CatalyzeField());
                         break;
                 }
             }
@@ -128,8 +128,8 @@ namespace TCGBase
             };
             dvToPerson.SubDamage = tag switch
             {
-                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.Indirect, -1, 1, dvToPerson.TargetIndex, true,dvToPerson.DamageTargetCategory),
-                ReactionTags.Swirl => new(DamageSource.Indirect, (cha.Element - 1) % 4 + 1, 1, dvToPerson.TargetIndex, true, dvToPerson.DamageTargetCategory),
+                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.Indirect, -1, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
+                ReactionTags.Swirl => new(DamageSource.Indirect, (cha.Element - 1) % 4 + 1, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
                 _ => null
             };
             int initialelement = cha.Element;

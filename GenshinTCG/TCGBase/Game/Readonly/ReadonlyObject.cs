@@ -42,7 +42,7 @@ namespace TCGBase
             MaxMP = c.Card.MaxMP;
             Element = c.Element;
             Effects = c.Effects.Copy().Select(e => new ReadonlyPersistent(e)).ToList();
-            SkillCount = c.Card.Skills.Where(s => s.DamageSkillCategory != SkillCategory.P).Count();
+            SkillCount = c.Card.Skills.Where(s => s.SkillCategory != SkillCategory.P).Count();
         }
     }
     public class ReadonlyPersistent : ReadonlyObject

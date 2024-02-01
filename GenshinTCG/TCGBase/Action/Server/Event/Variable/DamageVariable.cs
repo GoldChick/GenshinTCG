@@ -15,10 +15,15 @@
         /// </summary>
         Character,
     }
-    public enum DamageTargetCategory
+    public enum DamageTargetTeam
     {
         Enemy,
         Me
+    }
+    public enum DamageTargetArea
+    {
+        TargetOnly,
+        TargetExcept
     }
     public class DamageVariable : AbstractVariable
     {
@@ -57,7 +62,7 @@
         /// 根本来源<see cref="IDamageSource"/>
         /// </summary>
         public DamageSource DirectSource { get; private set; }
-        public DamageTargetCategory DamageTargetCategory { get; private set; }
+        public DamageTargetTeam DamageTargetTeam { get; private set; }
         /// <summary>
         /// 目标角色的index，绝对坐标还是相对坐标参见<see cref="TargetRelative"/>
         /// </summary>
@@ -67,11 +72,11 @@
         /// 在各种TCGMod中创建的伤害都应该为相对坐标<br/>
         /// 结算伤害时，会转化为绝对坐标
         /// </summary>
-        public bool TargetRelative { get; private set; }
+        internal bool TargetRelative { get; private set; }
         /// <summary>
         /// 为true时，改为对target以外的所有角色造成伤害<br/>
         /// </summary>
-        public bool TargetExcept { get; init; }
+        public DamageTargetArea TargetArea { get; init; }
         /// <summary>
         /// 伤害触发的反应类型，仅在伤害结算时获得，只读
         /// </summary>
@@ -84,35 +89,35 @@
         /// <summary>
         /// 通过public方法创建的dmg的targetindex为相对坐标(相对出战角色)
         /// </summary>
-        public DamageVariable(int element, int basedamage, DamageTargetCategory damageTargetCategory) : this(element, basedamage, 0, false, null, damageTargetCategory)
+        public DamageVariable(int element, int basedamage, DamageTargetTeam damageTargetCategory) : this(element, basedamage, 0, DamageTargetArea.TargetOnly, null, damageTargetCategory)
         {
         }
         /// <summary>
         /// 通过public方法创建的dmg的targetindex为相对坐标(相对出战角色)
         /// </summary>
-        public DamageVariable(int element, int basedamage, int relativeTarget = 0, bool targetExcept = false, DamageVariable? subdamage = null, DamageTargetCategory damageTargetCategory = DamageTargetCategory.Enemy)
+        public DamageVariable(int element, int basedamage, int relativeTarget = 0, DamageTargetArea targetArea = DamageTargetArea.TargetOnly, DamageVariable? subdamage = null, DamageTargetTeam damageTargetCategory = DamageTargetTeam.Enemy)
         {
             Element = int.Clamp(element, -1, 7);
             Damage = int.Max(0, basedamage);
             DirectSource = DamageSource.Direct;
-            DamageTargetCategory = damageTargetCategory;
+            DamageTargetTeam = damageTargetCategory;
             TargetIndex = relativeTarget;
             TargetRelative = true;
-            TargetExcept = targetExcept;
+            TargetArea = targetArea;
             SubDamage = subdamage;
         }
         /// <summary>
         /// 通过internal方法创建的dmg的targetindex为绝对坐标，并且没有子伤害
         /// </summary>
-        internal DamageVariable(DamageSource source, int element, int basedamage, int absoluteTarget, bool targetExcept, DamageTargetCategory damageTargetCategory)
+        internal DamageVariable(DamageSource source, int element, int basedamage, int absoluteTarget, DamageTargetArea targetArea, DamageTargetTeam damageTargetCategory)
         {
             Element = int.Clamp(element, -1, 7);
             Damage = int.Max(0, basedamage);
             DirectSource = source;
-            DamageTargetCategory = damageTargetCategory;
+            DamageTargetTeam = damageTargetCategory;
             TargetIndex = absoluteTarget;
             TargetRelative = false;
-            TargetExcept = targetExcept;
+            TargetArea = targetArea;
             SubDamage = null;
         }
         /// <summary>

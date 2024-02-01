@@ -2,8 +2,8 @@
 {
     public abstract class AbstractCardSkillPassive : AbstractCardSkill
     {
-        public override sealed SkillCategory DamageSkillCategory => SkillCategory.P;
-        public override sealed CostInit DamageCost => new();
+        public override sealed SkillCategory SkillCategory => SkillCategory.P;
+        public override sealed CostInit Cost => new();
         /// <summary>
         /// 被动技能不能触发[使用技能后]
         /// </summary>

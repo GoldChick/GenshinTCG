@@ -66,11 +66,9 @@
         public virtual bool CustomDesperated { get => false; }
         public int Variant { get; protected set; }
         public virtual bool Hidden => false;
-        public abstract PersistentTriggerList TriggerList { get; }
-        public SkillCategory DamageSkillCategory => SkillCategory.P;
-        public CostInit DamageCost => new CostCreate().ToCostInit();
+        public CostInit Cost => new CostCreate().ToCostInit();
 
-        private protected AbstractCardPersistent()
+        protected private AbstractCardPersistent(BaseCardRecord record) : base(record)
         {
         }
         public virtual void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent
@@ -79,11 +77,18 @@
             persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
         }
     }
+    //TODO: check it?
     public abstract class AbstractCardSummon : AbstractCardPersistent
     {
         public override sealed bool Hidden => base.Hidden;
+        protected private AbstractCardSummon(BaseCardRecord record) : base(record)
+        {
+        }
     }
     public abstract class AbstractCardEffect : AbstractCardPersistent
     {
+        protected private AbstractCardEffect(BaseCardRecord record) : base(record)
+        {
+        }
     }
 }

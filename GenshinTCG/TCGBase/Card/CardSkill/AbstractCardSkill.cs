@@ -1,16 +1,17 @@
 ﻿namespace TCGBase
 {
+    /// <summary>
+    /// 分别表示[非技能][A][E][Q][被动]
+    /// </summary>
     public enum SkillCategory
     {
-        /// <summary>
-        /// 作为伤害来源时，表明是一个[非(主动)技能]伤害
-        /// </summary>
-        P,
+        N,
         A,
         E,
         Q,
+        P
     }
-    public abstract class AbstractCardSkill : IDamageSource
+    public abstract class AbstractCardSkill : IDamageSource, ICostable, ISkillable
     {
         //by the way,我不认为被隐藏的非[准备]非[被动]技能有存在的必要
         /// <summary>
@@ -18,8 +19,34 @@
         /// [准备技能]和[被动技能]默认不触发
         /// </summary>
         public virtual bool Hidden => true;
-        public abstract CostInit DamageCost { get; }
-        public abstract SkillCategory DamageSkillCategory { get; }
+        public abstract CostInit Cost { get; }
+        public abstract SkillCategory SkillCategory { get; }
         public abstract void AfterUseAction(AbstractTeam me, Character c);
+    }
+    public abstract class AbstractSkillTrigger : IPersistentTrigger, ICostable, ISkillable
+    {
+        public string Tag => SenderTagInner.Use.ToString();
+
+        public abstract SkillCategory SkillCategory { get; }
+
+        public abstract CostInit Cost { get; }
+
+        public abstract void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable);
+    }
+    public class SkillTrigger : AbstractSkillTrigger
+    {
+        public SkillTrigger(SkillCategory category, CostInit cost)
+        {
+            SkillCategory = category;
+            Cost = cost;
+        }
+        public override SkillCategory SkillCategory { get; }
+
+        public override CostInit Cost { get; }
+
+        public override void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        {
+
+        }
     }
 }

@@ -24,11 +24,9 @@
         /// </summary>
         public virtual bool FastAction { get => true; }
         public abstract CostInit Cost { get; }
-
         /// <summary>
         /// //是否可以加入卡组里
         /// </summary>
-        /// <returns></returns>
         public virtual bool CanBeArmed(List<AbstractCardCharacter> chars) => true;
         public abstract void AfterUseAction(PlayerTeam me, int[] targetArgs);
         /// <summary>
@@ -36,8 +34,9 @@
         /// 如果实现ITargetSelector，且为单目标，可以借助这个方法给virtual类的target用
         /// </summary>
         public virtual bool CanBeUsed(PlayerTeam me, int[] targetArgs) => true;
-        private protected AbstractCardAction()
+        private protected AbstractCardAction():base(null)
         {
+            //TODO: record
         }
     }
 }

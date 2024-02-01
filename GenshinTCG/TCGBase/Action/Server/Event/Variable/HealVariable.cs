@@ -20,20 +20,20 @@
         /// 通过public方法创建的heal的targetindex为相对坐标<br/>
         /// 在内部转换为绝对坐标运算
         /// </summary>
-        public HealVariable(int baseamount, int relativeTarget = 0, bool targetExcept = false)
+        public HealVariable(int baseamount, int relativeTarget = 0, bool targetArea = false)
         {
             Amount = int.Max(0, baseamount);
             DirectSource = DamageSource.Direct;
             TargetIndex = relativeTarget;
-            TargetExcept = targetExcept;
+            TargetExcept = targetArea;
         }
 
-        internal HealVariable(DamageSource source, int baseamount, int relativeTarget = 0, bool targetExcept = false)
+        internal HealVariable(DamageSource source, int baseamount, int relativeTarget = 0, bool targetArea = false)
         {
             Amount = int.Max(0, baseamount);
             DirectSource = source;
             TargetIndex = relativeTarget;
-            TargetExcept = targetExcept;
+            TargetExcept = targetArea;
         }
     }
 }

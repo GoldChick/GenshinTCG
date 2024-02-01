@@ -12,6 +12,18 @@
         /// <param name="variable">可以被改写的东西,如[消耗的骰子们],[伤害] <b>(不应改变类型)</b></param>
         public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable);
     }
+    internal class PersistentTrigger : IPersistentTrigger
+    {
+        public EventPersistentHandler Handler;
+        public string Tag { get; }
+        public PersistentTrigger(string tag, EventPersistentHandler h)
+        {
+            Tag = tag;
+            Handler = h;
+        }
+        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable) => Handler.Invoke(me, persitent, sender, variable);
+    }
+
     public static class PersistentPreset
     {
         public class AfterUseSkill : IPersistentTrigger
@@ -117,7 +129,7 @@
                     _ => SenderTag.UseDiceFromSwitch.ToString()
                 };
                 _condition = condition ?? ((me, p, s, v) => me.TeamIndex == s.TeamID);
-                _costmodifier = costmodifier ?? ((me, p, s, v) => new CostModifier(DiceModifierType.Same, 1));
+                _costmodifier = costmodifier ?? ((me, p, s, v) => new CostModifier(ElementCategory.Trival, 1));
                 _aftertriggeraction = aftertriggeraction;
                 if (decreaseAvailabletimes)
                 {

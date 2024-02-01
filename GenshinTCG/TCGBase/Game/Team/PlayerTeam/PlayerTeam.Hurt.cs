@@ -15,14 +15,14 @@
             while (queue.Any())
             {
                 var dv = queue.Dequeue();
-                if (dv.TargetExcept)
+                if (dv.TargetArea == DamageTargetArea.TargetExcept)
                 {
                     for (int i = 0; i < Characters.Length; i++)
                     {
                         int index = (i + CurrCharacter) % Characters.Length;
                         if (index != dv.TargetIndex && Characters[index].Alive)
                         {
-                            queue.Enqueue(new(dv.DirectSource, dv.Element, dv.Damage, index, false, dv.DamageTargetCategory));
+                            queue.Enqueue(new(dv.DirectSource, dv.Element, dv.Damage, index, DamageTargetArea.TargetOnly, dv.DamageTargetTeam));
                         }
                     }
                 }
@@ -35,7 +35,7 @@
                     int initialelement = GetDamageReaction(dv);
                     if (dv.Element != -1)
                     {
-                        if (dv.DamageTargetCategory == DamageTargetCategory.Enemy)
+                        if (dv.DamageTargetTeam == DamageTargetTeam.Enemy)
                         {
                             RealGame.InstantTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease, initialelement), dv);
                             RealGame.InstantTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul, initialelement), dv);
@@ -128,7 +128,7 @@
                     c.HP -= hs.Damage;
                     if (c.HP == 0)
                     {
-                        if (c.Effects.TryFind(e => e.Card.Tags.Contains(PersistentTag.AntiDie.ToString()), out var p) )
+                        if (c.Effects.TryFind(e => e.Card.Tags.Contains(PersistentTag.AntiDie.ToString()), out var p))
                         {
                             //TODO:check it?  && p.Card.TriggerList.ContainsKey(SenderTag.PreDie.ToString())
                             antidie_effects.Add(p);
@@ -192,7 +192,7 @@
         /// 对我方队伍造成伤害时，不能吃到对方队伍的增伤
         /// </summary>
         public override void DoDamage(DamageVariable? dv, IDamageSource ds, Action? action = null, Action? seperateAction = null)
-            => (dv != null && dv.DamageTargetCategory == DamageTargetCategory.Enemy ? Enemy : this).InnerHurt(dv, ds, action);
+            => (dv != null && dv.DamageTargetTeam == DamageTargetTeam.Enemy ? Enemy : this).InnerHurt(dv, ds, action);
 
         //public void DoDamage(DamageVariable? dv, IDamageSource ds, Action<PlayerTeam> action)
         //        => (dv != null && dv.DamageTargetCategory == DamageTargetCategory.Enemy ? Enemy : this).InnerHurt(dv, ds, action);

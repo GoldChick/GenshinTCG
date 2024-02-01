@@ -76,13 +76,14 @@
                     EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseSkill));
                     var cha = t.Characters[t.CurrCharacter];
                     var ski = cha.Card.Skills[evt.Action.Index];
-                    t.AddPersistent(new Effect_RoundSkillCounter(ski), t.CurrCharacter);
+                    //TODO: skill counter
+                    //t.AddPersistent(new Effect_RoundSkillCounter(ski), t.CurrCharacter);
                     afterEventSender = new AfterUseSkillSender(currTeam, cha, ski);
 
-                    if (ski.DamageCost.MPCost > 0)
+                    if (ski.Cost.MPCost > 0)
                     {
                         //TODO: cost mp?
-                        t.Characters[t.CurrCharacter].MP -= ski.DamageCost.MPCost;
+                        t.Characters[t.CurrCharacter].MP -= ski.Cost.MPCost;
                     }
                     else
                     {
