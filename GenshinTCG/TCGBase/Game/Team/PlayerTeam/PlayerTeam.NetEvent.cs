@@ -155,7 +155,7 @@
                     break;
                 case ActionType.UseSKill:
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
-                    AbstractCardSkill skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
+                    AbstractSkillTrigger skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
                     c = new(skill.Cost);
                     RealGame.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
                     break;

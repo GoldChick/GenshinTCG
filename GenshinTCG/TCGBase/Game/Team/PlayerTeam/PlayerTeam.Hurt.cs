@@ -6,7 +6,7 @@
         /// 输入的dv满足targetRelative=false<br/>
         /// 在其中进行effect的调用
         /// </summary>
-        private List<HurtSender> InnerHurtCompute(IDamageSource ds, out bool overload, DamageVariable start)
+        private List<HurtSender> InnerHurtCompute(ITriggerable ds, out bool overload, DamageVariable start)
         {
             Queue<DamageVariable> queue = new();
             List<HurtSender> hss = new();
@@ -100,7 +100,7 @@
         /// specialAction:特殊效果，触发在反应效果后，免于被击倒前；会放到queue里<br/>
         /// seperateAction:分隔效果，用作获得充能，触发之后，关闭queue
         /// </summary>
-        private void InnerHurt(DamageVariable? dv, IDamageSource ds, Action? specialAction = null, Action? seperateAction = null)
+        private void InnerHurt(DamageVariable? dv, ITriggerable ds, Action? specialAction = null, Action? seperateAction = null)
         {
             List<HurtSender> hss = new();
             bool overload = false;
@@ -191,7 +191,7 @@
         /// 根据DamageVariable.DamageTargetCategory,对<b>我方队伍</b>或<b>对方队伍</b>造成伤害<br/>
         /// 对我方队伍造成伤害时，不能吃到对方队伍的增伤
         /// </summary>
-        public override void DoDamage(DamageVariable? dv, IDamageSource ds, Action? action = null, Action? seperateAction = null)
+        public override void DoDamage(DamageVariable? dv, ITriggerable ds, Action? action = null, Action? seperateAction = null)
             => (dv != null && dv.DamageTargetTeam == DamageTargetTeam.Enemy ? Enemy : this).InnerHurt(dv, ds, action);
 
         //public void DoDamage(DamageVariable? dv, IDamageSource ds, Action<PlayerTeam> action)

@@ -2,7 +2,7 @@
 {
     public partial class AbstractTeam
     {
-        public virtual void Heal(IDamageSource ds, params HealVariable[] dvs)
+        public virtual void Heal(ITriggerable ds, params HealVariable[] dvs)
         {
 
         }

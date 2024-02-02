@@ -23,7 +23,6 @@
         /// 是否快速行动，默认为true
         /// </summary>
         public virtual bool FastAction { get => true; }
-        public abstract CostInit Cost { get; }
         /// <summary>
         /// //是否可以加入卡组里
         /// </summary>

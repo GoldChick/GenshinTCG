@@ -12,7 +12,7 @@
         /// Credit: Gold_Chick
         /// </summary>
         public bool Deadly { get; internal set; }
-        internal HurtSender(int teamID, DamageVariable dv, ReactionTags reaction, DamageSource directSource, IDamageSource rootSource, int initialElement) : base(teamID, dv.Element, dv.TargetIndex, reaction, directSource, rootSource, initialElement)
+        internal HurtSender(int teamID, DamageVariable dv, ReactionTags reaction, DamageSource directSource, ITriggerable rootSource, int initialElement) : base(teamID, dv.Element, dv.TargetIndex, reaction, directSource, rootSource, initialElement)
         {
             Damage = dv.Damage;
         }

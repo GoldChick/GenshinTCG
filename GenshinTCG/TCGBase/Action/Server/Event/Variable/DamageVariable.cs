@@ -1,5 +1,17 @@
 ﻿namespace TCGBase
 {
+    public enum DamageElement
+    {
+        Trival = 0,
+        Cryo = 1,
+        Hydro = 2,
+        Pyro = 3,
+        Electro = 4,
+        Geo = 5,
+        Dendro = 6,
+        Anemo = 7,
+        Pierce = 8,
+    }
     /// <summary>
     /// 用于表明是直接伤害，还是间接伤害(扩散、超导等引发的额外伤害)
     /// </summary>
@@ -105,6 +117,13 @@
             TargetRelative = true;
             TargetArea = targetArea;
             SubDamage = subdamage;
+        }
+        /// <summary>
+        /// 通过record创建dmg,targetindex为相对坐标
+        /// </summary>
+        internal DamageVariable(DamageRecord record) : this((int)record.Element, record.Damage, record.TargetIndexOffset, record.TargetArea, null, record.TargetTeam)
+        {
+            //TODO: element的-1和8
         }
         /// <summary>
         /// 通过internal方法创建的dmg的targetindex为绝对坐标，并且没有子伤害

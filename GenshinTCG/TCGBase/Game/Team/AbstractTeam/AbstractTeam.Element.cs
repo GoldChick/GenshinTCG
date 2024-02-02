@@ -2,7 +2,7 @@
 {
     public partial class AbstractTeam
     {
-        public virtual void AttachElement(IDamageSource source, int element, params int[] targetRelativeIndexs)
+        public virtual void AttachElement(ITriggerable source, int element, params int[] targetRelativeIndexs)
         {
         }
     }

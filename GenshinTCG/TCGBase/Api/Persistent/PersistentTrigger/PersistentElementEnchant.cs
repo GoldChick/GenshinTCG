@@ -4,7 +4,7 @@
     /// only for Element_Enchant<br/>
     /// 元素附魔，如果是a，则变为b
     /// </summary>
-    public class PersistentElementEnchant : IPersistentTrigger
+    public class PersistentElementEnchant : ITriggerable
     {
         private int _toward;
         private int _adddamage;

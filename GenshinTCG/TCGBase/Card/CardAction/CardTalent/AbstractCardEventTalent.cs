@@ -21,7 +21,7 @@
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
             var c = me.Characters[targetArgs[0]];
-            if (c.Card.Skills[Skill] is not AbstractCardSkillPassive)
+            if (c.Card.Skills[Skill].SkillCategory != SkillCategory.Q)
             {
                 me.EffectTrigger(new ActionUseSkillSender(me.TeamIndex, c, Skill));
             }
@@ -35,7 +35,7 @@
             var c = me.Characters[targetArgs[0]];
             var card = c.Card;
             var sks = card.Skills;
-            return c.Alive && ((ICardTalent)this).IsFor(card) && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length] is AbstractCardSkillPassive);
+            return c.Alive && ((ICardTalent)this).IsFor(card) && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length].SkillCategory == SkillCategory.P);
         }
     }
 }

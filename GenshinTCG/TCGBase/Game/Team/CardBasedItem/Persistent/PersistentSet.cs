@@ -171,7 +171,7 @@ namespace TCGBase
                 }
             }
         }
-        private EventPersistentSetHandler PersistentHandelerConvert(Persistent<T> p, IPersistentTrigger value)
+        private EventPersistentSetHandler PersistentHandelerConvert(Persistent<T> p, ITriggerable value)
         {
             return (me, s, v) =>
             {

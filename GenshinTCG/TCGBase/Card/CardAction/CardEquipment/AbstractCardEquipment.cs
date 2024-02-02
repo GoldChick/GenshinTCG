@@ -34,7 +34,7 @@
         public override bool CanBeUsed(PlayerTeam me, int[] targetArgs)
         {
             var c = me.Characters[targetArgs[0]];
-            return c.Alive && c.Card.Tags.Contains(WeaponCategory.ToTags());
+            return c.Alive && c.Card.Tags.Contains(WeaponCategory.ToString());
         }
         protected AbstractCardWeapon()
         {

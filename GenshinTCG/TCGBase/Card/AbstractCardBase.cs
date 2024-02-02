@@ -12,6 +12,12 @@
     {
         public string Namespace => (GetType().Namespace ?? "minecraft").ToLower();
         public string NameID { get; }
+        /// <summary>
+        /// 对于[角色牌][行动牌]，hidden的不能被选择；<br/>
+        /// 对于[角色/出战状态]，hidden的前台不显示
+        /// 对于[召唤物]，hidden无用
+        /// </summary>
+        public bool Hidden { get; }
         public CardType CardType { get; }
         public List<string> Tags { get; }
         public PersistentTriggerList TriggerList { get; }
@@ -30,6 +36,7 @@
         protected private AbstractCardBase(BaseCardRecord record)
         {
             CardType = record.CardType;
+            Hidden = record.Hidden;
             NameID = record.NameID;
             Tags = record.Tags;
             TriggerList = new(record.SkillList.Select(Trigger.Convert).ToList());

@@ -2,7 +2,6 @@
 {
     public record BaseGameRecord
     {
-
         public string NameID { get; }
         public bool Hidden { get; }
 
@@ -23,24 +22,16 @@
     }
     public record DamageRecord
     {
+        public DamageElement Element { get; }
         public int Damage { get; }
-        public int Element { get; }
         public int TargetIndexOffset { get; }
         public DamageTargetArea TargetArea { get; }
         public DamageTargetTeam TargetTeam { get; }
-        public DamageRecord? SubDamage { get; }
-        public DamageRecord(params int[] nums)
+        public DamageRecord? SubDamage { get; internal set; }
+        public DamageRecord(DamageElement element, int damage, int targetIndexOffset = 0, DamageTargetArea targetArea = DamageTargetArea.TargetOnly, DamageTargetTeam targetTeam = DamageTargetTeam.Enemy, DamageRecord? subDamage = null)
         {
-            Damage = nums.ElementAtOrDefault(0);
-            Element = nums.ElementAtOrDefault(1);
-            TargetIndexOffset = nums.ElementAtOrDefault(2);
-            TargetArea = (DamageTargetArea)nums.ElementAtOrDefault(3);
-            TargetTeam = (DamageTargetTeam)nums.ElementAtOrDefault(4);
-        }
-        public DamageRecord(int damage, int element, int targetIndexOffset = 0, DamageTargetArea targetArea = DamageTargetArea.TargetOnly, DamageTargetTeam targetTeam = DamageTargetTeam.Enemy, DamageRecord? subDamage = null)
-        {
-            Damage = damage;
             Element = element;
+            Damage = damage;
             TargetIndexOffset = targetIndexOffset;
             TargetArea = targetArea;
             TargetTeam = targetTeam;

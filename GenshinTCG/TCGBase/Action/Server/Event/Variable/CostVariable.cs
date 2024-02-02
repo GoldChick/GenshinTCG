@@ -249,6 +249,11 @@ namespace TCGBase
             _costs[9] += num;
             return this;
         }
+        public CostCreate Add(ElementCategory element, int num)
+        {
+            _costs[(int)element] += num;
+            return this;
+        }
     }
     /// <summary>
     /// 创建[费用]，<see cref="CostCreate"/><br/><br/>

@@ -13,7 +13,7 @@
         {
             base.AfterUseAction(me, targetArgs);
             var c = me.Characters[targetArgs[0]];
-            if (c.Card.Skills[Skill] is not AbstractCardSkillPassive)
+            if (c.Card.Skills[Skill].SkillCategory != SkillCategory.P)
             {
                 me.EffectTrigger(new ActionUseSkillSender(me.TeamIndex, c, Skill));
             }
@@ -21,7 +21,11 @@
         /// <summary>
         /// override以覆写原先技能
         /// </summary>
-        public virtual void TalentTriggerAction(PlayerTeam me, Character c) => c.Card.Skills[Skill % c.Card.Skills.Length].AfterUseAction(me, c);
+        public virtual void TalentTriggerAction(PlayerTeam me, Character c)
+        {
+            //TODO:override
+            //=> c.Card.Skills[Skill % c.Card.Skills.Length].AfterUseAction(me, c);
+        }
         /// <summary>
         /// 默认实现为需要是本人的天赋，并且为被动技能/该角色在前台
         /// </summary>
@@ -30,8 +34,8 @@
             var c = me.Characters[targetArgs[0]];
             var sks = c.Card.Skills;
             var skill = sks[Skill % sks.Length];
-            return base.CanBeUsed(me, targetArgs) && targetArgs[0] == me.CurrCharacter && skill is not AbstractCardSkillPassive && c.Active
-                && (skill.SkillCategory!=SkillCategory.Q||c.MP==c.Card.MaxMP);
+            return base.CanBeUsed(me, targetArgs) && targetArgs[0] == me.CurrCharacter && skill.SkillCategory != SkillCategory.P && c.Active
+                && (skill.SkillCategory != SkillCategory.Q || c.MP == c.Card.MaxMP);
         }
     }
 }

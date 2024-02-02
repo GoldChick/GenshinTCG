@@ -6,7 +6,7 @@
         /// 输入的dv需要绝对坐标<br/>
         /// split出的healsender都为alive的角色上的
         /// </summary>
-        private List<HealSender> SplitHeal(IDamageSource ds, HealVariable d)
+        private List<HealSender> SplitHeal(ITriggerable ds, HealVariable d)
         {
             List<HealSender> hss = new();
             if (d.TargetExcept)
@@ -31,7 +31,7 @@
             }
             return hss;
         }
-        private List<HealSender> MergeHeal(IDamageSource ds, params HealVariable[] dvs_person)
+        private List<HealSender> MergeHeal(ITriggerable ds, params HealVariable[] dvs_person)
         {
             List<HealSender> hss = new();
             foreach (var item in dvs_person)
@@ -46,7 +46,7 @@
         /// 为了偷懒，使用了DamageVariable作为了治疗<br/>
         /// 仅TargetIndex TargetExcept Damage有效
         /// </summary>
-        public override void Heal(IDamageSource ds, params HealVariable[] dvs)
+        public override void Heal(ITriggerable ds, params HealVariable[] dvs)
         {
             HealVariable[] dvs_person = dvs.Select(p => new HealVariable(p.Amount, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
             List<HealSender> hss = MergeHeal(ds, dvs_person);

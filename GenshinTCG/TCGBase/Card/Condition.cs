@@ -15,7 +15,7 @@
         /// </summary>
         TalentEquiped,
     }
-    public class Condition
+    public abstract class ConditionPreset
     {
     }
 }

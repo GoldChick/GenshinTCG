@@ -59,13 +59,12 @@
 
         public void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : ICardPersistent;
     }
-    public abstract class AbstractCardPersistent : AbstractCardBase, ICardPersistent, IDamageSource
+    public abstract class AbstractCardPersistent : AbstractCardBase, ICardPersistent
     {
         public virtual int InitialUseTimes { get => MaxUseTimes; }
         public abstract int MaxUseTimes { get; }
         public virtual bool CustomDesperated { get => false; }
         public int Variant { get; protected set; }
-        public virtual bool Hidden => false;
         public CostInit Cost => new CostCreate().ToCostInit();
 
         protected private AbstractCardPersistent(BaseCardRecord record) : base(record)
@@ -80,7 +79,6 @@
     //TODO: check it?
     public abstract class AbstractCardSummon : AbstractCardPersistent
     {
-        public override sealed bool Hidden => base.Hidden;
         protected private AbstractCardSummon(BaseCardRecord record) : base(record)
         {
         }
