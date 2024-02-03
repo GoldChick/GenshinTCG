@@ -8,7 +8,8 @@
         /// <summary>
         /// 
         /// </summary>
-        Use,
+        UseSkill,
+        UseCard
     }
     public enum SenderTag
     {

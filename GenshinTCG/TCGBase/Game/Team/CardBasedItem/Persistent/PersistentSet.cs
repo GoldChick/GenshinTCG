@@ -8,7 +8,7 @@ namespace TCGBase
         public int PersistentRegion { get; init; }
     }
     public delegate void EventPersistentSetHandler(AbstractTeam me, AbstractSender s, AbstractVariable? v);
-    public class PersistentSet<T> : PersistentSet, IEnumerable<Persistent<T>> where T : ICardPersistent
+    public class PersistentSet<T> : PersistentSet, IEnumerable<Persistent<T>> where T : AbstractCardBase
     {
         private readonly List<Persistent<T>> _data;
         private readonly PlayerTeam? _me;
@@ -181,7 +181,16 @@ namespace TCGBase
                     int index = _data.FindIndex(d => d == p);
                     if (index >= 0)
                     {
-                        _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, p.AvailableTimes));
+                        _me?.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, p.AvailableTimes));
+                    }
+                    if (me.Game.TempDelayedTriggerQueue != null)
+                    {
+                        var queue = me.Game.TempDelayedTriggerQueue;
+                        me.Game.TempDelayedTriggerQueue = null;
+                        while (queue.TryDequeue(out var action))
+                        {
+                            action.Invoke();
+                        }
                     }
                 }
             };
@@ -189,7 +198,7 @@ namespace TCGBase
         private void Register(Persistent<T> p)
         {
             _data.Add(p);
-            foreach (var trigger in p.Card.TriggerList)
+            foreach (var trigger in p.Card.TriggerableList)
             {
                 var h = PersistentHandelerConvert(p, trigger);
                 if (!_handlers.ContainsKey(trigger.Tag))
@@ -201,18 +210,18 @@ namespace TCGBase
                     _handlers[trigger.Tag] += h;
                 }
             }
-            _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, PersistentRegion, p.Card.Variant, p.AvailableTimes, p.Card.Namespace, p.Card.NameID));
+            _me?.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, PersistentRegion, p.Card.Variant, p.AvailableTimes, p.Card.Namespace, p.Card.NameID));
         }
         private void Unregister(int index, Persistent<T> p)
         {
-            foreach (var trigger in p.Card.TriggerList)
+            foreach (var trigger in p.Card.TriggerableList)
             {
                 _handlers[trigger.Tag] -= PersistentHandelerConvert(p, trigger);
             }
-            _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
+            _me?.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
             _data.RemoveAt(index);
             //TODO: unregister here
-            _me.RealGame.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.Card), null);
+            _me?.RealGame.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.Card), null);
         }
 
         public IEnumerator<Persistent<T>> GetEnumerator() => _data.GetEnumerator();

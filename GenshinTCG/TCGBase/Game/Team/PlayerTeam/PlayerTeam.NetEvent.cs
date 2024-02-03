@@ -11,7 +11,7 @@
             ActionType.ReRollDice or ActionType.ReRollCard or ActionType.Pass => true,
             ActionType.Switch or ActionType.SwitchForced =>
                 action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
-            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.Skills.Length,
+            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.TriggerableList.Where(t => t.Tag == SenderTagInner.UseSkill.ToString()).Count(),
             ActionType.UseCard or ActionType.Blend => action.Index < CardsInHand.Count,
             _ => false
         };
@@ -65,7 +65,10 @@
                 else if (evt.Action.Type == ActionType.UseSKill)
                 {
                     var c = Characters[CurrCharacter];
-                    temp = c.MP >= c.Card.Skills[evt.Action.Index].Cost.MPCost;
+                    if (c.Card.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var t, evt.Action.Index) && t is ICostable cost)
+                    {
+                        temp = c.MP >= cost.Cost.MPCost;
+                    }
                 }
                 return temp && GetEventFinalDiceRequirement(evt.Action).DiceEqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
             }
@@ -155,9 +158,15 @@
                     break;
                 case ActionType.UseSKill:
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
-                    AbstractSkillTrigger skill = chaCard.Skills[action.Index % chaCard.Skills.Length];
-                    c = new(skill.Cost);
-                    RealGame.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
+                    if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is AbstractSkillTriggerable skill)
+                    {
+                        c = skill is ICostable cost ? new(cost.Cost) : new();
+                        RealGame.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
+                    }
+                    else
+                    {
+                        throw new Exception($"角色{chaCard.NameID}并没有第{action.Index}个技能");
+                    }
                     break;
                 case ActionType.UseCard:
                     var card = CardsInHand[action.Index % CardsInHand.Count];

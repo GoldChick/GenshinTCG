@@ -21,21 +21,32 @@
         /// </summary>
         QQ
     }
-    public abstract class AbstractCardCharacter : AbstractCardPersistent
+    public abstract class AbstractCardCharacter : AbstractCardBase
     {
-        public int MaxHP { get; }
-        public int MaxMP { get; }
+        public abstract int MaxHP { get; }
+        public abstract int MaxMP { get; }
         /// <summary>
-        ///  @NonNull 角色的所有技能
+        /// 主元素，用于调和和携带共鸣牌的判定等，从Tag中获取
         /// </summary>
-        public abstract AbstractSkillTrigger[] Skills { get; }
-        /// <summary>
-        /// 主元素，用于调和和携带共鸣牌的判定等
-        /// </summary>
-        public abstract ElementCategory CharacterElement { get; }
+        public ElementCategory CharacterElement { get; init; }
         public override sealed bool CustomDesperated => true;
         public override sealed int MaxUseTimes => 0;
-        internal AbstractCardCharacter(CharacterCardRecord record) : base(record)
+        protected AbstractCardCharacter() : base("null")
+        {
+            string? ele = Tags.Find(t => Enum.TryParse(t, out ElementCategory _));
+            CharacterElement = ele == null ? ElementCategory.Trival : Enum.Parse<ElementCategory>(ele);
+        }
+        protected private AbstractCardCharacter(CharacterCardRecord record) : base(record)
+        {
+            string? ele = Tags.Find(t => Enum.TryParse(t, out ElementCategory _));
+            CharacterElement = ele == null ? ElementCategory.Trival : Enum.Parse<ElementCategory>(ele);
+        }
+    }
+    public class CardCharacter : AbstractCardCharacter
+    {
+        public override int MaxHP { get; }
+        public override int MaxMP { get; }
+        internal CardCharacter(CharacterCardRecord record) : base(record)
         {
             MaxHP = record.MaxHP;
             MaxMP = record.MaxMP;

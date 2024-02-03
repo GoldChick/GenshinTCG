@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public interface ICardFood : ICardPersistent
+    public interface ICardFood : ICard
     {
 
     }

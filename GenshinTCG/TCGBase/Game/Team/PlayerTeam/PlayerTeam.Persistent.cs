@@ -5,7 +5,7 @@
         /// <summary>
         /// 根据对于[出战角色]的[相对坐标]来附着[角色状态]
         /// </summary>
-        public void AddPersonalEffect(AbstractCardPersistent per, int relativeIndex = 0, AbstractPersistent? bind = null)
+        public void AddPersonalEffect(AbstractCardBase per, int relativeIndex = 0, AbstractPersistent? bind = null)
         {
             Characters[(relativeIndex + CurrCharacter) % Characters.Length].AddEffect(new(per, bind));
         }
@@ -13,13 +13,14 @@
         /// 根据对于[出战角色]的[相对坐标]来附着[已经存在]的[角色状态]<br/>
         /// <b>如果没有特殊需要，请使用上面的方法创建新的persistent</b>
         /// </summary>
-        public void AddPersonalEffect(Persistent<AbstractCardPersistent> per, int relativeIndex = 0)
+        public void AddPersonalEffect(Persistent<AbstractCardBase> per, int relativeIndex = 0)
         {
             Characters[(relativeIndex + CurrCharacter) % Characters.Length].AddEffect(per);
         }
-        public void AddTeamEffect(ICardPersistent per, AbstractPersistent? bind = null) => Effects.Add(new(per, bind));
+        public void AddTeamEffect(AbstractCardBase per, AbstractPersistent? bind = null) => Effects.Add(new(per, bind));
 
-        public override void AddPersistent(AbstractCardPersistent per, int target = -1, AbstractPersistent? bind = null)
+        //TODO: 上面几个不知道还要不要
+        public override void AddEffect(AbstractCardBase per, int target = -1, AbstractPersistent? bind = null)
         {
             if (target == -1)
             {
@@ -42,7 +43,7 @@
             }
             Supports.Add(new(support));
         }
-        public override void AddSummon(int num, params AbstractCardSummon[] summons)
+        public override void AddSummon(int num, params AbstractCardBase[] summons)
         {
             var left = summons.Where(s => !Summons.Contains(s.GetType())).ToList();
             while (num > 0)
@@ -70,26 +71,6 @@
                     break;
                 }
             }
-        }
-        /// <summary>
-        /// 注册所有角色的被动技能，通常在游戏开始出人之前
-        /// </summary>
-        internal void RegisterPassive()
-        {
-            //TODO: check it?
-
-            //for (int i = 0; i < Characters.Length; i++)
-            //{
-            //    var c = Characters[i].Card;
-            //    foreach (var s in c.Skills)
-            //    {
-            //        if (s is AbstractCardSkillPassive ps && ps.MaxUseTimes >= 0)
-            //        {
-            //            //TODO:?
-            //            //AddPersistent(ps, i);
-            //        }
-            //    }
-            //}
         }
         /// <summary>
         /// 在某一次所有的结算之后，清除not active的effect

@@ -7,10 +7,10 @@ namespace TCGBase
     /// <param name="s">the message sender</param>
     /// <param name="v">possible things to change</param>
     public delegate void EventPersistentHandler(AbstractTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v);
-    public class PersistentTriggerList : IEnumerable<ITriggerable>
+    public class PersistentTriggerableList : IEnumerable<ITriggerable>
     {
         private readonly List<ITriggerable> _list;
-        public PersistentTriggerList(List<ITriggerable>? list = null)
+        public PersistentTriggerableList(List<ITriggerable>? list = null)
         {
             _list = list ?? new();
         }

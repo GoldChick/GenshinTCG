@@ -75,23 +75,25 @@
                 case ActionType.UseSKill:
                     EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseSkill));
                     var cha = t.Characters[t.CurrCharacter];
-                    var ski = cha.Card.Skills[evt.Action.Index];
-                    //TODO: skill counter
-                    //t.AddPersistent(new Effect_RoundSkillCounter(ski), t.CurrCharacter);
-                    afterEventSender = new AfterUseSkillSender(currTeam, cha, ski);
+                    //var ski = cha.Card.Skills[evt.Action.Index];
 
-                    if (ski.Cost.MPCost > 0)
-                    {
-                        //TODO: cost mp?
-                        t.Characters[t.CurrCharacter].MP -= ski.Cost.MPCost;
-                    }
-                    else
-                    {
-                        //TODO:give mp?
-                        
-                        //t.Characters[t.CurrCharacter].MP += ski.GiveMP;
-                    }
-                    EffectTrigger(new ActionUseSkillSender(t.TeamIndex, cha, evt.Action.Index));
+                    //TODO: skill counter & afteruseskill
+
+                    //t.AddPersistent(new Effect_RoundSkillCounter(ski), t.CurrCharacter);
+                    //afterEventSender = new AfterUseSkillSender(currTeam, cha, ski);
+
+                    //if (ski.Cost.MPCost > 0)
+                    //{
+                    //    //TODO: cost mp?
+                    //    t.Characters[t.CurrCharacter].MP -= ski.Cost.MPCost;
+                    //}
+                    //else
+                    //{
+                    //    //TODO:give mp?
+
+                    //    //t.Characters[t.CurrCharacter].MP += ski.GiveMP;
+                    //}
+                    EffectTrigger(new ActionUseSkillSender(t.TeamIndex, cha.PersistentRegion, evt.Action.Index));
                     break;
                 case ActionType.UseCard:
                     EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseCard));

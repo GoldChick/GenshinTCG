@@ -2,12 +2,12 @@
 
 namespace TCGBase
 {
-    public interface IRegistryConsumer<T> where T : AbstractCardBase
+    public interface IRegistryConsumer<T> where T : INameable
     {
         public void Accept(T t);
-        public void AcceptMulti(params T[] ts) => Array.ForEach(ts, t => Accept(t));
+        public void AcceptMulti(params T[] ts) => Array.ForEach(ts, Accept);
     }
-    public class RegistryCardCollection<T> : IRegistryConsumer<T>, IEnumerable<KeyValuePair<string, T>> where T : AbstractCardBase
+    public class RegistryCardCollection<T> : IRegistryConsumer<T>, IEnumerable<KeyValuePair<string, T>> where T : INameable
     {
         private readonly Dictionary<string, T> _values;
 

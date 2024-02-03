@@ -15,8 +15,8 @@ namespace TCGBase
         {
             try
             {
-                CharacterCards = input.Characters.Select(s =>  Registry.Instance.CharacterCards[s]).ToList();
-                ActionCards = input.ActionCards.Select(s => Registry.Instance.ActionCards[s]).ToList();
+                CharacterCards = input.Characters.Select(s =>  RegistryFromCard.Instance.CharacterCards[s]).ToList();
+                ActionCards = input.ActionCards.Select(s => RegistryFromCard.Instance.ActionCards[s]).ToList();
                 Valid = CharacterCards.Count == 3
                     && ActionCards.Count == 30;
                     //&& ActionCards.All(a => a.CanBeArmed());

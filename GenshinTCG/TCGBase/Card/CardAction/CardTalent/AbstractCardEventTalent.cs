@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractCardEventTalent : AbstractCardEventNoEffect, ICardTalent
+    public abstract class AbstractCardEventTalent : AbstractCardEventNoEffect, ITalent
     {
         //public override string NameID => $"talent_{CharacterNameID}";
         /// <summary>
@@ -21,21 +21,24 @@
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
             var c = me.Characters[targetArgs[0]];
-            if (c.Card.Skills[Skill].SkillCategory != SkillCategory.Q)
-            {
-                me.EffectTrigger(new ActionUseSkillSender(me.TeamIndex, c, Skill));
-            }
+            //TODO: 天赋用技能
+
+            //if (c.Card.Skills[Skill].SkillCategory != SkillCategory.Q)
+            //{
+            //    me.EffectTrigger(new ActionUseSkillSender(me.TeamIndex, c, Skill));
+            //}
         }
-        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(((ICardTalent)this).IsFor);
+        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(((ITalent)this).IsFor);
         /// <summary>
         /// 默认实现为需要是本人的天赋，并且为被动技能/该角色在前台
         /// </summary>
         public override bool CanBeUsed(PlayerTeam me, int[] targetArgs)
         {
-            var c = me.Characters[targetArgs[0]];
-            var card = c.Card;
-            var sks = card.Skills;
-            return c.Alive && ((ICardTalent)this).IsFor(card) && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length].SkillCategory == SkillCategory.P);
+            //var c = me.Characters[targetArgs[0]];
+            //var card = c.Card;
+            //var sks = card.Skills;
+            //return c.Alive && ((ICardTalent)this).IsFor(card) && ((targetArgs[0] == me.CurrCharacter && c.Active) || sks[Skill % sks.Length].SkillCategory == SkillCategory.P);
+            return true;
         }
     }
 }

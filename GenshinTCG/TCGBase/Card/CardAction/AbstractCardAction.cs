@@ -12,17 +12,16 @@
     /// <summary>
     /// 可以拿在手中被使用的卡牌
     /// </summary>
-    public abstract class AbstractCardAction : AbstractCardPersistent
+    public abstract class AbstractCardAction : AbstractCardBase
     {
         /// <summary>
         /// 允许携带的最大数量<br/>
-        /// 默认为2
         /// </summary>
-        public virtual int MaxNumPermitted { get => 2; }
+        public int MaxNumPermitted { get; }
         /// <summary>
         /// 是否快速行动，默认为true
         /// </summary>
-        public virtual bool FastAction { get => true; }
+        public bool FastAction { get; }
         /// <summary>
         /// //是否可以加入卡组里
         /// </summary>
@@ -33,9 +32,14 @@
         /// 如果实现ITargetSelector，且为单目标，可以借助这个方法给virtual类的target用
         /// </summary>
         public virtual bool CanBeUsed(PlayerTeam me, int[] targetArgs) => true;
-        private protected AbstractCardAction():base(null)
+        protected AbstractCardAction() : base("null")
         {
-            //TODO: record
+            //TODO: override
+        }
+        internal AbstractCardAction(ActionCardRecord record) : base(record)
+        {
+            MaxNumPermitted = record.MaxNumPermitted;
+            FastAction = !record.Tags.Contains(CardTag.Slowly.ToString());
         }
     }
 }

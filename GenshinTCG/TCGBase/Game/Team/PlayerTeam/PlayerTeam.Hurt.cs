@@ -6,7 +6,7 @@
         /// 输入的dv满足targetRelative=false<br/>
         /// 在其中进行effect的调用
         /// </summary>
-        private List<HurtSender> InnerHurtCompute(ITriggerable ds, out bool overload, DamageVariable start)
+        private List<HurtSender> InnerHurtCompute(ITriggerable triggerable, out bool overload, DamageVariable start)
         {
             Queue<DamageVariable> queue = new();
             List<HurtSender> hss = new();
@@ -31,24 +31,24 @@
                     //only one target
                     //TODO:附魔应该在这里吗？？
                     //TODO:prehurtsender的teamindex?
-                    RealGame.InstantTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.ElementEnchant), dv);
+                    RealGame.InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.ElementEnchant), dv);
                     int initialelement = GetDamageReaction(dv);
                     if (dv.Element != -1)
                     {
                         if (dv.DamageTargetTeam == DamageTargetTeam.Enemy)
                         {
-                            RealGame.InstantTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease, initialelement), dv);
-                            RealGame.InstantTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul, initialelement), dv);
+                            RealGame.InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.DamageIncrease, initialelement), dv);
+                            RealGame.InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.DamageMul, initialelement), dv);
                         }
                         else
                         {
-                            InstantTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageIncrease, initialelement), dv);
-                            InstantTrigger(new PreHurtSender(1 - TeamIndex, ds, SenderTag.DamageMul, initialelement), dv);
+                            InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.DamageIncrease, initialelement), dv);
+                            InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.DamageMul, initialelement), dv);
                         }
-                        InstantTrigger(new PreHurtSender(TeamIndex, ds, SenderTag.HurtDecrease, initialelement), dv);
+                        InstantTrigger(new PreHurtSender(TeamIndex, triggerable, SenderTag.HurtDecrease, initialelement), dv);
                     }
-                    overload |= ReactionItemGenerate(dv.TargetIndex, dv.Reaction, ds, initialelement);
-                    hss.Add(new(TeamIndex, dv, dv.Reaction, dv.DirectSource, ds, initialelement));
+                    overload |= ReactionItemGenerate(dv.TargetIndex, dv.Reaction, triggerable, initialelement);
+                    hss.Add(new(TeamIndex, dv, dv.Reaction, dv.DirectSource, triggerable, initialelement));
                 }
                 if (dv.SubDamage != null)
                 {
@@ -100,15 +100,21 @@
         /// specialAction:特殊效果，触发在反应效果后，免于被击倒前；会放到queue里<br/>
         /// seperateAction:分隔效果，用作获得充能，触发之后，关闭queue
         /// </summary>
-        private void InnerHurt(DamageVariable? dv, ITriggerable ds, Action? specialAction = null, Action? seperateAction = null)
+        private void InnerHurt(DamageVariable? dv, ITriggerable triggerable, Action? specialAction = null, Action? seperateAction = null)
         {
+            if (Game.TempDelayedTriggerQueue != null)
+            {
+                Game.TempDelayedTriggerQueue.Enqueue(() => InnerHurt(dv, triggerable, specialAction, seperateAction));
+                return;
+            }
+
             List<HurtSender> hss = new();
             bool overload = false;
 
             List<int> predies = new();
             List<EmptyTeam> predie_teams = new();
 
-            List<Persistent<AbstractCardPersistent>> antidie_effects = new();
+            List<Persistent<AbstractCardBase>> antidie_effects = new();
 
             Queue<Action> queue = new();
 
@@ -117,7 +123,7 @@
             if (dv != null)
             {
                 dv.ToAbsoluteIndex(CurrCharacter, Characters.Length);
-                hss = InnerHurtCompute(ds, out overload, dv);
+                hss = InnerHurtCompute(triggerable, out overload, dv);
             }
 
             foreach (var hs in hss)
@@ -128,7 +134,7 @@
                     c.HP -= hs.Damage;
                     if (c.HP == 0)
                     {
-                        if (c.Effects.TryFind(e => e.Card.Tags.Contains(PersistentTag.AntiDie.ToString()), out var p))
+                        if (c.Effects.TryFind(e => e.Card.Tags.Contains(CardTag.AntiDie.ToString()), out var p))
                         {
                             //TODO:check it?  && p.Card.TriggerList.ContainsKey(SenderTag.PreDie.ToString())
                             antidie_effects.Add(p);
@@ -152,47 +158,45 @@
             specialAction?.Invoke();
             foreach (var die_effect in antidie_effects)
             {
-                if (die_effect.Card.TriggerList.TryGetValue(SenderTag.PreDie.ToString(), out var h))
+                if (die_effect.Card.TriggerableList.TryGetValue(SenderTag.PreDie.ToString(), out var h))
                 {
                     h.Trigger(this, die_effect, new SimpleSender(TeamIndex, SenderTag.PreDie), null);
                 }
             }
-            //TODO: gain MP
-            RealGame.TempDelayedTriggerQueue = null;
-            while (queue.TryDequeue(out var trigger))
+            queue.Enqueue(() =>
             {
-                trigger.Invoke();
-            }
-            TestTriggerForDMG(hss, predies, predie_teams);
-            if (!Characters[CurrCharacter].Alive)
-            {
-                if (Characters.All(p => !p.Alive))
+                TestTriggerForDMG(hss, predies, predie_teams);
+                if (!Characters[CurrCharacter].Alive)
                 {
-                    throw new GameOverException();
+                    if (Characters.All(p => !p.Alive))
+                    {
+                        throw new GameOverException();
+                    }
+                    if (!Enemy.Characters[Enemy.CurrCharacter].Alive)
+                    {
+                        throw new Exception("共死其实还没做.....");
+                        ////双方出战角色都被击倒 进入选择角色出战
+                        //var t0 = new Task(() => RealGame.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced));
+                        //var t1 = new Task(() => RealGame.RequestAndHandleEvent(1 - TeamIndex, 30000, ActionType.SwitchForced));
+                        //t0.Start();
+                        //t1.Start();
+                        //Task.WaitAll(t0, t1);
+                        ////TODO:其实不该执行，应该都选择出战之后才能执行...
+                    }
+                    else
+                    {
+                        RealGame.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced);
+                    }
                 }
-                if (!Enemy.Characters[Enemy.CurrCharacter].Alive)
-                {
-                    throw new Exception("共死其实还没做.....");
-                    //双方出战角色都被击倒 进入选择角色出战
-                    var t0 = new Task(() => RealGame.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced));
-                    var t1 = new Task(() => RealGame.RequestAndHandleEvent(1 - TeamIndex, 30000, ActionType.SwitchForced));
-                    t0.Start();
-                    t1.Start();
-                    Task.WaitAll(t0, t1);
-                    //TODO:其实不该执行，应该都选择出战之后才能执行...
-                }
-                else
-                {
-                    RealGame.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced);
-                }
-            }
+
+            });
         }
         /// <summary>
         /// 根据DamageVariable.DamageTargetCategory,对<b>我方队伍</b>或<b>对方队伍</b>造成伤害<br/>
         /// 对我方队伍造成伤害时，不能吃到对方队伍的增伤
         /// </summary>
-        public override void DoDamage(DamageVariable? dv, ITriggerable ds, Action? action = null, Action? seperateAction = null)
-            => (dv != null && dv.DamageTargetTeam == DamageTargetTeam.Enemy ? Enemy : this).InnerHurt(dv, ds, action);
+        public override void DoDamage(DamageVariable? dv, ITriggerable triggerable, Action? action = null, Action? seperateAction = null)
+            => (dv != null && dv.DamageTargetTeam == DamageTargetTeam.Enemy ? Enemy : this).InnerHurt(dv, triggerable, action);
 
         //public void DoDamage(DamageVariable? dv, IDamageSource ds, Action<PlayerTeam> action)
         //        => (dv != null && dv.DamageTargetCategory == DamageTargetCategory.Enemy ? Enemy : this).InnerHurt(dv, ds, action);

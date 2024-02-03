@@ -13,10 +13,11 @@
         {
             base.AfterUseAction(me, targetArgs);
             var c = me.Characters[targetArgs[0]];
-            if (c.Card.Skills[Skill].SkillCategory != SkillCategory.P)
-            {
-                me.EffectTrigger(new ActionUseSkillSender(me.TeamIndex, c, Skill));
-            }
+            //TODO: 天赋用技能
+            //if (c.Card.Skills[Skill].SkillCategory != SkillCategory.P)
+            //{
+            //    me.EffectTrigger(new ActionUseSkillSender(me.TeamIndex, c, Skill));
+            //}
         }
         /// <summary>
         /// override以覆写原先技能
@@ -31,11 +32,12 @@
         /// </summary>
         public override sealed bool CanBeUsed(PlayerTeam me, int[] targetArgs)
         {
-            var c = me.Characters[targetArgs[0]];
-            var sks = c.Card.Skills;
-            var skill = sks[Skill % sks.Length];
-            return base.CanBeUsed(me, targetArgs) && targetArgs[0] == me.CurrCharacter && skill.SkillCategory != SkillCategory.P && c.Active
-                && (skill.SkillCategory != SkillCategory.Q || c.MP == c.Card.MaxMP);
+            //var c = me.Characters[targetArgs[0]];
+            //var sks = c.Card.Skills;
+            //var skill = sks[Skill % sks.Length];
+            //return base.CanBeUsed(me, targetArgs) && targetArgs[0] == me.CurrCharacter && skill.SkillCategory != SkillCategory.P && c.Active
+            //    && (skill.SkillCategory != SkillCategory.Q || c.MP == c.Card.MaxMP);
+            return true;
         }
     }
 }

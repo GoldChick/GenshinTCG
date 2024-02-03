@@ -3,13 +3,13 @@ namespace TCGBase
 {
     public class Character : Persistent<AbstractCardCharacter>
     {
-        public override AbstractCardPersistent CardBase => Card;
+        public override AbstractCardBase CardBase => Card;
         private int _hp;
         private int _mp;
         private int _element;
         private readonly AbstractTeam _t;
 
-        public PersistentSet<AbstractCardPersistent> Effects { get; }
+        public PersistentSet<AbstractCardBase> Effects { get; }
         /// <summary>
         /// HP并不在改变时发包，而在治疗、受伤时发包
         /// </summary>
@@ -62,7 +62,8 @@ namespace TCGBase
         internal Character(AbstractCardCharacter character, int index, PlayerTeam t) : base(character)
         {
             Card = character;
-            SkillCounter = Enumerable.Repeat(0, character.Skills.Length).ToList();
+            //多一点怎么了
+            SkillCounter = Enumerable.Repeat(0, character.TriggerableList.Count()).ToList();
             Data = SkillCounter;
 
             PersistentRegion = index;
@@ -120,21 +121,22 @@ namespace TCGBase
         /// 只有活着的时候，并且添加的是普通的effect，才能添加状态<br/>
         /// 如果添加的是圣遗物或武器，还会顶掉原来的
         /// </summary>
-        public void AddEffect(Persistent<AbstractCardPersistent> effect)
+        public void AddEffect(Persistent<AbstractCardBase> effect)
         {
             if (Alive && !Predie)
             {
-                if (effect.CardBase is AbstractCardArtifact)
+                //TODO:弃置
+                if (effect.CardBase.Tags.Contains(CardTag.Artifact.ToString()))
                 {
-                    Effects.TryRemove(typeof(AbstractCardArtifact));
+                    Effects.TryRemove(-2);
                     Effects.Add(effect);
                 }
-                else if (effect.CardBase is AbstractCardWeapon)
+                else if (effect.CardBase.Tags.Contains(CardTag.Weapon.ToString()))
                 {
-                    Effects.TryRemove(typeof(AbstractCardWeapon));
+                    Effects.TryRemove(-1);
                     Effects.Add(effect);
                 }
-                else if (effect.CardBase is AbstractCardEffect)
+                else if (effect.CardBase.CardType == CardType.Effect)
                 {
                     Effects.Add(effect);
                 }

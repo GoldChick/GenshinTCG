@@ -15,9 +15,9 @@
         public CounterRandom Random { get; init; }
         public TeamSpecialState SpecialState { get; init; }
         public abstract int CurrCharacter { get; internal set; }
-        public PersistentSet<ICardPersistent> Supports { get; init; }
-        public PersistentSet<AbstractCardSummon> Summons { get; init; }
-        public PersistentSet<ICardPersistent> Effects { get; init; }
+        public PersistentSet<AbstractCardBase> Supports { get; init; }
+        public PersistentSet<AbstractCardBase> Summons { get; init; }
+        public PersistentSet<AbstractCardBase> Effects { get; init; }
         protected private AbstractTeam(int teamindex)
         {
             TeamIndex = teamindex;

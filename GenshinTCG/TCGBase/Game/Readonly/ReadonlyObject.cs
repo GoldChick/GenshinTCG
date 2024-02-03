@@ -42,7 +42,7 @@ namespace TCGBase
             MaxMP = c.Card.MaxMP;
             Element = c.Element;
             Effects = c.Effects.Copy().Select(e => new ReadonlyPersistent(e)).ToList();
-            SkillCount = c.Card.Skills.Where(s => s.SkillCategory != SkillCategory.P).Count();
+            SkillCount = c.Card.TriggerableList.Where(t => t.Tag == SenderTagInner.UseSkill.ToString()).Count();
         }
     }
     public class ReadonlyPersistent : ReadonlyObject
@@ -55,8 +55,9 @@ namespace TCGBase
             Variant = variant;
             AvailableTimes = availabletimes;
         }
-        internal ReadonlyPersistent(AbstractPersistent p) : this(p.CardBase.Namespace, p.CardBase.NameID, p.CardBase.Variant, p.AvailableTimes)
+        internal ReadonlyPersistent(AbstractPersistent p) : this("sb", p.CardBase.NameID, p.CardBase.Variant, p.AvailableTimes)
         {
+            //TODO: p.CardBase.Namespace TODO23
         }
     }
 

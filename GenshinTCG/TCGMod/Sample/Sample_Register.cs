@@ -6,10 +6,17 @@ namespace Sample
     {
         public override void RegisterActionCard(IRegistryConsumer<AbstractCardAction> consumer)
         {
+            throw new NotImplementedException();
         }
 
         public override void RegisterCharacter(IRegistryConsumer<AbstractCardCharacter> consumer)
         {
+            throw new NotImplementedException();
+        }
+
+        public override void RegisterTriggerable(IRegistryConsumer<AbstractCustomTriggerable> consumer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -9,15 +9,15 @@ namespace TCGBase
         /// </summary>
         public void TryUseSkill(int skill)
         {
-            if (CurrCharacter >= 0)
-            {
-                var c = Characters[CurrCharacter];
-                if (c.Alive && c.Active && c.Card.Skills.Length > 0)
-                {
-                    skill = int.Clamp(skill, 0, c.Card.Skills.Length);
-                    RealGame.TryProcessEvent(new NetEvent(new NetAction(ActionType.UseSKill, skill)), TeamIndex);
-                }
-            }
+            //if (CurrCharacter >= 0)
+            //{
+            //    var c = Characters[CurrCharacter];
+            //    if (c.Alive && c.Active && c.Card.Skills.Length > 0)
+            //    {
+            //        skill = int.Clamp(skill, 0, c.Card.Skills.Length);
+            //        RealGame.TryProcessEvent(new NetEvent(new NetAction(ActionType.UseSKill, skill)), TeamIndex);
+            //    }
+            //}
         }
         public override void TrySwitchToIndex(int index, bool relative = false)
         {

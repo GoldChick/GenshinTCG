@@ -7,10 +7,10 @@
     public class ActionUseSkillSender : AbstractAfterActionSender
     {
         public override string SenderName => SenderTag.AfterUseSkill.ToString();
-        public Character Character { get; set; }
+        public int Character { get; set; }
         public int Skill { get; set; }
 
-        public ActionUseSkillSender(int teamID, Character character, int skill) : base(teamID)
+        public ActionUseSkillSender(int teamID, int character, int skill) : base(teamID)
         {
             Character = character;
             Skill = skill;

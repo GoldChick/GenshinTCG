@@ -23,7 +23,7 @@
         public override bool CanBeUsed(PlayerTeam me, int[] targetArgs) => me.Characters[targetArgs[0]].Alive;
 
         public override void Update<T>(PlayerTeam me, Persistent<T> persistent) => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
-        public override void AfterUseAction(PlayerTeam me, int[] targetArgs) => me.AddPersistent(this, targetArgs[0]);
+        public override void AfterUseAction(PlayerTeam me, int[] targetArgs) => me.AddEffect(this, targetArgs[0]);
         protected private AbstractCardEquipment()
         {
         }

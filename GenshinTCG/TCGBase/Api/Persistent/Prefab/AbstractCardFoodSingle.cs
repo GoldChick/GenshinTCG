@@ -15,9 +15,9 @@ namespace TCGBase
         {
             //TODO: full
             //me.AddPersistent(new Effect_Full(), targetArgs[0]);
-            if (TriggerList.Any())
+            if (TriggerableList.Any())
             {
-                me.AddPersistent(this, targetArgs[0]);
+                me.AddEffect(this, targetArgs[0]);
             }
         }
         /// <summary>

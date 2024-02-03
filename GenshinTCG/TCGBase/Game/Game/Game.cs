@@ -80,7 +80,6 @@
             NetEventRecords.Add(new());
             for (int i = 0; i < 2; i++)
             {
-                Teams[i].RegisterPassive();
                 Teams[i].RollCard(5);
             }
             var t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, ActionType.ReRollCard));

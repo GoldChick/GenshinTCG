@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractCardEquipmentTalent : AbstractCardEquipment, ICardTalent
+    public abstract class AbstractCardEquipmentTalent : AbstractCardEquipment, ITalent
     {
         protected AbstractCardEquipmentTalent()
         {
@@ -16,14 +16,14 @@
         /// 所属的角色的nameid<br/>
         /// </summary>
         public abstract string CharacterNameID { get; }
-        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(((ICardTalent)this).IsFor);
+        public override bool CanBeArmed(List<AbstractCardCharacter> chars) => chars.Any(((ITalent)this).IsFor);
         /// <summary>
         /// 默认实现为需要是本人的天赋，并且为被动技能/该角色在前台
         /// </summary>
         public override bool CanBeUsed(PlayerTeam me, int[] targetArgs)
         {
             var c = me.Characters[targetArgs[0]];
-            return c.Alive && ((ICardTalent)this).IsFor(c.Card);
+            return c.Alive && ((ITalent)this).IsFor(c.Card);
         }
     }
 }

@@ -6,6 +6,11 @@
     public enum TriggerType
     {
         /// <summary>
+        /// 参数: mpnum<br/>
+        /// eg: "mp,1"
+        /// </summary>
+        MP,
+        /// <summary>
         /// 参数: dmg<br/>
         /// eg: "dodamage,pyro-3(-0-targetonly-enemy)" 班尼特e,括号内为可选项<br/>
         /// "dodamage,pierce-2-0-targetexcept+cryo-2" 甘雨5a
@@ -22,39 +27,12 @@
         DoDamageWithEffect,
         DoDamageWithSummon,
     }
-    /// <summary>
-    /// 不同的参数之间用-分隔
-    /// </summary>
-    public enum CharacterUseSkillType
-    {
-        /// <summary>
-        /// 附属该状态的角色，若无，则为出战角色
-        /// </summary>
-        CurrCharacter,
-        NotCurrCharacter,
-        /// <summary>
-        /// 我方所有角色
-        /// </summary>
-        AllMyCharacter,
-        /// <summary>
-        /// 对方所有角色
-        /// </summary>
-        AllEnemyCharacter,
-        /// <summary>
-        /// 场上所有角色
-        /// </summary>
-        AllGameCharacter,
-        /// <summary>
-        /// 指定我方角色; 参数:Character.NameID
-        /// </summary>
-        CertainCharacter,
-        NotCertainCharacter,
-    }
+
     public enum TriggerableType
     {
         /// <summary>
-        /// tag: <see cref="SenderTagInner.Use"/>; 参数: [<see cref="SkillCategory"/>] [Cost] [Trigger]<br/>
-        /// eg:  "skill[a[pyro=1,void=2[dodamageaorb,pyro-3,count=3,pyro-5" 迪卢克e
+        /// tag: <see cref="SenderTagInner.UseSkill"/>; 参数: [<see cref="SkillCategory"/>] [Cost] [Trigger]<br/>
+        /// eg:  "skill[a[pyro=1,void=2[dodamageaorb,pyro-3,count=3,pyro-5[mp=1" 迪卢克e
         /// </summary>
         Skill,
         /// <summary>
@@ -94,7 +72,7 @@
                 {
                     return type switch
                     {
-                        TriggerableType.Skill => TriggerPreset.DoSkill(cs),
+                        TriggerableType.Skill => TriggerablePreset.DoSkill(cs),
                         _ => throw new Exception($"Trigger: 未检查的trigger:{cs[0]}")
                     };
                 }
@@ -108,7 +86,7 @@
             {
                 Console.WriteLine($"Error In Trigger Convertion: {ex.Message}");
             }
-            return null;
+            throw new Exception("Trigger.Convert():我也不知道遇到什么错误了(");
         }
     }
 }

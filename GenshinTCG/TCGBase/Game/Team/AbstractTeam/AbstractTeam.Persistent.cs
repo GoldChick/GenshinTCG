@@ -5,8 +5,8 @@
         public virtual void AddSupport(AbstractCardSupport support, int replace = -1)
         {
         }
-        public void AddSummon(AbstractCardSummon summon) => AddSummon(1, summon);
-        public virtual void AddSummon(int num, params AbstractCardSummon[] summons)
+        public void AddSummon(AbstractCardBase summon) => AddSummon(1, summon);
+        public virtual void AddSummon(int num, params AbstractCardBase[] summons)
         {
         }
 
@@ -21,7 +21,7 @@
         /// IEffect -1:团队 0-(characters.count-1):个人
         /// </summary>
         /// <param name="bind">绑定在某个其他persistent上供检测，只对出战状态和角色状态有效</param>
-        public virtual void AddPersistent(AbstractCardPersistent per, int target = -1, AbstractPersistent? bind = null)
+        public virtual void AddEffect(AbstractCardBase per, int target = -1, AbstractPersistent? bind = null)
         {
 
         }

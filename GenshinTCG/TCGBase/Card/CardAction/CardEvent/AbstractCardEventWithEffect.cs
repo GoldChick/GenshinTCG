@@ -10,7 +10,7 @@
         /// </summary>
         public override void AfterUseAction(PlayerTeam me, int[] targetArgs)
         {
-            me.AddPersistent(this);
+            me.AddEffect(this);
         }
     }
 }
