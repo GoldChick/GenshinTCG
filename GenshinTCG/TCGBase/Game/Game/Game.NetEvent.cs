@@ -73,27 +73,8 @@
                     afterEventSender = new AfterSwitchSender(currTeam, initial, t.CurrCharacter);
                     break;
                 case ActionType.UseSKill:
-                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseSkill));
-                    var cha = t.Characters[t.CurrCharacter];
-                    //var ski = cha.Card.Skills[evt.Action.Index];
-
-                    //TODO: skill counter & afteruseskill
-
-                    //t.AddPersistent(new Effect_RoundSkillCounter(ski), t.CurrCharacter);
                     //afterEventSender = new AfterUseSkillSender(currTeam, cha, ski);
-
-                    //if (ski.Cost.MPCost > 0)
-                    //{
-                    //    //TODO: cost mp?
-                    //    t.Characters[t.CurrCharacter].MP -= ski.Cost.MPCost;
-                    //}
-                    //else
-                    //{
-                    //    //TODO:give mp?
-
-                    //    //t.Characters[t.CurrCharacter].MP += ski.GiveMP;
-                    //}
-                    EffectTrigger(new ActionUseSkillSender(t.TeamIndex, cha.PersistentRegion, evt.Action.Index));
+                    EffectTrigger(new ActionUseSkillSender(t.TeamIndex, t.CurrCharacter, evt.Action.Index));
                     break;
                 case ActionType.UseCard:
                     EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseCard));
@@ -192,6 +173,7 @@
                 //用于给减费的persistent减少使用次数
                 t.GetEventFinalDiceRequirement(evt.Action, true);
                 t.CostDices(evt.CostArgs);
+                //TODO:充能在哪里
 
                 //TODO:触发[任意行动]后
 

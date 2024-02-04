@@ -100,11 +100,11 @@
         /// specialAction:特殊效果，触发在反应效果后，免于被击倒前；会放到queue里<br/>
         /// seperateAction:分隔效果，用作获得充能，触发之后，关闭queue
         /// </summary>
-        private void InnerHurt(DamageVariable? dv, ITriggerable triggerable, Action? specialAction = null, Action? seperateAction = null)
+        private void InnerHurt(DamageVariable? dv, ITriggerable triggerable, Action? specialAction = null)
         {
             if (Game.TempDelayedTriggerQueue != null)
             {
-                Game.TempDelayedTriggerQueue.Enqueue(() => InnerHurt(dv, triggerable, specialAction, seperateAction));
+                Game.TempDelayedTriggerQueue.Enqueue(() => InnerHurt(dv, triggerable, specialAction));
                 return;
             }
 

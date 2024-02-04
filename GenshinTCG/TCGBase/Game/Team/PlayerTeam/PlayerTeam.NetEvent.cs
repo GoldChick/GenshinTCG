@@ -28,13 +28,13 @@
                     break;
                 case ActionType.UseCard:
                     var actioncard = CardsInHand[evt.Action.Index];
-                    if (actioncard is ITargetSelector se)
-                    {
-                        temp = se.TargetDemands.Length == evt.AdditionalTargetArgs.Length && IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs);
-                    }
-                    else if (actioncard is AbstractCardSupport && Supports.Full)
+                    if (actioncard is AbstractCardSupport && Supports.Full)
                     {
                         temp = 1 == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs[0] >= 0 && evt.AdditionalTargetArgs[0] < Supports.Count;
+                    }
+                    else
+                    {
+                        temp = IsManyTargetDemandValid(actioncard.TargetDemands, evt.AdditionalTargetArgs);
                     }
                     temp &= actioncard.CanBeUsed(this, evt.AdditionalTargetArgs);
                     break;
@@ -80,13 +80,13 @@
         {
             List<TargetEnum> enums = new();
             var actioncard = CardsInHand[cardindex];
-            if (actioncard is ITargetSelector se)
-            {
-                enums.AddRange(se.TargetDemands.Select(d => d.Target));
-            }
-            else if (actioncard is AbstractCardSupport && Supports.Full)
+            if (actioncard is AbstractCardSupport && Supports.Full)
             {
                 enums.Add(TargetEnum.Support_Me);
+            }
+            else
+            {
+                enums.AddRange(actioncard.TargetDemands.Select(d => d.Target));
             }
             return enums;
         }
@@ -198,9 +198,10 @@
         internal List<int> GetNextValidTargets(int cardindex, int[] parameters_already)
         {
             List<int> ints = new();
-            if (CardsInHand[cardindex] is ITargetSelector se && se.TargetDemands.Length > parameters_already.Length)
+            var card = CardsInHand[cardindex];
+            if (card.TargetDemands.Length > parameters_already.Length)
             {
-                var curr_d = se.TargetDemands[parameters_already.Length];
+                var curr_d = card.TargetDemands[parameters_already.Length];
                 for (int i = 0; i < GetTargetEnumMaxCount(curr_d.Target); i++)
                 {
                     if (curr_d.Condition(this, parameters_already.Append(i).ToArray()))

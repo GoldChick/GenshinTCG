@@ -33,20 +33,20 @@
         public override sealed int MaxUseTimes => 0;
         protected AbstractCardCharacter() : base("null")
         {
-            string? ele = Tags.Find(t => Enum.TryParse(t, out ElementCategory _));
-            CharacterElement = ele == null ? ElementCategory.Trival : Enum.Parse<ElementCategory>(ele);
+            string? ele = Tags.Find(t => Enum.TryParse(t, true, out ElementCategory _));
+            CharacterElement = ele == null ? ElementCategory.Trival : Enum.Parse<ElementCategory>(ele, true);
         }
-        protected private AbstractCardCharacter(CharacterCardRecord record) : base(record)
+        protected private AbstractCardCharacter(CardRecordCharacter record) : base(record)
         {
-            string? ele = Tags.Find(t => Enum.TryParse(t, out ElementCategory _));
-            CharacterElement = ele == null ? ElementCategory.Trival : Enum.Parse<ElementCategory>(ele);
+            string? ele = Tags.Find(t => Enum.TryParse(t, true, out ElementCategory _));
+            CharacterElement = ele == null ? ElementCategory.Trival : Enum.Parse<ElementCategory>(ele, true);
         }
     }
     public class CardCharacter : AbstractCardCharacter
     {
         public override int MaxHP { get; }
         public override int MaxMP { get; }
-        internal CardCharacter(CharacterCardRecord record) : base(record)
+        internal CardCharacter(CardRecordCharacter record) : base(record)
         {
             MaxHP = record.MaxHP;
             MaxMP = record.MaxMP;

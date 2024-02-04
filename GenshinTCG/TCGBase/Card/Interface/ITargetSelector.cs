@@ -33,19 +33,6 @@
         Support_Enemy,
         Support_Me
     }
-    /// <summary>
-    /// 实现这个接口的卡牌使用时除了骰子，还必须需要选择另外的目标<br/>
-    /// 由于各种原因，只允许给[事件牌] [装备牌]使用
-    /// </summary>
-    internal interface ITargetSelector
-    {
-        /// <summary>
-        /// 将按照顺序依次选取<br/>
-        /// 如:[诸武精通]:{Character_Me,Character_Me}<br/>
-        /// [送你一程]:{Summon}<br/>
-        /// </summary>
-        public TargetDemand[] TargetDemands { get; }
-    }
     public class TargetDemand
     {
         public TargetEnum Target { get; }

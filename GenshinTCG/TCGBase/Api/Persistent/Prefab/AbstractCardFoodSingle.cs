@@ -1,8 +1,6 @@
-﻿using Minecraft;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
-    public abstract class AbstractCardFoodSingle : AbstractCardEvent, ICardFood
+    public abstract class AbstractCardFoodSingle : AbstractCardAction, ICardFood
     {
         public override TargetDemand[] TargetDemands => new TargetDemand[]
         {

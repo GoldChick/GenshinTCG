@@ -45,7 +45,7 @@
         }
         public override void AddSummon(int num, params AbstractCardBase[] summons)
         {
-            var left = summons.Where(s => !Summons.Contains(s.GetType())).ToList();
+            var left = summons.Where(s => !Summons.Contains(s.GetType()) && s.CardType == CardType.Summon).ToList();
             while (num > 0)
             {
                 if (left.Count == 0)//全都召唤了，刷新

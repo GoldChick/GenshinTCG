@@ -3,26 +3,13 @@ namespace TCGBase
 {
     public class RegistryFromCard
     {
-        private static RegistryFromCard _instance = new();
-        public static RegistryFromCard Instance => _instance;
-        private RegistryFromCard()
-        {
-            CharacterCards = new();
-            ActionCards = new();
-            CustomTriggerable = new();
-        }
-
         internal List<string> Mods { get; } = new();
-        internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; }
-        internal RegistryCardCollection<AbstractCardAction> ActionCards { get; }
-        internal RegistryCardCollection<AbstractCustomTriggerable> CustomTriggerable { get; }
 
         //不知为何的namespace黑名单
         private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "minecraft", "equipment", "nilou", "hutao" };
 
         public string[] GetMods() => Mods.ToArray();
-        public List<AbstractCardCharacter> GetCharacterCards() => CharacterCards.Select(kvp => kvp.Value).ToList();
-        public List<AbstractCardAction> GetActionCards() => ActionCards.Select(kvp => kvp.Value).ToList();
+
         internal void Register(AbstractModUtil util)
         {
             string name = util.NameSpace;
@@ -34,9 +21,9 @@ namespace TCGBase
 
             AbstractRegister reg = util.GetRegister();
 
-            reg.RegisterCharacter(CharacterCards);
-            reg.RegisterActionCard(ActionCards);
-            reg.RegisterTriggerable(CustomTriggerable);
+            reg.RegisterCharacter(Registry.Instance.CharacterCards);
+            reg.RegisterActionCard(Registry.Instance.ActionCards);
+            reg.RegisterTriggerable(Registry.Instance.CustomTriggerable);
         }
 
         public void LoadDlls(string path)

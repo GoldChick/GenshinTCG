@@ -121,7 +121,7 @@
         /// <summary>
         /// 通过record创建dmg,targetindex为相对坐标
         /// </summary>
-        internal DamageVariable(DamageRecord record) : this((int)record.Element, record.Damage, record.TargetIndexOffset, record.TargetArea, null, record.TargetTeam)
+        internal DamageVariable(DamageRecord record) : this((int)record.Element, record.Amount, record.TargetIndexOffset, record.TargetArea, null, record.TargetTeam)
         {
             //TODO: element的-1和8
         }

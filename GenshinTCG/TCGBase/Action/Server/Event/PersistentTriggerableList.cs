@@ -24,8 +24,9 @@ namespace TCGBase
         public bool TryGetValue(string st, [NotNullWhen(returnValue: true)] out ITriggerable? h, int index = 0)
         {
             var targets = _list.Where(p => p.Tag == st);
-            h = targets.ElementAt(int.Clamp(index, 0, targets.Count() - 1));
-            return targets.Any();
+            bool any = targets.Any();
+            h = any ? targets.ElementAt(int.Clamp(index, 0, targets.Count() - 1)) : null;
+            return any;
         }
         /// <summary>
         /// 查看是否有count个tag满足要求的触发，自动count>=1

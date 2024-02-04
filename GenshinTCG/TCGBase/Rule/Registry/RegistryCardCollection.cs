@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TCGBase
 {
@@ -25,7 +26,8 @@ namespace TCGBase
             }
         }
         public bool ContainsKey(string nameID) => _values.ContainsKey(nameID);
-        public bool TryGetValue(string nameID, out T? value) => _values.TryGetValue(nameID, out value);
+        public bool TryGetValue(string nameID, [NotNullWhen(true)] out T? value) => _values.TryGetValue(nameID, out value);
+        public bool TryGetValue(string nameSpace, string nameID, [NotNullWhen(true)] out T? value) => _values.TryGetValue($"{nameSpace}:{nameID}", out value);
         public T? GetValueOrDefault(string nameID) => ContainsKey(nameID) ? _values[nameID] : default;
         IEnumerator IEnumerable.GetEnumerator() => _values.GetEnumerator();
         IEnumerator<KeyValuePair<string, T>> IEnumerable<KeyValuePair<string, T>>.GetEnumerator() => _values.GetEnumerator();

@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractCardEventTalent : AbstractCardEventNoEffect, ITalent
+    public abstract class AbstractCardEventTalent : AbstractCardAction, ITalent
     {
         //public override string NameID => $"talent_{CharacterNameID}";
         /// <summary>

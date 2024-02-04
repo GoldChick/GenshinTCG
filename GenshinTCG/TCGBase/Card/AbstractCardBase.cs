@@ -58,13 +58,14 @@
         /// <summary>
         /// 通过[json]方式创建，可以参考现有的例子
         /// </summary>
-        protected private AbstractCardBase(BaseCardRecord record)
+        protected private AbstractCardBase(CardRecordBase record)
         {
             CardType = record.CardType;
             Hidden = record.Hidden;
             NameID = record.NameID;
             Tags = record.Tags;
-            TriggerableList = new(record.SkillList.Select(Trigger.Convert).ToList());
+            //TODO: 这里用triggerable的nameid在registry中寻找
+            //TriggerableList = new(record.SkillList.Select(Trigger.Convert).ToList());
         }
         public virtual void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : AbstractCardBase
         {
