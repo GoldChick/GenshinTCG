@@ -26,7 +26,7 @@
             switch (demand)
             {
                 case ActionType.ReRollCard:
-                    evt = new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].CardsInHand.Count).ToArray());
+                    evt = new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].CardsInHand.Count()).ToArray());
                     break;
                 case ActionType.ReRollDice:
                     evt = new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].Dices.Count).ToArray());
@@ -77,31 +77,29 @@
                     EffectTrigger(new ActionUseSkillSender(t.TeamIndex, t.CurrCharacter, evt.Action.Index));
                     break;
                 case ActionType.UseCard:
-                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseCard));
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, evt.Action.Index));
+                    EffectTrigger(new ActionUseCardSender(t.TeamIndex, evt.Action.Index));
+                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseCard));
 
-                    AbstractCardAction c = t.CardsInHand[evt.Action.Index];
+                    //TODO: mpcost?
+                    //if (c.Cost.MPCost > 0)
+                    //{
+                    //    if (c is IEnergyConsumerCard iec && evt.AdditionalTargetArgs.Length > iec.CostMPFromCharacterIndexInArgs)
+                    //    {
+                    //        t.Characters[evt.AdditionalTargetArgs[iec.CostMPFromCharacterIndexInArgs]].MP -= c.Cost.MPCost;
+                    //    }
+                    //    else
+                    //    {
+                    //        t.Characters[t.CurrCharacter].MP -= c.Cost.MPCost;
+                    //    }
+                    //}
 
-                    if (c.Cost.MPCost > 0)
-                    {
-                        if (c is IEnergyConsumerCard iec && evt.AdditionalTargetArgs.Length > iec.CostMPFromCharacterIndexInArgs)
-                        {
-                            t.Characters[evt.AdditionalTargetArgs[iec.CostMPFromCharacterIndexInArgs]].MP -= c.Cost.MPCost;
-                        }
-                        else
-                        {
-                            t.Characters[t.CurrCharacter].MP -= c.Cost.MPCost;
-                        }
-                    }
-                    c.AfterUseAction(t, evt.AdditionalTargetArgs);
-                    t.CardsInHand.RemoveAt(evt.Action.Index);
-
-                    afterEventSender = new AfterUseCardSender(currTeam, c, evt.AdditionalTargetArgs);
-                    afterEventFastActionVariable = new FastActionVariable(c.FastAction);
+                    //afterEventSender = new AfterUseCardSender(currTeam, c, evt.AdditionalTargetArgs);
+                    //afterEventFastActionVariable = new FastActionVariable(c.FastAction);
                     break;
                 case ActionType.Blend://调和
-                    t.TryRemoveCard(evt.Action.Index);
-                    t.AddSingleDice((int)t.Characters[t.CurrCharacter].Card.CharacterElement);
+                    t.CardsInHand.TryDestroyAt(evt.Action.Index);
+                    t.AddSingleDice((int)t.Characters[t.CurrCharacter].CharacterCard.CharacterElement);
                     afterEventFastActionVariable = new FastActionVariable(true);
                     break;
                 case ActionType.Break://行动空过
@@ -132,19 +130,20 @@
                     t.ReRollDice(dvr);
                     break;
                 case ActionType.ReRollCard:
-                    var cards = t.CardsInHand;
-                    var cardcash0 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 0).ToList();
-                    var cardcash1 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 1).ToList();
-                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Push, cards.Select((value, index) => evt.AdditionalTargetArgs[index] == 1 ? index : -1).Where(p => p >= 0).ToArray()));
-                    cards.Clear();
-                    cards.AddRange(cardcash0);
-                    var over = cardcash1.Count - t.LeftCards.Count;
-                    t.RollCard(cardcash1.Count);
-                    t.LeftCards.AddRange(cardcash1);
-                    if (over > 0)
-                    {
-                        t.RollCard(over);
-                    }
+                    //TODO:换牌
+                    //var cards = t.CardsInHand;
+                    //var cardcash0 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 0).ToList();
+                    //var cardcash1 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 1).ToList();
+                    //BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Push, cards.Select((value, index) => evt.AdditionalTargetArgs[index] == 1 ? index : -1).Where(p => p >= 0).ToArray()));
+                    //cards.Clear();
+                    //cards.AddRange(cardcash0);
+                    //var over = cardcash1.Count - t.LeftCards.Count;
+                    //t.RollCard(cardcash1.Count);
+                    //t.LeftCards.AddRange(cardcash1);
+                    //if (over > 0)
+                    //{
+                    //    t.RollCard(over);
+                    //}
                     //TODO:优先不换上来换下去的种类
                     break;
                 case ActionType.SwitchForced:

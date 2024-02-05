@@ -9,7 +9,7 @@
             {
                 if (p is Character c && s is ActionUseSkillSender ss)
                 {
-                    if (c.CardBase.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, ss.Skill) && h is AbstractSkillTriggerable skill)
+                    if (c.CardBase.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, ss.Skill) && h is AbstractTriggerableSkill skill)
                     {
                         me.Game.EffectTrigger(new SimpleSender(me.TeamIndex, SenderTag.BeforeUseSkill));
                         handler?.Invoke(me, p, s, v);

@@ -37,15 +37,14 @@
     {
         public string Namespace => (GetType().Namespace ?? "minecraft").ToLower();
         public virtual string NameID { get; }
+        public virtual int InitialUseTimes => 1;
         public bool Hidden { get; }
         public CardType CardType { get; }
-        public virtual int InitialUseTimes { get => MaxUseTimes; }
-        public abstract int MaxUseTimes { get; }
-        public virtual bool CustomDesperated { get => false; }
         public int Variant { get; protected set; }
         public List<string> Tags { get; }
         public CostInit Cost => new CostCreate().ToCostInit();
         public PersistentTriggerableList TriggerableList { get; }
+
         /// <summary>
         /// 通过[代码]方式创造卡牌时，需要自己维护tags和TriggerList
         /// </summary>
@@ -64,13 +63,14 @@
             Hidden = record.Hidden;
             NameID = record.NameID;
             Tags = record.Tags;
-            //TODO: 这里用triggerable的nameid在registry中寻找
-            //TriggerableList = new(record.SkillList.Select(Trigger.Convert).ToList());
-        }
-        public virtual void Update<T>(PlayerTeam me, Persistent<T> persistent) where T : AbstractCardBase
-        {
-            persistent.Data = null;
-            persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
+            TriggerableList = new();
+            foreach (var item in record.SkillList)
+            {
+                if (Registry.Instance.CustomTriggerable.TryGetValue(item, out var value))
+                {
+                    TriggerableList.Add(value);
+                }
+            }
         }
     }
 }

@@ -33,6 +33,10 @@
         Support_Enemy,
         Support_Me
     }
+    public interface ITargetSelector
+    {
+        public TargetDemand[] TargetDemands { get; }
+    }
     public class TargetDemand
     {
         public TargetEnum Target { get; }
@@ -46,6 +50,9 @@
         {
             Target = target;
             Condition = condition;
+        }
+        internal TargetDemand(SelectRecordBase select)
+        {
         }
     }
     internal class TargetValid

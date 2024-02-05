@@ -154,15 +154,15 @@ namespace TCGBase
     }
     public class CostModifier<T> : CostModifier where T : AbstractUseDiceSender
     {
-        public Func<PlayerTeam, AbstractPersistent, T, int>? DynamicNum { get; }
+        public Func<PlayerTeam, Persistent, T, int>? DynamicNum { get; }
         public CostModifier(ElementCategory type, int num) : base(type, num)
         {
         }
-        public CostModifier(ElementCategory type, Func<PlayerTeam, AbstractPersistent, T, int>? dynamicNum) : base(type, 0)
+        public CostModifier(ElementCategory type, Func<PlayerTeam, Persistent, T, int>? dynamicNum) : base(type, 0)
         {
             DynamicNum = dynamicNum;
         }
-        public bool Modifier(PlayerTeam me, AbstractPersistent p, T uds, CostVariable dcv)
+        public bool Modifier(PlayerTeam me, Persistent p, T uds, CostVariable dcv)
         {
             Num = DynamicNum?.Invoke(me, p, uds) ?? Num;
             return Modifier(dcv);
@@ -179,10 +179,6 @@ namespace TCGBase
         /// 同色 冰水火雷岩草风 杂色 充能 秘传点
         /// </summary>
         internal int[] DiceCost { get => _costs; }
-        /// <summary>
-        /// 对于[技能]，直接填写数值即可<br/>
-        /// 对于[卡牌]，需要实现<see cref="IEnergyConsumerCard"/>，指定额外Target的中角色的index（天赋卡默认index=0），否则默认为出战角色
-        /// </summary>
         internal int MPCost { get => _costs[9]; }
         //TODO:desperated mpcost
         public CostCreate()

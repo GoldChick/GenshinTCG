@@ -6,7 +6,7 @@
     /// </summary>
     public class ActionUseSkillSender : AbstractAfterActionSender
     {
-        public override string SenderName => SenderTag.AfterUseSkill.ToString();
+        public override string SenderName => SenderTagInner.UseSkill.ToString();
         public int Character { get; set; }
         public int Skill { get; set; }
 

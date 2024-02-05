@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractPersistent
+    public class Persistent
     {
         protected int _availableTimes;
 
@@ -10,11 +10,14 @@
             set
             {
                 _availableTimes = int.Max(0, value);
-                Active = CardBase.CustomDesperated | _availableTimes != 0;
+                if (CardBase is IEffect ef)
+                {
+                    Active = ef.CustomDesperated | _availableTimes != 0;
+                }
             }
         }
 
-        public abstract AbstractCardBase CardBase { get; }
+        public AbstractCardBase CardBase { get; }
         /// <summary>
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
@@ -36,30 +39,35 @@
         /// <summary>
         /// 依赖于的另一个persistent，在自己的persistent中编写检测机制
         /// </summary>
-        public AbstractPersistent? Father { get; set; }
+        public Persistent? Father { get; set; }
         /// <summary>
         /// 依赖于自己的persistent们，此状态清除时将把list中的其他状态也清除
         /// </summary>
-        public List<AbstractPersistent> Childs { get; }
-        protected AbstractPersistent(Type type)
+        public List<Persistent> Childs { get; }
+        public Persistent(AbstractCardBase card, Persistent? bind = null)
         {
-            Type = type;
+            CardBase = card;
+            Type = card.GetType();
             Active = true;
             Childs = new();
-        }
-
-    }
-    public class Persistent<T> : AbstractPersistent where T : AbstractCardBase
-    {
-        public override AbstractCardBase CardBase => Card;
-        public T Card { get; protected set; }
-        private protected Persistent(Type type, T card, AbstractPersistent? bind = null) : base(type)
-        {
-            Card = card;
             AvailableTimes = card.InitialUseTimes;
+
             Father = bind;
-            bind?.Childs.Add(this);
+            bind?.Childs?.Add(this);
         }
-        public Persistent(T card, AbstractPersistent? bind = null) : this(card.GetType(), card, bind) { }
+        internal static EventPersistentSetHandler GetDelayedHandler(EventPersistentSetHandler? input)
+        {
+            return (me, s, v) =>
+            {
+                Queue<Action> queue = new();
+                me.Game.TempDelayedTriggerQueue = queue;
+                input?.Invoke(me, s, v);
+                me.Game.TempDelayedTriggerQueue = null;
+                while (queue.TryDequeue(out var action))
+                {
+                    action.Invoke();
+                }
+            };
+        }
     }
 }

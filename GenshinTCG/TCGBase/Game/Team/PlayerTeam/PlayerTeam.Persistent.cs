@@ -5,7 +5,7 @@
         /// <summary>
         /// 根据对于[出战角色]的[相对坐标]来附着[角色状态]
         /// </summary>
-        public void AddPersonalEffect(AbstractCardBase per, int relativeIndex = 0, AbstractPersistent? bind = null)
+        public void AddPersonalEffect(AbstractCardBase per, int relativeIndex = 0, Persistent? bind = null)
         {
             Characters[(relativeIndex + CurrCharacter) % Characters.Length].AddEffect(new(per, bind));
         }
@@ -13,14 +13,14 @@
         /// 根据对于[出战角色]的[相对坐标]来附着[已经存在]的[角色状态]<br/>
         /// <b>如果没有特殊需要，请使用上面的方法创建新的persistent</b>
         /// </summary>
-        public void AddPersonalEffect(Persistent<AbstractCardBase> per, int relativeIndex = 0)
+        public void AddPersonalEffect(Persistent per, int relativeIndex = 0)
         {
             Characters[(relativeIndex + CurrCharacter) % Characters.Length].AddEffect(per);
         }
-        public void AddTeamEffect(AbstractCardBase per, AbstractPersistent? bind = null) => Effects.Add(new(per, bind));
+        public void AddTeamEffect(AbstractCardBase per, Persistent? bind = null) => Effects.Add(new(per, bind));
 
         //TODO: 上面几个不知道还要不要
-        public override void AddEffect(AbstractCardBase per, int target = -1, AbstractPersistent? bind = null)
+        public override void AddEffect(AbstractCardBase per, int target = -1, Persistent? bind = null)
         {
             if (target == -1)
             {

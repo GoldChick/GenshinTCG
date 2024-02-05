@@ -10,8 +10,8 @@
         /// <summary>
         /// BeforeUseCard: card 
         /// </summary>
-        public AbstractCardAction Card { get; }
-        internal UseDiceFromCardSender(int teamID, AbstractCardAction card, bool isrealaction) : base(isrealaction, teamID)
+        public AbstractCardBase Card { get; }
+        internal UseDiceFromCardSender(int teamID, AbstractCardBase card, bool isrealaction) : base(isrealaction, teamID)
         {
             Card = card;
         }

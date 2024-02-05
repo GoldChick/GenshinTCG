@@ -1,9 +1,9 @@
 ﻿
 namespace TCGBase
 {
-    public class Character : Persistent<AbstractCardCharacter>
+    public class Character : Persistent
     {
-        public override AbstractCardBase CardBase => Card;
+        public AbstractCardCharacter CharacterCard { get; }
         private int _hp;
         private int _mp;
         private int _element;
@@ -20,7 +20,7 @@ namespace TCGBase
             {
                 if (Alive)
                 {
-                    _hp = int.Clamp(value, 0, Card.MaxHP);
+                    _hp = int.Clamp(value, 0, CharacterCard.MaxHP);
                 }
             }
         }
@@ -30,7 +30,7 @@ namespace TCGBase
             {
                 if (Alive)
                 {
-                    _mp = int.Clamp(value, 0, Card.MaxMP);
+                    _mp = int.Clamp(value, 0, CharacterCard.MaxMP);
                     _t.Game.BroadCast(ClientUpdateCreate.CharacterUpdate.MPUpdate(_t.TeamIndex, PersistentRegion, _mp));
                 }
             }
@@ -61,7 +61,7 @@ namespace TCGBase
 
         internal Character(AbstractCardCharacter character, int index, PlayerTeam t) : base(character)
         {
-            Card = character;
+            CharacterCard = character;
             //多一点怎么了
             SkillCounter = Enumerable.Repeat(0, character.TriggerableList.Count()).ToList();
             Data = SkillCounter;
@@ -70,7 +70,7 @@ namespace TCGBase
             _t = t;
             Effects = new(index, t);
 
-            HP = Card.MaxHP;
+            HP = CharacterCard.MaxHP;
             Alive = true;
             Active = true;
         }
@@ -94,9 +94,9 @@ namespace TCGBase
         /// <summary>
         /// for copy
         /// </summary>
-        internal Character(Character die_character, EmptyTeam emptyTeam) : base(die_character.Card)
+        internal Character(Character die_character, EmptyTeam emptyTeam) : base(die_character.CardBase)
         {
-            Card = die_character.Card;
+            CharacterCard = die_character.CharacterCard;
             SkillCounter = die_character.SkillCounter.ToList();
             Data = SkillCounter;
             PersistentRegion = die_character.PersistentRegion;
@@ -109,19 +109,28 @@ namespace TCGBase
         internal EventPersistentSetHandler? GetPersistentHandlers(AbstractSender sender)
         {
             EventPersistentSetHandler? hs = null;
-            //TODO: check it 如何触发自己？
-            //if (Card.TriggerList.TryGetValue(sender.SenderName, out var h))
-            //{
-            //    hs += (me, s, v) => h.Trigger(me, this, sender, v);
-            //}
-            hs += Effects.GetPersistentHandlers(sender);
+            if (sender is ActionUseSkillSender ss)
+            {
+                if (PersistentRegion == ss.Character && CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var skill, ss.Skill))
+                {
+                    hs += GetDelayedHandler((me, s, v) => skill.Trigger(me, this, sender, v));
+                }
+            }
+            else
+            {
+                if (CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var h))
+                {
+                    hs += GetDelayedHandler((me, s, v) => h.Trigger(me, this, sender, v));
+                }
+                hs += Effects.GetPersistentHandlers(sender);
+            }
             return hs;
         }
         /// <summary>
         /// 只有活着的时候，并且添加的是普通的effect，才能添加状态<br/>
         /// 如果添加的是圣遗物或武器，还会顶掉原来的
         /// </summary>
-        public void AddEffect(Persistent<AbstractCardBase> effect)
+        public void AddEffect(Persistent effect)
         {
             if (Alive && !Predie)
             {

@@ -6,7 +6,7 @@ namespace TCGBase
     /// <param name="p">this buff</param>
     /// <param name="s">the message sender</param>
     /// <param name="v">possible things to change</param>
-    public delegate void EventPersistentHandler(AbstractTeam me, AbstractPersistent p, AbstractSender s, AbstractVariable? v);
+    public delegate void EventPersistentHandler(AbstractTeam me, Persistent p, AbstractSender s, AbstractVariable? v);
     public class PersistentTriggerableList : IEnumerable<ITriggerable>
     {
         private readonly List<ITriggerable> _list;
@@ -28,6 +28,8 @@ namespace TCGBase
             h = any ? targets.ElementAt(int.Clamp(index, 0, targets.Count() - 1)) : null;
             return any;
         }
+        public List<ITriggerable> this[string st] => GetAllValue(st);
+        public List<ITriggerable> GetAllValue(string st) => _list.Where(p => p.Tag == st).ToList();
         /// <summary>
         /// 查看是否有count个tag满足要求的触发，自动count>=1
         /// </summary>

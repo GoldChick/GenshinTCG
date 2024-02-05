@@ -3,7 +3,8 @@
     public abstract class AbstractGame
     {
         /// <summary>
-        /// 不为null时，会存储非立即结算状态
+        /// 不为null时，会存储非立即结算状态<br/>
+        /// 在任意triggerable结算完毕后，会清空queue
         /// </summary>
         internal Queue<Action>? TempDelayedTriggerQueue { get; set; }
         public abstract int CurrTeam { get; protected set; }

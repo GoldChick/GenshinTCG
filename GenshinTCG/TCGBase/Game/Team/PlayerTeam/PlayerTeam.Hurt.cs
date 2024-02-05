@@ -102,23 +102,13 @@
         /// </summary>
         private void InnerHurt(DamageVariable? dv, ITriggerable triggerable, Action? specialAction = null)
         {
-            if (Game.TempDelayedTriggerQueue != null)
-            {
-                Game.TempDelayedTriggerQueue.Enqueue(() => InnerHurt(dv, triggerable, specialAction));
-                return;
-            }
-
             List<HurtSender> hss = new();
             bool overload = false;
 
             List<int> predies = new();
             List<EmptyTeam> predie_teams = new();
 
-            List<Persistent<AbstractCardBase>> antidie_effects = new();
-
-            Queue<Action> queue = new();
-
-            RealGame.TempDelayedTriggerQueue = queue;
+            List<Persistent> antidie_effects = new();
 
             if (dv != null)
             {
@@ -134,7 +124,7 @@
                     c.HP -= hs.Damage;
                     if (c.HP == 0)
                     {
-                        if (c.Effects.TryFind(e => e.Card.Tags.Contains(CardTag.AntiDie.ToString()), out var p))
+                        if (c.Effects.TryFind(e => e.CardBase.Tags.Contains(CardTag.AntiDie.ToString()), out var p))
                         {
                             //TODO:check it?  && p.Card.TriggerList.ContainsKey(SenderTag.PreDie.ToString())
                             antidie_effects.Add(p);
@@ -158,12 +148,12 @@
             specialAction?.Invoke();
             foreach (var die_effect in antidie_effects)
             {
-                if (die_effect.Card.TriggerableList.TryGetValue(SenderTag.PreDie.ToString(), out var h))
+                if (die_effect.CardBase.TriggerableList.TryGetValue(SenderTag.PreDie.ToString(), out var h))
                 {
                     h.Trigger(this, die_effect, new SimpleSender(TeamIndex, SenderTag.PreDie), null);
                 }
             }
-            queue.Enqueue(() =>
+            RealGame.TempDelayedTriggerQueue?.Enqueue(() =>
             {
                 TestTriggerForDMG(hss, predies, predie_teams);
                 if (!Characters[CurrCharacter].Alive)
@@ -188,7 +178,6 @@
                         RealGame.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced);
                     }
                 }
-
             });
         }
         /// <summary>

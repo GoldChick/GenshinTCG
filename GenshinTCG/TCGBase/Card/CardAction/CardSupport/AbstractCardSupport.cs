@@ -2,8 +2,7 @@
 {
     public enum SupportTags
     {
-        None,
-        Place,
+        Location,
         Partner,
         Item,
     }
@@ -12,19 +11,13 @@
     /// </summary>
     public abstract class AbstractCardSupport : AbstractCardAction
     {
-        /// <summary>
-        /// default do nothing for Support Card<br/>
-        /// 或许可以用来加个入场效果
-        /// </summary>
-        public override void AfterUseAction(PlayerTeam me, int[] targetArgs) => me.AddSupport(this, targetArgs.ElementAtOrDefault(0));
-        public override bool CustomDesperated => true;
-        ///<summary>
-        /// 支援区不会更新，内置方法为将MaxUseTimes设置为MaxUseTimes
-        /// </summary>
-        public override sealed void Update<T>(PlayerTeam me, Persistent<T> persistent) => persistent.AvailableTimes = int.Max(persistent.AvailableTimes, MaxUseTimes);
         protected AbstractCardSupport()
         {
             Variant = -5;
+        }
+        protected private AbstractCardSupport(CardRecordSupport record) : base(record)
+        {
+
         }
     }
 }

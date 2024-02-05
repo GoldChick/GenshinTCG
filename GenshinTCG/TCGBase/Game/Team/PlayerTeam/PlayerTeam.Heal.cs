@@ -53,7 +53,7 @@
             foreach (var hs in hss)
             {
                 var c = Characters[hs.TargetIndex];
-                hs.Amount = int.Min(c.Card.MaxHP - c.HP, hs.Amount);
+                hs.Amount = int.Min(c.CharacterCard.MaxHP - c.HP, hs.Amount);
                 c.HP += hs.Amount;
                 RealGame.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(TeamIndex, hs.TargetIndex, hs.Amount));
             }

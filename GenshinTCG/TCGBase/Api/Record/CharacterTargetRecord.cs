@@ -79,7 +79,7 @@ namespace TCGBase
                 {
                     chars = chars.Where(index =>
                     {
-                        var card = team.Characters[index].Card;
+                        var card = team.Characters[index].CardBase;
                         return $"{card.Namespace}:{card.NameID}" == CertainName;
                     }).ToList();
                 }

@@ -52,7 +52,7 @@ namespace TCGBase
                 if (i != except)
                 {
                     var c = Characters[i];
-                    int hplost = c.Card.MaxHP - c.HP;
+                    int hplost = c.CharacterCard.MaxHP - c.HP;
                     if (hplost > currhplost)
                     {
                         currid = i;

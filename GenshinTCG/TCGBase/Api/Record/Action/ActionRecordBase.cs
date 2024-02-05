@@ -11,39 +11,12 @@ namespace TCGBase
         DoDamage,
         Effect,
         Heal,
+        Dice,
         /// <summary>
         /// 参数: dmgA condition dmgB<br/>
         /// eg:  "dodamageaorb,pyro-3,count=3,pyro-5" 迪卢克e
         /// </summary>
         DoDamageAorB,
-        /// <summary>
-        /// 参数: dmg effectA (effectB ...)
-        /// </summary>
-        DoDamageWithEffect,
-    }
-    public enum CharacterIndexType
-    {
-        /// <summary>
-        /// 变身成出战状态，或者是队伍中的从出战向右的角色
-        /// </summary>
-        Team,
-        /// <summary>
-        /// 一方附属该状态的角色，若无，则为出战角色
-        /// </summary>
-        CurrCharacter,
-        NotCurrCharacter,
-        /// <summary>
-        /// 一方所有角色
-        /// </summary>
-        AllCharacter,
-        /// <summary>
-        /// 一方指定角色; 参数:Character.NameID
-        /// </summary>
-        CertainCharacter,
-        /// <summary>
-        /// 指定角色之外的一方角色; 参数:Character.NameID
-        /// </summary>
-        NotCertainCharacter,
     }
     public record class ActionRecordBase
     {
@@ -65,16 +38,13 @@ namespace TCGBase
             Team = team;
         }
     }
-    public record class ActionRecordBaseWithTarget : ActionRecordBase
+    public record class ActionRecordBaseWithTarget : ActionRecordBaseWithTeam
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public CharacterTargetRecord Target { get; }
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public DamageTargetTeam Team { get; }
-        public ActionRecordBaseWithTarget(TriggerType actionType, DamageTargetTeam team, CharacterTargetRecord? target = null) : base(actionType)
+        public ActionRecordBaseWithTarget(TriggerType actionType, DamageTargetTeam team, CharacterTargetRecord? target = null) : base(actionType, team)
         {
             Target = target ?? new();
-            Team = team;
         }
     }
 }

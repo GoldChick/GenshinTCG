@@ -21,7 +21,7 @@
         }
 
         public string Tag => SenderTag.ElementEnchant.ToString();
-        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public void Trigger(AbstractTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable)
         {
             if (persitent.AvailableTimes > 0 && variable is DamageVariable dv && sender.TeamID == me.TeamIndex)
             {

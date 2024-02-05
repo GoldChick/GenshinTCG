@@ -9,6 +9,7 @@ namespace TCGBase
         /// eg:  "skill[a[pyro=1,void=2[dodamageaorb,pyro-3,count=3,pyro-5[mp=1" 迪卢克e
         /// </summary>
         Skill,
+        Card,
         /// <summary>
         /// tag: <see cref="SenderTag.AfterUseSkill"/>; 参数: [<see cref="SkillCategory"/>] [isonlyCurrCharacter] [Trigger]
         /// </summary>
@@ -43,5 +44,6 @@ namespace TCGBase
         {
             Type = type;
         }
+        public virtual ITriggerable GetTriggerable() => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record  class没有实现GetTriggerable()!");
     }
 }

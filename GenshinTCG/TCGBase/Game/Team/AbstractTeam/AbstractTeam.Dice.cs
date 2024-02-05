@@ -18,6 +18,13 @@
         public virtual void GainDice(params int[] dices)
         {
         }
+        public virtual void GainDice(ElementCategory element, int count = 1)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                GainDice((int)element);
+            }
+        }
         public virtual void TryRemoveDice(int element)
         {
         }

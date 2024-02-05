@@ -11,8 +11,8 @@
             ActionType.ReRollDice or ActionType.ReRollCard or ActionType.Pass => true,
             ActionType.Switch or ActionType.SwitchForced =>
                 action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
-            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].Card.TriggerableList.Where(t => t.Tag == SenderTagInner.UseSkill.ToString()).Count(),
-            ActionType.UseCard or ActionType.Blend => action.Index < CardsInHand.Count,
+            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].CardBase.TriggerableList.Where(t => t.Tag == SenderTagInner.UseSkill.ToString()).Count(),
+            ActionType.UseCard or ActionType.Blend => action.Index < CardsInHand.Count(),
             _ => false
         };
         private bool IsAdditionalTargetValid(NetEvent evt)
@@ -24,19 +24,22 @@
                     temp = Dices.Count == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs.All(i => i == 0 || i == 1);
                     break;
                 case ActionType.ReRollCard:
-                    temp = CardsInHand.Count == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs.All(i => i == 0 || i == 1);
+                    temp = CardsInHand.Count() == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs.All(i => i == 0 || i == 1);
                     break;
                 case ActionType.UseCard:
-                    var actioncard = CardsInHand[evt.Action.Index];
-                    if (actioncard is AbstractCardSupport && Supports.Full)
+                    var card = CardsInHand[evt.Action.Index].CardBase;
+                    if (card is AbstractCardAction actioncard)
                     {
-                        temp = 1 == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs[0] >= 0 && evt.AdditionalTargetArgs[0] < Supports.Count;
+                        if (card.CardType == CardType.Support && Supports.Full)
+                        {
+                            temp = 1 == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs[0] >= 0 && evt.AdditionalTargetArgs[0] < Supports.Count;
+                        }
+                        else if(actioncard is ITargetSelector se)
+                        {
+                            temp = IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs);
+                        }
+                        temp &= actioncard.CanBeUsed(this, evt.AdditionalTargetArgs);
                     }
-                    else
-                    {
-                        temp = IsManyTargetDemandValid(actioncard.TargetDemands, evt.AdditionalTargetArgs);
-                    }
-                    temp &= actioncard.CanBeUsed(this, evt.AdditionalTargetArgs);
                     break;
             }
             return temp;
@@ -45,14 +48,14 @@
         {
             if (evt.Action.Type == ActionType.Blend)
             {
-                return evt.CostArgs != null && evt.CostArgs.Sum() == 1 && evt.CostArgs[(int)Characters[CurrCharacter].Card.CharacterElement] == 0 && ContainsCost(evt.CostArgs);
+                return evt.CostArgs != null && evt.CostArgs.Sum() == 1 && evt.CostArgs[(int)Characters[CurrCharacter].CharacterCard.CharacterElement] == 0 && ContainsCost(evt.CostArgs);
             }
             else
             {
                 bool temp = true;
                 if (evt.Action.Type == ActionType.UseCard)
                 {
-                    var card = CardsInHand[evt.Action.Index];
+                    var card = CardsInHand[evt.Action.Index].CardBase;
                     if (card is IEnergyConsumerCard ec)
                     {
                         temp = evt.AdditionalTargetArgs.Length > ec.CostMPFromCharacterIndexInArgs && Characters[evt.AdditionalTargetArgs[ec.CostMPFromCharacterIndexInArgs]].MP >= card.Cost.MPCost;
@@ -65,7 +68,7 @@
                 else if (evt.Action.Type == ActionType.UseSKill)
                 {
                     var c = Characters[CurrCharacter];
-                    if (c.Card.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var t, evt.Action.Index) && t is ICostable cost)
+                    if (c.CardBase.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var t, evt.Action.Index) && t is ICostable cost)
                     {
                         temp = c.MP >= cost.Cost.MPCost;
                     }
@@ -79,14 +82,14 @@
         internal List<TargetEnum> GetCardTargetEnums(int cardindex)
         {
             List<TargetEnum> enums = new();
-            var actioncard = CardsInHand[cardindex];
-            if (actioncard is AbstractCardSupport && Supports.Full)
+            var actioncard = CardsInHand[cardindex].CardBase;
+            if (actioncard.CardType == CardType.Support && Supports.Full)
             {
                 enums.Add(TargetEnum.Support_Me);
             }
-            else
+            else if (actioncard is ITargetSelector se)
             {
-                enums.AddRange(actioncard.TargetDemands.Select(d => d.Target));
+                enums.AddRange(se.TargetDemands.Select(d => d.Target));
             }
             return enums;
         }
@@ -154,14 +157,14 @@
             {
                 case ActionType.Switch:
                     c = new CostCreate().Void(1).ToCostInit().ToCostVariable();
-                    RealGame.EffectTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
+                    RealGame.InstantTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
                     break;
                 case ActionType.UseSKill:
-                    AbstractCardCharacter chaCard = Characters[CurrCharacter].Card;
-                    if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is AbstractSkillTriggerable skill)
+                    AbstractCardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
+                    if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is AbstractTriggerableSkill skill)
                     {
                         c = skill is ICostable cost ? new(cost.Cost) : new();
-                        RealGame.EffectTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
+                        RealGame.InstantTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
                     }
                     else
                     {
@@ -169,9 +172,9 @@
                     }
                     break;
                 case ActionType.UseCard:
-                    var card = CardsInHand[action.Index % CardsInHand.Count];
+                    var card = CardsInHand[action.Index % CardsInHand.Count()].CardBase;
                     c = new(card.Cost);
-                    RealGame.EffectTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
+                    RealGame.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
                     break;
                 case ActionType.Blend:
                     int[] ints = new int[8];
@@ -181,7 +184,7 @@
                     }
                     else
                     {
-                        ints[(int)Characters[CurrCharacter].Card.CharacterElement] = 1;
+                        ints[(int)Characters[CurrCharacter].CharacterCard.CharacterElement] = 1;
                     }
                     //对于Blend并不是需要该种元素，而是不能是该种元素
                     c = new(ints, 0);
@@ -198,15 +201,18 @@
         internal List<int> GetNextValidTargets(int cardindex, int[] parameters_already)
         {
             List<int> ints = new();
-            var card = CardsInHand[cardindex];
-            if (card.TargetDemands.Length > parameters_already.Length)
+            var card = CardsInHand[cardindex].CardBase;
+            if (card is ITargetSelector se)
             {
-                var curr_d = card.TargetDemands[parameters_already.Length];
-                for (int i = 0; i < GetTargetEnumMaxCount(curr_d.Target); i++)
+                if (se.TargetDemands.Length > parameters_already.Length)
                 {
-                    if (curr_d.Condition(this, parameters_already.Append(i).ToArray()))
+                    var curr_d = se.TargetDemands[parameters_already.Length];
+                    for (int i = 0; i < GetTargetEnumMaxCount(curr_d.Target); i++)
                     {
-                        ints.Add(i);
+                        if (curr_d.Condition(this, parameters_already.Append(i).ToArray()))
+                        {
+                            ints.Add(i);
+                        }
                     }
                 }
             }

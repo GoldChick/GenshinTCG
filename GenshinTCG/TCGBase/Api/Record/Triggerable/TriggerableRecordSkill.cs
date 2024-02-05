@@ -2,6 +2,9 @@
 
 namespace TCGBase
 {
+    /// <summary>
+    /// 主动技能
+    /// </summary>
     public record TriggerableRecordSkill : TriggerableRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -15,5 +18,6 @@ namespace TCGBase
             Cost = cost;
             Action = action;
         }
+        public override ITriggerable GetTriggerable() => new TriggerableSkill(this);
     }
 }

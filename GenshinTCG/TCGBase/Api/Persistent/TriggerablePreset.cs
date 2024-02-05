@@ -10,7 +10,7 @@
         /// <param name="persitent">当前触发效果的persistent对应的object,用来减少、增加次数</param>
         /// <param name="sender">信息的发送者,如打出的[牌],使用的[技能]</param>
         /// <param name="variable">可以被改写的东西,如[消耗的骰子们],[伤害] <b>(不应改变类型)</b></param>
-        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable);
+        public void Trigger(AbstractTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable);
     }
     internal class Triggerable : ITriggerable
     {
@@ -21,7 +21,7 @@
             Tag = tag;
             Handler = h;
         }
-        public void Trigger(AbstractTeam me, AbstractPersistent persitent, AbstractSender sender, AbstractVariable? variable) => Handler.Invoke(me, persitent, sender, variable);
+        public void Trigger(AbstractTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable) => Handler.Invoke(me, persitent, sender, variable);
     }
 
     //public static class TriggerablePreset

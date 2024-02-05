@@ -48,10 +48,10 @@ namespace TCGBase
 
             LeftCardsNum = teamMe.LeftCards.Count;
             Dices = teamMe.Dices.ToList();
-            Cards = teamMe.CardsInHand.Select(c => new ReadonlyObject(c.Namespace, c.NameID)).ToList();
+            Cards = teamMe.CardsInHand.Select(c => new ReadonlyObject(c.CardBase.Namespace, c.CardBase.NameID)).ToList();
 
             EnemyDiceNum = teamEnemy.Dices.Count;
-            EnemyCardNum = teamEnemy.CardsInHand.Count;
+            EnemyCardNum = teamEnemy.CardsInHand.Count();
             EnemyLeftCardsNum = teamEnemy.LeftCards.Count;
         }
         /// <summary>
@@ -109,7 +109,7 @@ namespace TCGBase
                         -1 => packetteam.Effects,//-1
                         11 => packetteam.Summons,
                         12 => packetteam.Supports,
-                        _ => packetteam.Characters[packet.Ints[0]].Effects 
+                        _ => packetteam.Characters[packet.Ints[0]].Effects
                     };
                     switch (persistentcategory)
                     {
