@@ -16,13 +16,14 @@
         /// </summary>
         public TargetDemand[] TargetDemands => new TargetDemand[]
         {
-            new(TargetEnum.Character_Me,CanBeUsed)
+            new(DamageTargetTeam.Me,SelectType.Character,EquipmentCanBeUsed)
         };
         /// <summary>
-        /// 对于装备，这里targetArgs为长度1的数组，唯一的值为我方目标角色的index
+        /// 对于装备，targets为长度1的list，唯一的值为我方目标角色的index
         /// </summary>
-        public override bool CanBeUsed(AbstractTeam me, int[] targetArgs) => me.Characters[targetArgs[0]].Alive;
-        protected AbstractCardEquipment() 
+        public virtual bool EquipmentCanBeUsed(AbstractTeam me, List<Persistent> targets)
+            => targets.ElementAtOrDefault(0) is Character c && c.Alive;
+        protected AbstractCardEquipment()
         {
         }
         protected private AbstractCardEquipment(CardRecordEquipment record) : base(record)

@@ -9,5 +9,7 @@
             MaxNumPermitted = maxNumPermitted;
             Cost = cost ?? new();
         }
+        //TODO: desperated
+        public override AbstractCardBase GetCard() => new CardAction(this);
     }
 }

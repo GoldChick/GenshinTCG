@@ -2,7 +2,7 @@
 {
     public record class SelectRecordSummon : SelectRecordBase
     {
-        public SelectRecordSummon() : base(SelectType.Character)
+        public SelectRecordSummon() : base(SelectType.Summon)
         {
         }
     }

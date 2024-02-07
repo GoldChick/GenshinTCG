@@ -21,15 +21,14 @@
         /// 用于custom，会自动生成在SenderTagInner.UseCard下<br/>
         /// 如果想加一些其他的触发，可以自行维护TriggerableList
         /// </summary>
-        public virtual void AfterUseAction(AbstractTeam me, int[] targetArgs) { }
+        public virtual void AfterUseAction(AbstractTeam me, List<Persistent> targets) { }
         /// <summary>
-        /// 是否满足额外的打出条件（不包括骰子条件）<br/>
-        /// 如果实现ITargetSelector，且为单目标，可以借助这个方法给virtual类的target用
+        /// 是否满足额外的打出条件（不包括骰子条件）
         /// </summary>
-        public virtual bool CanBeUsed(AbstractTeam me, int[] targetArgs) => true;
+        public virtual bool CanBeUsed(AbstractTeam me) => true;
         protected private AbstractCardAction() : base("null")
         {
-            TriggerableList.Add(SenderTagInner.UseCard, (me, p, s, v) => AfterUseAction(me, new int[] { p.PersistentRegion }));
+            TriggerableList.Add(SenderTagInner.UseCard, (me, p, s, v) => AfterUseAction(me, new() { p }));
         }
         protected private AbstractCardAction(CardRecordAction record) : base(record)
         {

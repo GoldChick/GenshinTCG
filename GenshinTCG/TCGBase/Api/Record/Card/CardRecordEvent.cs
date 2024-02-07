@@ -7,5 +7,6 @@
         {
             Select = select ?? new();
         }
+        public override AbstractCardBase GetCard() => new CardEvent(this);
     }
 }

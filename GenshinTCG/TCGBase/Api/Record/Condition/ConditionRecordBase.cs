@@ -9,7 +9,8 @@ namespace TCGBase
         Effect,
         Summon,
         Support,
-        Card
+        Card,
+        Counter
     }
     public enum ConditionTypeX
     {
@@ -25,7 +26,7 @@ namespace TCGBase
     public record class ConditionRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public ConditionType Type;
+        public ConditionType Type { get; }
 
         public ConditionRecordBase(ConditionType type)
         {

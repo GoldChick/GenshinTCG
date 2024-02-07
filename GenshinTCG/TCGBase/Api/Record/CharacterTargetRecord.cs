@@ -2,6 +2,9 @@
 
 namespace TCGBase
 {
+    /// <summary>
+    /// 上effect时提供目标的enum
+    /// </summary>
     public enum CharacterTargetType
     {
         CurrCharacter,

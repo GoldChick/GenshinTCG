@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System;
+
+namespace TCGBase
 {
     /// <summary>
     /// 供Event使用的TargetEnum，创建<see cref="TargetEnum"/>
@@ -23,11 +25,8 @@
     /// </summary>
     public enum TargetEnum
     {
-        //Card_Enemy,
-        //Card_Me,
         Character_Enemy,
         Character_Me,
-
         Summon_Enemy,
         Summon_Me,
         Support_Enemy,
@@ -39,20 +38,43 @@
     }
     public class TargetDemand
     {
-        public TargetEnum Target { get; }
-        public Func<PlayerTeam, int[], bool> Condition { get; }
-        /// <summary>
-        /// <b>Action:</b><br/>
-        /// PlayerTeam: 表示我方队伍情况<br/>
-        /// int[]: 表示已经选中的Target对应的参数，第n个demand能获得参数的length为n<br/>
-        /// </summary>
-        public TargetDemand(TargetEnum target, Func<PlayerTeam, int[], bool> condition)
+        public DamageTargetTeam Team { get; }
+        public SelectType Select { get; }
+        public Func<PlayerTeam, List<Persistent>, bool> Condition { get; }
+        public TargetDemand(DamageTargetTeam team, SelectType select, Func<PlayerTeam, List<Persistent>, bool> condition)
         {
-            Target = target;
+            Team = team;
+            Select = select;
             Condition = condition;
         }
         internal TargetDemand(SelectRecordBase select)
         {
+            Team = select.Team;
+            Select = select.Type;
+            //TODO : condition
+        }
+        internal Persistent? GetPersistent(AbstractTeam team, int index)
+        {
+            var t = Team == DamageTargetTeam.Enemy ? team.Enemy : team;
+            return Select switch
+            {
+                SelectType.Character => t.Characters.ElementAtOrDefault(index),
+                SelectType.Summon => t.Summons.ElementAtOrDefault(index),
+                SelectType.Support => t.Supports.ElementAtOrDefault(index),
+                _ => throw new Exception("IsManyTargetDemandValid():不支持的SelectType!")
+            };
+        }
+        internal bool IsPersistentValid(AbstractTeam team, int index, List<Persistent> old)
+        {
+            var t = Team == DamageTargetTeam.Enemy ? team.Enemy : team;
+            persistent = Select switch
+            {
+                SelectType.Character => t.Characters.ElementAtOrDefault(index),
+                SelectType.Summon => t.Summons.ElementAtOrDefault(index),
+                SelectType.Support => t.Supports.ElementAtOrDefault(index),
+                _ => throw new Exception("IsManyTargetDemandValid():不支持的SelectType!")
+            };
+            return persistent != null && Condition?.Invoke(team, old.Append(persistent).ToList());
         }
     }
     internal class TargetValid

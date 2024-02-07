@@ -34,11 +34,11 @@
                         {
                             temp = 1 == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs[0] >= 0 && evt.AdditionalTargetArgs[0] < Supports.Count;
                         }
-                        else if(actioncard is ITargetSelector se)
+                        else if (actioncard is ITargetSelector se)
                         {
                             temp = IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs);
                         }
-                        temp &= actioncard.CanBeUsed(this, evt.AdditionalTargetArgs);
+                        temp &= actioncard.CanBeUsed(this);
                     }
                     break;
             }
@@ -89,18 +89,24 @@
             }
             else if (actioncard is ITargetSelector se)
             {
-                enums.AddRange(se.TargetDemands.Select(d => d.Target));
+                enums.AddRange(se.TargetDemands.Select(d => (TargetEnum)((int)d.Select * 2 + (int)d.Team)));
             }
             return enums;
         }
         protected bool IsManyTargetDemandValid(IEnumerable<TargetDemand> demands, int[] parameters)
         {
+            List<Persistent> persistents = new();
             for (int i = 0; i < parameters.Length; i++)
             {
-                var d = demands.ElementAt(i);
-                if (parameters[i] >= 0 && parameters[i] < GetTargetEnumMaxCount(d.Target) && d.Condition(this, parameters[..(i + 1)]))
+                var demand = demands.ElementAt(i);
+                Persistent? p = demand.GetPersistent(this, parameters[i]);
+                if (p != null)
                 {
-                    continue;
+                    persistents.Add(p);
+                    if (demand.Condition(this, persistents))
+                    {
+                        continue;
+                    }
                 }
                 return false;
             }
@@ -207,7 +213,7 @@
                 if (se.TargetDemands.Length > parameters_already.Length)
                 {
                     var curr_d = se.TargetDemands[parameters_already.Length];
-                    for (int i = 0; i < GetTargetEnumMaxCount(curr_d.Target); i++)
+                    for (int i = 0; i < GetTargetEnumMaxCount(curr_d.Select, curr_d.Team); i++)
                     {
                         if (curr_d.Condition(this, parameters_already.Append(i).ToArray()))
                         {
@@ -218,39 +224,42 @@
             }
             return ints;
         }
-        internal List<TargetValid> TargetDemandToAllTargetValid(IEnumerable<TargetDemand> demand)
-            => GetTargetValid(demand).Select((ints, index) => new TargetValid(demand.ElementAt(index).Target, ints)).ToList();
-        private IEnumerable<List<int>> GetTargetValid(IEnumerable<TargetDemand> demand, int depth = 0, List<int>? curr = null)
+        //internal List<TargetValid> TargetDemandToAllTargetValid(IEnumerable<TargetDemand> demand)
+        //    => GetTargetValid(demand).Select((ints, index) => new TargetValid(demand.ElementAt(index).Target, ints)).ToList();
+        //private IEnumerable<List<int>> GetTargetValid(IEnumerable<TargetDemand> demand, int depth = 0, List<int>? curr = null)
+        //{
+        //    curr ??= new();
+        //    if (depth == demand.Count())
+        //    {
+        //        yield return curr;
+        //        yield break;
+        //    }
+        //    var nums = Enumerable.Range(0, GetTargetEnumMaxCount(demand.ElementAt(depth).Target));
+        //    foreach (var d in nums)
+        //    {
+        //        curr.Add(d);
+        //        if (demand.ElementAt(depth).Condition.Invoke(this, curr.ToArray()))
+        //        {
+        //            foreach (var item in GetTargetValid(demand, depth + 1, curr))
+        //            {
+        //                yield return item;
+        //            }
+        //        }
+        //        curr.Remove(d);
+        //    }
+        //}
+        protected int GetTargetEnumMaxCount(SelectType select, DamageTargetTeam team)
+            => GetTargetEnumMaxCount(((int)select * 2 + (int)team));
+        protected int GetTargetEnumMaxCount(TargetEnum e)
+            => GetTargetEnumMaxCount((int)e);
+        protected int GetTargetEnumMaxCount(int region) => region switch
         {
-            curr ??= new();
-            if (depth == demand.Count())
-            {
-                yield return curr;
-                yield break;
-            }
-            var nums = Enumerable.Range(0, GetTargetEnumMaxCount(demand.ElementAt(depth).Target));
-            foreach (var d in nums)
-            {
-                curr.Add(d);
-                if (demand.ElementAt(depth).Condition.Invoke(this, curr.ToArray()))
-                {
-                    foreach (var item in GetTargetValid(demand, depth + 1, curr))
-                    {
-                        yield return item;
-                    }
-                }
-                curr.Remove(d);
-            }
-        }
-        protected int GetTargetEnumMaxCount(TargetEnum e) => e switch
-        {
-            //TargetEnum.Card_Me => CardsInHand.Count,
-            TargetEnum.Character_Enemy => Enemy.Characters.Length,
-            TargetEnum.Character_Me => Characters.Length,
-            TargetEnum.Summon_Enemy => Enemy.Summons.Count,
-            TargetEnum.Summon_Me => Summons.Count,
-            TargetEnum.Support_Enemy => Enemy.Supports.Count,
-            TargetEnum.Support_Me => Supports.Count,
+            0 => Enemy.Characters.Length,
+            1 => Characters.Length,
+            2 => Enemy.Summons.Count,
+            3 => Summons.Count,
+            4 => Enemy.Supports.Count,
+            5 => Supports.Count,
             _ => throw new Exception("PlayerTeam.NetEvent.TargetEnumToEnumrable():不支持的TargetEnum!")
         };
     }
