@@ -62,7 +62,8 @@
         {
             var t = Teams[currTeam];
 
-            afterEventSender = new SimpleSender(currTeam, evt.Action.Type.ToSenderTags());
+            afterEventSender = new AfterActionSender(currTeam, evt.Action.Type);
+
             FastActionVariable? afterEventFastActionVariable = isaction ? new FastActionVariable(false) : null;
             switch (evt.Action.Type)
             {
@@ -70,16 +71,15 @@
                     EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeSwitch));
                     var initial = t.CurrCharacter;
                     t.CurrCharacter = evt.Action.Index;
-                    afterEventSender = new AfterSwitchSender(currTeam, initial, t.CurrCharacter);
+                    //afterEventSender = new AfterSwitchSender(currTeam, initial, t.CurrCharacter);
+                    //TODO:切换角色后 的触发
                     break;
                 case ActionType.UseSKill:
-                    //afterEventSender = new AfterUseSkillSender(currTeam, cha, ski);
                     EffectTrigger(new ActionUseSkillSender(t.TeamIndex, t.CurrCharacter, evt.Action.Index));
                     break;
                 case ActionType.UseCard:
                     BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, evt.Action.Index));
-                    EffectTrigger(new ActionUseCardSender(t.TeamIndex, evt.Action.Index));
-                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeUseCard));
+                    EffectTrigger(new ActionUseCardSender(t.TeamIndex, evt.Action.Index, evt.AdditionalTargetArgs));
 
                     //TODO: mpcost?
                     //if (c.Cost.MPCost > 0)

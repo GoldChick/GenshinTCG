@@ -1,13 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
 namespace TCGBase
 {
-    public delegate void EventPersistentSetHandler(AbstractTeam me, AbstractSender s, AbstractVariable? v);
+    public delegate void EventPersistentSetHandler(PlayerTeam me, AbstractSender s, AbstractVariable? v);
     public class PersistentSet<T> : AbstractPersistentSet, IEnumerable<Persistent> where T : AbstractCardBase
     {
         private readonly List<Persistent> _data;
-        private readonly PlayerTeam? _me;
+        private readonly PlayerTeam _me;
         private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
         /// <summary>
         /// 为正代表最多x个，为负或0代表无限制
@@ -23,18 +24,14 @@ namespace TCGBase
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
         /// </param>
-        internal PersistentSet(int region, AbstractTeam team, int size = 0, bool multisame = false)
+        internal PersistentSet(int region, PlayerTeam team, int size = 0, bool multisame = false)
         {
             PersistentRegion = region;
             _data = new();
             _handlers = new();
             MaxSize = size;
             MultiSame = multisame;
-            //TODO: check it :可能会引起什么报错，不过暂时不关心
-            if (team is PlayerTeam pt)
-            {
-                _me = pt;
-            }
+            _me = team;
         }
         public Persistent this[int i] => _data[i];
         /// <summary>
@@ -52,7 +49,7 @@ namespace TCGBase
                     if (t.CardBase.Variant % 10 == input.CardBase.Variant % 10 && input.CardBase is IEffect ef)
                     {
                         ef.Update(_me, t);
-                        _me.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, t.AvailableTimes));
+                        _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, t.AvailableTimes));
                     }
                     else
                     {
@@ -177,7 +174,7 @@ namespace TCGBase
                     int index = _data.FindIndex(d => d == p);
                     if (index >= 0 && me is PlayerTeam pt)
                     {
-                        pt.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(me.TeamIndex, PersistentRegion, index, p.AvailableTimes));
+                        pt.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(me.TeamIndex, PersistentRegion, index, p.AvailableTimes));
                     }
                 }
             });
@@ -197,7 +194,7 @@ namespace TCGBase
                     _handlers[trigger.Tag] += h;
                 }
             }
-            _me?.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, PersistentRegion, p.CardBase.Variant, p.AvailableTimes, p.CardBase.Namespace, p.CardBase.NameID));
+            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, PersistentRegion, p.CardBase.Variant, p.AvailableTimes, p.CardBase.Namespace, p.CardBase.NameID));
         }
         private void Unregister(int index, Persistent p)
         {
@@ -205,14 +202,20 @@ namespace TCGBase
             {
                 _handlers[trigger.Tag] -= PersistentHandelerConvert(p, trigger);
             }
-            _me?.RealGame.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
+            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
             _data.RemoveAt(index);
-            //TODO: unregister here
-            _me?.RealGame.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.CardBase), null);
         }
-
+        public void Destroy(int index)
+        {
+            var p = _data.ElementAtOrDefault(index);
+            if (p != null)
+            {
+                Unregister(index, p);
+                _me.Game.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.CardBase), null);
+            }
+        }
+        public void DestroyFirst(Predicate<Persistent> condition) => Destroy(_data.FindIndex(condition));
         public IEnumerator<Persistent> GetEnumerator() => _data.GetEnumerator();
-
         IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
     }
 }

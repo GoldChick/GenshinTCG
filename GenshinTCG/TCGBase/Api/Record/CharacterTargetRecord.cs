@@ -28,7 +28,7 @@ namespace TCGBase
             Except = except;
             CertainName = certainName;
         }
-        public List<int> GetCharacters(AbstractTeam team)
+        public List<int> GetCharacters(PlayerTeam team)
         {
             List<int> chars = new();
             if (team.CurrCharacter != -1)

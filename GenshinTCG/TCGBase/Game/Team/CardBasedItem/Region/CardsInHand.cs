@@ -1,32 +1,32 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata.Ecma335;
 
 namespace TCGBase
 {
     public class CardsInHand : AbstractPersistentSet, IEnumerable<Persistent>
     {
         private readonly List<Persistent> _data;
-        public CardsInHand()
+        private readonly PlayerTeam _t;
+        public CardsInHand(PlayerTeam t)
         {
             PersistentRegion = -10;
             _data = new();
+            _t = t;
         }
         public Persistent this[int i] => _data[i];
         internal void Add(AbstractCardAction card)
         {
-            //TODO: broadcast
             if (_data.Count >= 10)
             {
-                //RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace, card.NameID));
+                _t.Game.BroadCast(ClientUpdateCreate.CardUpdate(_t.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace, card.NameID));
             }
             else
             {
                 _data.Add(new(card));
-                //RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
+                _t.Game.BroadCast(ClientUpdateCreate.CardUpdate(_t.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
             }
         }
-        internal EventPersistentSetHandler? GetHandler(AbstractSender sender)
+        internal EventPersistentSetHandler? GetHandlers(AbstractSender sender)
         {
             if (sender is ActionUseCardSender cs && cs.Card >= 0 && cs.Card <= _data.Count)
             {
@@ -36,21 +36,23 @@ namespace TCGBase
                 {
                     handler += it.Trigger;
                 }
+                //这里的s就是上面的cs
                 return Persistent.GetDelayedHandler((me, s, v) =>
                 {
                     _data.RemoveAt(cs.Card);
                     switch (card.CardBase.CardType)
                     {
                         case CardType.Equipment:
+                            me.Characters[cs.Args.ElementAtOrDefault(0)].AddEffect(card.CardBase);
                             break;
                         case CardType.Support:
+                            me.AddSupport(card.CardBase, cs.Args.FirstOrDefault(-1));
                             break;
                         case CardType.Event:
                             break;
                         default:
                             throw new ArgumentException($"CardsInHand:你把什么东西扔到手里了？{card.CardBase.CardType}?");
                     }
-                    //TODO:依据种类的不同而xx；装备牌装到身上；支援牌放到支援区；事件牌直接消失
                     handler?.Invoke(me, card, s, v);
                 });
             }

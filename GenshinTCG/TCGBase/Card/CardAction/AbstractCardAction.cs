@@ -21,11 +21,11 @@
         /// 用于custom，会自动生成在SenderTagInner.UseCard下<br/>
         /// 如果想加一些其他的触发，可以自行维护TriggerableList
         /// </summary>
-        public virtual void AfterUseAction(AbstractTeam me, List<Persistent> targets) { }
+        public virtual void AfterUseAction(PlayerTeam me, List<Persistent> targets) { }
         /// <summary>
         /// 是否满足额外的打出条件（不包括骰子条件）
         /// </summary>
-        public virtual bool CanBeUsed(AbstractTeam me) => true;
+        public virtual bool CanBeUsed(PlayerTeam me) => true;
         protected private AbstractCardAction() : base("null")
         {
             TriggerableList.Add(SenderTagInner.UseCard, (me, p, s, v) => AfterUseAction(me, new() { p }));

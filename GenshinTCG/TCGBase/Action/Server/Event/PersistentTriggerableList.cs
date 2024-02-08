@@ -6,7 +6,7 @@ namespace TCGBase
     /// <param name="p">this buff</param>
     /// <param name="s">the message sender</param>
     /// <param name="v">possible things to change</param>
-    public delegate void EventPersistentHandler(AbstractTeam me, Persistent p, AbstractSender s, AbstractVariable? v);
+    public delegate void EventPersistentHandler(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v);
     public class PersistentTriggerableList : IEnumerable<ITriggerable>
     {
         private readonly List<ITriggerable> _list;

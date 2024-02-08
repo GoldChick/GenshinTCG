@@ -7,7 +7,7 @@
         /// </summary>
         public void AddPersonalEffect(AbstractCardBase per, int relativeIndex = 0, Persistent? bind = null)
         {
-            Characters[(relativeIndex + CurrCharacter) % Characters.Length].AddEffect(new(per, bind));
+            Characters[(relativeIndex + CurrCharacter) % Characters.Length].AddEffect(new Persistent(per, bind));
         }
         /// <summary>
         /// 根据对于[出战角色]的[相对坐标]来附着[已经存在]的[角色状态]<br/>
@@ -17,10 +17,15 @@
         {
             Characters[(relativeIndex + CurrCharacter) % Characters.Length].AddEffect(per);
         }
-        public void AddTeamEffect(AbstractCardBase per, Persistent? bind = null) => Effects.Add(new(per, bind));
+        public void AddTeamEffect(AbstractCardBase per, Persistent? bind = null) => Effects.Add(new Persistent(per, bind));
 
         //TODO: 上面几个不知道还要不要
-        public override void AddEffect(AbstractCardBase per, int target = -1, Persistent? bind = null)
+        /// <summary>
+        /// 增加一个effect，只在PlayerTeam中有效
+        /// IEffect -1:团队 0-(characters.count-1):个人
+        /// </summary>
+        /// <param name="bind">绑定在某个其他persistent上供检测，只对出战状态和角色状态有效</param>
+        public void AddEffect(AbstractCardBase per, int target = -1, Persistent? bind = null)
         {
             if (target == -1)
             {
@@ -28,22 +33,31 @@
             }
             else
             {
-                Characters[int.Clamp(target, 0, Characters.Length - 1)].AddEffect(new(per, bind));
+                Characters[int.Clamp(target, 0, Characters.Length - 1)].AddEffect(new Persistent(per, bind));
             }
-            RealGame.BroadCastRegion();
+            Game.BroadCastRegion();
+        }
+        public void AddSupport(Persistent support, int replace = -1)
+        {
+            if (Supports.Full)
+            {
+                Supports.Destroy(replace);
+            }
+            Supports.Add(support);
         }
         /// <summary>
         /// 自己检测满了没有，也不一定添加成功
         /// </summary>
-        public override void AddSupport(AbstractCardSupport support, int replace = -1)
+        public void AddSupport(AbstractCardBase support, int replace = -1)
         {
             if (Supports.Full)
             {
-                Supports.TryRemoveAt(replace);
+                Supports.Destroy(replace);
             }
             Supports.Add(new(support));
         }
-        public override void AddSummon(int num, params AbstractCardBase[] summons)
+        public void AddSummon(AbstractCardBase summon) => AddSummon(1, summon);
+        public void AddSummon(int num, params AbstractCardBase[] summons)
         {
             var left = summons.Where(s => !Summons.Contains(s.GetType()) && s.CardType == CardType.Summon).ToList();
             while (num > 0)
@@ -72,60 +86,65 @@
                 }
             }
         }
-        /// <summary>
-        /// 在某一次所有的结算之后，清除not active的effect
-        /// </summary>
-        /// <returns>删除的effect总数量</returns>
-        internal void EffectUpdate()
-        {
-            for (int i = 0; i < Characters.Length; i++)
-            {
-                Characters[(i + Characters.Length + CurrCharacter) % Characters.Length].Effects.Update();
-            }
-            Effects.Update();
-            Summons.Update();
-            Supports.Update();
-        }
-        internal EventPersistentSetHandler? GetCharacterEffectHandlers(AbstractSender sender)
+        internal EventPersistentSetHandler? GetEffectHandlers(AbstractSender sender)
         {
             EventPersistentSetHandler? hs = null;
-            for (int i = 0; i < Characters.Length; i++)
+            if (CurrCharacter == -1)
             {
-                var c = Characters[(i + Characters.Length + CurrCharacter) % Characters.Length];
-                if (c.Alive)
+                hs += Effects.GetPersistentHandlers(sender);
+                for (int i = 0; i < Characters.Length; i++)
                 {
-                    hs += c.GetPersistentHandlers(sender);
+                    hs += Characters[i].GetPersistentHandlers(sender);
                 }
             }
-            return hs;
-        }
-        internal EventPersistentSetHandler? GetOtherEffectHandlers(AbstractSender sender)
-        {
-            EventPersistentSetHandler? hs = null;
-            hs += Effects.GetPersistentHandlers(sender);
+            else
+            {
+                hs += Characters[CurrCharacter].GetPersistentHandlers(sender);
+                hs += Effects.GetPersistentHandlers(sender);
+                for (int i = 1; i < Characters.Length; i++)
+                {
+                    hs += Characters[(i + CurrCharacter) % Characters.Length].GetPersistentHandlers(sender);
+                }
+            }
             hs += Summons.GetPersistentHandlers(sender);
             hs += Supports.GetPersistentHandlers(sender);
+            hs += CardsInHand.GetHandlers(sender);
             return hs;
-        }
-        /// <summary>
-        /// 用于被击倒角色的受到伤害结算
-        /// </summary>
-        private void EffectTriggerWithoutCharacter(EventPersistentSetHandler? hs, AbstractSender sender, AbstractVariable? variable = null)
-        {
-            hs += GetOtherEffectHandlers(sender);
-            hs?.Invoke(this, sender, variable);
-            EffectUpdate();
         }
         /// <summary>
         /// 立即触发，不会储存在Queue里
         /// </summary>
-        internal virtual void InstantTrigger(AbstractSender sender, AbstractVariable? variable = null) => EffectTriggerWithoutCharacter(GetCharacterEffectHandlers(sender), sender, variable);
-
-        public override void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
+        internal void InstantTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
-            if (RealGame.TempDelayedTriggerQueue != null)
+            GetEffectHandlers(sender)?.Invoke(this, sender, variable);
+            if (CurrCharacter == -1)
             {
-                RealGame.TempDelayedTriggerQueue.Enqueue(() => InstantTrigger(sender, variable));
+                Effects.Update();
+                for (int i = 0; i < Characters.Length; i++)
+                {
+                    Characters[i].Effects.Update();
+                }
+            }
+            else
+            {
+                Characters[CurrCharacter].Effects.Update();
+                Effects.Update();
+                for (int i = 1; i < Characters.Length; i++)
+                {
+                    Characters[(i + CurrCharacter) % Characters.Length].Effects.Update();
+                }
+            }
+            Summons.Update();
+            Supports.Update();
+        }
+        /// <summary>
+        /// effect按照 (curr)角色=>团队=>(curr+1->curr+2->...)角色=>召唤物=>支援区 的顺序结算<br/>
+        /// </summary>
+        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
+        {
+            if (Game.TempDelayedTriggerQueue != null)
+            {
+                Game.TempDelayedTriggerQueue.Enqueue(() => InstantTrigger(sender, variable));
             }
             else
             {

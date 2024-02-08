@@ -1,6 +1,4 @@
-﻿using TCGBase;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// 通过客户端传递来的NetCardSet制作而成

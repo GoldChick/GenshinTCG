@@ -8,6 +8,10 @@
         /// </summary>
         AntiDie,
         /// <summary>
+        /// 具有该Tag的状态，被视为能组织所附属角色使用技能，用于[冻结][石化]
+        /// </summary>
+        AntiSkill,
+        /// <summary>
         /// 具有该Tag的状态，被标记为护盾，用于[双岩共鸣]、[贯虹]的检测
         /// </summary>
         YellowShield,

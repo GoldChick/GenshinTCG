@@ -112,7 +112,7 @@
         }
         internal static class CharacterUpdate
         {
-            public static ClientUpdatePacket HurtUpdate(int teamID, int index, int element, int damage) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Hurt, index, element, damage);
+            public static ClientUpdatePacket HurtUpdate(int teamID, int index, DamageElement element, int damage) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Hurt, index, (int)element, damage);
             public static ClientUpdatePacket HealUpdate(int teamID, int index, int amount) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Heal, index, amount);
             public static ClientUpdatePacket ElementUpdate(int teamID, int index, int element) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.Element, index, element);
             public static ClientUpdatePacket MPUpdate(int teamID, int index, int mp) => new(ClientUpdateType.Character, 10 * teamID + (int)CharacterUpdateCategory.MP, index, mp);

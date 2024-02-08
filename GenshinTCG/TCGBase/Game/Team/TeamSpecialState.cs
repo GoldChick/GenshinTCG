@@ -17,8 +17,17 @@
         /// 是否满足本大爷还没有输条件，即本回合我方有角色被击倒
         /// </summary>
         public bool HaventLost { get; internal set; }
-        
-        //TODO:我方受到的元素伤害种类数
-        //TODO:我方支援区弃置的卡牌数量
+        /// <summary>
+        /// 我方受到的元素伤害种类数
+        /// </summary>
+        public List<int> ElementTypeSufferNum { get; }
+        /// <summary>
+        /// 我方支援区弃置的卡牌数量
+        /// </summary>
+        public int SupportDesperatedNum { get; internal set; }
+        public TeamSpecialState()
+        {
+            ElementTypeSufferNum = new();
+        }
     }
 }

@@ -6,14 +6,14 @@
     public class NoDamageHurtSender : AbstractSender
     {
         public override string SenderName => SenderTag.AfterHurt.ToString();
-        public int Element { get; }
+        public DamageElement Element { get; }
         public int InitialElement { get; }
         public int TargetIndex { get; }
         public ReactionTags Reaction { get; }
         public DamageSource DirectSource { get; }
         public ITriggerable RootSource { get; }
 
-        internal NoDamageHurtSender(int teamID, int element, int targetIndex, ReactionTags reaction, DamageSource directSource, ITriggerable rootSource, int initialElement) : base(teamID)
+        internal NoDamageHurtSender(int teamID, DamageElement element, int targetIndex, ReactionTags reaction, DamageSource directSource, ITriggerable rootSource, int initialElement) : base(teamID)
         {
             Element = element;
             TargetIndex = targetIndex;

@@ -1,7 +1,8 @@
 ﻿namespace TCGBase
 {
     /// <summary>
-    /// After使用技能的sender
+    /// After使用技能的sender<br/>
+    /// 创建集成于GetSkillHandler()中
     /// </summary>
     public class AfterUseSkillSender : AbstractAfterActionSender
     {

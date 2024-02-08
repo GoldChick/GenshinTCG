@@ -21,7 +21,7 @@
         /// <summary>
         /// 对于装备，targets为长度1的list，唯一的值为我方目标角色的index
         /// </summary>
-        public virtual bool EquipmentCanBeUsed(AbstractTeam me, List<Persistent> targets)
+        public virtual bool EquipmentCanBeUsed(PlayerTeam me, List<Persistent> targets)
             => targets.ElementAtOrDefault(0) is Character c && c.Alive;
         protected AbstractCardEquipment()
         {

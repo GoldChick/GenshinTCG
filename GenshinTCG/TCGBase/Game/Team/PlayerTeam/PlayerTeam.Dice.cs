@@ -2,7 +2,7 @@
 {
     public partial class PlayerTeam
     {
-        public override int DiceNum => Dices.Count;
+        public int DiceNum => Dices.Count;
         public void RollDice(DiceRollingVariable rolling)
         {
             //TODO:是对的吗
@@ -24,7 +24,10 @@
 
             AddDiceRange(randoms);
         }
-        public override int[] GetDicesArray()
+        /// <summary>
+        /// 返回int[8],第i个成员表示第i种元素骰的数量(默认顺序:万能 冰水火雷岩草风)
+        /// </summary>
+        public int[] GetDicesArray()
         {
             int[] dices = new int[8];
             foreach (var d in Dices)
@@ -33,7 +36,10 @@
             }
             return dices;
         }
-        public override List<(int count, int element)> GetSortedDices()
+        /// <summary>
+        /// 杂色骰优先按照数量排列，再按照冰水火雷岩草风的顺序排列，
+        /// </summary>
+        public List<(int count, int element)> GetSortedDices()
         {
             var dices = GetDicesArray().Select((d, element) => (d, element)).ToList();
             //by the way, 这高能==的优先级怎么是这样的
@@ -57,10 +63,13 @@
             {
                 Dices.Add(int.Clamp(d, 0, 7));
                 Dices.Sort();
-                RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+                Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
             }
         }
-        public override void GainDice(params int[] dices)
+        /// <summary>
+        /// int值代表元素类型
+        /// </summary>
+        public void GainDice(params int[] dices)
         {
             foreach (var d in dices)
             {
@@ -71,9 +80,15 @@
                 Dices.Add(int.Clamp(d, 0, 7));
             }
             Dices.Sort();
-            RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
-
+        public void GainDice(ElementCategory element, int count = 1)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                GainDice((int)element);
+            }
+        }
         /// <summary>
         /// 获得很多骰子<br/>
         /// 会进行broadcast
@@ -89,9 +104,9 @@
                 Dices.Add(int.Clamp(ds.ElementAt(i), 0, 7));
             }
             Dices.Sort();
-            RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
-        public override void TryRemoveDice(int element)
+        public void TryRemoveDice(int element)
         {
             if (Dices.Contains(element))
             {
@@ -110,7 +125,7 @@
                     Dices.Remove(i);
                 }
             }
-            RealGame.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
         }
         /// <summary>
         /// 是否包含所需要的骰子

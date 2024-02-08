@@ -77,9 +77,7 @@
         AfterUseCard,
         AfterUseSkill,
         AfterPass,
-        /// <summary>
-        /// 仅用于触发effect，而且仅在[双方进行任意行动后]的时候触发
-        /// </summary>
+
         AfterAnyAction,
         /// <summary>
         /// 受到可能有元素附着、可能有伤害的东西后，发出Sender: HurtSender或NoDamageHurtSender

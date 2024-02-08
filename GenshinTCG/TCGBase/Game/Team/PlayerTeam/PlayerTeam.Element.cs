@@ -3,17 +3,17 @@ namespace TCGBase
 {
     public partial class PlayerTeam
     {
-        private static ReactionTags GetReaction(int currElement, int elementToApply, out int nextElement)
+        private static ReactionTags GetReaction(int currElement, DamageElement elementToApply, out int nextElementState)
         {
             ReactionTags reactiontag = ReactionTags.None;
             //角色身上附着的元素(只允许附着 无0 冰1 水2 火3 雷4 草6 <b>冰+草5</b>
-            nextElement = currElement;
+            nextElementState = currElement;
 
-            if (elementToApply > 0)
+            if (elementToApply is not (DamageElement.Trival or DamageElement.Pierce))
             {
-                nextElement = 0;
+                nextElementState = 0;
 
-                int reactionType = elementToApply * 10 + currElement;
+                int reactionType = (int)elementToApply * 10 + currElement;
                 switch (reactionType)
                 {
                     case 12 or 21 or 25://冻结
@@ -63,22 +63,22 @@ namespace TCGBase
                         break;
 
                     case 61 or 16://不反应，但是冰草共存
-                        nextElement = 5;
+                        nextElementState = 5;
                         break;
 
                     case 10 or 20 or 30 or 40 or 60://不反应，但是改变附着
-                        nextElement = elementToApply;
+                        nextElementState = (int)elementToApply;
                         break;
 
                     default://不反应，也不改变附着
-                        nextElement = currElement;
+                        nextElementState = currElement;
                         break;
                 }
 
                 //冰草共存检测是否反应掉了冰
                 if (currElement == 5 && reactiontag != ReactionTags.None)
                 {
-                    nextElement = 6;
+                    nextElementState = 6;
                 }
             }
 
@@ -87,7 +87,7 @@ namespace TCGBase
         private bool ReactionItemGenerate(int targetindex, ReactionTags tag, ITriggerable source, int initialelement)
         {
             var egv = new ElementGenerateVariable(false, null);
-            RealGame.EffectTrigger(new PreHurtSender(TeamIndex, source, SenderTag.ElementItemGenerate, initialelement), egv);
+            Game.EffectTrigger(new PreHurtSender(TeamIndex, source, SenderTag.ElementItemGenerate, initialelement), egv);
 
             egv.GenerateAction?.Invoke(this, targetindex);
             if (!egv.OverrideInitialGenerator)
@@ -128,8 +128,8 @@ namespace TCGBase
             };
             dvToPerson.SubDamage = tag switch
             {
-                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.Indirect, -1, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
-                ReactionTags.Swirl => new(DamageSource.Indirect, (cha.Element - 1) % 4 + 1, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
+                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.Indirect, DamageElement.Pierce, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
+                ReactionTags.Swirl => new(DamageSource.Indirect, (DamageElement)((cha.Element - 1) % 4 + 1), 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
                 _ => null
             };
             int initialelement = cha.Element;
@@ -138,7 +138,7 @@ namespace TCGBase
             dvToPerson.Reaction = tag;
             return initialelement;
         }
-        public override void AttachElement(ITriggerable source, int element, params int[] targetRelativeIndexs)
+        public void AttachElement(ITriggerable source, DamageElement element, params int[] targetRelativeIndexs)
         {
             var chas = targetRelativeIndexs.Distinct().Select(i => Characters[(i + CurrCharacter) % Characters.Length]);
             var tags = chas.Select(c => (GetReaction(c.Element, element, out int nextElement), nextElement));

@@ -18,14 +18,7 @@
     public enum DamageSource
     {
         Direct,
-        Indirect,
-
-        /// <summary>
-        /// 直接由[对方]的[角色技能]造成的伤害
-        /// 
-        /// TODO: remove it
-        /// </summary>
-        Character,
+        Indirect
     }
     public enum DamageTargetTeam
     {
@@ -40,7 +33,7 @@
     public class DamageVariable : AbstractVariable
     {
         private int _damage;
-        private int _element;
+        private DamageElement _element;
         /// <summary>
         /// [物理伤害]和[元素伤害]能够增加
         /// </summary>
@@ -55,17 +48,16 @@
             }
         }
         /// <summary>
-        /// 0-7 物理 冰水火雷岩草风<br/>
-        /// -1 穿透<br/>
+        /// 物理 冰水火雷岩草风 穿透<br/>
         /// 只有[物理伤害]能被附魔
         /// </summary>
-        public int Element
+        public DamageElement Element
         {
             get => _element; set
             {
-                if (_element == 0)
+                if (_element == DamageElement.Trival)
                 {
-                    _element = int.Clamp(value, -1, 7);
+                    _element = value;
                 }
             }
         }
@@ -101,15 +93,15 @@
         /// <summary>
         /// 通过public方法创建的dmg的targetindex为相对坐标(相对出战角色)
         /// </summary>
-        public DamageVariable(int element, int basedamage, DamageTargetTeam damageTargetCategory) : this(element, basedamage, 0, DamageTargetArea.TargetOnly, null, damageTargetCategory)
+        public DamageVariable(DamageElement element, int basedamage, DamageTargetTeam damageTargetCategory) : this(element, basedamage, 0, DamageTargetArea.TargetOnly, null, damageTargetCategory)
         {
         }
         /// <summary>
         /// 通过public方法创建的dmg的targetindex为相对坐标(相对出战角色)
         /// </summary>
-        public DamageVariable(int element, int basedamage, int relativeTarget = 0, DamageTargetArea targetArea = DamageTargetArea.TargetOnly, DamageVariable? subdamage = null, DamageTargetTeam damageTargetCategory = DamageTargetTeam.Enemy)
+        public DamageVariable(DamageElement element, int basedamage, int relativeTarget = 0, DamageTargetArea targetArea = DamageTargetArea.TargetOnly, DamageVariable? subdamage = null, DamageTargetTeam damageTargetCategory = DamageTargetTeam.Enemy)
         {
-            Element = int.Clamp(element, -1, 7);
+            Element = element;
             Damage = int.Max(0, basedamage);
             DirectSource = DamageSource.Direct;
             DamageTargetTeam = damageTargetCategory;
@@ -121,16 +113,15 @@
         /// <summary>
         /// 通过record创建dmg,targetindex为相对坐标
         /// </summary>
-        internal DamageVariable(DamageRecord record) : this((int)record.Element, record.Amount, record.TargetIndexOffset, record.TargetArea, null, record.TargetTeam)
+        internal DamageVariable(DamageRecord record) : this(record.Element, record.Amount, record.TargetIndexOffset, record.TargetArea, null, record.TargetTeam)
         {
-            //TODO: element的-1和8
         }
         /// <summary>
         /// 通过internal方法创建的dmg的targetindex为绝对坐标，并且没有子伤害
         /// </summary>
-        internal DamageVariable(DamageSource source, int element, int basedamage, int absoluteTarget, DamageTargetArea targetArea, DamageTargetTeam damageTargetCategory)
+        internal DamageVariable(DamageSource source, DamageElement element, int basedamage, int absoluteTarget, DamageTargetArea targetArea, DamageTargetTeam damageTargetCategory)
         {
-            Element = int.Clamp(element, -1, 7);
+            Element = element;
             Damage = int.Max(0, basedamage);
             DirectSource = source;
             DamageTargetTeam = damageTargetCategory;

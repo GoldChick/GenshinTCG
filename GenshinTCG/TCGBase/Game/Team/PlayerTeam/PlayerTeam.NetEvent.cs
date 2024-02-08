@@ -36,7 +36,7 @@
                         }
                         else if (actioncard is ITargetSelector se)
                         {
-                            temp = IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs);
+                            temp = evt.AdditionalTargetArgs.Length == se.TargetDemands.Length && IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs, out _);
                         }
                         temp &= actioncard.CanBeUsed(this);
                     }
@@ -93,20 +93,18 @@
             }
             return enums;
         }
-        protected bool IsManyTargetDemandValid(IEnumerable<TargetDemand> demands, int[] parameters)
+        /// <summary>
+        /// 只检测前parameters个对不对
+        /// </summary>
+        protected bool IsManyTargetDemandValid(IEnumerable<TargetDemand> demands, int[] parameters, out List<Persistent> persistents)
         {
-            List<Persistent> persistents = new();
+            persistents = new();
             for (int i = 0; i < parameters.Length; i++)
             {
                 var demand = demands.ElementAt(i);
-                Persistent? p = demand.GetPersistent(this, parameters[i]);
-                if (p != null)
+                if (demand.IsPersistentValid(this, parameters[i], persistents))
                 {
-                    persistents.Add(p);
-                    if (demand.Condition(this, persistents))
-                    {
-                        continue;
-                    }
+                    continue;
                 }
                 return false;
             }
@@ -163,14 +161,14 @@
             {
                 case ActionType.Switch:
                     c = new CostCreate().Void(1).ToCostInit().ToCostVariable();
-                    RealGame.InstantTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
+                    Game.InstantTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
                     break;
                 case ActionType.UseSKill:
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
                     if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is AbstractTriggerableSkill skill)
                     {
                         c = skill is ICostable cost ? new(cost.Cost) : new();
-                        RealGame.InstantTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
+                        Game.InstantTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
                     }
                     else
                     {
@@ -180,7 +178,7 @@
                 case ActionType.UseCard:
                     var card = CardsInHand[action.Index % CardsInHand.Count()].CardBase;
                     c = new(card.Cost);
-                    RealGame.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
+                    Game.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
                     break;
                 case ActionType.Blend:
                     int[] ints = new int[8];
@@ -212,12 +210,15 @@
             {
                 if (se.TargetDemands.Length > parameters_already.Length)
                 {
-                    var curr_d = se.TargetDemands[parameters_already.Length];
-                    for (int i = 0; i < GetTargetEnumMaxCount(curr_d.Select, curr_d.Team); i++)
+                    if (IsManyTargetDemandValid(se.TargetDemands, parameters_already, out var persistents_already))
                     {
-                        if (curr_d.Condition(this, parameters_already.Append(i).ToArray()))
+                        var curr_d = se.TargetDemands[parameters_already.Length];
+                        for (int i = 0; i < GetTargetEnumMaxCount(curr_d.Select, curr_d.Team); i++)
                         {
-                            ints.Add(i);
+                            if (curr_d.IsPersistentValid(this, i, persistents_already.ToList()))
+                            {
+                                ints.Add(i);
+                            }
                         }
                     }
                 }

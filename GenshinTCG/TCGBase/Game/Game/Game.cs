@@ -162,8 +162,8 @@
         /// </summary>
         internal void InstantTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
         {
-            EventPersistentSetHandler? hsC = (Teams[CurrTeam].GetCharacterEffectHandlers(sender) + Teams[CurrTeam].GetOtherEffectHandlers(sender));
-            EventPersistentSetHandler? hsO = (Teams[1 - CurrTeam].GetCharacterEffectHandlers(sender) + Teams[1 - CurrTeam].GetOtherEffectHandlers(sender));
+            EventPersistentSetHandler? hsC = Teams[CurrTeam].GetEffectHandlers(sender);
+            EventPersistentSetHandler? hsO = Teams[1 - CurrTeam].GetEffectHandlers(sender);
             hsC?.Invoke(Teams[CurrTeam], sender, variable);
             hsO?.Invoke(Teams[1 - CurrTeam], sender, variable);
             if (broadcast)

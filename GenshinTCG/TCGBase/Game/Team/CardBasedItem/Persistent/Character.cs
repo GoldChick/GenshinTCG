@@ -1,5 +1,4 @@
-﻿
-namespace TCGBase
+﻿namespace TCGBase
 {
     public class Character : Persistent
     {
@@ -7,7 +6,7 @@ namespace TCGBase
         private int _hp;
         private int _mp;
         private int _element;
-        private readonly AbstractTeam _t;
+        private readonly PlayerTeam _t;
 
         public PersistentSet<AbstractCardBase> Effects { get; }
         /// <summary>
@@ -36,12 +35,7 @@ namespace TCGBase
             }
         }
 
-        public bool Alive;
-        /// <summary>
-        /// 濒死状态，生命值降为0，又不被“免于被击倒”治疗会使其为true<br/>
-        /// 真死了之后又为false
-        /// </summary>
-        internal bool Predie;
+        public bool Alive { get; private set; }
         public int Element
         {
             get => _element;
@@ -58,7 +52,6 @@ namespace TCGBase
         /// 使用技能后对应技能的值+1，每回合行动阶段开始时清零，记录一个回合内使用技能的次数
         /// </summary>
         public List<int> SkillCounter { get; }
-
         internal Character(AbstractCardCharacter character, int index, PlayerTeam t) : base(character)
         {
             CharacterCard = character;
@@ -78,9 +71,8 @@ namespace TCGBase
         /// 被击倒角色会在异次元空间中参与结算......<br/>
         /// 此时仍然alive，但是predie
         /// </summary>
-        internal Character ToDieLimbo(EmptyTeam emptyTeam)
+        internal void ToDieLimbo()
         {
-            Character limbo_c = new(this, emptyTeam);
             for (int i = 0; i < SkillCounter.Count; i++)
             {
                 SkillCounter[i] = 0;
@@ -88,66 +80,75 @@ namespace TCGBase
             HP = 0;
             MP = 0;
             Element = 0;
-            Predie = true;
-            return limbo_c;
+        }
+        internal void ToDie()
+        {
+            Alive = false;
+        }
+        internal void DieTrigger(HurtSender hs)
+        {
+            while (Effects.Any())
+            {
+                var p = Effects.First();
+                if (p.CardBase.TriggerableList.TryGetValue(hs.SenderName, out var h))
+                {
+                    GetDelayedHandler((me, s, v) => h?.Trigger(me, this, s, v))?.Invoke(_t, hs, null);
+                }
+                Effects.Destroy(0);
+            }
         }
         /// <summary>
-        /// for copy
+        /// not alive => null
         /// </summary>
-        internal Character(Character die_character, EmptyTeam emptyTeam) : base(die_character.CardBase)
-        {
-            CharacterCard = die_character.CharacterCard;
-            SkillCounter = die_character.SkillCounter.ToList();
-            Data = SkillCounter;
-            PersistentRegion = die_character.PersistentRegion;
-            _t = emptyTeam;
-            Effects = die_character.Effects;
-            Alive = false;
-            Active = false;
-            //TODO: check it
-        }
         internal EventPersistentSetHandler? GetPersistentHandlers(AbstractSender sender)
         {
             EventPersistentSetHandler? hs = null;
-            if (sender is ActionUseSkillSender ss)
+            if (Alive)
             {
-                if (PersistentRegion == ss.Character && CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var skill, ss.Skill))
+                if (sender is ActionUseSkillSender ss)
                 {
-                    hs += GetDelayedHandler((me, s, v) => skill.Trigger(me, this, sender, v));
+                    if (PersistentRegion == ss.Character && CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var skill, ss.Skill))
+                    {
+                        hs += GetDelayedHandler((me, s, v) => skill.Trigger(me, this, sender, v));
+                    }
                 }
-            }
-            else
-            {
-                if (CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var h))
+                else
                 {
-                    hs += GetDelayedHandler((me, s, v) => h.Trigger(me, this, sender, v));
+                    if (CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var h))
+                    {
+                        hs += GetDelayedHandler((me, s, v) => h.Trigger(me, this, sender, v));
+                    }
+                    hs += Effects.GetPersistentHandlers(sender);
                 }
-                hs += Effects.GetPersistentHandlers(sender);
             }
             return hs;
         }
+        public void AddEffect(AbstractCardBase effect) => AddEffect(new Persistent(effect));
         /// <summary>
         /// 只有活着的时候，并且添加的是普通的effect，才能添加状态<br/>
         /// 如果添加的是圣遗物或武器，还会顶掉原来的
         /// </summary>
         public void AddEffect(Persistent effect)
         {
-            if (Alive && !Predie)
+            if (Alive)
             {
-                //TODO:弃置
-                if (effect.CardBase.Tags.Contains(CardTag.Artifact.ToString()))
+                switch (effect.CardBase.CardType)
                 {
-                    Effects.TryRemove(-2);
-                    Effects.Add(effect);
-                }
-                else if (effect.CardBase.Tags.Contains(CardTag.Weapon.ToString()))
-                {
-                    Effects.TryRemove(-1);
-                    Effects.Add(effect);
-                }
-                else if (effect.CardBase.CardType == CardType.Effect)
-                {
-                    Effects.Add(effect);
+                    case CardType.Equipment:
+                        if (effect.CardBase.Tags.Contains(CardTag.Artifact.ToString()))
+                        {
+                            Effects.DestroyFirst(p => p.CardBase.Tags.Contains(CardTag.Artifact.ToString()));
+                            Effects.Add(effect);
+                        }
+                        else if (effect.CardBase.Tags.Contains(CardTag.Weapon.ToString()))
+                        {
+                            Effects.DestroyFirst(p => p.CardBase.Tags.Contains(CardTag.Weapon.ToString()));
+                            Effects.Add(effect);
+                        }
+                        break;
+                    case CardType.Effect:
+                        Effects.Add(effect);
+                        break;
                 }
             }
         }

@@ -1,22 +1,32 @@
 ﻿namespace TCGBase
 {
-    public partial class PlayerTeam : AbstractTeam
+    public partial class PlayerTeam
     {
-        public override AbstractGame Game { get => RealGame; }
-        internal Game RealGame { get; }
-        public override PlayerTeam Enemy => RealGame.Teams[1 - TeamIndex];
+        public Game Game { get; }
+        public PlayerTeam Enemy => Game.Teams[1 - TeamIndex];
         /// <summary>
         /// 用于pvp模式仅限3个角色(然而设计模式似乎允许使用最多10个角色 Warning:未经测试)
         /// </summary>
-        public override Character[] Characters { get; protected init; }
-
+        public Character[] Characters { get; protected init; }
+        /// <summary>
+        /// 在Game.Teams中的index
+        /// </summary>
+        public int TeamIndex { get; private init; }
+        /// <summary>
+        /// 只允许使用队内的random
+        /// </summary>
+        public CounterRandom Random { get; init; }
+        public TeamSpecialState SpecialState { get; init; }
+        public PersistentSet<AbstractCardBase> Supports { get; init; }
+        public PersistentSet<AbstractCardBase> Summons { get; init; }
+        public PersistentSet<AbstractCardBase> Effects { get; init; }
         private int _currcharacter;
-        public override int CurrCharacter
+        public int CurrCharacter
         {
             get => _currcharacter; internal set
             {
                 _currcharacter = value;
-                RealGame.BroadCast(ClientUpdateCreate.CharacterUpdate.SwitchUpdate(TeamIndex, value));
+                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.SwitchUpdate(TeamIndex, value));
             }
         }
         public bool Pass { get; internal set; }
@@ -29,17 +39,24 @@
         /// </summary>
         internal List<int> Dices { get; }
         /// <param name="cardset">经过处理确认正确的卡组</param>
-        internal PlayerTeam(ServerPlayerCardSet cardset, Game game, int teamindex) : base(teamindex)
+        internal PlayerTeam(ServerPlayerCardSet cardset, Game game, int teamindex)
         {
-            RealGame = game;
+            TeamIndex = teamindex;
+            Game = game;
+
+            Random = new();//TODO:SEED
+            SpecialState = new();
+
+            Summons = new(11, this, 4, false);
+            Supports = new(12, this, 4, true);
+            Effects = new(-1, this);
 
             Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i, this)).ToArray();
             LeftCards = cardset.ActionCards.ToList();
-            CardsInHand = new();
+            CardsInHand = new(this);
 
             Pass = false;
             Dices = new();
-
 
             _currcharacter = -1;
         }
@@ -53,7 +70,7 @@
             RollDice(drv);
             for (int i = 0; i < drv.RollingTimes; i++)
             {
-                RealGame.RequestAndHandleEvent(TeamIndex, 30000, ActionType.ReRollDice);
+                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.ReRollDice);
             }
         }
         /// <summary>
@@ -63,10 +80,6 @@
         {
             Dices.Clear();
             RollCard(2);
-        }
-        internal EmptyTeam ToEmpty(Character die)
-        {
-            return new EmptyTeam(die, this);
         }
     }
 }

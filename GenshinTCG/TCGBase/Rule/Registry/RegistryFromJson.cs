@@ -4,11 +4,11 @@ namespace TCGBase
 {
     internal class RegistryFromJson
     {
-        public JsonSerializerOptions JsonOptionActionCard { get; }
+        public JsonSerializerOptions JsonOptionCard { get; }
         public JsonSerializerOptions JsonOptionTriggerable { get; }
         public RegistryFromJson()
         {
-            JsonOptionActionCard = new()
+            JsonOptionCard = new()
             {
                 Converters = { new JsonConverterCard(), new JsonConverterSelect(), new JsonConverterCondition() }
             };
@@ -37,7 +37,7 @@ namespace TCGBase
         {
             try
             {
-                CardRecordAction? record = JsonSerializer.Deserialize<CardRecordAction>(json, JsonOptionActionCard);
+                CardRecordBase? record = JsonSerializer.Deserialize<CardRecordBase>(json, JsonOptionCard);
                 if (record != null)
                 {
                     return record.GetCard();

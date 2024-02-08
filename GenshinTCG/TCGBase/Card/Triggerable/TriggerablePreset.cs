@@ -4,10 +4,9 @@
     {
         public static EventPersistentHandler GetSkillHandler(EventPersistentHandler? handler) => (me, p, s, v) =>
         {
-            //TODO:检测冻结、石化
             if (p.PersistentRegion == me.CurrCharacter)
             {
-                if (p is Character c && s is ActionUseSkillSender ss)
+                if (p is Character c && c.Effects.All(ef => !ef.CardBase.Tags.Contains(CardTag.AntiSkill.ToString())) && s is ActionUseSkillSender ss)
                 {
                     if (c.CardBase.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, ss.Skill) && h is AbstractTriggerableSkill skill)
                     {

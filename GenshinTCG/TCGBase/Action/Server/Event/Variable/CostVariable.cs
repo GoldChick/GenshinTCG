@@ -179,8 +179,8 @@ namespace TCGBase
         /// 同色 冰水火雷岩草风 杂色 充能 秘传点
         /// </summary>
         internal int[] DiceCost { get => _costs; }
-        internal int MPCost { get => _costs[9]; }
-        //TODO:desperated mpcost
+        public int MPCost => _costs[9];
+        public int Legend => _costs[10];
         public CostCreate()
         {
             _costs = new int[11];

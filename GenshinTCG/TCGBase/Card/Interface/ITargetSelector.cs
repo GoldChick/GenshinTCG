@@ -53,7 +53,7 @@ namespace TCGBase
             Select = select.Type;
             //TODO : condition
         }
-        internal Persistent? GetPersistent(AbstractTeam team, int index)
+        internal Persistent? GetPersistent(PlayerTeam team, int index)
         {
             var t = Team == DamageTargetTeam.Enemy ? team.Enemy : team;
             return Select switch
@@ -64,17 +64,22 @@ namespace TCGBase
                 _ => throw new Exception("IsManyTargetDemandValid():不支持的SelectType!")
             };
         }
-        internal bool IsPersistentValid(AbstractTeam team, int index, List<Persistent> old)
+        internal bool IsPersistentValid(PlayerTeam team, int index, List<Persistent> old)
         {
             var t = Team == DamageTargetTeam.Enemy ? team.Enemy : team;
-            persistent = Select switch
+            var persistent = Select switch
             {
                 SelectType.Character => t.Characters.ElementAtOrDefault(index),
                 SelectType.Summon => t.Summons.ElementAtOrDefault(index),
                 SelectType.Support => t.Supports.ElementAtOrDefault(index),
                 _ => throw new Exception("IsManyTargetDemandValid():不支持的SelectType!")
             };
-            return persistent != null && Condition?.Invoke(team, old.Append(persistent).ToList());
+            if (persistent != null)
+            {
+                old.Add(persistent);
+                return Condition.Invoke(t, old);
+            }
+            return false;
         }
     }
     internal class TargetValid
