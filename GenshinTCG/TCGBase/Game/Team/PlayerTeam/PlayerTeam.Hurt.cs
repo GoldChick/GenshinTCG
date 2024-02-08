@@ -78,9 +78,8 @@
                         c.HP -= hs.Damage;
                         if (c.HP == 0)
                         {
-                            if (c.Effects.TryFind(e => e.CardBase.Tags.Contains(CardTag.AntiDie.ToString()), out var p))
+                            if (c.Effects.TryFind(e => e.CardBase.Tags.Contains(CardTag.AntiDie.ToString()), out var p) && p.CardBase.TriggerableList.ContainsKey(SenderTag.PreDie.ToString()))
                             {
-                                //TODO:check it?  && p.Card.TriggerList.ContainsKey(SenderTag.PreDie.ToString())
                                 antidie_effects.Add(p);
                             }
                             else
@@ -99,9 +98,12 @@
             specialAction?.Invoke();
             foreach (var die_effect in antidie_effects)
             {
-                if (die_effect.CardBase.TriggerableList.TryGetValue(SenderTag.PreDie.ToString(), out var h))
+                foreach (var it in die_effect.CardBase.TriggerableList)
                 {
-                    h.Trigger(this, die_effect, new SimpleSender(TeamIndex, SenderTag.PreDie), null);
+                    if (it.Tag == SenderTag.PreDie.ToString())
+                    {
+                        it.Trigger(this, die_effect, new SimpleSender(TeamIndex, SenderTag.PreDie), null);
+                    }
                 }
             }
             foreach (var c in Characters)
@@ -146,7 +148,7 @@
                     }
                     else
                     {
-                        Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.SwitchForced);
+                        Game.RequestAndHandleEvent(TeamIndex, 30000, OperationType.Switch);
                     }
                 }
             });

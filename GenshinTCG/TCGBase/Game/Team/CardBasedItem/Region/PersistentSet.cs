@@ -74,17 +74,17 @@ namespace TCGBase
         /// 是否包含某type的子类
         /// </summary>
         public bool Contains(Type type) => _data.Exists(e => e.Type.IsAssignableTo(type));
-        public bool Contains(int variant) => _data.Exists((Predicate<Persistent>)(e => (e.CardBase.Variant % 10) == variant));
-        public bool Contains(string nameSpace, string nameID, int variant) => _data.Exists((Predicate<Persistent>)(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID && (e.CardBase.Variant % 10) == variant));
-        public bool Contains(string nameSpace, string nameID) => _data.Exists((Predicate<Persistent>)(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID));
+        public bool Contains(int variant) => _data.Exists(e => (e.CardBase.Variant % 10) == variant);
+        public bool Contains(string nameSpace, string nameID, int variant) => _data.Exists(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID && (e.CardBase.Variant % 10) == variant);
+        public bool Contains(string nameSpace, string nameID) => _data.Exists(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID);
         public Persistent? Find(Predicate<Persistent> condition) => _data.Find(condition);
         /// <summary>
         /// 找到第一个某type的子类
         /// </summary>
         public Persistent? Find(Type type) => _data.Find(e => e.Type.IsAssignableTo(type));
-        public Persistent? Find(string nameSpace, string nameID) => _data.Find((Predicate<Persistent>)(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID));
-        public Persistent? Find(string nameSpace, string nameID, int variant) => _data.Find((Predicate<Persistent>)(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID && (e.CardBase.Variant % 10) == variant));
-        public Persistent? Find(int variant) => _data.Find((Predicate<Persistent>)(e => (e.CardBase.Variant % 10) == variant));
+        public Persistent? Find(string nameSpace, string nameID) => _data.Find(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID);
+        public Persistent? Find(string nameSpace, string nameID, int variant) => _data.Find(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID && (e.CardBase.Variant % 10) == variant);
+        public Persistent? Find(int variant) => _data.Find(e => (e.CardBase.Variant % 10) == variant);
         public bool TryFind(Predicate<Persistent> condition, [NotNullWhen(true)] out Persistent? p)
         {
             p = _data.Find(condition);
@@ -121,7 +121,7 @@ namespace TCGBase
                 acs += hs;
             }
             //任意行动的主体必须是队伍
-            if (sender.TeamID != -1 && _handlers.TryGetValue(SenderTag.AfterAnyAction.ToString(), out hs))
+            if (sender.TeamID != -1 && _handlers.TryGetValue(SenderTag.AfterOperation.ToString(), out hs))
             {
                 acs += hs;
             }
@@ -146,12 +146,11 @@ namespace TCGBase
         /// <summary>
         /// 用来清理第一个[武器][装备][圣遗物]
         /// </summary>
-        public void TryRemove(int variant) => TryRemoveAt(_data.FindIndex((Predicate<Persistent>)(e => (e.CardBase.Variant % 10) == variant)));
+        public void TryRemove(int variant) => TryRemoveAt(_data.FindIndex(e => (e.CardBase.Variant % 10) == variant));
         internal void Clear(Func<Persistent, bool>? condition = null)
         {
             for (int i = _data.Count - 1; i >= 0; i--)
             {
-                //TODO:似乎有很多的循环调用，比如Ondesperated
                 if (_data.Count > i)
                 {
                     var d = _data[i];

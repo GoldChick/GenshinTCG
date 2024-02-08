@@ -4,7 +4,7 @@
     /// 触发[出战角色]技能效果的sender<br/>
     /// 需指定角色、技能的index<br/>
     /// </summary>
-    public class ActionUseSkillSender : AbstractAfterActionSender
+    public class ActionUseSkillSender : AbstractSender
     {
         public override string SenderName => SenderTagInner.UseSkill.ToString();
         public int Character { get; set; }

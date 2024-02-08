@@ -2,7 +2,7 @@
 
 namespace TCGBase
 {
-    public enum ActionType
+    public enum OperationType
     {
         /// <summary>
         /// 无意义...
@@ -18,11 +18,6 @@ namespace TCGBase
         /// 选择任意卡牌重投
         /// </summary>
         ReRollCard,
-        /// <summary>
-        /// Index:Target Character Index <br/>
-        /// 出战、死亡导致的免费、快速切人
-        /// </summary>
-        SwitchForced,
 
         /// <summary>
         /// Index:Target Character Index
@@ -50,15 +45,15 @@ namespace TCGBase
         /// </summary>
         Pass,
     }
-    public class NetAction
+    public class NetOperation
     {
-        public ActionType Type { get; }
+        public OperationType Type { get; }
         /// <summary>
         /// 某Action对应的Index含义见其注释(没有就是没有)
         /// </summary>
         public int Index { get; }
         [JsonConstructor]
-        public NetAction(ActionType type, int index = 0)
+        public NetOperation(OperationType type, int index = 0)
         {
             Type = type;
             Index = index;

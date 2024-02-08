@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public class ActionUseCardSender : AbstractAfterActionSender
+    public class ActionUseCardSender : AbstractSender
     {
         public override string SenderName => SenderTagInner.UseCard.ToString();
         public int Card { get; }

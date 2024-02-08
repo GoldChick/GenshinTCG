@@ -14,6 +14,7 @@
                         handler?.Invoke(me, p, s, v);
                         c.SkillCounter[ss.Skill]++;
                         me.Game.EffectTrigger(new AfterUseSkillSender(me.TeamIndex, c, skill));
+                        me.SpecialState.DownStrike = true;
                     }
                 }
             }

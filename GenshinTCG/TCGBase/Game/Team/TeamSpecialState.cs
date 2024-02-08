@@ -10,7 +10,7 @@
         /// </summary>
         public bool HeavyStrike { get; internal set; }
         /// <summary>
-        /// 是否满足下落攻击条件，即上次行动为切换角色时，造成普通攻击伤害
+        /// 是否满足下落攻击条件，切换角色后变为true，回合开始时、使用技能后变为false
         /// </summary>
         public bool DownStrike { get; internal set; }
         /// <summary>

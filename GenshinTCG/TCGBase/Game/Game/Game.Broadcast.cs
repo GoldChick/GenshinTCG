@@ -2,7 +2,7 @@
 {
     public partial class Game
     {
-        public override void BroadCast(ClientUpdatePacket packet)
+        public void BroadCast(ClientUpdatePacket packet)
         {
             int teamID = packet.Category / 10;
             Clients[teamID].Update(packet);
@@ -16,7 +16,7 @@
         /// <summary>
         /// TODO：偷个懒
         /// </summary>
-        public override void BroadCastRegion()
+        public void BroadCastRegion()
         {
             Clients[0].UpdateRegion();
             Clients[1].UpdateRegion();

@@ -2,12 +2,12 @@
 {
     public partial class Game
     {
-        internal void RequestAndHandleEvent(int teamid, int millisecondsTimeout, ActionType demand) => HandleEvent(RequestEvent(teamid, millisecondsTimeout, demand), teamid);
+        internal void RequestAndHandleEvent(int teamid, int millisecondsTimeout, OperationType demand) => HandleNetEvent(RequestEvent(teamid, millisecondsTimeout, demand), teamid, demand);
         /// <summary>
         /// 向对应客户端请求一个valid的事件，或者default的事件
         /// </summary>
         /// <returns>返回的必然是有效事件</returns>
-        private NetEvent RequestEvent(int teamid, int millisecondsTimeout, ActionType demand)
+        private NetEvent RequestEvent(int teamid, int millisecondsTimeout, OperationType demand)
         {
             CancellationTokenSource ts = new();
             var t = new Task<NetEvent>(() => Clients[teamid].RequestEvent(demand), ts.Token);
@@ -16,7 +16,7 @@
 
             Task.WaitAny(t, Task.Run(() => Thread.Sleep(millisecondsTimeout)));
 
-            if (t.IsCompleted && Teams[teamid].IsEventValid(t.Result) && (demand == ActionType.Trival || demand == t.Result.Action.Type))
+            if (t.IsCompleted && Teams[teamid].IsEventValid(t.Result) && (demand == OperationType.Trival || demand == t.Result.Operation.Type))
             {
                 return t.Result;
             }
@@ -25,20 +25,20 @@
             NetEvent? evt = null;
             switch (demand)
             {
-                case ActionType.ReRollCard:
-                    evt = new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].CardsInHand.Count()).ToArray());
+                case OperationType.ReRollCard:
+                    evt = new NetEvent(new NetOperation(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].CardsInHand.Count()).ToArray());
                     break;
-                case ActionType.ReRollDice:
-                    evt = new NetEvent(new NetAction(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].Dices.Count).ToArray());
+                case OperationType.ReRollDice:
+                    evt = new NetEvent(new NetOperation(demand), new int[8], Enumerable.Repeat(0, Teams[teamid].Dices.Count).ToArray());
                     break;
-                case ActionType.SwitchForced:
+                case OperationType.Switch:
                     {
                         var chas = Teams[teamid].Characters;
                         for (int i = 0; i < chas.Length; i++)
                         {
                             if (chas[i].Alive)
                             {
-                                evt = new NetEvent(new NetAction(demand, i));
+                                evt = new NetEvent(new NetOperation(demand, i));
                                 break;
                             }
                         }
@@ -49,87 +49,46 @@
                     }
                     break;
                 default:
-                    evt = new NetEvent(new NetAction(ActionType.Pass));
+                    evt = new NetEvent(new NetOperation(OperationType.Pass));
                     break;
             }
             return evt;
         }
         ///<summary>
-        /// 处理<b>VALID</b>事件，可能为[行动]<br/>
+        /// 这里处理的事件全都是已经确定valid的，所以不会进行任何检测<br/>
+        /// <b>注：这里处理的是事件，不完全等于行动</b>
         /// </summary>
-        /// <returns>是否是快速行动（对于[非行动]默认为true,可以舍弃）</returns>
-        private bool EventMayActionProcess(NetEvent evt, int currTeam, out AbstractSender afterEventSender, bool isaction = false)
+        /// <param name="evt">已经证明是valid的NetEvent</param>
+        internal void HandleNetEvent(NetEvent evt, int teamid, OperationType demand = OperationType.Trival)
         {
-            var t = Teams[currTeam];
+            var team = Teams[teamid];
 
-            afterEventSender = new AfterActionSender(currTeam, evt.Action.Type);
+            FastActionVariable afterEventFastActionVariable = new(false);
 
-            FastActionVariable? afterEventFastActionVariable = isaction ? new FastActionVariable(false) : null;
-            switch (evt.Action.Type)
+            if (demand == OperationType.Trival)
             {
-                case ActionType.Switch:
-                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeSwitch));
-                    var initial = t.CurrCharacter;
-                    t.CurrCharacter = evt.Action.Index;
-                    //afterEventSender = new AfterSwitchSender(currTeam, initial, t.CurrCharacter);
-                    //TODO:切换角色后 的触发
-                    break;
-                case ActionType.UseSKill:
-                    EffectTrigger(new ActionUseSkillSender(t.TeamIndex, t.CurrCharacter, evt.Action.Index));
-                    break;
-                case ActionType.UseCard:
-                    BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Use, evt.Action.Index));
-                    EffectTrigger(new ActionUseCardSender(t.TeamIndex, evt.Action.Index, evt.AdditionalTargetArgs));
-
-                    //TODO: mpcost?
-                    //if (c.Cost.MPCost > 0)
-                    //{
-                    //    if (c is IEnergyConsumerCard iec && evt.AdditionalTargetArgs.Length > iec.CostMPFromCharacterIndexInArgs)
-                    //    {
-                    //        t.Characters[evt.AdditionalTargetArgs[iec.CostMPFromCharacterIndexInArgs]].MP -= c.Cost.MPCost;
-                    //    }
-                    //    else
-                    //    {
-                    //        t.Characters[t.CurrCharacter].MP -= c.Cost.MPCost;
-                    //    }
-                    //}
-
-                    //afterEventSender = new AfterUseCardSender(currTeam, c, evt.AdditionalTargetArgs);
-                    //afterEventFastActionVariable = new FastActionVariable(c.FastAction);
-                    break;
-                case ActionType.Blend://调和
-                    t.CardsInHand.TryDestroyAt(evt.Action.Index);
-                    t.AddSingleDice((int)t.Characters[t.CurrCharacter].CharacterCard.CharacterElement);
-                    afterEventFastActionVariable = new FastActionVariable(true);
-                    break;
-                case ActionType.Break://行动空过
-                    break;
-                default://回合空过
-                    t.Pass = true;
-                    break;
+                /*
+                 * 行动一览：
+                 * 切换角色+使用技能+使用卡牌+调和卡牌+暂时空过+回合空过
+                 */
+                //用于给减费的persistent减少使用次数
+                team.GetEventFinalDiceRequirement(evt.Operation, true);
+                team.CostDices(evt.CostArgs);
+                //TODO:消耗充能在哪里
             }
-            EffectTrigger(afterEventSender, afterEventFastActionVariable);
-            return afterEventFastActionVariable?.Fast ?? true;
-        }
-        /// <summary>
-        /// 重投+换牌+强制切人
-        /// </summary>
-        private void EventNotActionProcess(NetEvent evt, int currTeam)
-        {
-            var t = Teams[currTeam];
-            switch (evt.Action.Type)
+            switch (evt.Operation.Type)
             {
-                case ActionType.ReRollDice:
-                    var dices = t.Dices;
+                case OperationType.ReRollDice:
+                    var dices = team.Dices;
                     int cnt = dices.Count;
                     var dicecash = dices.Where((value, index) => evt.AdditionalTargetArgs[index] == 0).ToList();
                     dices.Clear();
                     dices.AddRange(dicecash);
                     DiceRollingVariable dvr = new(cnt - dicecash.Count);
-                    EffectTrigger(new SimpleSender(currTeam, SenderTag.BeforeRerollDice), dvr);
-                    t.ReRollDice(dvr);
+                    EffectTrigger(new SimpleSender(teamid, SenderTag.BeforeRerollDice), dvr);
+                    team.ReRollDice(dvr);
                     break;
-                case ActionType.ReRollCard:
+                case OperationType.ReRollCard:
                     //TODO:换牌
                     //var cards = t.CardsInHand;
                     //var cardcash0 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 0).ToList();
@@ -146,84 +105,51 @@
                     //}
                     //TODO:优先不换上来换下去的种类
                     break;
-                case ActionType.SwitchForced:
-                    var initial = t.CurrCharacter;
-                    t.CurrCharacter = evt.Action.Index;
-                    EffectTrigger(new AfterSwitchSender(currTeam, initial, t.CurrCharacter), null);
+                case OperationType.Switch:
+                    team.TrySwitchToIndex(evt.Operation.Index);
+                    break;
+                case OperationType.UseSKill:
+                    EffectTrigger(new ActionUseSkillSender(team.TeamIndex, team.CurrCharacter, evt.Operation.Index));
+                    break;
+                case OperationType.UseCard:
+                    afterEventFastActionVariable.Fast = (team.CardsInHand[evt.Operation.Index].CardBase as AbstractCardAction)?.FastAction ?? true;
+                    BroadCast(ClientUpdateCreate.CardUpdate(teamid, ClientUpdateCreate.CardUpdateCategory.Use, evt.Operation.Index));
+                    EffectTrigger(new ActionUseCardSender(team.TeamIndex, evt.Operation.Index, evt.AdditionalTargetArgs));
+                    break;
+                case OperationType.Blend://调和
+                    team.CardsInHand.TryDestroyAt(evt.Operation.Index);
+                    team.AddSingleDice((int)team.Characters[team.CurrCharacter].CharacterCard.CharacterElement);
+                    afterEventFastActionVariable.Fast = true;
+                    break;
+                case OperationType.Break://行动空过
+                    break;
+                default://回合空过
+                    team.Pass = true;
                     break;
             }
-        }
-        ///<summary>
-        /// 这里处理的事件全都是已经确定valid的，所以不会进行任何检测<br/>
-        /// <b>注：这里处理的是事件，不等于行动</b>
-        /// </summary>
-        /// <param name="evt">已经证明是valid的NetEvent</param>
-        /// <returns>是否是战斗行动</returns>
-        internal void HandleEvent(NetEvent evt, int currTeam)
-        {
-            AbstractSender? afterEventSender = null;
-            var t = Teams[currTeam];
-            /*
-             * 行动一览：
-             * 切换角色+使用技能+使用卡牌+调和卡牌+暂时空过+回合空过
-             */
-            if ((int)evt.Action.Type >= 4)
+
+            if (demand == OperationType.Trival)
             {
-                //用于给减费的persistent减少使用次数
-                t.GetEventFinalDiceRequirement(evt.Action, true);
-                t.CostDices(evt.CostArgs);
-                //TODO:充能在哪里
-
-                //TODO:触发[任意行动]后
-
+                EffectTrigger(new AfterOperationSender(teamid, evt.Operation.Type), afterEventFastActionVariable);
                 //必须是当前行动的队伍才有意义做出[战斗行动]并且发生[队伍交替]
-                if (!EventMayActionProcess(evt, currTeam, out afterEventSender, true) && CurrTeam == currTeam && !Teams[1 - CurrTeam].Pass)
+                if (CurrTeam == teamid)
                 {
-                    CurrTeam = 1 - CurrTeam;
+                    if (team.Pass || (!afterEventFastActionVariable.Fast && !team.Enemy.Pass))
+                    {
+                        CurrTeam = 1 - CurrTeam;
+                    }
                 }
             }
-            else
-            {
-                EventNotActionProcess(evt, currTeam);
-            }
-
-            NetEventRecord record;
-            if (afterEventSender is AfterUseSkillSender ss)
-            {
-                record = new UseSkillRecord(currTeam, evt, ss.Character, ss.Skill);
-            }
-            else if (afterEventSender is AfterUseCardSender cs)
-            {
-                record = new UseCardRecord(currTeam, evt, cs.Card);
-            }
-            else
-            {
-                record = new(currTeam, evt);
-            }
-            NetEventRecords.Last().Add(record);
             //update team state
-            t.SpecialState.HeavyStrike = t.DiceNum % 2 == 0;
-            t.SpecialState.DownStrike = evt.Action.Type == ActionType.SwitchForced || evt.Action.Type == ActionType.Switch;
+            team.SpecialState.HeavyStrike = team.DiceNum % 2 == 0;
         }
         public void TryHandleEvent(NetEvent evt, int teamid)
         {
             if (Teams[teamid].IsEventValid(evt))
             {
-                HandleEvent(evt, teamid);
+                HandleNetEvent(evt, teamid);
             }
         }
-        public override void TryProcessEvent(NetEvent evt, int teamid)
-        {
-            if ((int)evt.Action.Type >= 4)
-            {
-                EventMayActionProcess(evt, teamid, out _);
-            }
-            else
-            {
-                EventNotActionProcess(evt, teamid);
-            }
-        }
-
         /// <summary>
         /// teamme: 发起换边请求的队伍<br/>
         /// 当这个队伍是当前队伍时，才能有效切换

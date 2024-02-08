@@ -8,28 +8,28 @@ namespace TCGBase
     public class NetEvent
     {
         private readonly int[] _costargs;
-        public NetAction Action { get; private init; }
+        public NetOperation Operation { get; private init; }
         public int[] CostArgs { get=>_costargs; }
         /// <summary>
         /// 并不在NetAction.Index中，而是额外一些的Target，如[送你一程]=>[Summon_Enemy]
         /// </summary>
         public int[] AdditionalTargetArgs { get; private set; }
-        public NetEvent(NetAction action)
+        public NetEvent(NetOperation action)
         {
-            Action = action;
+            Operation = action;
             _costargs = new int[8];
             AdditionalTargetArgs = Array.Empty<int>();
         }
-        public NetEvent(NetAction action, params int[]? cost)
+        public NetEvent(NetOperation action, params int[]? cost)
         {
-            Action = action;
+            Operation = action;
             Normalize.CostNormalize(cost, out _costargs);
             AdditionalTargetArgs = Array.Empty<int>();
         }
         [JsonConstructor]
-        public NetEvent(NetAction action, int[] costargs, int[] additionaltargetArgs)
+        public NetEvent(NetOperation action, int[] costargs, int[] additionaltargetArgs)
         {
-            Action = action;
+            Operation = action;
             Normalize.CostNormalize(costargs, out _costargs);
             AdditionalTargetArgs = additionaltargetArgs ?? Array.Empty<int>();
         }

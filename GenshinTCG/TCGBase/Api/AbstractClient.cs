@@ -18,20 +18,20 @@
         /// 客户端=>服务端
         /// 游戏进行中调用索取对应行动
         /// </summary>
-        public abstract NetEvent RequestEvent(ActionType demand);
+        public abstract NetEvent RequestEvent(OperationType demand);
         /// <summary>
         /// 表示正在向对方request需要的event
         /// </summary>
-        public virtual void RequestEnemyEvent(ActionType demand) { }
+        public virtual void RequestEnemyEvent(OperationType demand) { }
         public List<TargetEnum> GetCardTargetEnums(int cardindex) => Me.GetCardTargetEnums(cardindex);
         /// <summary>
         /// 对于cardindex这张卡，已经有already_params这些选中的参数了，但是还需要选择更多
         /// </summary>
         /// <returns>可供选择的对象在其区域的index们</returns>
         public List<int> GetCardNextValidTargets(int cardindex, int[] already_params) => Me.GetNextValidTargets(cardindex, already_params);
-        public CostVariable GetEventFinalDiceRequirement(NetAction action) => Me.GetEventFinalDiceRequirement(action);
-        public CostVariable GetCardCostRequirement(int index) => Me.GetEventFinalDiceRequirement(new(ActionType.UseCard, index));
-        public CostVariable GetSkillCostRequirement(int index) => Me.GetEventFinalDiceRequirement(new(ActionType.UseSKill, index));
+        public CostVariable GetEventFinalDiceRequirement(NetOperation action) => Me.GetEventFinalDiceRequirement(action);
+        public CostVariable GetCardCostRequirement(int index) => Me.GetEventFinalDiceRequirement(new(OperationType.UseCard, index));
+        public CostVariable GetSkillCostRequirement(int index) => Me.GetEventFinalDiceRequirement(new(OperationType.UseSKill, index));
         public bool IsEventValid(NetEvent evt) => Me.IsEventValid(evt);
         /// <summary>
         /// 服务端=>客户端

@@ -43,7 +43,10 @@ namespace TCGBase
             }
             if (Characters[curr].Alive)
             {
-                Game.TryProcessEvent(new NetEvent(new NetAction(ActionType.SwitchForced, curr)), TeamIndex);
+                var initial = CurrCharacter;
+                CurrCharacter = curr;
+                EffectTrigger(new AfterSwitchSender(TeamIndex, initial, CurrCharacter));
+                SpecialState.DownStrike = true;
             }
         }
         /// <summary>

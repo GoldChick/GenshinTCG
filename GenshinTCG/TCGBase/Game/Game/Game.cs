@@ -8,19 +8,32 @@
         Gaming,
         Ending,
     }
-    public partial class Game : AbstractGame
+    public partial class Game
     {
         public PlayerTeam[] Teams { get; init; }
         /// <summary>
         /// 对战双方，暂无观战模式
         /// </summary>
         internal List<AbstractClient> Clients { get; init; }
-
+        /// <summary>
+        /// 不为null时，会存储非立即结算状态<br/>
+        /// 在任意triggerable结算完毕后，会清空queue
+        /// </summary>
+        internal Queue<Action>? TempDelayedTriggerQueue { get; set; }
+        /// <summary>
+        /// 用来存储[队伍做出的]行动
+        /// </summary>
+        public List<List<BaseRecord>> NetEventRecords { get; }
+        /// <summary>
+        /// @desperated<br/>
+        /// 用来存储[客观发生的]行动
+        /// </summary>
+        public List<List<BaseRecord>> ActionRecords { get; }
         public GameStage Stage { get; private set; }
 
         public int Round { get; private set; }
         private int _currteam;
-        public override int CurrTeam
+        public int CurrTeam
         {
             get => _currteam; protected set
             {
@@ -33,6 +46,8 @@
         {
             Teams = new PlayerTeam[2];
             Clients = new();
+            NetEventRecords = new();
+            ActionRecords = new();
         }
         public void AddClient(AbstractClient c) => Clients.Add(c);
         /// <summary>
@@ -82,23 +97,23 @@
             {
                 Teams[i].RollCard(5);
             }
-            var t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, ActionType.ReRollCard));
-            var t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, ActionType.ReRollCard));
+            var t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, OperationType.ReRollCard));
+            var t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, OperationType.ReRollCard));
             t0.Start();
             t1.Start();
             Task.WaitAll(t0, t1);
 
-            HandleEvent(t0.Result, 0);
-            HandleEvent(t1.Result, 1);
+            HandleNetEvent(t0.Result, 0, OperationType.ReRollCard);
+            HandleNetEvent(t1.Result, 1, OperationType.ReRollCard);
 
-            t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, ActionType.SwitchForced));
-            t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, ActionType.SwitchForced));
+            t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, OperationType.Switch));
+            t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, OperationType.Switch));
             t0.Start();
             t1.Start();
             Task.WaitAll(t0, t1);
 
-            HandleEvent(t0.Result, 0);
-            HandleEvent(t1.Result, 1);
+            HandleNetEvent(t0.Result, 0, OperationType.Switch);
+            HandleNetEvent(t1.Result, 1, OperationType.Switch);
 
             EffectTrigger(new SimpleSender(SenderTag.GameStart));
 
@@ -122,12 +137,11 @@
                     EffectTrigger(new SimpleSender(CurrTeam, SenderTag.RoundMeStart));
                     if (oldteam == CurrTeam)
                     {
-                        RequestAndHandleEvent(CurrTeam, 30000, ActionType.Trival);
+                        RequestAndHandleEvent(CurrTeam, 30000, OperationType.Trival);
                     }
                 }
 
                 Stage = GameStage.Ending;
-                CurrTeam = 1 - CurrTeam;
                 EffectTrigger(new SimpleSender(SenderTag.RoundOver));
                 Teams[CurrTeam].RoundEnd();
                 Teams[1 - CurrTeam].RoundEnd();
@@ -145,7 +159,7 @@
         /// <summary>
         /// 如果你确信此次effecttrigger不会改变variable，那么可以不检测teamid
         /// </summary>
-        public override void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
+        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
         {
             if (TempDelayedTriggerQueue != null)
             {

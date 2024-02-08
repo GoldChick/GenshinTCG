@@ -78,7 +78,7 @@
         AfterUseSkill,
         AfterPass,
 
-        AfterAnyAction,
+        AfterOperation,
         /// <summary>
         /// 受到可能有元素附着、可能有伤害的东西后，发出Sender: HurtSender或NoDamageHurtSender
         /// </summary>

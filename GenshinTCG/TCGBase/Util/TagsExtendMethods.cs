@@ -15,17 +15,17 @@
         /// <br/>
         /// 若带有Variable为<see cref="FastActionVariable"/>则说明为是否快速行动
         /// </summary>
-        public static SenderTag ToSenderTags(this ActionType type, bool before = false) => type switch
-        {
-            ActionType.ReRollDice => before ? SenderTag.BeforeRerollDice : SenderTag.AfterRerollDice,
-            ActionType.ReRollCard => before ? SenderTag.BeforeRerollCard : SenderTag.AfterRerollCard,
-            ActionType.Switch or ActionType.SwitchForced => before ? SenderTag.BeforeSwitch : SenderTag.AfterSwitch,
-            ActionType.UseSKill => before ? SenderTag.BeforeUseSkill : SenderTag.AfterUseSkill,
-            ActionType.UseCard => before ? SenderTag.BeforeUseCard : SenderTag.AfterUseCard,
-            ActionType.Blend => before ? SenderTag.BeforeBlend : SenderTag.AfterBlend,
-            ActionType.Pass => before ? SenderTag.BeforePass : SenderTag.AfterPass,
-            _ => throw new Exception("Tags.ActionTypeToSenderTag():传入了未知的ActionType!")
-        };
+        //public static SenderTag ToSenderTags(this OperationType type, bool before = false) => type switch
+        //{
+        //    OperationType.ReRollDice => before ? SenderTag.BeforeRerollDice : SenderTag.AfterRerollDice,
+        //    OperationType.ReRollCard => before ? SenderTag.BeforeRerollCard : SenderTag.AfterRerollCard,
+        //    OperationType.Switch or OperationType.SwitchForced => before ? SenderTag.BeforeSwitch : SenderTag.AfterSwitch,
+        //    OperationType.UseSKill => before ? SenderTag.BeforeUseSkill : SenderTag.AfterUseSkill,
+        //    OperationType.UseCard => before ? SenderTag.BeforeUseCard : SenderTag.AfterUseCard,
+        //    OperationType.Blend => before ? SenderTag.BeforeBlend : SenderTag.AfterBlend,
+        //    OperationType.Pass => before ? SenderTag.BeforePass : SenderTag.AfterPass,
+        //    _ => throw new Exception("Tags.ActionTypeToSenderTag():传入了未知的ActionType!")
+        //};
         internal static TargetEnumForNetEvent ToNetEvent(this TargetEnum e) => e switch
         {
             //TargetEnum.Card_Enemy => TargetEnumForNetEvent.Card_Enemy,

@@ -2,32 +2,32 @@
 {
     public partial class PlayerTeam
     {
-        internal bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Action) && IsAdditionalTargetValid(evt) && IsCostValid(evt);
+        internal bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Operation) && IsAdditionalTargetValid(evt) && IsCostValid(evt);
         /// <summary>
         /// 判断action.Index是否在合适范围
         /// </summary>
-        private bool IsLimitValid(NetAction action) => action.Index >= 0 && action.Type switch
+        private bool IsLimitValid(NetOperation action) => action.Index >= 0 && action.Type switch
         {
-            ActionType.ReRollDice or ActionType.ReRollCard or ActionType.Pass => true,
-            ActionType.Switch or ActionType.SwitchForced =>
+            OperationType.ReRollDice or OperationType.ReRollCard or OperationType.Pass => true,
+            OperationType.Switch =>
                 action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
-            ActionType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].CardBase.TriggerableList.Where(t => t.Tag == SenderTagInner.UseSkill.ToString()).Count(),
-            ActionType.UseCard or ActionType.Blend => action.Index < CardsInHand.Count(),
+            OperationType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].CardBase.TriggerableList.Where(t => t.Tag == SenderTagInner.UseSkill.ToString()).Count(),
+            OperationType.UseCard or OperationType.Blend => action.Index < CardsInHand.Count(),
             _ => false
         };
         private bool IsAdditionalTargetValid(NetEvent evt)
         {
             bool temp = true;
-            switch (evt.Action.Type)
+            switch (evt.Operation.Type)
             {
-                case ActionType.ReRollDice:
+                case OperationType.ReRollDice:
                     temp = Dices.Count == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs.All(i => i == 0 || i == 1);
                     break;
-                case ActionType.ReRollCard:
+                case OperationType.ReRollCard:
                     temp = CardsInHand.Count() == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs.All(i => i == 0 || i == 1);
                     break;
-                case ActionType.UseCard:
-                    var card = CardsInHand[evt.Action.Index].CardBase;
+                case OperationType.UseCard:
+                    var card = CardsInHand[evt.Operation.Index].CardBase;
                     if (card is AbstractCardAction actioncard)
                     {
                         if (card.CardType == CardType.Support && Supports.Full)
@@ -46,16 +46,16 @@
         }
         private bool IsCostValid(NetEvent evt)
         {
-            if (evt.Action.Type == ActionType.Blend)
+            if (evt.Operation.Type == OperationType.Blend)
             {
                 return evt.CostArgs != null && evt.CostArgs.Sum() == 1 && evt.CostArgs[(int)Characters[CurrCharacter].CharacterCard.CharacterElement] == 0 && ContainsCost(evt.CostArgs);
             }
             else
             {
                 bool temp = true;
-                if (evt.Action.Type == ActionType.UseCard)
+                if (evt.Operation.Type == OperationType.UseCard)
                 {
-                    var card = CardsInHand[evt.Action.Index].CardBase;
+                    var card = CardsInHand[evt.Operation.Index].CardBase;
                     if (card is IEnergyConsumerCard ec)
                     {
                         temp = evt.AdditionalTargetArgs.Length > ec.CostMPFromCharacterIndexInArgs && Characters[evt.AdditionalTargetArgs[ec.CostMPFromCharacterIndexInArgs]].MP >= card.Cost.MPCost;
@@ -65,15 +65,15 @@
                         temp = CurrCharacter >= 0 && Characters[CurrCharacter].MP >= card.Cost.MPCost;
                     }
                 }
-                else if (evt.Action.Type == ActionType.UseSKill)
+                else if (evt.Operation.Type == OperationType.UseSKill)
                 {
                     var c = Characters[CurrCharacter];
-                    if (c.CardBase.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var t, evt.Action.Index) && t is ICostable cost)
+                    if (c.CardBase.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var t, evt.Operation.Index) && t is ICostable cost)
                     {
                         temp = c.MP >= cost.Cost.MPCost;
                     }
                 }
-                return temp && GetEventFinalDiceRequirement(evt.Action).DiceEqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
+                return temp && GetEventFinalDiceRequirement(evt.Operation).DiceEqualTo(evt.CostArgs) && ContainsCost(evt.CostArgs);
             }
         }
         /// <summary>
@@ -154,16 +154,16 @@
         /// <summary>
         /// 返回经过各种减费结算的
         /// </summary>
-        internal CostVariable GetEventFinalDiceRequirement(NetAction action, bool realAction = false)
+        internal CostVariable GetEventFinalDiceRequirement(NetOperation action, bool realAction = false)
         {
             CostVariable c;
             switch (action.Type)
             {
-                case ActionType.Switch:
+                case OperationType.Switch:
                     c = new CostCreate().Void(1).ToCostInit().ToCostVariable();
                     Game.InstantTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
                     break;
-                case ActionType.UseSKill:
+                case OperationType.UseSKill:
                     AbstractCardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
                     if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is AbstractTriggerableSkill skill)
                     {
@@ -175,12 +175,12 @@
                         throw new Exception($"角色{chaCard.NameID}并没有第{action.Index}个技能");
                     }
                     break;
-                case ActionType.UseCard:
+                case OperationType.UseCard:
                     var card = CardsInHand[action.Index % CardsInHand.Count()].CardBase;
                     c = new(card.Cost);
                     Game.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
                     break;
-                case ActionType.Blend:
+                case OperationType.Blend:
                     int[] ints = new int[8];
                     if (CurrCharacter == -1)
                     {

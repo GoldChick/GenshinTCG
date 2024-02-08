@@ -70,7 +70,7 @@
             RollDice(drv);
             for (int i = 0; i < drv.RollingTimes; i++)
             {
-                Game.RequestAndHandleEvent(TeamIndex, 30000, ActionType.ReRollDice);
+                Game.RequestAndHandleEvent(TeamIndex, 30000, OperationType.ReRollDice);
             }
         }
         /// <summary>

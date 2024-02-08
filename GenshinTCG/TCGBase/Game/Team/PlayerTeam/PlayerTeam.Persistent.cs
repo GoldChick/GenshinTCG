@@ -2,41 +2,24 @@
 {
     public partial class PlayerTeam
     {
-        /// <summary>
-        /// 根据对于[出战角色]的[相对坐标]来附着[角色状态]
-        /// </summary>
-        public void AddPersonalEffect(AbstractCardBase per, int relativeIndex = 0, Persistent? bind = null)
+        public void AddEffect(Persistent per, int target = -1)
         {
-            Characters[(relativeIndex + CurrCharacter) % Characters.Length].AddEffect(new Persistent(per, bind));
+            if (target == -1)
+            {
+                Effects.Add(per);
+            }
+            else
+            {
+                Characters[int.Clamp(target, 0, Characters.Length - 1)].AddEffect(per);
+            }
+            Game.BroadCastRegion();
         }
-        /// <summary>
-        /// 根据对于[出战角色]的[相对坐标]来附着[已经存在]的[角色状态]<br/>
-        /// <b>如果没有特殊需要，请使用上面的方法创建新的persistent</b>
-        /// </summary>
-        public void AddPersonalEffect(Persistent per, int relativeIndex = 0)
-        {
-            Characters[(relativeIndex + CurrCharacter) % Characters.Length].AddEffect(per);
-        }
-        public void AddTeamEffect(AbstractCardBase per, Persistent? bind = null) => Effects.Add(new Persistent(per, bind));
-
-        //TODO: 上面几个不知道还要不要
         /// <summary>
         /// 增加一个effect，只在PlayerTeam中有效
         /// IEffect -1:团队 0-(characters.count-1):个人
         /// </summary>
         /// <param name="bind">绑定在某个其他persistent上供检测，只对出战状态和角色状态有效</param>
-        public void AddEffect(AbstractCardBase per, int target = -1, Persistent? bind = null)
-        {
-            if (target == -1)
-            {
-                Effects.Add(new(per, bind));
-            }
-            else
-            {
-                Characters[int.Clamp(target, 0, Characters.Length - 1)].AddEffect(new Persistent(per, bind));
-            }
-            Game.BroadCastRegion();
-        }
+        public void AddEffect(AbstractCardBase per, int target = -1, Persistent? bind = null) => AddEffect(new Persistent(per, bind), target);
         public void AddSupport(Persistent support, int replace = -1)
         {
             if (Supports.Full)
@@ -48,14 +31,7 @@
         /// <summary>
         /// 自己检测满了没有，也不一定添加成功
         /// </summary>
-        public void AddSupport(AbstractCardBase support, int replace = -1)
-        {
-            if (Supports.Full)
-            {
-                Supports.Destroy(replace);
-            }
-            Supports.Add(new(support));
-        }
+        public void AddSupport(AbstractCardBase support, int replace = -1) => AddSupport(new Persistent(support), replace);
         public void AddSummon(AbstractCardBase summon) => AddSummon(1, summon);
         public void AddSummon(int num, params AbstractCardBase[] summons)
         {
