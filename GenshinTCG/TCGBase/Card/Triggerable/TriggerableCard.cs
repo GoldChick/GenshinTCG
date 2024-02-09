@@ -7,7 +7,7 @@ namespace TCGBase
         public EventPersistentHandler? Handler;
         public TriggerableCard(TriggerableRecordCard card) : base()
         {
-            NameID = "usecard";//just for warning
+            NameID = "usecard";//set in INameSetable
             Handler = null;
             foreach (var item in card.Action)
             {

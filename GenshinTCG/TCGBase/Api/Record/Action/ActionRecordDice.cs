@@ -4,7 +4,7 @@
     {
         public List<CostRecord> Dice { get; }
         public bool Gain { get; }
-        public ActionRecordDice(List<CostRecord> dice, bool gain = true, DamageTargetTeam team = DamageTargetTeam.Me) : base(TriggerType.MP, team)
+        public ActionRecordDice(List<CostRecord> dice, bool gain = true, DamageTargetTeam team = DamageTargetTeam.Me) : base(TriggerType.Dice, team)
         {
             Dice = dice;
             Gain = gain;

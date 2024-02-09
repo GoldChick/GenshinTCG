@@ -63,9 +63,9 @@
             _t = t;
             Effects = new(index, t);
 
-            HP = CharacterCard.MaxHP;
             Alive = true;
             Active = true;
+            HP = CharacterCard.MaxHP;
         }
         /// <summary>
         /// 被击倒角色会在异次元空间中参与结算......<br/>

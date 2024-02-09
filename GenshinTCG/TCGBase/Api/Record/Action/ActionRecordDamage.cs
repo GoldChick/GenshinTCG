@@ -18,7 +18,7 @@
             }
             return (me, p, s, v) =>
             {
-                me.Enemy.DoDamage(new(Damage), triggerable, () => subhandler?.Invoke(me, p, s, v));
+                me.DoDamage(new(Damage), triggerable, () => subhandler?.Invoke(me, p, s, v));
             };
         }
     }

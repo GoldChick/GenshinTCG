@@ -13,14 +13,12 @@ namespace TCGBase
             {
                 return typeElement.GetString() switch
                 {
-                    //TODO: summon and effect
-                    //"Summon" or "Effect" => JsonSerializer.Deserialize<CardRecordEffect>(root.GetRawText(), options),
                     "MP" => JsonSerializer.Deserialize<ActionRecordMP>(root.GetRawText(), options),
                     "Damage" => JsonSerializer.Deserialize<ActionRecordDamage>(root.GetRawText(), options),
                     "Dice" => JsonSerializer.Deserialize<ActionRecordDice>(root.GetRawText(), options),
                     "Effect" => JsonSerializer.Deserialize<ActionRecordEffect>(root.GetRawText(), options),
                     "Heal" => JsonSerializer.Deserialize<ActionRecordHeal>(root.GetRawText(), options),
-                    _ => throw new JsonException("JsonConverterAction.Read() : Not Registered 'Type' property."),
+                    _ => throw new JsonException($"Unregistered ActionRecord 'Type' property: {typeElement}."),
                 };
             }
             throw new JsonException("JsonConverterAction.Read() : Missing or invalid 'CardType' property.(NOT Ignore Case)");

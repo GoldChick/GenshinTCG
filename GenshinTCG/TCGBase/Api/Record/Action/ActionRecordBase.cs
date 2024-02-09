@@ -13,7 +13,6 @@ namespace TCGBase
         Effect,
         Heal,
         Dice,
-        AfterUseSkill
     }
     public record class ActionRecordBase
     {
@@ -37,7 +36,6 @@ namespace TCGBase
     }
     public record class ActionRecordBaseWithTarget : ActionRecordBaseWithTeam
     {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public CharacterTargetRecord Target { get; }
         public ActionRecordBaseWithTarget(TriggerType actionType, DamageTargetTeam team, CharacterTargetRecord? target = null) : base(actionType, team)
         {
