@@ -10,7 +10,7 @@
         /// 如:[诸武精通]:{Character_Me,Character_Me}<br/>
         /// [送你一程]:{Summon}<br/>
         /// </summary>
-        public virtual TargetDemand[] TargetDemands => Array.Empty<TargetDemand>();
+        public virtual List<TargetDemand> TargetDemands => new();
         protected AbstractCardEvent()
         {
         }

@@ -1,16 +1,27 @@
-﻿namespace TCGBase
+﻿using System.Text.Json;
+
+namespace TCGBase
 {
     public partial class PlayerTeam
     {
-        internal bool IsEventValid(NetEvent evt) => IsLimitValid(evt.Operation) && IsAdditionalTargetValid(evt) && IsCostValid(evt);
+        internal bool IsEventValid(NetEvent evt, OperationType demand = OperationType.Trival)
+        {
+            if (demand == OperationType.Trival)
+            {
+                return IsLimitValid(evt.Operation) && IsAdditionalTargetValid(evt) && IsCostValid(evt);
+            }
+            else
+            {
+                return true;
+            }
+        }
         /// <summary>
         /// 判断action.Index是否在合适范围
         /// </summary>
         private bool IsLimitValid(NetOperation action) => action.Index >= 0 && action.Type switch
         {
-            OperationType.ReRollDice or OperationType.ReRollCard or OperationType.Pass => true,
-            OperationType.Switch =>
-                action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
+            OperationType.Pass => true,
+            OperationType.Switch => action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
             OperationType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].CardBase.TriggerableList.Where(t => t.Tag == SenderTagInner.UseSkill.ToString()).Count(),
             OperationType.UseCard or OperationType.Blend => action.Index < CardsInHand.Count(),
             _ => false
@@ -36,7 +47,7 @@
                         }
                         else if (actioncard is ITargetSelector se)
                         {
-                            temp = evt.AdditionalTargetArgs.Length == se.TargetDemands.Length && IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs, out _);
+                            temp = evt.AdditionalTargetArgs.Length == se.TargetDemands.Count && IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs, out _);
                         }
                         temp &= actioncard.CanBeUsed(this);
                     }
@@ -56,13 +67,16 @@
                 if (evt.Operation.Type == OperationType.UseCard)
                 {
                     var card = CardsInHand[evt.Operation.Index].CardBase;
-                    if (card is IEnergyConsumerCard ec)
+                    if (card is AbstractCardAction action)
                     {
-                        temp = evt.AdditionalTargetArgs.Length > ec.CostMPFromCharacterIndexInArgs && Characters[evt.AdditionalTargetArgs[ec.CostMPFromCharacterIndexInArgs]].MP >= card.Cost.MPCost;
-                    }
-                    else
-                    {
-                        temp = CurrCharacter >= 0 && Characters[CurrCharacter].MP >= card.Cost.MPCost;
+                        if (card is IEnergyConsumerCard ec)
+                        {
+                            temp = evt.AdditionalTargetArgs.Length > ec.CostMPFromCharacterIndexInArgs && Characters[evt.AdditionalTargetArgs[ec.CostMPFromCharacterIndexInArgs]].MP >= action.Cost.MPCost;
+                        }
+                        else
+                        {
+                            temp = CurrCharacter >= 0 && Characters[CurrCharacter].MP >= action.Cost.MPCost;
+                        }
                     }
                 }
                 else if (evt.Operation.Type == OperationType.UseSKill)
@@ -177,8 +191,15 @@
                     break;
                 case OperationType.UseCard:
                     var card = CardsInHand[action.Index % CardsInHand.Count()].CardBase;
-                    c = new(card.Cost);
-                    Game.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
+                    if (card is AbstractCardAction cardaction)
+                    {
+                        c = new(cardaction.Cost);
+                        Game.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
+                    }
+                    else
+                    {
+                        c = new();
+                    }
                     break;
                 case OperationType.Blend:
                     int[] ints = new int[8];
@@ -208,7 +229,7 @@
             var card = CardsInHand[cardindex].CardBase;
             if (card is ITargetSelector se)
             {
-                if (se.TargetDemands.Length > parameters_already.Length)
+                if (se.TargetDemands.Count > parameters_already.Length)
                 {
                     if (IsManyTargetDemandValid(se.TargetDemands, parameters_already, out var persistents_already))
                     {

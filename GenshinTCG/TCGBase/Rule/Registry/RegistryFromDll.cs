@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 namespace TCGBase
 {
-    public class RegistryFromCard
+    public class RegistryFromDll
     {
         internal List<string> Mods { get; } = new();
 

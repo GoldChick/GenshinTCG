@@ -28,7 +28,7 @@ namespace TCGBase
         }
         internal EventPersistentSetHandler? GetHandlers(AbstractSender sender)
         {
-            if (sender is ActionUseCardSender cs && cs.Card >= 0 && cs.Card <= _data.Count)
+            if (sender.TeamID == _t.TeamIndex && sender is ActionUseCardSender cs && cs.Card >= 0 && cs.Card <= _data.Count)
             {
                 EventPersistentHandler? handler = null;
                 var card = _data[cs.Card];

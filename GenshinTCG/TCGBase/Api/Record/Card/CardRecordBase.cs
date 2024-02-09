@@ -29,6 +29,5 @@ namespace TCGBase
         }
         public List<string> SkillList { get; }
         public List<string> Tags { get; }
-        public virtual AbstractCardBase GetCard() => null;
     }
 }

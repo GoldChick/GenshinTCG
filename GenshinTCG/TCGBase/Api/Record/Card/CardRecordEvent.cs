@@ -7,6 +7,6 @@
         {
             Select = select ?? new();
         }
-        public override AbstractCardBase GetCard() => new CardEvent(this);
+        public override AbstractCardAction GetCard(string @namespace) => new CardEvent(this, @namespace);
     }
 }

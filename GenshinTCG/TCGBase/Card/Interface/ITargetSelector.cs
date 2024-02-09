@@ -34,7 +34,7 @@ namespace TCGBase
     }
     public interface ITargetSelector
     {
-        public TargetDemand[] TargetDemands { get; }
+        public List<TargetDemand> TargetDemands { get; }
     }
     public class TargetDemand
     {

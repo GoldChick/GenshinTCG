@@ -10,6 +10,5 @@
 
         public int MaxHP { get; }
         public int MaxMP { get; }
-        public override AbstractCardBase GetCard() => new CardCharacter(this);
     }
 }

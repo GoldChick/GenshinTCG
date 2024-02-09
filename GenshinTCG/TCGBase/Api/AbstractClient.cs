@@ -32,7 +32,7 @@
         public CostVariable GetEventFinalDiceRequirement(NetOperation action) => Me.GetEventFinalDiceRequirement(action);
         public CostVariable GetCardCostRequirement(int index) => Me.GetEventFinalDiceRequirement(new(OperationType.UseCard, index));
         public CostVariable GetSkillCostRequirement(int index) => Me.GetEventFinalDiceRequirement(new(OperationType.UseSKill, index));
-        public bool IsEventValid(NetEvent evt) => Me.IsEventValid(evt);
+        //public bool IsEventValid(NetEvent evt) => Me.IsEventValid(evt);
         /// <summary>
         /// 服务端=>客户端
         /// 游戏进行中更新Team<br/>

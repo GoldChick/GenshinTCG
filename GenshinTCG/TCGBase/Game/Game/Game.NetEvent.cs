@@ -16,7 +16,7 @@
 
             Task.WaitAny(t, Task.Run(() => Thread.Sleep(millisecondsTimeout)));
 
-            if (t.IsCompleted && Teams[teamid].IsEventValid(t.Result) && (demand == OperationType.Trival || demand == t.Result.Operation.Type))
+            if (t.IsCompleted && Teams[teamid].IsEventValid(t.Result, demand) && (demand == OperationType.Trival || demand == t.Result.Operation.Type))
             {
                 return t.Result;
             }

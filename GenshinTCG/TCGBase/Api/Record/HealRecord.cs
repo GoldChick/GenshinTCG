@@ -11,9 +11,9 @@ namespace TCGBase
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DamageTargetTeam TargetTeam { get; }
         public HealRecord? SubHeal { get; internal set; }
-        public HealRecord(int damage, int targetIndexOffset = 0, DamageTargetArea targetArea = DamageTargetArea.TargetOnly, DamageTargetTeam targetTeam = DamageTargetTeam.Me, HealRecord? subHeal = null)
+        public HealRecord(int amount, int targetIndexOffset = 0, DamageTargetArea targetArea = DamageTargetArea.TargetOnly, DamageTargetTeam targetTeam = DamageTargetTeam.Me, HealRecord? subHeal = null)
         {
-            Amount = damage;
+            Amount = amount;
             TargetIndexOffset = targetIndexOffset;
             TargetArea = targetArea;
             TargetTeam = targetTeam;

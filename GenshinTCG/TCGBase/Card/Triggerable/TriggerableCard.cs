@@ -13,7 +13,8 @@
         }
         public string Tag => SenderTagInner.UseCard.ToString();
         public EventPersistentHandler? Action { get; internal set; }
-        public void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable) => Action?.Invoke(me, persitent, sender, variable);
+        public void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable) => throw new Exception("Triggerable Card test");
+        //Action?.Invoke(me, persitent, sender, variable)
 
     }
 }

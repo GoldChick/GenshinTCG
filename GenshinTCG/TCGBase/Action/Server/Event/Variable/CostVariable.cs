@@ -178,7 +178,7 @@ namespace TCGBase
         /// <summary>
         /// 同色 冰水火雷岩草风 杂色 充能 秘传点
         /// </summary>
-        internal int[] DiceCost { get => _costs; }
+        public int[] DiceCost { get => _costs; }
         public int MPCost => _costs[9];
         public int Legend => _costs[10];
         public CostCreate()
@@ -199,51 +199,6 @@ namespace TCGBase
         public CostCreate Void(int num)
         {
             _costs[8] += num;
-            return this;
-        }
-        public CostCreate Same(int num)
-        {
-            _costs[0] += num;
-            return this;
-        }
-        public CostCreate Cryo(int num)
-        {
-            _costs[1] += num;
-            return this;
-        }
-        public CostCreate Hydro(int num)
-        {
-            _costs[2] += num;
-            return this;
-        }
-        public CostCreate Pyro(int num)
-        {
-            _costs[3] += num;
-            return this;
-        }
-        public CostCreate Electro(int num)
-        {
-            _costs[4] += num;
-            return this;
-        }
-        public CostCreate Geo(int num)
-        {
-            _costs[5] += num;
-            return this;
-        }
-        public CostCreate Dendro(int num)
-        {
-            _costs[6] += num;
-            return this;
-        }
-        public CostCreate Anemo(int num)
-        {
-            _costs[7] += num;
-            return this;
-        }
-        public CostCreate MP(int num)
-        {
-            _costs[9] += num;
             return this;
         }
         public CostCreate Add(ElementCategory element, int num)

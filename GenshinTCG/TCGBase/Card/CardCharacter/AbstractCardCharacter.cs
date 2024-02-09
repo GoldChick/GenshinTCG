@@ -8,13 +8,13 @@
     public enum CharacterRegion
     {
         None,
-        ABYSS,
-        MONDSTADT,
-        LIYUE,
-        INAZUMA,
-        SUMERU,
-        FONTAINE,
-        NATLAN,
+        Abyss,
+        Mondstadt,
+        Liyue,
+        Inazuma,
+        Sumeru,
+        Fontaine,
+        Natlan,
         Fatui,
         /// <summary>
         /// 丘丘人也算个国家算了

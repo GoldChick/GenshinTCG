@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace TCGBase
 {
-    public class JsonConverterCard : JsonConverter<CardRecordBase>
+    public class JsonConverterActionCard : JsonConverter<CardRecordAction>
     {
-        public override CardRecordBase? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override CardRecordAction? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             using JsonDocument doc = JsonDocument.ParseValue(ref reader);
             var root = doc.RootElement;
@@ -13,7 +13,8 @@ namespace TCGBase
             {
                 return typeElement.GetString() switch
                 {
-                    "Summon" or "Effect" => JsonSerializer.Deserialize<CardRecordEffect>(root.GetRawText(), options),
+                    //TODO: summon and effect
+                    //"Summon" or "Effect" => JsonSerializer.Deserialize<CardRecordEffect>(root.GetRawText(), options),
                     "Equipment" => JsonSerializer.Deserialize<CardRecordEquipment>(root.GetRawText(), options),
                     "Support" => JsonSerializer.Deserialize<CardRecordSupport>(root.GetRawText(), options),
                     "Event" => JsonSerializer.Deserialize<CardRecordEvent>(root.GetRawText(), options),
@@ -23,7 +24,7 @@ namespace TCGBase
             throw new JsonException("JsonConverterCard.Read() : Missing or invalid 'CardType' property.(NOT Ignore Case)");
         }
 
-        public override void Write(Utf8JsonWriter writer, CardRecordBase value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, CardRecordAction value, JsonSerializerOptions options)
         {
             JsonSerializer.Serialize(writer, value, value.GetType(), options);
         }

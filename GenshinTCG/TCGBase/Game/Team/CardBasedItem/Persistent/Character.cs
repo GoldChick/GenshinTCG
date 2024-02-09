@@ -107,7 +107,7 @@
             {
                 if (sender is ActionUseSkillSender ss)
                 {
-                    if (PersistentRegion == ss.Character && CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var skill, ss.Skill))
+                    if (ss.TeamID == _t.TeamIndex && PersistentRegion == ss.Character && CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var skill, ss.Skill))
                     {
                         hs += GetDelayedHandler((me, s, v) => skill.Trigger(me, this, sender, v));
                     }

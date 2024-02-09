@@ -9,7 +9,7 @@
         public List<string> Add { get; }
         public List<string> Remove { get; }
 
-        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, DamageTargetTeam team = DamageTargetTeam.Enemy, CharacterTargetRecord? target = null) : base(TriggerType.Effect, team, target)
+        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, DamageTargetTeam team = DamageTargetTeam.Me, CharacterTargetRecord? target = null) : base(TriggerType.Effect, team, target)
         {
             Add = add ?? new();
             Remove = remove ?? new();

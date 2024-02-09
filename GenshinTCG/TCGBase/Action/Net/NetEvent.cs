@@ -14,22 +14,22 @@ namespace TCGBase
         /// 并不在NetAction.Index中，而是额外一些的Target，如[送你一程]=>[Summon_Enemy]
         /// </summary>
         public int[] AdditionalTargetArgs { get; private set; }
-        public NetEvent(NetOperation action)
+        public NetEvent(NetOperation operation)
         {
-            Operation = action;
+            Operation = operation;
             _costargs = new int[8];
             AdditionalTargetArgs = Array.Empty<int>();
         }
-        public NetEvent(NetOperation action, params int[]? cost)
+        public NetEvent(NetOperation operation, params int[]? cost)
         {
-            Operation = action;
+            Operation = operation;
             Normalize.CostNormalize(cost, out _costargs);
             AdditionalTargetArgs = Array.Empty<int>();
         }
         [JsonConstructor]
-        public NetEvent(NetOperation action, int[] costargs, int[] additionaltargetArgs)
+        public NetEvent(NetOperation operation, int[] costargs, int[] additionaltargetArgs)
         {
-            Operation = action;
+            Operation = operation;
             Normalize.CostNormalize(costargs, out _costargs);
             AdditionalTargetArgs = additionaltargetArgs ?? Array.Empty<int>();
         }

@@ -37,16 +37,15 @@
         Event,
         Effect
     }
-    public abstract class AbstractCardBase : INameable, ICard, ICostable
+    public abstract class AbstractCardBase : INameable, ICard
     {
-        public string Namespace => (GetType().Namespace ?? "minecraft").ToLower();
+        public virtual string Namespace => (GetType().Namespace ?? "minecraft").ToLower();
         public virtual string NameID { get; }
         public virtual int InitialUseTimes => 1;
         public bool Hidden { get; }
         public CardType CardType { get; }
         public int Variant { get; protected set; }
         public List<string> Tags { get; }
-        public CostInit Cost => new CostCreate().ToCostInit();
         public PersistentTriggerableList TriggerableList { get; }
 
         /// <summary>

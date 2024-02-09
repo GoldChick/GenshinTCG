@@ -2,8 +2,17 @@
 {
     internal sealed class CardEquipment : AbstractCardEquipment
     {
-        public CardEquipment(CardRecordEquipment record) : base(record)
+        public override string Namespace { get; }
+        public override CostInit Cost { get; }
+        public CardEquipment(CardRecordEquipment record, string @namespace) : base(record)
         {
+            Namespace = @namespace;
+            CostCreate create = new();
+            foreach (var c in record.Cost)
+            {
+                create.Add(c.Type, c.Count);
+            }
+            Cost = create.ToCostInit();
         }
     }
 }

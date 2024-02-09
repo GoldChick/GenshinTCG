@@ -3,7 +3,7 @@
     /// <summary>
     /// 可以拿在手中被使用的卡牌
     /// </summary>
-    public abstract class AbstractCardAction : AbstractCardBase
+    public abstract class AbstractCardAction : AbstractCardBase, ICostable
     {
         /// <summary>
         /// 允许携带的最大数量<br/>
@@ -26,6 +26,7 @@
         /// 是否满足额外的打出条件（不包括骰子条件）
         /// </summary>
         public virtual bool CanBeUsed(PlayerTeam me) => true;
+        public abstract CostInit Cost { get; }
         protected private AbstractCardAction() : base("null")
         {
             TriggerableList.Add(SenderTagInner.UseCard, (me, p, s, v) => AfterUseAction(me, new() { p }));
