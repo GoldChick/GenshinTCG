@@ -13,9 +13,15 @@ namespace TCGBase
             {
                 return typeElement.GetString() switch
                 {
+                    "Custom" => JsonSerializer.Deserialize<TriggerableRecordCustom>(root.GetRawText(), options),
                     "Skill" => JsonSerializer.Deserialize<TriggerableRecordSkill>(root.GetRawText(), options),
                     "Card" => JsonSerializer.Deserialize<TriggerableRecordCard>(root.GetRawText(), options),
-                    _ => throw new JsonException("JsonConverterTriggerable.Read() : Not Registered 'Type' property."),
+                    //↓下为普通类预设↓
+                    "RoundOver" or "AfterUseSkill" => JsonSerializer.Deserialize<TriggerableRecordWithAction>(root.GetRawText(), options),
+                    //↓下为具体类预设↓
+                    "Skill_A" => JsonSerializer.Deserialize<TriggerableRecordSkill_A>(root.GetRawText(), options),
+                    "Skill_E" => JsonSerializer.Deserialize<TriggerableRecordSkill_E>(root.GetRawText(), options),
+                    _ => throw new JsonException($"UnRegistered Triggerable 'Type' property: {typeElement.GetString()}."),
                 };
             }
             throw new JsonException("JsonConverterTriggerable.Read() : Missing or invalid 'Type' property.(NOT Ignore Case)");

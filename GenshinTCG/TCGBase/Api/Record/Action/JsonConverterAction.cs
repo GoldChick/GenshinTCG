@@ -18,6 +18,8 @@ namespace TCGBase
                     "Dice" => JsonSerializer.Deserialize<ActionRecordDice>(root.GetRawText(), options),
                     "Effect" => JsonSerializer.Deserialize<ActionRecordEffect>(root.GetRawText(), options),
                     "Heal" => JsonSerializer.Deserialize<ActionRecordHeal>(root.GetRawText(), options),
+                    "Counter" => JsonSerializer.Deserialize<ActionRecordCounter>(root.GetRawText(), options),
+                    "Switch" => JsonSerializer.Deserialize<ActionRecordSwitch>(root.GetRawText(), options),
                     _ => throw new JsonException($"Unregistered ActionRecord 'Type' property: {typeElement}."),
                 };
             }

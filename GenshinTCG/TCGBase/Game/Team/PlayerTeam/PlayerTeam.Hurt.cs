@@ -159,7 +159,7 @@ namespace TCGBase
         /// 根据DamageVariable.DamageTargetTeam,对<b>我方队伍</b>或<b>对方队伍</b>造成伤害<br/>
         /// 对我方队伍造成伤害时，不能吃到对方队伍的增伤
         /// </summary>
-        public void DoDamage(DamageVariable? dv, ITriggerable triggerable, Action? action = null)
-            => (dv != null && dv.DamageTargetTeam == DamageTargetTeam.Enemy ? Enemy : this).InnerHurt(dv, triggerable, action);
+        public void DoDamage(DamageVariable? dv, ITriggerable triggerable, Action? specialAction = null)
+            => (dv != null && dv.DamageTargetTeam == DamageTargetTeam.Enemy ? Enemy : this).InnerHurt(dv, triggerable, specialAction);
     }
 }

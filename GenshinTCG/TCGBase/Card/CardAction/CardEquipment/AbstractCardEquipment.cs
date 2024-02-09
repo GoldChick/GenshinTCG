@@ -2,7 +2,7 @@
 {
     public enum WeaponCategory
     {
-        Other,
+        OtherWeapon,
         Sword,
         Claymore,
         Longweapon,

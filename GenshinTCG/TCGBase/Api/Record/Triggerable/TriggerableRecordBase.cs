@@ -4,36 +4,20 @@ namespace TCGBase
 {
     public enum TriggerableType
     {
-        /// <summary>
-        /// tag: <see cref="SenderTagInner.UseSkill"/>; 参数: [<see cref="SkillCategory"/>] [Cost] [Trigger]<br/>
-        /// eg:  "skill[a[pyro=1,void=2[dodamageaorb,pyro-3,count=3,pyro-5[mp=1" 迪卢克e
-        /// </summary>
+        Custom,
+
         Skill,
         Card,
-        /// <summary>
-        /// tag: <see cref="SenderTag.AfterUseSkill"/>; 参数: [<see cref="SkillCategory"/>] [isonlyCurrCharacter] [Trigger]
-        /// </summary>
+        //↓下为预设，转化为TriggerableRecordWithAction↓
+        RoundOver,
         AfterUseSkill,
-        /// <summary>
-        /// tag: <see cref="SenderTag.AfterUseCard"/>; 参数:
-        /// </summary>
         AfterUseCard,
-        /// <summary>
-        /// tag: <see cref="SenderTag.AfterBlend"/>;
-        /// </summary>
-        AfterBlend,
-        /// <summary>
-        /// tag: <see cref="SenderTag.AfterSwitch"/>;
-        /// </summary>
         AfterSwitch,
-        /// <summary>
-        /// tag: <see cref="SenderTag.AfterHurt"/>;
-        /// </summary>
         AfterHurt,
-        /// <summary>
-        /// tag: <see cref="SenderTag.AfterBlend"/>;
-        /// </summary>
         AfterHealed,
+        //↓下为预设，有设置好的类↓
+        Skill_A,
+        Skill_E,
     }
     public record class TriggerableRecordBase
     {
@@ -44,6 +28,16 @@ namespace TCGBase
         {
             Type = type;
         }
-        public virtual AbstractCustomTriggerable GetTriggerable() => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record  class没有实现GetTriggerable()!");
+        public virtual AbstractCustomTriggerable GetTriggerable() => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record class没有实现GetTriggerable()!Type: {Type}.");
+    }
+    public record TriggerableRecordWithAction : TriggerableRecordBase
+    {
+        public List<ActionRecordBase> Action { get; }
+
+        public TriggerableRecordWithAction(TriggerableType type, List<ActionRecordBase> action) : base(type)
+        {
+            Action = action;
+        }
+        public override AbstractCustomTriggerable GetTriggerable() => new Triggerable(this);
     }
 }

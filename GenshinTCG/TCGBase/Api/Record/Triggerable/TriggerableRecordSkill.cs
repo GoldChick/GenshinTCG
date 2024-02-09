@@ -5,18 +5,17 @@ namespace TCGBase
     /// <summary>
     /// 主动技能
     /// </summary>
-    public record TriggerableRecordSkill : TriggerableRecordBase
+    public record TriggerableRecordSkill : TriggerableRecordWithAction
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public SkillCategory Category { get; }
         public List<CostRecord> Cost { get; }
-        public List<ActionRecordBase> Action { get; }
-
-        public TriggerableRecordSkill(SkillCategory category, List<CostRecord> cost, List<ActionRecordBase> action) : base(TriggerableType.Skill)
+        public int MP { get; }
+        public TriggerableRecordSkill(SkillCategory category, List<CostRecord> cost, List<ActionRecordBase> action, int mp = 1) : base(TriggerableType.Skill, action)
         {
             Category = category;
             Cost = cost;
-            Action = action;
+            MP = mp;
         }
         public override AbstractCustomTriggerable GetTriggerable() => new TriggerableSkill(this);
     }

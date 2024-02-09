@@ -1,8 +1,9 @@
-﻿namespace TCGBase
+﻿using System.Text.Json;
+
+namespace TCGBase
 {
     /// <summary>
-    /// 名义上是添加effect，其实比较通用<br/>
-    /// 
+    /// 添加/删除summon/effect
     /// </summary>
     public record class ActionRecordEffect : ActionRecordBaseWithTarget
     {

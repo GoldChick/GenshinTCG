@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System.Text.Json;
+
+namespace TCGBase
 {
     public record class ActionRecordDamage : ActionRecordBase
     {
@@ -18,7 +20,10 @@
             }
             return (me, p, s, v) =>
             {
-                me.DoDamage(new(Damage), triggerable, () => subhandler?.Invoke(me, p, s, v));
+                me.DoDamage(new(Damage), triggerable, () =>
+                {
+                    subhandler?.Invoke(me, p, s, v);
+                });
             };
         }
     }

@@ -63,6 +63,7 @@
         /// </summary>
         protected private AbstractCardBase(CardRecordBase record)
         {
+            Namespace = (GetType().Namespace ?? "minecraft").ToLower();
             CardType = record.CardType;
             Hidden = record.Hidden;
             NameID = record.NameID;
@@ -70,10 +71,7 @@
             TriggerableList = new();
             foreach (var item in record.SkillList)
             {
-                if (Registry.Instance.CustomTriggerable.TryGetValue(item, out var value))
-                {
-                    TriggerableList.Add(value);
-                }
+                TriggerableList.Add(item.GetTriggerable());
             }
         }
         void INameSetable.SetName(string @namespace, string nameid)

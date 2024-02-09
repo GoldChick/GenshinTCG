@@ -13,6 +13,8 @@ namespace TCGBase
         Effect,
         Heal,
         Dice,
+        Counter,
+        Switch
     }
     public record class ActionRecordBase
     {

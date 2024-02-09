@@ -13,7 +13,6 @@ namespace TCGBase
             {
                 Handler += item.GetHandler(this);
             }
-            Console.WriteLine($"{JsonSerializer.Serialize(card.Action)}");
         }
         public override string NameID { get; protected set; }
 

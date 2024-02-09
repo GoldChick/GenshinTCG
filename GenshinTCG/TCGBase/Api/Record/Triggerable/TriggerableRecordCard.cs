@@ -5,13 +5,10 @@ namespace TCGBase
     /// <summary>
     /// 卡牌打出时的效果
     /// </summary>
-    public record TriggerableRecordCard : TriggerableRecordBase
+    public record TriggerableRecordCard : TriggerableRecordWithAction
     {
-        public List<ActionRecordBase> Action { get; }
-
-        public TriggerableRecordCard(List<ActionRecordBase> action) : base(TriggerableType.Card)
+        public TriggerableRecordCard(List<ActionRecordBase> action) : base(TriggerableType.Card, action)
         {
-            Action = action;
         }
         public override AbstractCustomTriggerable GetTriggerable() => new TriggerableCard(this);
     }

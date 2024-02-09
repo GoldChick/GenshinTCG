@@ -6,13 +6,23 @@ namespace TCGBase
 {
     public class RegistryFromJson
     {
+        public JsonSerializerOptions JsonOptionCharacter { get; }
         public JsonSerializerOptions JsonOptionActionCard { get; }
+        public JsonSerializerOptions JsonOptionEffect { get; }
         public JsonSerializerOptions JsonOptionTriggerable { get; }
         public RegistryFromJson()
         {
+            JsonOptionCharacter = new()
+            {
+                Converters = { new JsonConverterTriggerable(), new JsonConverterAction() }
+            };
             JsonOptionActionCard = new()
             {
-                Converters = { new JsonConverterActionCard(), new JsonConverterSelect(), new JsonConverterCondition() }
+                Converters = { new JsonConverterActionCard(), new JsonConverterSelect(), new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
+            };
+            JsonOptionEffect = new()
+            {
+                Converters = { new JsonConverterTriggerable(), new JsonConverterAction() }
             };
             JsonOptionTriggerable = new()
             {
@@ -52,7 +62,7 @@ namespace TCGBase
         }
         public CardCharacter CreateCharacterCard(string json)
         {
-            CardRecordCharacter? record = JsonSerializer.Deserialize<CardRecordCharacter>(json);
+            CardRecordCharacter? record = JsonSerializer.Deserialize<CardRecordCharacter>(json, JsonOptionCharacter);
             if (record != null)
             {
                 return new CardCharacter(record);
@@ -70,7 +80,7 @@ namespace TCGBase
         }
         public AbstractCardEffect CreateEffectCard(string json)
         {
-            CardRecordEffect? record = JsonSerializer.Deserialize<CardRecordEffect>(json);
+            CardRecordEffect? record = JsonSerializer.Deserialize<CardRecordEffect>(json, JsonOptionEffect);
             if (record != null)
             {
                 return record.GetCard();

@@ -19,6 +19,13 @@
             {
                 inner += item.GetHandler(this);
             }
+            inner += (me, p, s, v) =>
+            {
+                if (p is Character c)
+                {
+                    c.MP += skill.MP;
+                }
+            };
             Action = TriggerablePreset.GetSkillHandler(inner);
         }
         public SkillCategory SkillCategory { get; }

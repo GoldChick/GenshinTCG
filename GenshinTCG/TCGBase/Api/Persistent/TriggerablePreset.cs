@@ -12,17 +12,7 @@
         /// <param name="variable">可以被改写的东西,如[消耗的骰子们],[伤害] <b>(不应改变类型)</b></param>
         public void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable);
     }
-    internal class Triggerable : ITriggerable
-    {
-        public string Tag { get; }
-        public EventPersistentHandler? Handler { get; protected set; }
-        public Triggerable(string tag, EventPersistentHandler? h = null)
-        {
-            Tag = tag;
-            Handler = h;
-        }
-        public void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable) => Handler?.Invoke(me, persitent, sender, variable);
-    }
+
 
     //public static class TriggerablePreset
     //{
