@@ -21,8 +21,8 @@ namespace TCGBase
 
             AbstractRegister reg = util.GetRegister();
 
-            reg.RegisterCharacter(Registry.Instance.CharacterCards);
             reg.RegisterActionCard(Registry.Instance.ActionCards);
+            reg.RegisterEffectCard(Registry.Instance.EffectCards);
             reg.RegisterTriggerable(Registry.Instance.CustomTriggerable);
         }
 

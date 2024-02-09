@@ -16,7 +16,7 @@
         /// <summary>
         /// //是否可以加入卡组里
         /// </summary>
-        public virtual bool CanBeArmed(List<AbstractCardCharacter> chars) => true;
+        public virtual bool CanBeArmed(List<CardCharacter> chars) => true;
         /// <summary>
         /// 用于custom，会自动生成在SenderTagInner.UseCard下<br/>
         /// 如果想加一些其他的触发，可以自行维护TriggerableList

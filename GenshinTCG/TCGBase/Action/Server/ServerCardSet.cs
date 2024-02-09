@@ -7,7 +7,7 @@
     public class ServerPlayerCardSet
     {
         public bool Valid { get; init; }
-        internal List<AbstractCardCharacter> CharacterCards { get; init; }
+        internal List<CardCharacter> CharacterCards { get; init; }
         internal List<AbstractCardAction> ActionCards { get; init; }
         public ServerPlayerCardSet(PlayerNetCardSet input)
         {

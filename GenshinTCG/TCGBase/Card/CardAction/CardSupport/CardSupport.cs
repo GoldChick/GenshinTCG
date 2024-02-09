@@ -2,11 +2,9 @@
 {
     internal sealed class CardSupport : AbstractCardSupport
     {
-        public override string Namespace { get; }
         public override CostInit Cost { get; }
-        public CardSupport(CardRecordSupport record, string @namespace) : base(record)
+        public CardSupport(CardRecordSupport record) : base(record)
         {
-            Namespace = @namespace;
             CostCreate create = new();
             foreach (var c in record.Cost)
             {

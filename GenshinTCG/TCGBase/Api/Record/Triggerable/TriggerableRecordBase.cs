@@ -44,6 +44,6 @@ namespace TCGBase
         {
             Type = type;
         }
-        public virtual ITriggerable GetTriggerable() => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record  class没有实现GetTriggerable()!");
+        public virtual AbstractCustomTriggerable GetTriggerable() => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record  class没有实现GetTriggerable()!");
     }
 }

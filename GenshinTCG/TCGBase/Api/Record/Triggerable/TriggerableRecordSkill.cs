@@ -18,6 +18,6 @@ namespace TCGBase
             Cost = cost;
             Action = action;
         }
-        public override ITriggerable GetTriggerable() => new TriggerableSkill(this);
+        public override AbstractCustomTriggerable GetTriggerable() => new TriggerableSkill(this);
     }
 }

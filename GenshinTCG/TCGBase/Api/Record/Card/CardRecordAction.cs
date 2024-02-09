@@ -9,6 +9,6 @@
             MaxNumPermitted = maxNumPermitted;
             Cost = cost ?? new();
         }
-        public virtual AbstractCardAction GetCard(string @namespace) => new CardAction(this);
+        public virtual AbstractCardAction GetCard() => new CardAction(this);
     }
 }

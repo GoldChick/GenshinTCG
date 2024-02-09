@@ -37,10 +37,10 @@
         Event,
         Effect
     }
-    public abstract class AbstractCardBase : INameable, ICard
+    public abstract class AbstractCardBase : INameable, ICard, INameSetable
     {
-        public virtual string Namespace => (GetType().Namespace ?? "minecraft").ToLower();
-        public virtual string NameID { get; }
+        public virtual string Namespace { get; protected set; }
+        public virtual string NameID { get; protected set; }
         public virtual int InitialUseTimes => 1;
         public bool Hidden { get; }
         public CardType CardType { get; }
@@ -53,6 +53,7 @@
         /// </summary>
         protected AbstractCardBase(string nameID)
         {
+            Namespace = (GetType().Namespace ?? "minecraft").ToLower();
             NameID = nameID;
             Tags = new();
             TriggerableList = new();
@@ -74,6 +75,11 @@
                     TriggerableList.Add(value);
                 }
             }
+        }
+        void INameSetable.SetName(string @namespace, string nameid)
+        {
+            Namespace = @namespace;
+            NameID = nameid;
         }
     }
 }

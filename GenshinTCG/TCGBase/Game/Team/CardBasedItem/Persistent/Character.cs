@@ -2,7 +2,7 @@
 {
     public class Character : Persistent
     {
-        public AbstractCardCharacter CharacterCard { get; }
+        public CardCharacter CharacterCard { get; }
         private int _hp;
         private int _mp;
         private int _element;
@@ -52,7 +52,7 @@
         /// 使用技能后对应技能的值+1，每回合行动阶段开始时清零，记录一个回合内使用技能的次数
         /// </summary>
         public List<int> SkillCounter { get; }
-        internal Character(AbstractCardCharacter character, int index, PlayerTeam t) : base(character)
+        internal Character(CardCharacter character, int index, PlayerTeam t) : base(character)
         {
             CharacterCard = character;
             //多一点怎么了

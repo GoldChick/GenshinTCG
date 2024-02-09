@@ -6,7 +6,7 @@
         public static Registry Instance => _instance;
         public RegistryFromDll RFDll { get; }
         public RegistryFromJson RFJson { get; }
-        internal RegistryCardCollection<AbstractCardCharacter> CharacterCards { get; }
+        internal RegistryCardCollection<CardCharacter> CharacterCards { get; }
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; }
         internal RegistryCardCollection<AbstractCardEffect> EffectCards { get; }
         internal RegistryCardCollection<AbstractCustomTriggerable> CustomTriggerable { get; }
@@ -21,8 +21,9 @@
             RFDll = new();
             RFJson = new();
         }
-        public List<AbstractCardCharacter> GetCharacterCards() => CharacterCards.Select(kvp => kvp.Value).ToList();
+        public List<CardCharacter> GetCharacterCards() => CharacterCards.Select(kvp => kvp.Value).ToList();
         public List<AbstractCardAction> GetActionCards() => ActionCards.Select(kvp => kvp.Value).ToList();
         public List<AbstractCardEffect> GetEffectCards() => EffectCards.Select(kvp => kvp.Value).ToList();
+        public List<AbstractCustomTriggerable> GetTriggerables() => CustomTriggerable.Select(kvp => kvp.Value).ToList();
     }
 }

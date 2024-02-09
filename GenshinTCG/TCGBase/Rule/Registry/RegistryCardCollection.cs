@@ -5,7 +5,7 @@ namespace TCGBase
 {
     public interface IRegistryConsumer<T> where T : INameable
     {
-        public void Accept(T t, string? nameSpace = null);
+        public void Accept(T t);
         public void AcceptMulti(params T[] ts) => Array.ForEach(ts, t => Accept(t));
     }
     public class RegistryCardCollection<T> : IRegistryConsumer<T>, IEnumerable<KeyValuePair<string, T>> where T : INameable
@@ -18,11 +18,11 @@ namespace TCGBase
         }
         public T this[string nameID] { get => _values[nameID]; set => _values[nameID] = value; }
 
-        public void Accept(T t, string? nameSpace = null)
+        public void Accept(T t)
         {
-            if (!_values.TryAdd($"{nameSpace ?? t.Namespace}:{t.NameID}", t))
+            if (!_values.TryAdd($"{ t.Namespace}:{t.NameID}", t))
             {
-                throw new Exception($"Registry:Mod {nameSpace ?? t.Namespace}注册名为{t.NameID}的{typeof(T)}时出现了问题:nameID被占用!");
+                throw new Exception($"Registry:Mod {t.Namespace}注册名为{t.NameID}的{typeof(T)}时出现了问题:nameID被占用!");
             }
         }
         public bool ContainsKey(string nameID) => _values.ContainsKey(nameID);

@@ -2,11 +2,9 @@
 {
     internal sealed class CardEquipment : AbstractCardEquipment
     {
-        public override string Namespace { get; }
         public override CostInit Cost { get; }
-        public CardEquipment(CardRecordEquipment record, string @namespace) : base(record)
+        public CardEquipment(CardRecordEquipment record) : base(record)
         {
-            Namespace = @namespace;
             CostCreate create = new();
             foreach (var c in record.Cost)
             {

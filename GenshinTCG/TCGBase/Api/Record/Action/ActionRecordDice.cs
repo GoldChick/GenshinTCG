@@ -16,7 +16,10 @@
                 var team = Team == DamageTargetTeam.Enemy ? me.Enemy : me;
                 if (Gain)
                 {
-                    team.GainDice();
+                    foreach (var record in Dice)
+                    {
+                        team.GainDice(record.Type, record.Count);
+                    }
                 }
                 else
                 {

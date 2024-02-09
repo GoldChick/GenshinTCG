@@ -4,13 +4,10 @@
     {
         public DamageRecord Damage { get; }
         public List<ActionRecordBase> With { get; }
-        /// <summary>
-        /// 对于这个record，CharacterIndexType和DamageTargetTeam无意义
-        /// </summary>
-        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase> with) : base(TriggerType.DoDamage)
+        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase>? with = null) : base(TriggerType.Damage)
         {
             Damage = damage;
-            With = with;
+            With = with ?? new();
         }
         public override EventPersistentHandler? GetHandler(ITriggerable triggerable)
         {

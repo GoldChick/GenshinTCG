@@ -8,12 +8,10 @@ namespace Sample
         {
             throw new NotImplementedException();
         }
-
-        public override void RegisterCharacter(IRegistryConsumer<AbstractCardCharacter> consumer)
+        public override void RegisterEffectCard(IRegistryConsumer<AbstractCardEffect> consumer)
         {
             throw new NotImplementedException();
         }
-
         public override void RegisterTriggerable(IRegistryConsumer<AbstractCustomTriggerable> consumer)
         {
             throw new NotImplementedException();

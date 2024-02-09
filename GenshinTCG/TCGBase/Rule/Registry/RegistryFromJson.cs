@@ -16,16 +16,17 @@ namespace TCGBase
             };
             JsonOptionTriggerable = new()
             {
-                Converters = { new JsonConverterTriggerable() }
+                Converters = { new JsonConverterTriggerable(), new JsonConverterAction() }
             };
         }
         public void LoadFolders(string path, string modid)
         {
-            LoadITriggerable(path, modid, "character", (json) => Registry.Instance.CharacterCards.Accept(CreateCharacterCard(json, modid)));
-            LoadITriggerable(path, modid, "actioncard", (json) => Registry.Instance.ActionCards.Accept(CreateActionCard(json, modid)));
-            LoadITriggerable(path, modid, "effect", (json) => Registry.Instance.EffectCards.Accept(CreateEffectCard(json, modid)));
+            LoadITriggerable(path, modid, "triggerable", Registry.Instance.CustomTriggerable.Accept, CreateTriggerable);
+            LoadITriggerable(path, modid, "character", Registry.Instance.CharacterCards.Accept, CreateCharacterCard);
+            LoadITriggerable(path, modid, "actioncard", Registry.Instance.ActionCards.Accept, CreateActionCard);
+            LoadITriggerable(path, modid, "effect", Registry.Instance.EffectCards.Accept, CreateEffectCard);
         }
-        private void LoadITriggerable(string path, string modid, string suffix, Action<string> registry)
+        private void LoadITriggerable<T>(string path, string modid, string suffix, Action<T> registry, Func<string, T> create)
         {
             path = $"{path}/{modid}/{suffix}";
             if (!Directory.Exists(path))
@@ -36,76 +37,52 @@ namespace TCGBase
             var s = info.GetFiles();
             if (s.Length != 0)
             {
-                foreach (var jsonF in s)
+                foreach (var jsonFile in s)
                 {
-                    using StreamReader reader = jsonF.OpenText();
+                    using StreamReader reader = jsonFile.OpenText();
                     var json = reader.ReadToEnd();
-                    registry(json);
+                    T t = create(json);
+                    if (t is INameSetable namesetable)
+                    {
+                        namesetable.SetName(modid, jsonFile.Name.Split('.')[0]);
+                    }
+                    registry(t);
                 }
             }
         }
-        public AbstractCardCharacter CreateCharacterCard(string json, string modid)
+        public CardCharacter CreateCharacterCard(string json)
         {
-            try
+            CardRecordCharacter? record = JsonSerializer.Deserialize<CardRecordCharacter>(json);
+            if (record != null)
             {
-                CardRecordCharacter? record = JsonSerializer.Deserialize<CardRecordCharacter>(json);
-                if (record != null)
-                {
-                    return new CardCharacter(record, modid);
-                }
+                return new CardCharacter(record);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            throw new Exception("sb?");
+            throw new Exception("sb?CardCharacter");
         }
-        public AbstractCardAction CreateActionCard(string json, string modid)
+        public AbstractCardAction CreateActionCard(string json)
         {
-            try
+            CardRecordAction? record = JsonSerializer.Deserialize<CardRecordAction>(json, JsonOptionActionCard);
+            if (record != null)
             {
-                CardRecordAction? record = JsonSerializer.Deserialize<CardRecordAction>(json, JsonOptionActionCard);
-                if (record != null)
-                {
-                    return record.GetCard(modid);
-                }
+                return record.GetCard();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            throw new Exception("sb?");
+            throw new Exception("sb?AbstractCardAction");
         }
-        public AbstractCardEffect CreateEffectCard(string json, string modid)
+        public AbstractCardEffect CreateEffectCard(string json)
         {
-            try
+            CardRecordEffect? record = JsonSerializer.Deserialize<CardRecordEffect>(json);
+            if (record != null)
             {
-                CardRecordEffect? record = JsonSerializer.Deserialize<CardRecordEffect>(json);
-                if (record != null)
-                {
-                    return record.GetCard(modid);
-                }
+                return record.GetCard();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            throw new Exception("sb?");
+            throw new Exception("sb?AbstractCardEffect");
         }
-
-        public ITriggerable CreateTriggerable(string json)
+        public AbstractCustomTriggerable CreateTriggerable(string json)
         {
-            try
+            TriggerableRecordBase? rb = JsonSerializer.Deserialize<TriggerableRecordBase>(json, JsonOptionTriggerable);
+            if (rb != null)
             {
-                TriggerableRecordBase? rb = JsonSerializer.Deserialize<TriggerableRecordBase>(json, JsonOptionTriggerable);
-                if (rb != null)
-                {
-                    return rb.GetTriggerable();
-                }
-            }
-            catch (Exception)
-            {
-                throw;
+                return rb.GetTriggerable();
             }
             throw new Exception("RegistryFromJson:Out Of TriggerableType!");
         }

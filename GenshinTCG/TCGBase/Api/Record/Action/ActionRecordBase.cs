@@ -8,15 +8,12 @@ namespace TCGBase
     public enum TriggerType
     {
         MP,
-        DoDamage,
+        Damage,
+        DamageAorB,
         Effect,
         Heal,
         Dice,
-        /// <summary>
-        /// 参数: dmgA condition dmgB<br/>
-        /// eg:  "dodamageaorb,pyro-3,count=3,pyro-5" 迪卢克e
-        /// </summary>
-        DoDamageAorB,
+        AfterUseSkill
     }
     public record class ActionRecordBase
     {

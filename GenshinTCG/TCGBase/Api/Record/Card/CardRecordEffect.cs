@@ -9,6 +9,6 @@
             MaxUseTimes = int.Max(maxUseTimes, 0);
             InitialUseTimes = initialUseTimes > 0 ? initialUseTimes : MaxUseTimes;
         }
-        public AbstractCardEffect GetCard(string @namespace) => new CardEffect(this,@namespace);
+        public AbstractCardEffect GetCard() => new CardEffect(this);
     }
 }

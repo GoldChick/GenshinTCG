@@ -1,20 +1,27 @@
-﻿namespace TCGBase
+﻿using System.Text.Json;
+
+namespace TCGBase
 {
-    internal class TriggerableCard : ITriggerable
+    internal class TriggerableCard : AbstractCustomTriggerable
     {
-        public TriggerableCard(TriggerableRecordCard card)
+        public EventPersistentHandler? Handler;
+        public TriggerableCard(TriggerableRecordCard card) : base()
         {
-            EventPersistentHandler? inner = null;
+            NameID = "usecard";//just for warning
+            Handler = null;
             foreach (var item in card.Action)
             {
-                inner += item.GetHandler(this);
+                Handler += item.GetHandler(this);
             }
-            Action = inner;
+            Console.WriteLine($"{JsonSerializer.Serialize(card.Action)}");
         }
-        public string Tag => SenderTagInner.UseCard.ToString();
-        public EventPersistentHandler? Action { get; internal set; }
-        public void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable) => throw new Exception("Triggerable Card test");
-        //Action?.Invoke(me, persitent, sender, variable)
+        public override string NameID { get; protected set; }
 
+        public override string Tag => SenderTagInner.UseCard.ToString();
+
+        public override void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable)
+        {
+            Handler?.Invoke(me, persitent, sender, variable);
+        }
     }
 }

@@ -178,8 +178,8 @@ namespace TCGBase
                     Game.InstantTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
                     break;
                 case OperationType.UseSKill:
-                    AbstractCardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
-                    if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is AbstractTriggerableSkill skill)
+                    CardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
+                    if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is ITriggerable skill)
                     {
                         c = skill is ICostable cost ? new(cost.Cost) : new();
                         Game.InstantTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);

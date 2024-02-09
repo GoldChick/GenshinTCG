@@ -1,14 +1,10 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractCustomTriggerable : ITriggerable, INameable
+    public abstract class AbstractCustomSkillTriggerable : AbstractCustomTriggerable, ICostable, ISkillable
     {
-        public string Namespace => (GetType().Namespace ?? "minecraft").ToLower();
-        public abstract string NameID { get; }
-        public abstract string Tag { get; }
-        public abstract void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable);
-    }
-    public abstract class AbstractCustomSkillTriggerable : AbstractTriggerableSkill
-    {
+        public sealed override string Tag => SenderTagInner.UseSkill.ToString();
+        public abstract SkillCategory SkillCategory { get; }
+        public abstract CostInit Cost { get; }
         /// <summary>
         /// 这里的persistent其实是character，需要的话可以自行取用
         /// </summary>

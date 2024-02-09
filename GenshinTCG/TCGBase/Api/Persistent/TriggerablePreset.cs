@@ -14,14 +14,14 @@
     }
     internal class Triggerable : ITriggerable
     {
-        public EventPersistentHandler Handler;
         public string Tag { get; }
-        public Triggerable(string tag, EventPersistentHandler h)
+        public EventPersistentHandler? Handler { get; protected set; }
+        public Triggerable(string tag, EventPersistentHandler? h = null)
         {
             Tag = tag;
             Handler = h;
         }
-        public void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable) => Handler.Invoke(me, persitent, sender, variable);
+        public void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable) => Handler?.Invoke(me, persitent, sender, variable);
     }
 
     //public static class TriggerablePreset

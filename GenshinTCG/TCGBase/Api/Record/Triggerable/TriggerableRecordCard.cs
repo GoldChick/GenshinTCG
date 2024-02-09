@@ -13,6 +13,6 @@ namespace TCGBase
         {
             Action = action;
         }
-        public override ITriggerable GetTriggerable() => new TriggerableCard(this);
+        public override AbstractCustomTriggerable GetTriggerable() => new TriggerableCard(this);
     }
 }
