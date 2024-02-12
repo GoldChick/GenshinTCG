@@ -28,6 +28,6 @@ namespace TCGBase
         public int Element;
         public int Damage;
         public ReactionTags Reaction;
-        public AbstractCustomTriggerable Source;
+        public AbstractTriggerable Source;
     }
 }

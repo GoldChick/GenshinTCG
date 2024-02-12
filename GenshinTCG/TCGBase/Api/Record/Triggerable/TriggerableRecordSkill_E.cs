@@ -16,7 +16,7 @@ namespace TCGBase
             Element = element;
             DoElementDamage = doelementdamage;
         }
-        public override AbstractCustomTriggerable GetTriggerable()
+        public override AbstractTriggerable GetTriggerable()
         {
             return new TriggerableSkill(new TriggerableRecordSkill(
                 SkillCategory.E,

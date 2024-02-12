@@ -28,7 +28,7 @@ namespace TCGBase
         {
             Type = type;
         }
-        public virtual AbstractCustomTriggerable GetTriggerable() => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record class没有实现GetTriggerable()!Type: {Type}.");
+        public virtual AbstractTriggerable GetTriggerable() => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record class没有实现GetTriggerable()!Type: {Type}.");
     }
     public record TriggerableRecordWithAction : TriggerableRecordBase
     {
@@ -38,7 +38,7 @@ namespace TCGBase
         {
             Action = action;
         }
-        public override AbstractCustomTriggerable GetTriggerable()
+        public override AbstractTriggerable GetTriggerable()
         {
             return Type switch
             {

@@ -2,7 +2,7 @@
 
 namespace TCGBase
 {
-    internal class TriggerableCard : AbstractCustomTriggerable
+    internal class TriggerableCard : AbstractTriggerable
     {
         public EventPersistentHandler? Handler;
         public TriggerableCard(TriggerableRecordWithAction card) : base()

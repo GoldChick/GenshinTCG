@@ -10,6 +10,6 @@
         public TriggerableRecordCard(List<ActionRecordBase> action) : base(TriggerableType.Card, action)
         {
         }
-        public override AbstractCustomTriggerable GetTriggerable() => new TriggerableCard(this);
+        public override AbstractTriggerable GetTriggerable() => new TriggerableCard(this);
     }
 }

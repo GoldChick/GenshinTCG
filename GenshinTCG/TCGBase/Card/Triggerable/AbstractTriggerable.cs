@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractCustomTriggerable : INameable, INameSetable
+    public abstract class AbstractTriggerable : INameable, INameSetable
     {
         public string Namespace { get; protected set; }
         /// <summary>
@@ -16,7 +16,7 @@
         /// <param name="sender">信息的发送者,如打出的[牌],使用的[技能]</param>
         /// <param name="variable">可以被改写的东西,如[消耗的骰子们],[伤害] <b>(不应改变类型)</b></param>
         public abstract void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable);
-        protected AbstractCustomTriggerable()
+        protected AbstractTriggerable()
         {
             Namespace = (GetType().Namespace ?? "minecraft").ToLower();
         }

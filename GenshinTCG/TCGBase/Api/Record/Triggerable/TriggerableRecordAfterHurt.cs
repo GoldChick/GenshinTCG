@@ -5,7 +5,7 @@
         public TriggerableRecordAfterHurt(List<ActionRecordBase> action) : base(TriggerableType.AfterHurt, action)
         {
         }
-        public override AbstractCustomTriggerable GetTriggerable()
+        public override AbstractTriggerable GetTriggerable()
         {
             var t = new Triggerable(SenderTag.AfterHurt.ToString());
             t.Action = (me, p, s, v) =>

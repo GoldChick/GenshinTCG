@@ -11,7 +11,7 @@ namespace TCGBase
             Damage = damage;
             With = with ?? new();
         }
-        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
+        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
         {
             EventPersistentHandler? subhandler = null;
             foreach (ActionRecordBase action in With)
@@ -20,7 +20,7 @@ namespace TCGBase
             }
             return (me, p, s, v) =>
             {
-                me.DoDamage(new(Damage), triggerable, () =>
+                me.DoDamage(new(Damage), p, triggerable, () =>
                 {
                     subhandler?.Invoke(me, p, s, v);
                 });

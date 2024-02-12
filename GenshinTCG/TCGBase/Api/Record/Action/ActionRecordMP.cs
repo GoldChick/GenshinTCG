@@ -7,7 +7,7 @@
         {
             Amount = amount;
         }
-        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
+        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {

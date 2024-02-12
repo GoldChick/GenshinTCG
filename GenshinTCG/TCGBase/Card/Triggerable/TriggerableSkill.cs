@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    internal sealed class TriggerableSkill : AbstractCustomTriggerable, ICostable, ISkillable
+    internal sealed class TriggerableSkill : AbstractTriggerable, ICostable, ISkillable
     {
         public TriggerableSkill(TriggerableRecordSkill skill)
         {

@@ -84,7 +84,7 @@ namespace TCGBase
             }
             throw new Exception("sb?AbstractCardEffect");
         }
-        public AbstractCustomTriggerable CreateTriggerable(string json)
+        public AbstractTriggerable CreateTriggerable(string json)
         {
             TriggerableRecordBase? rb = JsonSerializer.Deserialize<TriggerableRecordBase>(json, JsonOptionTriggerable);
             if (rb != null)

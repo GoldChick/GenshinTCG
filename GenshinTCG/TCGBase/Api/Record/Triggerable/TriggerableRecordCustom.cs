@@ -10,6 +10,6 @@
         {
             Name = name;
         }
-        public override AbstractCustomTriggerable GetTriggerable() => Registry.Instance.CustomTriggerable[Name];
+        public override AbstractTriggerable GetTriggerable() => Registry.Instance.CustomTriggerable[Name];
     }
 }

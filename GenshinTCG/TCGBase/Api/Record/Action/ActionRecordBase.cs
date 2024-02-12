@@ -31,7 +31,7 @@ namespace TCGBase
             Type = type;
             When = when ?? new();
         }
-        public virtual EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable) => throw new NotImplementedException($"No Action In Type: {Type}");
+        public virtual EventPersistentHandler? GetHandler(AbstractTriggerable triggerable) => throw new NotImplementedException($"No Action In Type: {Type}");
     }
     public record class ActionRecordBaseWithTeam : ActionRecordBase
     {
@@ -49,7 +49,7 @@ namespace TCGBase
         {
             Target = target ?? new();
         }
-        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
+        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
         {
             return Type switch
             {

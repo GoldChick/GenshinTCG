@@ -17,7 +17,7 @@
             NeedEnable = needEnable;
             SkillType = skilltype;
         }
-        public override AbstractCustomTriggerable GetTriggerable()
+        public override AbstractTriggerable GetTriggerable()
         {
             var t = new Triggerable(SenderTag.AfterUseSkill.ToString());
 

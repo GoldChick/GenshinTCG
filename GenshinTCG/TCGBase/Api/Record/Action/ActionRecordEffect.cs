@@ -15,7 +15,7 @@ namespace TCGBase
             Add = add ?? new();
             Remove = remove ?? new();
         }
-        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
+        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {

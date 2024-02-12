@@ -8,7 +8,7 @@
             {
                 if (p is Character c && c.Effects.All(ef => !ef.CardBase.Tags.Contains(CardTag.AntiSkill.ToString())) && s is ActionUseSkillSender ss)
                 {
-                    if (c.CardBase.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, ss.Skill) && h is AbstractCustomTriggerable skill)
+                    if (c.CardBase.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, ss.Skill) && h is AbstractTriggerable skill)
                     {
                         me.Game.EffectTrigger(new SimpleSender(me.TeamIndex, SenderTag.BeforeUseSkill));
                         handler?.Invoke(me, p, s, v);

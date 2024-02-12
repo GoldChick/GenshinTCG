@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public partial class PlayerTeam
     {
@@ -8,7 +6,7 @@ namespace TCGBase
         /// 输入的dv满足targetRelative=false<br/>
         /// 在其中进行effect的调用
         /// </summary>
-        private List<HurtSender> InnerHurtCompute(AbstractCustomTriggerable triggerable, out bool overload, DamageVariable start)
+        private List<HurtSender> InnerHurtCompute(HurtSourceSender sourceSender, out bool overload, DamageVariable start)
         {
             Queue<DamageVariable> queue = new();
             List<HurtSender> hss = new();
@@ -24,33 +22,29 @@ namespace TCGBase
                         int index = (i + CurrCharacter) % Characters.Length;
                         if (index != dv.TargetIndex && Characters[index].Alive)
                         {
-                            queue.Enqueue(new(dv.DirectSource, dv.Element, dv.Damage, index, DamageTargetArea.TargetOnly, dv.DamageTargetTeam));
+                            queue.Enqueue(new(dv.Direct, dv.Element, dv.Damage, index, DamageTargetArea.TargetOnly, dv.DamageTargetTeam));
                         }
                     }
                 }
                 else
                 {
                     //only one target
-                    //TODO:附魔应该在这里吗？？
-                    //TODO:prehurtsender的teamindex?
-                    Game.InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.ElementEnchant), dv);
-                    int initialelement = GetDamageReaction(dv);
                     if (dv.Element is not DamageElement.Pierce)
                     {
-                        if (dv.DamageTargetTeam == DamageTargetTeam.Enemy)
-                        {
-                            Game.InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.DamageIncrease, initialelement), dv);
-                            Game.InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.DamageMul, initialelement), dv);
-                        }
-                        else
-                        {
-                            InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.DamageIncrease, initialelement), dv);
-                            InstantTrigger(new PreHurtSender(1 - TeamIndex, triggerable, SenderTag.DamageMul, initialelement), dv);
-                        }
-                        InstantTrigger(new PreHurtSender(TeamIndex, triggerable, SenderTag.HurtDecrease, initialelement), dv);
+                        sourceSender.ModifierName = SenderTag.ElementEnchant;
+                        Game.InstantTrigger(sourceSender, dv);
+                        
+                        GetDamageReaction(dv);
+
+                        sourceSender.ModifierName = SenderTag.DamageIncrease;
+                        Game.InstantTrigger(sourceSender, dv);
+                        sourceSender.ModifierName = SenderTag.DamageMul;
+                        Game.InstantTrigger(sourceSender, dv);
+                        sourceSender.ModifierName = SenderTag.HurtDecrease;
+                        Game.InstantTrigger(sourceSender, dv);
                     }
-                    overload |= ReactionItemGenerate(dv.TargetIndex, dv.Reaction, triggerable, initialelement);
-                    hss.Add(new(TeamIndex, dv, dv.Reaction, dv.DirectSource, triggerable, initialelement));
+                    overload |= ReactionItemGenerate(dv.TargetIndex, dv.Reaction, sourceSender);
+                    hss.Add(new HurtSender(TeamIndex, dv, dv.Reaction, dv.Direct));
                 }
                 if (dv.SubDamage != null)
                 {
@@ -62,7 +56,7 @@ namespace TCGBase
         /// <summary>
         /// specialAction:特殊效果，触发在反应效果后，免于被击倒前；会放到queue里<br/>
         /// </summary>
-        private void InnerHurt(DamageVariable? dv, AbstractCustomTriggerable triggerable, Action? specialAction = null)
+        private void InnerHurt(DamageVariable? dv, HurtSourceSender sourceSender, Action? specialAction = null)
         {
             bool overload = false;
 
@@ -70,8 +64,7 @@ namespace TCGBase
             List<HurtSender> valid_hss = new();
             if (dv != null)
             {
-                dv.ToAbsoluteIndex(CurrCharacter, Characters.Length);
-                foreach (var hs in InnerHurtCompute(triggerable, out overload, dv))
+                foreach (var hs in InnerHurtCompute(sourceSender, out overload, dv))
                 {
                     var c = Characters[hs.TargetIndex];
                     if (c.HP > 0)
@@ -159,7 +152,11 @@ namespace TCGBase
         /// 根据DamageVariable.DamageTargetTeam,对<b>我方队伍</b>或<b>对方队伍</b>造成伤害<br/>
         /// 对我方队伍造成伤害时，不能吃到对方队伍的增伤
         /// </summary>
-        public void DoDamage(DamageVariable? dv, AbstractCustomTriggerable triggerable, Action? specialAction = null)
-            => (dv != null && dv.DamageTargetTeam == DamageTargetTeam.Enemy ? Enemy : this).InnerHurt(dv, triggerable, specialAction);
+        public void DoDamage(DamageVariable? dv, Persistent persistent, AbstractTriggerable triggerable, Action? specialAction = null)
+        {
+            dv?.ToAbsoluteIndex(this);
+            HurtSourceSender hss = new(SenderTag.ElementEnchant, TeamIndex, persistent, triggerable);
+            InnerHurt(dv, hss, specialAction);
+        }
     }
 }

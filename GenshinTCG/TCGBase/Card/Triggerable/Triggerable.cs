@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    internal sealed class Triggerable : AbstractCustomTriggerable
+    internal sealed class Triggerable : AbstractTriggerable
     {
         public Triggerable(TriggerableRecordWithAction record)
         {

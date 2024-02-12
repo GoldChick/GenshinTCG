@@ -6,7 +6,7 @@
     public class HurtSender : NoDamageHurtSender
     {
         public int Damage { get; init; }
-        internal HurtSender(int teamID, DamageVariable dv, ReactionTags reaction, DamageSource directSource, AbstractCustomTriggerable rootSource, int initialElement) : base(teamID, dv.Element, dv.TargetIndex, reaction, directSource, rootSource, initialElement)
+        internal HurtSender(int teamID, DamageVariable dv, ReactionTags reaction, DamageSource directSource) : base(teamID, dv.Element, dv.TargetIndex, reaction, directSource)
         {
             Damage = dv.Damage;
         }

@@ -89,16 +89,8 @@
         /// </summary>
         AfterPersistentOtherDesperated,
         #endregion
-        #region 处理击倒
-        /// <summary>
-        /// 击倒预处理，在此可以判定出一些“免于被击倒”之类的状态
-        /// </summary>
         PreDie,
-        /// <summary>
-        /// 击倒处理，预处理后生命值为0才触发。
-        /// </summary>
-        Die
-        #endregion
+        PreHurt
     }
 
     /// <summary>

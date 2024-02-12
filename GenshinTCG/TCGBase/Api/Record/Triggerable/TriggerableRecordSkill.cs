@@ -17,6 +17,6 @@ namespace TCGBase
             Cost = cost;
             MP = mp;
         }
-        public override AbstractCustomTriggerable GetTriggerable() => new TriggerableSkill(this);
+        public override AbstractTriggerable GetTriggerable() => new TriggerableSkill(this);
     }
 }

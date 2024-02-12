@@ -12,7 +12,7 @@ namespace Sample
         {
             throw new NotImplementedException();
         }
-        public override void RegisterTriggerable(IRegistryConsumer<AbstractCustomTriggerable> consumer)
+        public override void RegisterTriggerable(IRegistryConsumer<AbstractTriggerable> consumer)
         {
             throw new NotImplementedException();
         }

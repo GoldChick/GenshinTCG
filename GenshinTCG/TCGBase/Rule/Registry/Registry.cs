@@ -9,7 +9,7 @@
         internal RegistryCardCollection<CardCharacter> CharacterCards { get; }
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; }
         internal RegistryCardCollection<AbstractCardEffect> EffectCards { get; }
-        internal RegistryCardCollection<AbstractCustomTriggerable> CustomTriggerable { get; }
+        internal RegistryCardCollection<AbstractTriggerable> CustomTriggerable { get; }
         private Registry()
         {
             ActionCards = new();
@@ -24,6 +24,6 @@
         public List<CardCharacter> GetCharacterCards() => CharacterCards.Select(kvp => kvp.Value).ToList();
         public List<AbstractCardAction> GetActionCards() => ActionCards.Select(kvp => kvp.Value).ToList();
         public List<AbstractCardEffect> GetEffectCards() => EffectCards.Select(kvp => kvp.Value).ToList();
-        public List<AbstractCustomTriggerable> GetTriggerables() => CustomTriggerable.Select(kvp => kvp.Value).ToList();
+        public List<AbstractTriggerable> GetTriggerables() => CustomTriggerable.Select(kvp => kvp.Value).ToList();
     }
 }

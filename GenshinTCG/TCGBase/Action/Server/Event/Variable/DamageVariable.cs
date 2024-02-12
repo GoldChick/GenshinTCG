@@ -61,11 +61,7 @@
                 }
             }
         }
-        /// <summary>
-        /// 此处为伤害的<b>直接、额外来源</b>，比如扩散伤害在此处视为[Addition]，但是根本来源不一定，其在一开始就被创建<br/>
-        /// 根本来源<see cref="IDamageSource"/>
-        /// </summary>
-        public DamageSource DirectSource { get; private set; }
+        public DamageSource Direct { get; private set; }
         public DamageTargetTeam DamageTargetTeam { get; private set; }
         /// <summary>
         /// 目标角色的index，绝对坐标还是相对坐标参见<see cref="TargetRelative"/>
@@ -103,7 +99,7 @@
         {
             Element = element;
             Damage = int.Max(0, basedamage);
-            DirectSource = DamageSource.Direct;
+            Direct = DamageSource.Direct;
             DamageTargetTeam = damageTargetCategory;
             TargetIndex = relativeTarget;
             TargetRelative = true;
@@ -123,7 +119,7 @@
         {
             Element = element;
             Damage = int.Max(0, basedamage);
-            DirectSource = source;
+            Direct = source;
             DamageTargetTeam = damageTargetCategory;
             TargetIndex = absoluteTarget;
             TargetRelative = false;
@@ -131,17 +127,24 @@
             SubDamage = null;
         }
         /// <summary>
-        /// 如果是相对坐标，就改成绝对坐标
+        /// 如果是相对坐标，就改成绝对坐标<br/>
+        /// me为产生这个伤害的队伍
         /// </summary>
-        /// <param name="currCharacter"></param>
-        /// <param name="characterLength"></param>
-        internal void ToAbsoluteIndex(int currCharacter, int characterLength)
+        internal void ToAbsoluteIndex(PlayerTeam me)
         {
             if (TargetRelative)
             {
-                TargetIndex = (TargetIndex + currCharacter) % characterLength;
+                var team = DamageTargetTeam == DamageTargetTeam.Enemy ? me.Enemy : me;
+                if (TargetIndex % team.Characters.Where(c => c.Alive).Count() != 0)
+                {
+                    do
+                    {
+                        TargetIndex = (TargetIndex + team.CurrCharacter) % team.Characters.Length;
+                    }
+                    while (!team.Characters[TargetIndex].Alive);
+                }
                 TargetRelative = false;
-                SubDamage?.ToAbsoluteIndex(currCharacter, characterLength);
+                SubDamage?.ToAbsoluteIndex(team);
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractCustomSkillTriggerable : AbstractCustomTriggerable, ICostable, ISkillable
+    public abstract class AbstractCustomSkillTriggerable : AbstractTriggerable, ICostable, ISkillable
     {
         public sealed override string Tag => SenderTagInner.UseSkill.ToString();
         public abstract SkillCategory SkillCategory { get; }

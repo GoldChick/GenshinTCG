@@ -7,20 +7,16 @@
     {
         public override string SenderName => SenderTag.AfterHurt.ToString();
         public DamageElement Element { get; }
-        public int InitialElement { get; }
         public int TargetIndex { get; }
         public ReactionTags Reaction { get; }
         public DamageSource DirectSource { get; }
-        public AbstractCustomTriggerable RootSource { get; }
 
-        internal NoDamageHurtSender(int teamID, DamageElement element, int targetIndex, ReactionTags reaction, DamageSource directSource, AbstractCustomTriggerable rootSource, int initialElement) : base(teamID)
+        internal NoDamageHurtSender(int teamID, DamageElement element, int targetIndex, ReactionTags reaction, DamageSource directSource) : base(teamID)
         {
             Element = element;
             TargetIndex = targetIndex;
             Reaction = reaction;
             DirectSource = directSource;
-            RootSource = rootSource;
-            InitialElement = initialElement;
         }
     }
 }

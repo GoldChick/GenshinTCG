@@ -50,7 +50,7 @@ namespace TCGBase
         {
             return Type switch
             {
-                ConditionType.Direct => (me, s, v) => v is DamageVariable dv && dv.DirectSource == DamageSource.Direct,
+                ConditionType.Direct => (me, s, v) => v is DamageVariable dv && dv.Direct == DamageSource.Direct,
                 //ConditionType.Summon => (me, s, v) => s is PreHurtSender phs && phs.RootSource,
                 //TODO:如何判断来源Persistent
                 ConditionType.Skill => (me, s, v) => s is PreHurtSender phs && phs.RootSource is ISkillable,

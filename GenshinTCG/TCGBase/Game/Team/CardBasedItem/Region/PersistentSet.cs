@@ -165,7 +165,7 @@ namespace TCGBase
                 }
             }
         }
-        private EventPersistentSetHandler PersistentHandelerConvert(Persistent p, AbstractCustomTriggerable value)
+        private EventPersistentSetHandler PersistentHandelerConvert(Persistent p, AbstractTriggerable value)
         {
             return Persistent.GetDelayedHandler((me, s, v) =>
             {
