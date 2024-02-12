@@ -179,7 +179,7 @@ namespace TCGBase
                     break;
                 case OperationType.UseSKill:
                     CardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
-                    if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is ITriggerable skill)
+                    if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is AbstractCustomTriggerable skill)
                     {
                         c = skill is ICostable cost ? new(cost.Cost) : new();
                         Game.InstantTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
@@ -270,7 +270,7 @@ namespace TCGBase
         //        curr.Remove(d);
         //    }
         //}
-        protected int GetTargetEnumMaxCount(SelectType select, DamageTargetTeam team)
+        protected int GetTargetEnumMaxCount(TargetType select, DamageTargetTeam team)
             => GetTargetEnumMaxCount(((int)select * 2 + (int)team));
         protected int GetTargetEnumMaxCount(TargetEnum e)
             => GetTargetEnumMaxCount((int)e);

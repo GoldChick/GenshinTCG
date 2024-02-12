@@ -4,7 +4,7 @@
     {
         public override List<TargetDemand> TargetDemands { get; }
         public override CostInit Cost { get; }
-        public CardEvent(CardRecordEvent record) : base(record)
+        public CardEvent(CardRecordAction record) : base(record)
         {
             record.Select.ForEach(s =>
             {

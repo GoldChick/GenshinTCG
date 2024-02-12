@@ -4,12 +4,12 @@
     {
         public List<CostRecord> Dice { get; }
         public bool Gain { get; }
-        public ActionRecordDice(List<CostRecord> dice, bool gain = true, DamageTargetTeam team = DamageTargetTeam.Me) : base(TriggerType.Dice, team)
+        public ActionRecordDice(List<CostRecord> dice, bool gain = true, DamageTargetTeam team = DamageTargetTeam.Me, List<TargetRecord>? when = null) : base(TriggerType.Dice, team, when)
         {
             Dice = dice;
             Gain = gain;
         }
-        public override EventPersistentHandler? GetHandler(ITriggerable triggerable)
+        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {

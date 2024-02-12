@@ -1,7 +1,7 @@
-﻿using System.Text.Json.Serialization;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
+    //TODO: 有目标的情况
+
     /// <summary>
     /// 卡牌打出时的效果
     /// </summary>

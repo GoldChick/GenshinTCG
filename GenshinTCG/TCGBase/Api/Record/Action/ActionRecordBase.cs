@@ -14,34 +14,56 @@ namespace TCGBase
         Heal,
         Dice,
         Counter,
-        Switch
+        Switch,
+        Skill,
+        SetData
     }
     public record class ActionRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public TriggerType ActionType { get; }
-
-        public ActionRecordBase(TriggerType actionType)
+        public TriggerType Type { get; }
+        /// <summary>
+        /// 所有record都要找到符合要求的target
+        /// </summary>
+        public List<TargetRecord> When { get; }
+        public ActionRecordBase(TriggerType type, List<TargetRecord>? when)
         {
-            ActionType = actionType;
+            Type = type;
+            When = when ?? new();
         }
-        public virtual EventPersistentHandler? GetHandler(ITriggerable triggerable) => null;
+        public virtual EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable) => throw new NotImplementedException($"No Action In Type: {Type}");
     }
     public record class ActionRecordBaseWithTeam : ActionRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DamageTargetTeam Team { get; }
-        public ActionRecordBaseWithTeam(TriggerType actionType, DamageTargetTeam team) : base(actionType)
+        public ActionRecordBaseWithTeam(TriggerType actionType, DamageTargetTeam team, List<TargetRecord>? when) : base(actionType, when)
         {
             Team = team;
         }
     }
-    public record class ActionRecordBaseWithTarget : ActionRecordBaseWithTeam
+    public record class ActionRecordBaseWithTarget : ActionRecordBase
     {
-        public CharacterTargetRecord Target { get; }
-        public ActionRecordBaseWithTarget(TriggerType actionType, DamageTargetTeam team, CharacterTargetRecord? target = null) : base(actionType, team)
+        public TargetRecord Target { get; }
+        public ActionRecordBaseWithTarget(TriggerType type, TargetRecord? target = null, List<TargetRecord>? when = null) : base(type, when)
         {
             Target = target ?? new();
+        }
+        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
+        {
+            return Type switch
+            {
+                TriggerType.Switch => (me, p, s, v) =>
+                {
+                    var ps = Target.GetTargets(me, p, s, out var team);
+                    if (ps.Any())
+                    {
+                        team.TrySwitchToIndex(ps[0].PersistentRegion);
+                    }
+                }
+                ,
+                _ => base.GetHandler(triggerable),
+            };
         }
     }
 }

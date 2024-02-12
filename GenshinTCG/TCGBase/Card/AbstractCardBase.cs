@@ -64,9 +64,9 @@
         protected private AbstractCardBase(CardRecordBase record)
         {
             Namespace = (GetType().Namespace ?? "minecraft").ToLower();
+            NameID = "todo";
             CardType = record.CardType;
             Hidden = record.Hidden;
-            NameID = record.NameID;
             Tags = record.Tags;
             TriggerableList = new();
             foreach (var item in record.SkillList)

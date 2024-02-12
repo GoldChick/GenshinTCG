@@ -8,7 +8,7 @@ namespace TCGBase
         /// 输入的dv满足targetRelative=false<br/>
         /// 在其中进行effect的调用
         /// </summary>
-        private List<HurtSender> InnerHurtCompute(ITriggerable triggerable, out bool overload, DamageVariable start)
+        private List<HurtSender> InnerHurtCompute(AbstractCustomTriggerable triggerable, out bool overload, DamageVariable start)
         {
             Queue<DamageVariable> queue = new();
             List<HurtSender> hss = new();
@@ -62,7 +62,7 @@ namespace TCGBase
         /// <summary>
         /// specialAction:特殊效果，触发在反应效果后，免于被击倒前；会放到queue里<br/>
         /// </summary>
-        private void InnerHurt(DamageVariable? dv, ITriggerable triggerable, Action? specialAction = null)
+        private void InnerHurt(DamageVariable? dv, AbstractCustomTriggerable triggerable, Action? specialAction = null)
         {
             bool overload = false;
 
@@ -159,7 +159,7 @@ namespace TCGBase
         /// 根据DamageVariable.DamageTargetTeam,对<b>我方队伍</b>或<b>对方队伍</b>造成伤害<br/>
         /// 对我方队伍造成伤害时，不能吃到对方队伍的增伤
         /// </summary>
-        public void DoDamage(DamageVariable? dv, ITriggerable triggerable, Action? specialAction = null)
+        public void DoDamage(DamageVariable? dv, AbstractCustomTriggerable triggerable, Action? specialAction = null)
             => (dv != null && dv.DamageTargetTeam == DamageTargetTeam.Enemy ? Enemy : this).InnerHurt(dv, triggerable, specialAction);
     }
 }

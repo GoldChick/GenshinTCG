@@ -5,7 +5,7 @@ namespace TCGBase
     internal class TriggerableCard : AbstractCustomTriggerable
     {
         public EventPersistentHandler? Handler;
-        public TriggerableCard(TriggerableRecordCard card) : base()
+        public TriggerableCard(TriggerableRecordWithAction card) : base()
         {
             NameID = "usecard";//set in INameSetable
             Handler = null;

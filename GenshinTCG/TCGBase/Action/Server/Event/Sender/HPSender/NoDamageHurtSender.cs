@@ -11,9 +11,9 @@
         public int TargetIndex { get; }
         public ReactionTags Reaction { get; }
         public DamageSource DirectSource { get; }
-        public ITriggerable RootSource { get; }
+        public AbstractCustomTriggerable RootSource { get; }
 
-        internal NoDamageHurtSender(int teamID, DamageElement element, int targetIndex, ReactionTags reaction, DamageSource directSource, ITriggerable rootSource, int initialElement) : base(teamID)
+        internal NoDamageHurtSender(int teamID, DamageElement element, int targetIndex, ReactionTags reaction, DamageSource directSource, AbstractCustomTriggerable rootSource, int initialElement) : base(teamID)
         {
             Element = element;
             TargetIndex = targetIndex;

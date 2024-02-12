@@ -5,11 +5,11 @@ namespace TCGBase
     {
         public HealRecord Heal { get; }
 
-        public ActionRecordHeal(HealRecord heal) : base(TriggerType.Heal)
+        public ActionRecordHeal(HealRecord heal, List<TargetRecord>? when) : base(TriggerType.Heal, when)
         {
             Heal = heal;
         }
-        public override EventPersistentHandler? GetHandler(ITriggerable triggerable)
+        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {

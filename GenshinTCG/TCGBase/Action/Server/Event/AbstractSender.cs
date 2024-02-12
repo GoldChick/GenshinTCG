@@ -5,9 +5,6 @@
     /// </summary>
     internal enum SenderTagInner
     {
-        /// <summary>
-        /// 
-        /// </summary>
         UseSkill,
         UseCard
     }

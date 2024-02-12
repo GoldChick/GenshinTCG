@@ -2,13 +2,21 @@
 {
     public record CardRecordAction : CardRecordBase
     {
+        public List<TargetRecord> Select { get; }
         public int MaxNumPermitted { get; }
         public List<CostRecord> Cost { get; }
-        public CardRecordAction(string nameID, CardType cardType, List<TriggerableRecordBase> skillList, List<string> tags, List<CostRecord>? cost = null, bool hidden = false, int maxNumPermitted = 2) : base(nameID, hidden, cardType, skillList, tags)
+        public CardRecordAction(CardType cardType, List<TriggerableRecordBase> skillList, List<string> tags, List<TargetRecord>? select = null, List<CostRecord>? cost = null, bool hidden = false, int maxNumPermitted = 2) : base(hidden, cardType, skillList, tags)
         {
             MaxNumPermitted = maxNumPermitted;
             Cost = cost ?? new();
+            Select = select ?? new();
         }
-        public virtual AbstractCardAction GetCard() => new CardAction(this);
+        public virtual AbstractCardAction GetCard() => CardType switch
+        {
+            CardType.Event => new CardEvent(this),
+            CardType.Equipment => new CardEquipment(this),
+            CardType.Support => new CardSupport(this),
+            _ => throw new NotImplementedException($"UnKnown Action CardType: {CardType}"),
+        };
     }
 }

@@ -84,7 +84,7 @@ namespace TCGBase
 
             return reactiontag;
         }
-        private bool ReactionItemGenerate(int targetindex, ReactionTags tag, ITriggerable source, int initialelement)
+        private bool ReactionItemGenerate(int targetindex, ReactionTags tag, AbstractCustomTriggerable source, int initialelement)
         {
             var egv = new ElementGenerateVariable(false, null);
             Game.EffectTrigger(new PreHurtSender(TeamIndex, source, SenderTag.ElementItemGenerate, initialelement), egv);
@@ -138,7 +138,7 @@ namespace TCGBase
             dvToPerson.Reaction = tag;
             return initialelement;
         }
-        public void AttachElement(ITriggerable source, DamageElement element, params int[] targetRelativeIndexs)
+        public void AttachElement(AbstractCustomTriggerable source, DamageElement element, params int[] targetRelativeIndexs)
         {
             var chas = targetRelativeIndexs.Distinct().Select(i => Characters[(i + CurrCharacter) % Characters.Length]);
             var tags = chas.Select(c => (GetReaction(c.Element, element, out int nextElement), nextElement));

@@ -19,9 +19,9 @@
     public record UseSkillRecord : NetEventRecord
     {
         public Character Character { get; }
-        public ITriggerable Skill { get; }
+        public AbstractCustomTriggerable Skill { get; }
 
-        public UseSkillRecord(int teamid, NetEvent netEvent, Character character, ITriggerable skill) : base(teamid, netEvent)
+        public UseSkillRecord(int teamid, NetEvent netEvent, Character character, AbstractCustomTriggerable skill) : base(teamid, netEvent)
         {
             Character = character;
             Skill = skill;

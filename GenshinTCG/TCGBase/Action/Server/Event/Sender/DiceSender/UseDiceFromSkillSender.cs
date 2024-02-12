@@ -14,8 +14,8 @@
         /// <summary>
         /// BeforeUseSkill: skill<br/>
         /// </summary>
-        public ITriggerable Skill { get; }
-        internal UseDiceFromSkillSender(int teamID, Character cha, ITriggerable skill, bool isrealaction) : base(isrealaction, teamID)
+        public AbstractCustomTriggerable Skill { get; }
+        internal UseDiceFromSkillSender(int teamID, Character cha, AbstractCustomTriggerable skill, bool isrealaction) : base(isrealaction, teamID)
         {
             Character = cha;
             Skill = skill;

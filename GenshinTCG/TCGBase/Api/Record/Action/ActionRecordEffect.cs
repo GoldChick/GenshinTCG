@@ -10,17 +10,16 @@ namespace TCGBase
         public List<string> Add { get; }
         public List<string> Remove { get; }
 
-        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, DamageTargetTeam team = DamageTargetTeam.Me, CharacterTargetRecord? target = null) : base(TriggerType.Effect, team, target)
+        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, TargetRecord? target = null, List<TargetRecord>? when = null) : base(TriggerType.Effect, target, when)
         {
             Add = add ?? new();
             Remove = remove ?? new();
         }
-        public override EventPersistentHandler? GetHandler(ITriggerable triggerable)
+        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {
-                var team = Team == DamageTargetTeam.Enemy ? me.Enemy : me;
-                var chars = Target.GetCharacters(team);
+                var chars = Target.GetTargets(me, p, s, out var team);
 
                 var removecards = Remove.Select(str => Registry.Instance.EffectCards[str]);
                 foreach (var card in removecards)
@@ -32,6 +31,14 @@ namespace TCGBase
                             break;
                         case CardType.Effect:
                             //: remove effect
+                            if (Target.Type == TargetType.Team)
+                            {
+
+                            }
+                            else
+                            {
+
+                            }
                             break;
                     }
                 }
@@ -44,7 +51,14 @@ namespace TCGBase
                             team.AddSummon(card);
                             break;
                         case CardType.Effect:
-                            chars.ForEach(c => team.AddEffect(card, c));
+                            if (Target.Type == TargetType.Team)
+                            {
+                                team.AddEffect(card);
+                            }
+                            else
+                            {
+                                chars.ForEach(c => team.AddEffect(card, c.PersistentRegion));
+                            }
                             break;
                     }
                 }

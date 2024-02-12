@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace TCGBase
 {
@@ -18,7 +16,7 @@ namespace TCGBase
             };
             JsonOptionActionCard = new()
             {
-                Converters = { new JsonConverterActionCard(), new JsonConverterSelect(), new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
+                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
             };
             JsonOptionEffect = new()
             {
@@ -31,7 +29,6 @@ namespace TCGBase
         }
         public void LoadFolders(string path, string modid)
         {
-            LoadITriggerable(path, modid, "triggerable", Registry.Instance.CustomTriggerable.Accept, CreateTriggerable);
             LoadITriggerable(path, modid, "character", Registry.Instance.CharacterCards.Accept, CreateCharacterCard);
             LoadITriggerable(path, modid, "actioncard", Registry.Instance.ActionCards.Accept, CreateActionCard);
             LoadITriggerable(path, modid, "effect", Registry.Instance.EffectCards.Accept, CreateEffectCard);

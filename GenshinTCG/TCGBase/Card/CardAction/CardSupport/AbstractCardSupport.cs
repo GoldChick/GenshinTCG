@@ -15,7 +15,7 @@
         {
             Variant = -5;
         }
-        protected private AbstractCardSupport(CardRecordSupport record) : base(record)
+        protected private AbstractCardSupport(CardRecordAction record) : base(record)
         {
 
         }

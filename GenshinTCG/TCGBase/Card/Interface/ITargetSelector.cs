@@ -1,14 +1,10 @@
-﻿using System;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     /// <summary>
     /// 供Event使用的TargetEnum，创建<see cref="TargetEnum"/>
     /// </summary>
     internal enum TargetEnumForNetEvent
     {
-        //Card_Enemy,
-        //Card_Me,
         Character_Enemy,
         Character_Me,
 
@@ -39,15 +35,15 @@ namespace TCGBase
     public class TargetDemand
     {
         public DamageTargetTeam Team { get; }
-        public SelectType Select { get; }
+        public TargetType Select { get; }
         public Func<PlayerTeam, List<Persistent>, bool> Condition { get; }
-        public TargetDemand(DamageTargetTeam team, SelectType select, Func<PlayerTeam, List<Persistent>, bool> condition)
+        public TargetDemand(DamageTargetTeam team, TargetType select, Func<PlayerTeam, List<Persistent>, bool> condition)
         {
             Team = team;
             Select = select;
             Condition = condition;
         }
-        internal TargetDemand(SelectRecordBase select)
+        internal TargetDemand(SelectRecord select)
         {
             Team = select.Team;
             Select = select.Type;
@@ -58,9 +54,9 @@ namespace TCGBase
             var t = Team == DamageTargetTeam.Enemy ? team.Enemy : team;
             return Select switch
             {
-                SelectType.Character => t.Characters.ElementAtOrDefault(index),
-                SelectType.Summon => t.Summons.ElementAtOrDefault(index),
-                SelectType.Support => t.Supports.ElementAtOrDefault(index),
+                TargetType.Character => t.Characters.ElementAtOrDefault(index),
+                TargetType.Summon => t.Summons.ElementAtOrDefault(index),
+                TargetType.Support => t.Supports.ElementAtOrDefault(index),
                 _ => throw new Exception("IsManyTargetDemandValid():不支持的SelectType!")
             };
         }
@@ -69,9 +65,9 @@ namespace TCGBase
             var t = Team == DamageTargetTeam.Enemy ? team.Enemy : team;
             var persistent = Select switch
             {
-                SelectType.Character => t.Characters.ElementAtOrDefault(index),
-                SelectType.Summon => t.Summons.ElementAtOrDefault(index),
-                SelectType.Support => t.Supports.ElementAtOrDefault(index),
+                TargetType.Character => t.Characters.ElementAtOrDefault(index),
+                TargetType.Summon => t.Summons.ElementAtOrDefault(index),
+                TargetType.Support => t.Supports.ElementAtOrDefault(index),
                 _ => throw new Exception("IsManyTargetDemandValid():不支持的SelectType!")
             };
             if (persistent != null)

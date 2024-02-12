@@ -1,17 +1,19 @@
 ﻿namespace TCGBase
 {
-    public interface ITriggerable
-    {
-        public string Tag { get; }
-        /// <summary>
-        /// 结算或预结算一次效果<br/>
-        /// 次数的减少需要自己维护
-        /// </summary>
-        /// <param name="persitent">当前触发效果的persistent对应的object,用来减少、增加次数</param>
-        /// <param name="sender">信息的发送者,如打出的[牌],使用的[技能]</param>
-        /// <param name="variable">可以被改写的东西,如[消耗的骰子们],[伤害] <b>(不应改变类型)</b></param>
-        public void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable);
-    }
+    //public interface AbstractCustomTriggerable
+    //{
+    //    public Persistent Owner { get; protected set; }
+    //    public string Tag { get; }
+    //    /// <summary>
+    //    /// 结算或预结算一次效果<br/>
+    //    /// 次数的减少需要自己维护
+    //    /// </summary>
+    //    /// <param name="persitent">当前触发效果的persistent对应的object,用来减少、增加次数</param>
+    //    /// <param name="sender">信息的发送者,如打出的[牌],使用的[技能]</param>
+    //    /// <param name="variable">可以被改写的东西,如[消耗的骰子们],[伤害] <b>(不应改变类型)</b></param>
+    //    public void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable);
+    //    public void SetOwner(Persistent owner) => Owner = owner;
+    //}
 
 
     //public static class TriggerablePreset

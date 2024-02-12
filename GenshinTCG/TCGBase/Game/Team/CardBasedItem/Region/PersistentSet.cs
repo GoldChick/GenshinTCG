@@ -77,6 +77,8 @@ namespace TCGBase
         public bool Contains(int variant) => _data.Exists(e => (e.CardBase.Variant % 10) == variant);
         public bool Contains(string nameSpace, string nameID, int variant) => _data.Exists(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID && (e.CardBase.Variant % 10) == variant);
         public bool Contains(string nameSpace, string nameID) => _data.Exists(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID);
+        public bool Contains(string name) => _data.Exists(e => $"{e.CardBase.Namespace}:{e.CardBase.NameID}" == name);
+        public bool Contains(Predicate<Persistent> condition) => _data.Exists(condition);
         public Persistent? Find(Predicate<Persistent> condition) => _data.Find(condition);
         /// <summary>
         /// 找到第一个某type的子类
@@ -163,7 +165,7 @@ namespace TCGBase
                 }
             }
         }
-        private EventPersistentSetHandler PersistentHandelerConvert(Persistent p, ITriggerable value)
+        private EventPersistentSetHandler PersistentHandelerConvert(Persistent p, AbstractCustomTriggerable value)
         {
             return Persistent.GetDelayedHandler((me, s, v) =>
             {

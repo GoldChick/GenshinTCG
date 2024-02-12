@@ -22,29 +22,40 @@
 
     public enum ReactionTags
     {
-        None,
-        Frozen,
-        Melt,
-        SuperConduct,
+        None = 0,
+
+        Frozen = 12,
+        Melt = 13,
+        SuperConduct = 14,
+        CrystallizeCryo = 15,
+        SwirlCryo = 17,
+
         /// <summary>
         /// 蒸发
         /// </summary>
-        Vaporize,
-        /// <summary>
-        /// 感电
-        /// </summary>
-        ElectroCharged,
-        Overloaded,
-        Crystallize,
-        Bloom,
-        Burning,
+        Vaporize = 23,
+        ElectroCharged = 24,
+        CrystallizeHydro = 25,
+        Bloom = 26,
+        SwirlHydro = 27,
+
+        Overloaded = 34,
+        CrystallizePyro = 35,
+        Burning = 36,
+        SwirlPyro = 37,
+
+        CrystallizeElectro = 45,
         /// <summary>
         /// 激化
         /// </summary>
-        Catalyze,
+        Catalyze = 46,
+        SwirlElectro = 47,
+
+        //↓desperated↓
+        Crystallize = 55,
         /// <summary>
         /// 扩散
         /// </summary>
-        Swirl
+        Swirl = 77
     }
 }

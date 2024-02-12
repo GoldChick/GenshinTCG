@@ -16,7 +16,7 @@
         /// </summary>
         public List<TargetDemand> TargetDemands => new()
         {
-            new(DamageTargetTeam.Me,SelectType.Character,EquipmentCanBeUsed)
+            new(DamageTargetTeam.Me,TargetType.Character,EquipmentCanBeUsed)
         };
         /// <summary>
         /// 对于装备，targets为长度1的list，唯一的值为我方目标角色的index
@@ -26,7 +26,7 @@
         protected AbstractCardEquipment()
         {
         }
-        protected private AbstractCardEquipment(CardRecordEquipment record) : base(record)
+        protected private AbstractCardEquipment(CardRecordAction record) : base(record)
         {
         }
     }

@@ -78,7 +78,7 @@
         /// </summary>
         internal bool TargetRelative { get; private set; }
         /// <summary>
-        /// 为true时，改为对target以外的所有角色造成伤害<br/>
+        /// 为TargetExcept时，改为对target以外的所有角色造成伤害<br/>
         /// </summary>
         public DamageTargetArea TargetArea { get; init; }
         /// <summary>

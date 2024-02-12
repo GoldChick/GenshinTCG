@@ -5,21 +5,6 @@ namespace TCGBase
     public partial class PlayerTeam
     {
         /// <summary>
-        /// 尝试使用出战角色技能，自动clamp，注意：不是行动
-        /// </summary>
-        public void TryUseSkill(int skill)
-        {
-            //if (CurrCharacter >= 0)
-            //{
-            //    var c = Characters[CurrCharacter];
-            //    if (c.Alive && c.Active && c.Card.Skills.Length > 0)
-            //    {
-            //        skill = int.Clamp(skill, 0, c.Card.Skills.Length);
-            //        RealGame.TryProcessEvent(new NetEvent(new NetAction(ActionType.UseSKill, skill)), TeamIndex);
-            //    }
-            //}
-        }
-        /// <summary>
         /// 强制切换到某一个[活]角色（可指定绝对坐标或相对坐标，默认绝对）<br/>
         /// </summary>
         public void TrySwitchToIndex(int index, bool relative = false)
@@ -41,7 +26,7 @@ namespace TCGBase
             {
                 curr = (index + Characters.Length) % Characters.Length;
             }
-            if (Characters[curr].Alive)
+            if (curr != CurrCharacter && Characters[curr].Alive)
             {
                 var initial = CurrCharacter;
                 CurrCharacter = curr;

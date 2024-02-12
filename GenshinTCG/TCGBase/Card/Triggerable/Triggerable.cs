@@ -12,7 +12,7 @@
             }
             Tag = record.Type.ToString();
         }
-        public Triggerable(string tag, EventPersistentHandler? action)
+        public Triggerable(string tag, EventPersistentHandler? action = null)
         {
             NameID = "default";//never set in this case
             Action = action;

@@ -8,9 +8,9 @@
     {
         public override string SenderName => SenderTag.AfterUseSkill.ToString();
         public Character Character { get; set; }
-        public ITriggerable Skill { get; set; }
+        public AbstractCustomTriggerable Skill { get; set; }
 
-        internal AfterUseSkillSender(int teamID, Character character, ITriggerable skill) : base(teamID)
+        internal AfterUseSkillSender(int teamID, Character character, AbstractCustomTriggerable skill) : base(teamID)
         {
             Character = character;
             Skill = skill;

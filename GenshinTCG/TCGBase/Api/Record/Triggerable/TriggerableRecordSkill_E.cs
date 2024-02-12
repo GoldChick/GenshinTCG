@@ -11,7 +11,7 @@ namespace TCGBase
         public ElementCategory Element { get; }
         public bool DoElementDamage { get; }
 
-        public TriggerableRecordSkill_E(ElementCategory element,bool doelementdamage=true) : base(TriggerableType.Skill_A)
+        public TriggerableRecordSkill_E(ElementCategory element, bool doelementdamage = true) : base(TriggerableType.Skill_E)
         {
             Element = element;
             DoElementDamage = doelementdamage;

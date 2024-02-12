@@ -8,12 +8,12 @@
     {
         public int Add { get; }
         public string? Name { get; }
-        public ActionRecordCounter(int add, string? name = null, DamageTargetTeam team = DamageTargetTeam.Me) : base(TriggerType.Effect, team)
+        public ActionRecordCounter(int add, string? name = null, DamageTargetTeam team = DamageTargetTeam.Me, List<TargetRecord>? when = null) : base(TriggerType.Effect, team, when)
         {
             Add = add;
             Name = name;
         }
-        public override EventPersistentHandler? GetHandler(ITriggerable triggerable)
+        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {

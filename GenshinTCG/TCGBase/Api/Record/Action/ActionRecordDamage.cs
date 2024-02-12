@@ -6,12 +6,12 @@ namespace TCGBase
     {
         public DamageRecord Damage { get; }
         public List<ActionRecordBase> With { get; }
-        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase>? with = null) : base(TriggerType.Damage)
+        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase>? with = null, List<TargetRecord>? when = null) : base(TriggerType.Damage, when)
         {
             Damage = damage;
             With = with ?? new();
         }
-        public override EventPersistentHandler? GetHandler(ITriggerable triggerable)
+        public override EventPersistentHandler? GetHandler(AbstractCustomTriggerable triggerable)
         {
             EventPersistentHandler? subhandler = null;
             foreach (ActionRecordBase action in With)

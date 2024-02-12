@@ -14,7 +14,7 @@
         protected AbstractCardEvent()
         {
         }
-        protected private AbstractCardEvent(CardRecordEvent record) : base(record)
+        protected private AbstractCardEvent(CardRecordAction record) : base(record)
         {
 
         }

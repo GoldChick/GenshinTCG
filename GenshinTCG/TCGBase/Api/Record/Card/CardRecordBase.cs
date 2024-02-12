@@ -4,12 +4,10 @@ namespace TCGBase
 {
     public record BaseGameRecord
     {
-        public string NameID { get; }
         public bool Hidden { get; }
 
-        protected BaseGameRecord(string nameID, bool hidden)
+        protected BaseGameRecord(bool hidden)
         {
-            NameID = nameID;
             Hidden = hidden;
         }
     }
@@ -21,7 +19,7 @@ namespace TCGBase
         /// </summary>
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public CardType CardType { get; }
-        public CardRecordBase(string nameID, bool hidden, CardType cardType, List<TriggerableRecordBase> skillList, List<string>? tags) : base(nameID, hidden)
+        public CardRecordBase(bool hidden, CardType cardType, List<TriggerableRecordBase> skillList, List<string>? tags) : base(hidden)
         {
             CardType = cardType;
             SkillList = skillList;

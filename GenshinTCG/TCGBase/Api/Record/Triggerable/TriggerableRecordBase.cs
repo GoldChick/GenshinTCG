@@ -38,6 +38,13 @@ namespace TCGBase
         {
             Action = action;
         }
-        public override AbstractCustomTriggerable GetTriggerable() => new Triggerable(this);
+        public override AbstractCustomTriggerable GetTriggerable()
+        {
+            return Type switch
+            {
+                TriggerableType.Card => new TriggerableCard(this),
+                _ => new Triggerable(this)
+            };
+        }
     }
 }
