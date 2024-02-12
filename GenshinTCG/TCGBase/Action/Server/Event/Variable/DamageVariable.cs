@@ -143,6 +143,10 @@
                     }
                     while (!team.Characters[TargetIndex].Alive);
                 }
+                else
+                {
+                    TargetIndex = team.CurrCharacter;
+                }
                 TargetRelative = false;
                 SubDamage?.ToAbsoluteIndex(team);
             }

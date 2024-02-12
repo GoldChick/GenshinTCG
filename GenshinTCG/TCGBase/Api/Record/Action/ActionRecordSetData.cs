@@ -6,27 +6,24 @@
         /// 如果不为null，就将persistent.data改为此Data
         /// </summary>
         public List<int>? Data { get; }
-        public ActionRecordSetData(List<int>? data = null, TargetRecord? target = null, List<TargetRecord>? when = null) : base(TriggerType.SetData, target, when)
+        public ActionRecordSetData(List<int>? data = null, TargetRecord? target = null, List<TargetRecord>? whenwith = null) : base(TriggerType.SetData, target, whenwith)
         {
             Data = data;
         }
-        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            return (me, p, s, v) =>
+            Target.GetTargets(me, p, s, v, out var _).ForEach(pe =>
             {
-                Target.GetTargets(me, p, s, out var _).ForEach(pe =>
+                if (Data != null)
                 {
-                    if (Data != null)
-                    {
-                        pe.Data = Data;
-                    }
-                    else if (pe.Data == null)
-                    {
-                        pe.Data = new();
+                    pe.Data = Data;
+                }
+                else if (pe.Data == null)
+                {
+                    pe.Data = new();
 
-                    }
-                });
-            };
+                }
+            });
         }
     }
 }

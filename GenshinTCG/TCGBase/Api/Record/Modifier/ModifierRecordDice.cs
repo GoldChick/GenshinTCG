@@ -23,7 +23,7 @@
         {
         }
 
-        public override EventPersistentHandler? Get()
+        protected override EventPersistentHandler? Get()
         {
             EventPersistentHandler handler = (me, p, s, v) =>
             {

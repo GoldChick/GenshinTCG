@@ -17,7 +17,7 @@
     public record class TargetRecord : SelectRecord
     {
         /// <summary>
-        /// 默认为0，即第一个
+        /// 默认为0，即第一个；可置为负表示全部
         /// </summary>
         public int Index { get; }
         /// <summary>
@@ -31,7 +31,7 @@
             Reverse = reverse;
         }
 
-        public List<Persistent> GetTargets(PlayerTeam me, Persistent p, AbstractSender s, out PlayerTeam team)
+        public List<Persistent> GetTargets(PlayerTeam me, Persistent p, AbstractSender? s, AbstractVariable? v, out PlayerTeam team)
         {
             var localteam = Team == DamageTargetTeam.Enemy ? me.Enemy : me;
             team = localteam;
@@ -68,12 +68,12 @@
                     }
                     break;
             }
-            targets = targets.Where(pe => With.All(condition => condition.Not ^ condition.GetPersistentPredicate().Invoke(localteam, pe))).ToList();
+            targets = targets.Where(pe => With.All(condition => condition.Valid(localteam, pe, s, v))).ToList();
             if (Reverse)
             {
                 targets.Reverse();
             }
-            if (Index >= 0 && Index <= targets.Count)
+            if (Index >= 0 && Index < targets.Count)
             {
                 return new() { targets[Index] };
             }

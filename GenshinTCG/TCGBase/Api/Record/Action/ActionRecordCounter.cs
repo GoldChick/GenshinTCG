@@ -8,32 +8,29 @@
     {
         public int Add { get; }
         public string? Name { get; }
-        public ActionRecordCounter(int add, string? name = null, DamageTargetTeam team = DamageTargetTeam.Me, List<TargetRecord>? when = null) : base(TriggerType.Effect, team, when)
+        public ActionRecordCounter(int add, string? name = null, DamageTargetTeam team = DamageTargetTeam.Me, List<TargetRecord>? whenwith = null) : base(TriggerType.Effect, team, whenwith)
         {
             Add = add;
             Name = name;
         }
-        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            return (me, p, s, v) =>
+            if (Name != null)
             {
-                if (Name != null)
+                Queue<PersistentSet<AbstractCardBase>> queue = new(me.Characters.Select(c => c.Effects));
+                queue.Enqueue(me.Effects);
+                queue.Enqueue(me.Summons);
+                queue.Enqueue(me.Supports);
+                bool flag = false;
+                while (!flag && queue.TryDequeue(out var set))
                 {
-                    Queue<PersistentSet<AbstractCardBase>> queue = new(me.Characters.Select(c => c.Effects));
-                    queue.Enqueue(me.Effects);
-                    queue.Enqueue(me.Summons);
-                    queue.Enqueue(me.Supports);
-                    bool flag = false;
-                    while (!flag && queue.TryDequeue(out var set))
-                    {
-                        flag = TryAdd(set);
-                    }
+                    flag = TryAdd(set);
                 }
-                else if (p is not Character)
-                {
-                    p.AvailableTimes += Add;
-                }
-            };
+            }
+            else if (p is not Character)
+            {
+                p.AvailableTimes += Add;
+            }
         }
         private bool TryAdd(PersistentSet<AbstractCardBase> set)
         {

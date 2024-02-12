@@ -5,17 +5,14 @@ namespace TCGBase
     {
         public HealRecord Heal { get; }
 
-        public ActionRecordHeal(HealRecord heal, List<TargetRecord>? when) : base(TriggerType.Heal, when)
+        public ActionRecordHeal(HealRecord heal, List<TargetRecord>? whenwith) : base(TriggerType.Heal, whenwith)
         {
             Heal = heal;
         }
-        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            return (me, p, s, v) =>
-            {
-                //TODO: check it
-                me.Heal(triggerable, new HealVariable(Heal.Amount, Heal.TargetIndexOffset, Heal.TargetArea == DamageTargetArea.TargetOnly));
-            };
+            //TODO: check it
+            me.Heal(triggerable, new HealVariable(Heal.Amount, Heal.TargetIndexOffset, Heal.TargetArea == DamageTargetArea.TargetOnly));
         }
     }
 }

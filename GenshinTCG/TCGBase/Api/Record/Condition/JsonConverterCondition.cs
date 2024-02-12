@@ -15,18 +15,14 @@ namespace TCGBase
                 {
                     return type switch
                     {
-                        ConditionType.Alive or ConditionType.CurrCharacter
-                        => JsonSerializer.Deserialize<ConditionRecordBase>(root.GetRawText(), options),
+                        ConditionType.HPLost or ConditionType.Counter or ConditionType.Damage
+                        => JsonSerializer.Deserialize<ConditionRecordTriInt>(root.GetRawText(), options),
 
-                        ConditionType.HurtMoreThan or ConditionType.HurtEquals or
-                        ConditionType.CounterMoreThan or ConditionType.CounterEquals or
-                        ConditionType.DamageMoreThan or ConditionType.DamageEquals
-                        => JsonSerializer.Deserialize<ConditionRecordBiInt>(root.GetRawText(), options),
-
-                        ConditionType.HasEffect or ConditionType.HasEffectWithTag or ConditionType.HasTag
+                        ConditionType.HasEffect or ConditionType.HasEffectWithTag or ConditionType.HasTag or ConditionType.Name
+                        or ConditionType.Element or ConditionType.Reaction or ConditionType.SkillType or ConditionType.Related
                         => JsonSerializer.Deserialize<ConditionRecordString>(root.GetRawText(), options),
 
-                        _ => throw new JsonException($"Unimplemented Condition 'Type' property: {type}.")
+                        _ => JsonSerializer.Deserialize<ConditionRecordBase>(root.GetRawText()),
                     };
                 }
                 throw new JsonException($"Unregistered Condition 'Type' property: {typeElement.GetString()}.");

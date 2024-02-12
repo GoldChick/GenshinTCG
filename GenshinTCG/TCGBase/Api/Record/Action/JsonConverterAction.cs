@@ -15,7 +15,8 @@ namespace TCGBase
                 {
                     return type switch
                     {
-                        TriggerType.MP => JsonSerializer.Deserialize<ActionRecordMP>(root.GetRawText(), options),
+                        TriggerType.MP or TriggerType.Skill => JsonSerializer.Deserialize<ActionRecordInt>(root.GetRawText(), options),
+
                         TriggerType.Damage => JsonSerializer.Deserialize<ActionRecordDamage>(root.GetRawText(), options),
                         TriggerType.Dice => JsonSerializer.Deserialize<ActionRecordDice>(root.GetRawText(), options),
                         TriggerType.Effect => JsonSerializer.Deserialize<ActionRecordEffect>(root.GetRawText(), options),

@@ -33,7 +33,7 @@
                     {
                         sourceSender.ModifierName = SenderTag.ElementEnchant;
                         Game.InstantTrigger(sourceSender, dv);
-                        
+
                         GetDamageReaction(dv);
 
                         sourceSender.ModifierName = SenderTag.DamageIncrease;
@@ -62,6 +62,7 @@
 
             List<Persistent> antidie_effects = new();
             List<HurtSender> valid_hss = new();
+            //TODO: 加入队伍归属问题
             if (dv != null)
             {
                 foreach (var hs in InnerHurtCompute(sourceSender, out overload, dv))

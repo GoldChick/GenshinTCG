@@ -10,59 +10,56 @@ namespace TCGBase
         public List<string> Add { get; }
         public List<string> Remove { get; }
 
-        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, TargetRecord? target = null, List<TargetRecord>? when = null) : base(TriggerType.Effect, target, when)
+        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, TargetRecord? target = null, List<TargetRecord>? whenwith = null) : base(TriggerType.Effect, target, whenwith)
         {
             Add = add ?? new();
             Remove = remove ?? new();
         }
-        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            return (me, p, s, v) =>
+            var chars = Target.GetTargets(me, p, s, v, out var team);
+
+            var removecards = Remove.Select(str => Registry.Instance.EffectCards[str]);
+            foreach (var card in removecards)
             {
-                var chars = Target.GetTargets(me, p, s, out var team);
-
-                var removecards = Remove.Select(str => Registry.Instance.EffectCards[str]);
-                foreach (var card in removecards)
+                switch (card.CardType)
                 {
-                    switch (card.CardType)
-                    {
-                        case CardType.Summon:
-                            //TODO: remove summon
-                            break;
-                        case CardType.Effect:
-                            //: remove effect
-                            if (Target.Type == TargetType.Team)
-                            {
+                    case CardType.Summon:
+                        //TODO: remove summon
+                        break;
+                    case CardType.Effect:
+                        //: remove effect
+                        if (Target.Type == TargetType.Team)
+                        {
 
-                            }
-                            else
-                            {
+                        }
+                        else
+                        {
 
-                            }
-                            break;
-                    }
+                        }
+                        break;
                 }
-                var addcards = Add.Select(str => Registry.Instance.EffectCards[str]);
-                foreach (var card in addcards)
+            }
+            var addcards = Add.Select(str => Registry.Instance.EffectCards[str]);
+            foreach (var card in addcards)
+            {
+                switch (card.CardType)
                 {
-                    switch (card.CardType)
-                    {
-                        case CardType.Summon:
-                            team.AddSummon(card);
-                            break;
-                        case CardType.Effect:
-                            if (Target.Type == TargetType.Team)
-                            {
-                                team.AddEffect(card);
-                            }
-                            else
-                            {
-                                chars.ForEach(c => team.AddEffect(card, c.PersistentRegion));
-                            }
-                            break;
-                    }
+                    case CardType.Summon:
+                        team.AddSummon(card);
+                        break;
+                    case CardType.Effect:
+                        if (Target.Type == TargetType.Team)
+                        {
+                            team.AddEffect(card);
+                        }
+                        else
+                        {
+                            chars.ForEach(c => team.AddEffect(card, c.PersistentRegion));
+                        }
+                        break;
                 }
-            };
+            }
         }
     }
 }

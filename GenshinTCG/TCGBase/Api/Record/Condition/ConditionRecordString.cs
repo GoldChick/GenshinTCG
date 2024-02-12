@@ -7,25 +7,20 @@
         {
             Value = value ?? "test";
         }
-        public override Func<PlayerTeam, AbstractSender, AbstractVariable, bool> GetPredicate()
+        protected override bool GetPredicate(PlayerTeam me, Persistent? p, AbstractSender? s, AbstractVariable? v)
         {
             return Type switch
             {
-                ConditionType.Element => (me, s, v) => v is DamageVariable dv && dv.Element.ToString() == Value,
-                ConditionType.Reaction => (me, s, v) => v is DamageVariable dv && dv.Reaction.ToString() == Value,
-                ConditionType.SkillType => (me, s, v) => s is PreHurtSender phs && phs.RootSource is ISkillable skill && skill.SkillCategory.ToString() == Value,
-                ConditionType.Related => (me, s, v) => v is DamageVariable dv && (((DamageElement)((int)dv.Reaction / 10)).ToString() == Value || ((DamageElement)((int)dv.Reaction % 10)).ToString() == Value),
-                _ => base.GetPredicate()
-            };
-        }
-        public override Func<PlayerTeam, Persistent, bool> GetPersistentPredicate()
-        {
-            return Type switch
-            {
-                ConditionType.HasEffect => (me, p) => p is Character c && c.Effects.Contains(Value),
-                ConditionType.HasEffectWithTag => (me, p) => p is Character c && c.Effects.Contains(ef => ef.CardBase.Tags.Contains(Value)),
-                ConditionType.HasTag => (me, p) => p.CardBase.Tags.Contains(Value),
-                _ => base.GetPersistentPredicate()
+                ConditionType.Element => v is DamageVariable dv && dv.Element.ToString() == Value,
+                ConditionType.Reaction => v is DamageVariable dv && dv.Reaction.ToString() == Value,
+                ConditionType.SkillType => s is HurtSourceSender hss && hss.Triggerable is ISkillable skill && skill.SkillCategory.ToString() == Value,
+                ConditionType.Related => v is DamageVariable dv && (((DamageElement)((int)dv.Reaction / 10)).ToString() == Value || ((DamageElement)((int)dv.Reaction % 10)).ToString() == Value),
+
+                ConditionType.HasEffect => p is Character c && c.Effects.Contains(Value),
+                ConditionType.HasEffectWithTag => p is Character c && c.Effects.Contains(ef => ef.CardBase.Tags.Contains(Value)),
+                ConditionType.HasTag => p != null && p.CardBase.Tags.Contains(Value),
+                ConditionType.Name => $"{p?.CardBase.Namespace}:{p?.CardBase.NameID}" == Value,
+                _ => base.GetPredicate(me, p, s, v)
             };
         }
     }

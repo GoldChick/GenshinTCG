@@ -1,30 +1,25 @@
-﻿using System.Text.Json;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
     public record class ActionRecordDamage : ActionRecordBase
     {
         public DamageRecord Damage { get; }
         public List<ActionRecordBase> With { get; }
-        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase>? with = null, List<TargetRecord>? when = null) : base(TriggerType.Damage, when)
+        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase>? with = null, List<TargetRecord>? whenwith = null) : base(TriggerType.Damage, whenwith)
         {
             Damage = damage;
             With = with ?? new();
         }
-        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
             EventPersistentHandler? subhandler = null;
             foreach (ActionRecordBase action in With)
             {
                 subhandler += action.GetHandler(triggerable);
             }
-            return (me, p, s, v) =>
+            me.DoDamage(new(Damage), p, triggerable, () =>
             {
-                me.DoDamage(new(Damage), p, triggerable, () =>
-                {
-                    subhandler?.Invoke(me, p, s, v);
-                });
-            };
+                subhandler?.Invoke(me, p, s, v);
+            });
         }
     }
 }

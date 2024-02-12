@@ -1,4 +1,5 @@
-﻿namespace TCGBase
+﻿
+namespace TCGBase
 {
     internal sealed class CardEquipment : AbstractCardEquipment
     {
@@ -11,6 +12,22 @@
                 create.Add(c.Type, c.Count);
             }
             Cost = create.ToCostInit();
+            if (record.Select.FirstOrDefault() is TargetRecord tr)
+            {
+                _predicate = (me, targets) =>
+                {
+                    if (targets.Count == 1)
+                    {
+                        return tr.With.TrueForAll(condition => condition.Valid(me, targets[0], null, null));
+                    }
+                    return false;
+                };
+            }
+        }
+        private Func<PlayerTeam, List<Persistent>, bool>? _predicate;
+        public override bool EquipmentCanBeUsed(PlayerTeam me, List<Persistent> targets)
+        {
+            return _predicate?.Invoke(me, targets) ?? true;
         }
     }
 }

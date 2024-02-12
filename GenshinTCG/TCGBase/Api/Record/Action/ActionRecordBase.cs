@@ -25,19 +25,29 @@ namespace TCGBase
         /// <summary>
         /// 所有record都要找到符合要求的target
         /// </summary>
-        public List<TargetRecord> When { get; }
-        public ActionRecordBase(TriggerType type, List<TargetRecord>? when)
+        public List<TargetRecord> WhenWith { get; }
+        public ActionRecordBase(TriggerType type, List<TargetRecord>? whenwith)
         {
             Type = type;
-            When = when ?? new();
+            WhenWith = whenwith ?? new();
         }
-        public virtual EventPersistentHandler? GetHandler(AbstractTriggerable triggerable) => throw new NotImplementedException($"No Action In Type: {Type}");
+        public EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        {
+            return (me, p, s, v) =>
+            {
+                if (WhenWith.All(t => t.GetTargets(me, p, s, v, out _).Any()))
+                {
+                    DoAction(triggerable, me, p, s, v);
+                }
+            };
+        }
+        protected virtual void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v) => throw new NotImplementedException($"No Action In Type: {Type}");
     }
     public record class ActionRecordBaseWithTeam : ActionRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DamageTargetTeam Team { get; }
-        public ActionRecordBaseWithTeam(TriggerType actionType, DamageTargetTeam team, List<TargetRecord>? when) : base(actionType, when)
+        public ActionRecordBaseWithTeam(TriggerType actionType, DamageTargetTeam team, List<TargetRecord>? whenwith) : base(actionType, whenwith)
         {
             Team = team;
         }
@@ -45,25 +55,25 @@ namespace TCGBase
     public record class ActionRecordBaseWithTarget : ActionRecordBase
     {
         public TargetRecord Target { get; }
-        public ActionRecordBaseWithTarget(TriggerType type, TargetRecord? target = null, List<TargetRecord>? when = null) : base(type, when)
+        public ActionRecordBaseWithTarget(TriggerType type, TargetRecord? target = null, List<TargetRecord>? whenwith = null) : base(type, whenwith)
         {
             Target = target ?? new();
         }
-        public override EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            return Type switch
+            switch (Type)
             {
-                TriggerType.Switch => (me, p, s, v) =>
-                {
-                    var ps = Target.GetTargets(me, p, s, out var team);
+                case TriggerType.Switch:
+                    var ps = Target.GetTargets(me, p, s, v, out var team);
                     if (ps.Any())
                     {
                         team.TrySwitchToIndex(ps[0].PersistentRegion);
                     }
-                }
-                ,
-                _ => base.GetHandler(triggerable),
-            };
+                    break;
+                default:
+                    base.DoAction(triggerable, me, p, s, v);
+                    break;
+            }
         }
     }
 }
