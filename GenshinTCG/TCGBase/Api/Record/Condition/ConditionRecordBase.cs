@@ -35,7 +35,6 @@ namespace TCGBase
 
         //分界线，上为对于Damage，下为对于Dice
     }
-    public delegate bool EventPersistentPredicate(PlayerTeam me, Persistent? p, AbstractSender? s, AbstractVariable? v);
     public record class ConditionRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -62,6 +61,12 @@ namespace TCGBase
                 ConditionType.CurrCharacter => p?.PersistentRegion == me.CurrCharacter,
                 _ => throw new NotImplementedException($"Unknown Predicate In Type: {Type}")
             };
+        }
+    }
+    public record class ConditionRecordBaseImplement : ConditionRecordBase
+    {
+        public ConditionRecordBaseImplement(ConditionType type, bool not) : base(type, not)
+        {
         }
     }
 }

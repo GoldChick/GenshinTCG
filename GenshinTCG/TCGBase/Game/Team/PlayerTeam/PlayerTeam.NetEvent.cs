@@ -171,18 +171,22 @@ namespace TCGBase
         internal CostVariable GetEventFinalDiceRequirement(NetOperation action, bool realAction = false)
         {
             CostVariable c;
+            DiceModifierSender? dms = null;
             switch (action.Type)
             {
                 case OperationType.Switch:
                     c = new CostCreate().Void(1).ToCostInit().ToCostVariable();
-                    Game.InstantTrigger(new UseDiceFromSwitchSender(TeamIndex, CurrCharacter, action.Index % Characters.Length, realAction), c, false);
+                    dms = new(TeamIndex);
                     break;
                 case OperationType.UseSKill:
                     CardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
-                    if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is AbstractTriggerable skill)
+                    if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is ISkillable skill)
                     {
                         c = skill is ICostable cost ? new(cost.Cost) : new();
-                        Game.InstantTrigger(new UseDiceFromSkillSender(TeamIndex, Characters[CurrCharacter], skill, realAction), c, false);
+                        if (h is ICostable skillcost)
+                        {
+                            dms = new(TeamIndex, Characters[CurrCharacter], skillcost);
+                        }
                     }
                     else
                     {
@@ -193,12 +197,13 @@ namespace TCGBase
                     var card = CardsInHand[action.Index % CardsInHand.Count()].CardBase;
                     if (card is AbstractCardAction cardaction)
                     {
-                        c = new(cardaction.Cost);
-                        Game.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
+                        c = new CostVariable(cardaction.Cost.DiceCost);
+                        //Game.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
+                        dms = new(TeamIndex, cardaction);
                     }
                     else
                     {
-                        c = new();
+                        throw new Exception($"第{action.Index}个Card不是AbstractCardAction");
                     }
                     break;
                 case OperationType.Blend:
@@ -212,11 +217,15 @@ namespace TCGBase
                         ints[(int)Characters[CurrCharacter].CharacterCard.CharacterElement] = 1;
                     }
                     //对于Blend并不是需要该种元素，而是不能是该种元素
-                    c = new(ints, 0);
+                    c = new(ints);
                     break;
                 default:
                     c = new();
                     break;
+            }
+            if (dms != null)
+            {
+                c.Mod(this, dms);
             }
             return c;
         }

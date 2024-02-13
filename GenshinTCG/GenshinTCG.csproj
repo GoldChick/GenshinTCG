@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="TCGBase\Api\CharacterCard\Action\" />
     <Folder Include="TCGMod\Sample\ActionCard\EquipmentCard\" />
     <Folder Include="TCGMod\Sample\ActionCard\EventCard\" />
     <Folder Include="TCGMod\Sample\ActionCard\OtherCard\" />

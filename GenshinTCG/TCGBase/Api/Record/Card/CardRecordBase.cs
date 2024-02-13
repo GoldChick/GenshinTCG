@@ -19,13 +19,15 @@ namespace TCGBase
         /// </summary>
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public CardType CardType { get; }
-        public CardRecordBase(bool hidden, CardType cardType, List<TriggerableRecordBase> skillList, List<string>? tags) : base(hidden)
+        public CardRecordBase(bool hidden, CardType cardType, List<TriggerableRecordBase> skillList, List<string>? tags = null, List<ModifierRecordBase>? modlist = null) : base(hidden)
         {
             CardType = cardType;
             SkillList = skillList;
             Tags = tags ?? new();
+            ModList = modlist ?? new();
         }
         public List<TriggerableRecordBase> SkillList { get; }
+        public List<ModifierRecordBase> ModList { get; }
         public List<string> Tags { get; }
     }
 }

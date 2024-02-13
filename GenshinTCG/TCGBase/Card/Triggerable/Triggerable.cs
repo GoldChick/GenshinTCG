@@ -2,7 +2,7 @@
 {
     internal sealed class Triggerable : AbstractTriggerable
     {
-        public Triggerable(TriggerableRecordWithAction record)
+        public Triggerable(TriggerableRecordBaseImplement record)
         {
             NameID = "default";//never set in this case
             Action = null;

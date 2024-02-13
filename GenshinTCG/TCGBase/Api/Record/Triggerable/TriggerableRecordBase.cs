@@ -10,6 +10,7 @@ namespace TCGBase
         Card,
         //↓下为预设，转化为TriggerableRecordWithAction↓
         RoundOver,
+        RoundStep,
         AfterUseSkill,
         AfterUseCard,
         AfterSwitch,
@@ -23,28 +24,52 @@ namespace TCGBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TriggerableType Type { get; }
-
-        public TriggerableRecordBase(TriggerableType type)
+        public List<ActionRecordBase> Action { get; }
+        public List<ConditionRecordBase> When { get; }
+        public TriggerableRecordBase(TriggerableType type, List<ActionRecordBase>? action = null, List<ConditionRecordBase>? when = null)
         {
             Type = type;
+            Action = action ?? new();
+            When = when ?? new();
         }
-        public virtual AbstractTriggerable GetTriggerable() => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record class没有实现GetTriggerable()!Type: {Type}.");
-    }
-    public record TriggerableRecordWithAction : TriggerableRecordBase
-    {
-        public List<ActionRecordBase> Action { get; }
-
-        public TriggerableRecordWithAction(TriggerableType type, List<ActionRecordBase> action) : base(type)
+        public virtual AbstractTriggerable GetTriggerable()
         {
-            Action = action;
-        }
-        public override AbstractTriggerable GetTriggerable()
-        {
+            Triggerable t = new(SenderTag.RoundStep.ToString());
+            if (Type == TriggerableType.RoundStep)
+            {
+                t.Action = GetHandler(t);
+                return t;
+            }
+            else if (Type == TriggerableType.RoundOver)
+            {
+                t = new(SenderTag.RoundOver.ToString());
+                t.Action = GetHandler(t);
+                return t;
+            }
             return Type switch
             {
                 TriggerableType.Card => new TriggerableCard(this),
-                _ => new Triggerable(this)
+                _ => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record class没有实现GetTriggerable()!Type: {Type}.")
             };
+        }
+        protected virtual EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        {
+            return (me, p, s, v) =>
+            {
+                if (When.TrueForAll(condition => condition.Valid(me, p, s, v)))
+                {
+                    foreach (var ac in Action)
+                    {
+                        ac.GetHandler(triggerable)?.Invoke(me, p, s, v);
+                    }
+                }
+            };
+        }
+    }
+    public record TriggerableRecordBaseImplement : TriggerableRecordBase
+    {
+        public TriggerableRecordBaseImplement(TriggerableType type, List<ActionRecordBase>? action = null) : base(type, action)
+        {
         }
     }
 }

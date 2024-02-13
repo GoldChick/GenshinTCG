@@ -27,10 +27,9 @@ namespace TCGBase
 
                         _ => throw new JsonException($"Unimplemented ActionRecord 'Type' property: {typeElement}."),
                     };
-                    throw new JsonException($"Unregistered ActionRecord 'Type' property: {typeElement}.");
                 }
             }
-            throw new JsonException("JsonConverterAction.Read() : Missing or invalid 'CardType' property.(NOT Ignore Case)");
+            throw new JsonException($"JsonConverterAction.Read() : Missing or invalid 'Type' property:(NOT Ignore Case)Json: \n{root}");
         }
 
         public override void Write(Utf8JsonWriter writer, ActionRecordBase value, JsonSerializerOptions options)

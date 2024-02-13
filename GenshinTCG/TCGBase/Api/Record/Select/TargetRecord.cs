@@ -7,8 +7,6 @@
         Summon,
         Support,
         //↓下面对于Select没用↓
-        //需要自己清楚的知道参数来源于什么，With对此不生效
-        Custom,
         //本身的Persistent
         This,
         //仅用于添加状态，此时不调用GetTargets()
@@ -59,13 +57,6 @@
                     break;
                 case TargetType.This:
                     targets.Add(p);
-                    break;
-                case TargetType.Custom:
-                    if (s is ITargetSupplier supplier)
-                    {
-                        targets.Add(supplier.GetTarget(team, Index));
-                        return targets;
-                    }
                     break;
             }
             targets = targets.Where(pe => With.All(condition => condition.Valid(localteam, pe, s, v))).ToList();

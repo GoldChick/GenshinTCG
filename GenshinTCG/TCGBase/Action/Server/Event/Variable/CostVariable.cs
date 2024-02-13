@@ -3,36 +3,53 @@ using System.Text.Json.Serialization;
 
 namespace TCGBase
 {
-    /// <summary>
-    /// 描述可增减的花费<br/>
-    /// 不过请不要直接操作属性来加减dice数量，因为有特殊规则<br/>
-    /// 考虑使用<see cref="CostModifier{T}"/> where T : AbstractUseDiceSender
-    /// </summary>
     public class CostVariable : AbstractVariable
     {
-        protected int[] _costs;
-        /// <summary>
-        /// 同色 冰水火雷岩草风 杂色<br/>
-        /// 请不要通过此属性修改
-        /// </summary>
-        public int[] DiceCost { get => _costs; }
-        public int MPCost { get; protected set; }
+        [JsonIgnore]
+        internal List<SingleCostVariable> Costs { get; }
+        public int[] DiceCost { get; }
+        [JsonIgnore]
+        public int CostSum => Costs.Sum(scv => scv.Count);
         public CostVariable()
         {
-            _costs = new int[9];
+            Costs = new();
+            DiceCost = new int[11];
         }
-        public CostVariable(CostInit init) : this(init.DiceCost, init.MPCost)
+        public CostVariable(CostInit cost) : this(cost.DiceCost)
         {
-
         }
         [JsonConstructor]
-        public CostVariable(int[] dicecost, int mpcost) : this()
+        public CostVariable(int[] dicecost)
         {
-            for (int i = 0; i < 9 && i < dicecost.Length; i++)
+            Costs = new();
+            DiceCost = new int[11];
+            for (int i = 0; i < dicecost.Length; i++)
             {
-                _costs[i] = dicecost[i];
+                if (dicecost[i] > 0)
+                {
+                    Costs.Add(new SingleCostVariable((ElementCategory)i, dicecost[i]));
+                    DiceCost[i] = dicecost[i];
+                }
             }
-            MPCost = mpcost;
+        }
+        internal void Mod(PlayerTeam me, DiceModifierSender sender)
+        {
+            foreach (var singleCostVariable in Costs)
+            {
+                if (singleCostVariable.Element == ElementCategory.Void)
+                {
+                    sender.DiceModType = DiceModifierType.Void;
+                    me.InstantTrigger(sender, singleCostVariable);
+                }
+                sender.DiceModType = DiceModifierType.Color;
+                me.InstantTrigger(sender, singleCostVariable);
+                sender.DiceModType = DiceModifierType.Any;
+                me.InstantTrigger(sender, singleCostVariable);
+                sender.DiceModType = DiceModifierType.If;
+                me.InstantTrigger(sender, singleCostVariable);
+
+                DiceCost[(int)singleCostVariable.Element] = singleCostVariable.Count;
+            }
         }
         /// <summary>
         /// 判断提供的dices是否能<b>恰好</b>满足需要
@@ -41,9 +58,9 @@ namespace TCGBase
         public bool DiceEqualTo(int[]? supply)
         {
             supply ??= new int[9];
-            if (supply.All(p => p >= 0) && supply.Sum() == _costs.Sum())
+            if (supply.All(p => p >= 0) && supply.Sum() == CostSum)
             {
-                if (_costs[0] > 0)
+                if (Costs.ElementAtOrDefault(0)?.Element == ElementCategory.Trival)
                 {
                     //同色
                     int num = supply.Where(i => i > 0).Count();
@@ -53,119 +70,10 @@ namespace TCGBase
                 {
                     //杂色+某(几)种指定颜色
                     //只需要满足 总数量相同+万能能够满足缺少的元素
-                    return supply[0] >= _costs.Select((c, index) => c -= int.Min(c, supply.ElementAtOrDefault(index))).ToArray()[1..8].Sum();
+                    return supply[0] >= Costs.Where(scv => (int)scv.Element <= 7).Select(scv => scv.Count -= int.Min(scv.Count, supply.ElementAtOrDefault((int)scv.Element))).Sum();
                 }
             }
             return false;
-        }
-    }
-    public class CostModifier
-    {
-        protected ElementCategory Type { get; }
-        protected int Num { get; set; }
-        /// <summary>
-        /// 骰子原始消耗只有 [同色] | [杂色+一些指定颜色] 两种搭配<br/><br/>
-        /// 切换角色视为杂色骰<br/><br/>
-        /// 通过[Same]对[有色骰]消耗进行更改时，只能减少不能增加<br/>
-        /// </summary>
-        public CostModifier(ElementCategory type, int num)
-        {
-            Type = type;
-            Num = num;
-        }
-        public bool Modifier(CostVariable dcv)
-        {
-            bool act = true;
-
-            if (dcv.DiceCost[0] > 0)
-            {
-                if (Type == ElementCategory.Trival || Num <= 0)
-                {
-                    dcv.DiceCost[(int)Type] -= int.Min(dcv.DiceCost[(int)Type], Num);
-                }
-                else
-                {
-                    act = false;
-                }
-            }
-            //否则 abcd颜色+x杂色
-            else if (Type == ElementCategory.Trival)
-            {
-                //通过[Same]对[有色骰]消耗进行更改，只能减少不能增加
-                if (dcv.DiceCost.Any(i => i > 0))
-                {
-                    if (Num >= 0)
-                    {
-                        int a = Num;
-                        for (int i = 1; i < 9; i++)
-                        {
-                            if (a == 0)
-                            {
-                                break;
-                            }
-                            int min = int.Min(dcv.DiceCost[i], a);
-                            a -= min;
-                            dcv.DiceCost[i] -= min;
-                        }
-                    }
-                }
-                else if (Num != 0)
-                {
-                    act = false;
-                }
-            }
-            else if (Type == ElementCategory.Void)
-            {
-                if (dcv.DiceCost[8] > 0 || Num <= 0)
-                {
-                    dcv.DiceCost[8] -= int.Min(dcv.DiceCost[8], Num);
-                }
-                else
-                {
-                    act = false;
-                }
-            }
-            else
-            {
-                if (dcv.DiceCost[(int)Type] > 0 || Num <= 0)
-                {
-                    var min = int.Min(dcv.DiceCost[(int)Type], Num);
-                    Num -= min;
-                    dcv.DiceCost[(int)Type] -= min;
-
-                    min = int.Min(dcv.DiceCost[8], Num);
-                    Num -= min;
-                    dcv.DiceCost[8] -= min;
-                }
-                else if (dcv.DiceCost[8] > 0)
-                {
-                    var min = int.Min(dcv.DiceCost[8], Num);
-                    Num -= min;
-                    dcv.DiceCost[8] -= min;
-                }
-                else
-                {
-                    act = false;
-                }
-            }
-
-            return act;
-        }
-    }
-    public class CostModifier<T> : CostModifier where T : AbstractUseDiceSender
-    {
-        public Func<PlayerTeam, Persistent, T, int>? DynamicNum { get; }
-        public CostModifier(ElementCategory type, int num) : base(type, num)
-        {
-        }
-        public CostModifier(ElementCategory type, Func<PlayerTeam, Persistent, T, int>? dynamicNum) : base(type, 0)
-        {
-            DynamicNum = dynamicNum;
-        }
-        public bool Modifier(PlayerTeam me, Persistent p, T uds, CostVariable dcv)
-        {
-            Num = DynamicNum?.Invoke(me, p, uds) ?? Num;
-            return Modifier(dcv);
         }
     }
     /// <summary>

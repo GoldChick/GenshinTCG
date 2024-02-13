@@ -9,11 +9,20 @@ namespace TCGBase
         Element,
         Shield
     }
+    public enum ModifierMode
+    {
+        Add,
+        Mul,
+        DivideCeil,
+        DivideFloor,
+        DivideRound,
+    }
     public record class ModifierRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierType Type { get; }
-        public int Sign { get; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public ModifierMode Mode { get; }
         public int Value { get; }
         /// <summary>
         /// 如果成功触发，减少多少AvailableTime
@@ -22,14 +31,23 @@ namespace TCGBase
         public List<TargetRecord> WhenWith { get; }
         public List<ConditionRecordBase> When { get; }
 
-        public ModifierRecordBase(ModifierType type, int sign, int value, int consume = 1, List<ConditionRecordBase>? when = null, List<TargetRecord>? whenwith = null)
+        public ModifierRecordBase(ModifierType type, int value, ModifierMode mode = ModifierMode.Add, int consume = 1, List<ConditionRecordBase>? when = null, List<TargetRecord>? whenwith = null)
         {
             Type = type;
-            Sign = Math.Sign(sign);
+            Mode = mode;
             Value = value;
             Consume = consume;
             When = when ?? new();
             WhenWith = whenwith ?? new();
+        }
+        public virtual AbstractTriggerable GetTriggerable()
+        {
+            return new Triggerable((Type switch
+            {
+                ModifierType.Damage => Mode == ModifierMode.Add ? SenderTag.DamageIncrease : SenderTag.DamageMul,
+                ModifierType.Element => SenderTag.ElementEnchant,
+                _ => throw new NotImplementedException($"UnImplemented Modifier Record Type: {Type}")
+            }).ToString(), GetHandler());
         }
         public EventPersistentHandler? GetHandler()
         {

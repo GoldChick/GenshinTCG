@@ -69,6 +69,10 @@
             Hidden = record.Hidden;
             Tags = record.Tags;
             TriggerableList = new();
+            foreach (var item in record.ModList)
+            {
+                TriggerableList.Add(item.GetTriggerable());
+            }
             foreach (var item in record.SkillList)
             {
                 TriggerableList.Add(item.GetTriggerable());

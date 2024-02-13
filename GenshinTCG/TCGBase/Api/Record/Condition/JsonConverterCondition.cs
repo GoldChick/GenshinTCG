@@ -22,7 +22,7 @@ namespace TCGBase
                         or ConditionType.Element or ConditionType.Reaction or ConditionType.SkillType or ConditionType.Related
                         => JsonSerializer.Deserialize<ConditionRecordString>(root.GetRawText(), options),
 
-                        _ => JsonSerializer.Deserialize<ConditionRecordBase>(root.GetRawText()),
+                        _ => JsonSerializer.Deserialize<ConditionRecordBaseImplement>(root.GetRawText(), options),
                     };
                 }
                 throw new JsonException($"Unregistered Condition 'Type' property: {typeElement.GetString()}.");

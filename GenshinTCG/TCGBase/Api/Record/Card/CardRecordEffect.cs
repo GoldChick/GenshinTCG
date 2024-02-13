@@ -4,7 +4,7 @@
     {
         public int InitialUseTimes { get; }
         public int MaxUseTimes { get; }
-        public CardRecordEffect(List<TriggerableRecordBase> skillList, int maxUseTimes, int initialUseTimes = -1, List<string>? tags = null, bool hidden = false, CardType cardtype = CardType.Effect) : base(hidden, cardtype, skillList, tags)
+        public CardRecordEffect(List<TriggerableRecordBase> skillList, int maxUseTimes, List<ModifierRecordBase>? modlist = null, int initialUseTimes = -1, List<string>? tags = null, bool hidden = false, CardType cardtype = CardType.Effect) : base(hidden, cardtype, skillList, tags, modlist)
         {
             MaxUseTimes = int.Max(maxUseTimes, 0);
             InitialUseTimes = initialUseTimes > 0 ? initialUseTimes : MaxUseTimes;

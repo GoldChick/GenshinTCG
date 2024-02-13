@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public record TriggerableRecordAfterUseSkill : TriggerableRecordWithAction
+    public record TriggerableRecordAfterUseSkill : TriggerableRecordBase
     {
         /// <summary>
         /// 如果为true，则第一次不会触发<br/>

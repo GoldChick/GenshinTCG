@@ -2,7 +2,7 @@
 {
     public record CardRecordCharacter : CardRecordBase
     {
-        public CardRecordCharacter( int maxHP, int maxMP, List<TriggerableRecordBase> skillList, List<string> tags, bool hidden = false, CardType cardType = CardType.Character) : base(hidden, cardType, skillList, tags)
+        public CardRecordCharacter(int maxHP, int maxMP, List<TriggerableRecordBase> skillList, List<string> tags, bool hidden = false, CardType cardType = CardType.Character) : base(hidden, cardType, skillList, tags, null)
         {
             MaxHP = maxHP;
             MaxMP = maxMP;

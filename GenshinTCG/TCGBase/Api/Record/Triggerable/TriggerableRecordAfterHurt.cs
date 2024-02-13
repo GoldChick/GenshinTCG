@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public record TriggerableRecordAfterHurt : TriggerableRecordWithAction
+    public record TriggerableRecordAfterHurt : TriggerableRecordBase
     {
         public TriggerableRecordAfterHurt(List<ActionRecordBase> action) : base(TriggerableType.AfterHurt, action)
         {

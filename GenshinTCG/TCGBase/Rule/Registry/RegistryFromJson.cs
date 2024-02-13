@@ -12,7 +12,7 @@ namespace TCGBase
         {
             JsonOptionCharacter = new()
             {
-                Converters = { new JsonConverterTriggerable(), new JsonConverterAction() }
+                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
             };
             JsonOptionActionCard = new()
             {
@@ -20,11 +20,11 @@ namespace TCGBase
             };
             JsonOptionEffect = new()
             {
-                Converters = { new JsonConverterTriggerable(), new JsonConverterAction() }
+                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
             };
             JsonOptionTriggerable = new()
             {
-                Converters = { new JsonConverterTriggerable(), new JsonConverterAction() }
+                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
             };
         }
         public void LoadFolders(string path, string modid)
@@ -68,30 +68,11 @@ namespace TCGBase
         }
         public AbstractCardAction CreateActionCard(string json)
         {
-            CardRecordAction? record = JsonSerializer.Deserialize<CardRecordAction>(json, JsonOptionActionCard);
-            if (record != null)
-            {
-                return record.GetCard();
-            }
-            throw new Exception("sb?AbstractCardAction");
+            return JsonSerializer.Deserialize<CardRecordAction>(json, JsonOptionActionCard)?.GetCard() ?? throw new Exception("sb?AbstractCardAction");
         }
         public AbstractCardEffect CreateEffectCard(string json)
         {
-            CardRecordEffect? record = JsonSerializer.Deserialize<CardRecordEffect>(json, JsonOptionEffect);
-            if (record != null)
-            {
-                return record.GetCard();
-            }
-            throw new Exception("sb?AbstractCardEffect");
-        }
-        public AbstractTriggerable CreateTriggerable(string json)
-        {
-            TriggerableRecordBase? rb = JsonSerializer.Deserialize<TriggerableRecordBase>(json, JsonOptionTriggerable);
-            if (rb != null)
-            {
-                return rb.GetTriggerable();
-            }
-            throw new Exception("RegistryFromJson:Out Of TriggerableType!");
+            return JsonSerializer.Deserialize<CardRecordEffect>(json, JsonOptionEffect)?.GetCard() ?? throw new Exception("sb?AbstractCardEffect");
         }
     }
 }

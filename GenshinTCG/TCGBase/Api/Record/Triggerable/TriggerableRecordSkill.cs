@@ -5,7 +5,7 @@ namespace TCGBase
     /// <summary>
     /// 主动技能
     /// </summary>
-    public record TriggerableRecordSkill : TriggerableRecordWithAction
+    public record TriggerableRecordSkill : TriggerableRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public SkillCategory Category { get; }
