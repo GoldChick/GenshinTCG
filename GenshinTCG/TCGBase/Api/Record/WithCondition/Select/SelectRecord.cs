@@ -5,19 +5,19 @@ namespace TCGBase
     /// <summary>
     /// 用于Select时，Type只能为Character，Summon，Support
     /// </summary>
-    public record class SelectRecord
+    public record class SelectRecord : IWhenAnyThenAction
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TargetType Type { get; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DamageTargetTeam Team { get; }
-        public List<ConditionRecordBase> With { get; }
+        public List<List<ConditionRecordBase>> WhenAny { get; }
 
-        public SelectRecord(TargetType type, DamageTargetTeam team = DamageTargetTeam.Me, List<ConditionRecordBase>? with = null)
+        public SelectRecord(TargetType type, DamageTargetTeam team = DamageTargetTeam.Me, List<List<ConditionRecordBase>>? whenany = null)
         {
             Type = type;
             Team = team;
-            With = with ?? new();
+            WhenAny = whenany ?? new();
         }
         public int GetIndexs()
         {

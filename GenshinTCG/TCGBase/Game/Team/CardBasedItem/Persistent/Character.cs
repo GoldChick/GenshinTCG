@@ -144,6 +144,9 @@
                         {
                             Effects.DestroyFirst(p => p.CardBase.Tags.Contains(CardTag.Weapon.ToString()));
                             Effects.Add(effect);
+                        }else
+                        {
+                            Effects.Add(effect);
                         }
                         break;
                     case CardType.Effect:

@@ -3,7 +3,7 @@
     public record class ActionRecordInt : ActionRecordBaseWithTarget
     {
         public int Value { get; }
-        public ActionRecordInt(TriggerType type, int value = 0, TargetRecord? target = null, List<TargetRecord>? whenwith = null) : base(type, target, whenwith)
+        public ActionRecordInt(TriggerType type, int value = 0, TargetRecord? target = null, List<List<ConditionRecordBase>>? whenany = null) : base(type, target, whenany)
         {
             Value = value;
         }

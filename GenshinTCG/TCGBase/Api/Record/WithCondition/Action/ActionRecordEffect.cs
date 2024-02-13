@@ -10,7 +10,7 @@ namespace TCGBase
         public List<string> Add { get; }
         public List<string> Remove { get; }
 
-        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, TargetRecord? target = null, List<TargetRecord>? whenwith = null) : base(TriggerType.Effect, target, whenwith)
+        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, TargetRecord? target = null, List<List<ConditionRecordBase>>? whenany = null) : base(TriggerType.Effect, target, whenany)
         {
             Add = add ?? new();
             Remove = remove ?? new();

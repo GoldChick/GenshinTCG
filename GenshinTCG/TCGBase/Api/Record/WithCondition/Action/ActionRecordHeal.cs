@@ -5,7 +5,7 @@ namespace TCGBase
     {
         public HealRecord Heal { get; }
 
-        public ActionRecordHeal(HealRecord heal, List<TargetRecord>? whenwith) : base(TriggerType.Heal, whenwith)
+        public ActionRecordHeal(HealRecord heal, List<List<ConditionRecordBase>>? whenany) : base(TriggerType.Heal, whenany)
         {
             Heal = heal;
         }

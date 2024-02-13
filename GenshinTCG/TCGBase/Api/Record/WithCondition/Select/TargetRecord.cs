@@ -23,7 +23,7 @@
         /// </summary>
         public bool Reverse { get; }
 
-        public TargetRecord(TargetType type = TargetType.Character, int index = 0, bool reverse = false, DamageTargetTeam team = DamageTargetTeam.Me, List<ConditionRecordBase>? with = null) : base(type, team, with)
+        public TargetRecord(TargetType type = TargetType.Character, int index = 0, bool reverse = false, DamageTargetTeam team = DamageTargetTeam.Me, List<List<ConditionRecordBase>>? whenany = null) : base(type, team, whenany)
         {
             Index = index;
             Reverse = reverse;
@@ -59,7 +59,7 @@
                     targets.Add(p);
                     break;
             }
-            targets = targets.Where(pe => With.All(condition => condition.Valid(localteam, pe, s, v))).ToList();
+            targets = targets.Where(pe => (this as IWhenAnyThenAction).IsConditionValid(localteam, pe, s, v)).ToList();
             if (Reverse)
             {
                 targets.Reverse();

@@ -2,16 +2,6 @@
 {
     internal sealed class Triggerable : AbstractTriggerable
     {
-        public Triggerable(TriggerableRecordBaseImplement record)
-        {
-            NameID = "default";//never set in this case
-            Action = null;
-            foreach (var item in record.Action)
-            {
-                Action += item.GetHandler(this);
-            }
-            Tag = record.Type.ToString();
-        }
         public Triggerable(string tag, EventPersistentHandler? action = null)
         {
             NameID = "default";//never set in this case

@@ -34,6 +34,9 @@ namespace TCGBase
         Damage,
 
         //分界线，上为对于Damage，下为对于Dice
+
+        //分界线，上为对于Dice，下为对于Target
+        AnyTarget,
     }
     public record class ConditionRecordBase
     {

@@ -17,7 +17,7 @@ namespace TCGBase
         DivideFloor,
         DivideRound,
     }
-    public record class ModifierRecordBase
+    public record class ModifierRecordBase : IWhenAnyThenAction
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierType Type { get; }
@@ -28,17 +28,15 @@ namespace TCGBase
         /// 如果成功触发，减少多少AvailableTime
         /// </summary>
         public int Consume { get; }
-        public List<TargetRecord> WhenWith { get; }
-        public List<ConditionRecordBase> When { get; }
+        public List<List<ConditionRecordBase>> WhenAny { get; }
 
-        public ModifierRecordBase(ModifierType type, int value, ModifierMode mode = ModifierMode.Add, int consume = 1, List<ConditionRecordBase>? when = null, List<TargetRecord>? whenwith = null)
+        public ModifierRecordBase(ModifierType type, int value, ModifierMode mode = ModifierMode.Add, int consume = 1, List<List<ConditionRecordBase>>? whenany = null)
         {
             Type = type;
             Mode = mode;
             Value = value;
             Consume = consume;
-            When = when ?? new();
-            WhenWith = whenwith ?? new();
+            WhenAny = whenany ?? new();
         }
         public virtual AbstractTriggerable GetTriggerable()
         {
@@ -49,17 +47,14 @@ namespace TCGBase
                 _ => throw new NotImplementedException($"UnImplemented Modifier Record Type: {Type}")
             }).ToString(), GetHandler());
         }
-        public EventPersistentHandler? GetHandler()
+        public EventPersistentHandler GetHandler()
         {
             return (me, p, s, v) =>
             {
-                if (When.All(c => c.Valid(me, p, s, v)))
+                if ((this as IWhenAnyThenAction).IsConditionValid(me, p, s, v))
                 {
-                    if (WhenWith.All(t => t.GetTargets(me, p, s, v, out _).Any()))
-                    {
-                        Get()?.Invoke(me, p, s, v);
-                        p.AvailableTimes -= Consume;
-                    }
+                    Get()?.Invoke(me, p, s, v);
+                    p.AvailableTimes -= Consume;
                 }
             };
         }

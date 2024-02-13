@@ -27,10 +27,7 @@
         {
             EventPersistentHandler handler = (me, p, s, v) =>
             {
-                if (s is AbstractUseDiceSender uds)
-                {
 
-                }
             };
             return handler;
         }

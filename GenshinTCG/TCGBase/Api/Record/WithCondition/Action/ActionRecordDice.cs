@@ -4,7 +4,7 @@
     {
         public List<CostRecord> Dice { get; }
         public bool Gain { get; }
-        public ActionRecordDice(List<CostRecord> dice, bool gain = true, DamageTargetTeam team = DamageTargetTeam.Me, List<TargetRecord>? whenwith = null) : base(TriggerType.Dice, team, whenwith)
+        public ActionRecordDice(List<CostRecord> dice, bool gain = true, DamageTargetTeam team = DamageTargetTeam.Me, List<List<ConditionRecordBase>>? whenany = null) : base(TriggerType.Dice, team, whenany)
         {
             Dice = dice;
             Gain = gain;

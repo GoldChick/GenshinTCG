@@ -2,9 +2,6 @@
 
 namespace TCGBase
 {
-    /// <summary>
-    /// 不同的参数之间用，分隔
-    /// </summary>
     public enum TriggerType
     {
         MP,
@@ -18,24 +15,23 @@ namespace TCGBase
         Skill,
         SetData
     }
-    public record class ActionRecordBase
+    public record class ActionRecordBase : IWhenAnyThenAction
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TriggerType Type { get; }
-        /// <summary>
-        /// 所有record都要找到符合要求的target
-        /// </summary>
-        public List<TargetRecord> WhenWith { get; }
-        public ActionRecordBase(TriggerType type, List<TargetRecord>? whenwith)
+
+        public List<List<ConditionRecordBase>> WhenAny { get; }
+
+        public ActionRecordBase(TriggerType type, List<List<ConditionRecordBase>>? whenany)
         {
             Type = type;
-            WhenWith = whenwith ?? new();
+            WhenAny = whenany ?? new();
         }
         public EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {
-                if (WhenWith.All(t => t.GetTargets(me, p, s, v, out _).Any()))
+                if ((this as IWhenAnyThenAction).IsConditionValid(me, p, s, v))
                 {
                     DoAction(triggerable, me, p, s, v);
                 }
@@ -47,7 +43,7 @@ namespace TCGBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DamageTargetTeam Team { get; }
-        public ActionRecordBaseWithTeam(TriggerType actionType, DamageTargetTeam team, List<TargetRecord>? whenwith) : base(actionType, whenwith)
+        public ActionRecordBaseWithTeam(TriggerType actionType, DamageTargetTeam team, List<List<ConditionRecordBase>>? whenany = null) : base(actionType, whenany)
         {
             Team = team;
         }
@@ -55,7 +51,7 @@ namespace TCGBase
     public record class ActionRecordBaseWithTarget : ActionRecordBase
     {
         public TargetRecord Target { get; }
-        public ActionRecordBaseWithTarget(TriggerType type, TargetRecord? target = null, List<TargetRecord>? whenwith = null) : base(type, whenwith)
+        public ActionRecordBaseWithTarget(TriggerType type, TargetRecord? target = null, List<List<ConditionRecordBase>>? whenany = null) : base(type, whenany)
         {
             Target = target ?? new();
         }

@@ -8,7 +8,7 @@
     {
         public int Add { get; }
         public string? Name { get; }
-        public ActionRecordCounter(int add, string? name = null, DamageTargetTeam team = DamageTargetTeam.Me, List<TargetRecord>? whenwith = null) : base(TriggerType.Effect, team, whenwith)
+        public ActionRecordCounter(int add, string? name = null, DamageTargetTeam team = DamageTargetTeam.Me, List<List<ConditionRecordBase>>? whenany = null) : base(TriggerType.Effect, team, whenany)
         {
             Add = add;
             Name = name;

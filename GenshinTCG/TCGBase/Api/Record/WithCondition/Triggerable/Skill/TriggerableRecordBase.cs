@@ -34,23 +34,15 @@ namespace TCGBase
         }
         public virtual AbstractTriggerable GetTriggerable()
         {
-            Triggerable t = new(SenderTag.RoundStep.ToString());
-            if (Type == TriggerableType.RoundStep)
+            Triggerable t = new(Type switch
             {
-                t.Action = GetHandler(t);
-                return t;
-            }
-            else if (Type == TriggerableType.RoundOver)
-            {
-                t = new(SenderTag.RoundOver.ToString());
-                t.Action = GetHandler(t);
-                return t;
-            }
-            return Type switch
-            {
-                TriggerableType.Card => new TriggerableCard(this),
-                _ => throw new NotImplementedException($"某个继承了TriggerableRecordBase的record class没有实现GetTriggerable()!Type: {Type}.")
-            };
+                TriggerableType.Card => SenderTagInner.UseCard.ToString(),
+                _ => Type.ToString()
+            });
+
+            t.Action = GetHandler(t);
+
+            return t;
         }
         protected virtual EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
         {

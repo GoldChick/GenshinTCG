@@ -22,6 +22,9 @@ namespace TCGBase
                         or ConditionType.Element or ConditionType.Reaction or ConditionType.SkillType or ConditionType.Related
                         => JsonSerializer.Deserialize<ConditionRecordString>(root.GetRawText(), options),
 
+                        ConditionType.AnyTarget
+                        => JsonSerializer.Deserialize<ConditionRecordAnyTarget>(root.GetRawText(), options),
+
                         _ => JsonSerializer.Deserialize<ConditionRecordBaseImplement>(root.GetRawText(), options),
                     };
                 }
