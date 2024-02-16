@@ -15,10 +15,11 @@ namespace TCGBase
                 {
                     return type switch
                     {
-                        ConditionType.HPLost or ConditionType.Counter or ConditionType.Damage
+                        ConditionType.HPLost or ConditionType.MPLost or ConditionType.Counter or ConditionType.Damage
                         => JsonSerializer.Deserialize<ConditionRecordTriInt>(root.GetRawText(), options),
 
                         ConditionType.HasEffect or ConditionType.HasEffectWithTag or ConditionType.HasTag or ConditionType.Name
+                        or ConditionType.SimpleTalent
                         or ConditionType.Element or ConditionType.Reaction or ConditionType.SkillType or ConditionType.Related
                         => JsonSerializer.Deserialize<ConditionRecordString>(root.GetRawText(), options),
 

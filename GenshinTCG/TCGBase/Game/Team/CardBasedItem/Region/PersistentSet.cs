@@ -118,14 +118,12 @@ namespace TCGBase
         internal EventPersistentSetHandler? GetPersistentHandlers(AbstractSender sender)
         {
             EventPersistentSetHandler? acs = null;
-            if (_handlers.TryGetValue(sender.SenderName, out var hs))
+            if (sender is not (ActionUseCardSender or  ActionUseSkillSender))
             {
-                acs += hs;
-            }
-            //任意行动的主体必须是队伍
-            if (sender.TeamID != -1 && _handlers.TryGetValue(SenderTag.AfterOperation.ToString(), out hs))
-            {
-                acs += hs;
+                if (_handlers.TryGetValue(sender.SenderName, out var hs))
+                {
+                    acs += hs;
+                }
             }
             return acs;
         }

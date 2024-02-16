@@ -15,14 +15,14 @@
             while (queue.Any())
             {
                 var dv = queue.Dequeue();
-                if (dv.TargetArea == DamageTargetArea.TargetExcept)
+                if (dv.TargetArea == TargetArea.TargetExcept)
                 {
                     for (int i = 0; i < Characters.Length; i++)
                     {
                         int index = (i + CurrCharacter) % Characters.Length;
                         if (index != dv.TargetIndex && Characters[index].Alive)
                         {
-                            queue.Enqueue(new(dv.Direct, dv.Element, dv.Damage, index, DamageTargetArea.TargetOnly, dv.DamageTargetTeam));
+                            queue.Enqueue(new(dv.Direct, dv.Element, dv.Damage, index, TargetArea.TargetOnly, dv.TargetTeam));
                         }
                     }
                 }
@@ -112,6 +112,9 @@
 
             var alive_hss = valid_hss.Where(hs => Characters[hs.TargetIndex].Alive);
             var died_hss = valid_hss.Where(hs => !Characters[hs.TargetIndex].Alive);
+
+            //TODO:用这个代替hurt sender
+            sourceSender.ModifierName = SenderTag.AfterHurt;
 
             Game.TempDelayedTriggerQueue?.Enqueue(() =>
             {

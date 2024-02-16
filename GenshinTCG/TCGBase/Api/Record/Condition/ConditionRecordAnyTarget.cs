@@ -3,7 +3,7 @@
     public record class ConditionRecordAnyTarget : ConditionRecordBase
     {
         public TargetRecord Target { get; }
-        public ConditionRecordAnyTarget(TargetRecord target, bool not = false) : base(ConditionType.AnyTarget, not)
+        public ConditionRecordAnyTarget(TargetRecord target, bool not = false, ConditionRecordBase? or = null) : base(ConditionType.AnyTarget, not, or)
         {
             Target = target;
         }

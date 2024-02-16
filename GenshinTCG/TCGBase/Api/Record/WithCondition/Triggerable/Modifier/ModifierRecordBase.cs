@@ -7,7 +7,9 @@ namespace TCGBase
         Dice,
         Damage,
         Element,
-        Shield
+        //下面两个内置 When TargetMe
+        Shield,
+        Barrier
     }
     public enum ModifierMode
     {
@@ -17,26 +19,35 @@ namespace TCGBase
         DivideFloor,
         DivideRound,
     }
-    public record class ModifierRecordBase : IWhenAnyThenAction
+    public record class ModifierRecordBase : IWhenThenAction
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierType Type { get; }
+        //只对Damage有效
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierMode Mode { get; }
         public int Value { get; }
         /// <summary>
-        /// 如果成功触发，减少多少AvailableTime
+        /// 如果成功触发，减少多少AvailableTime，默认1
         /// </summary>
         public int Consume { get; }
-        public List<List<ConditionRecordBase>> WhenAny { get; }
+        public List<ConditionRecordBase> When { get; }
 
-        public ModifierRecordBase(ModifierType type, int value, ModifierMode mode = ModifierMode.Add, int consume = 1, List<List<ConditionRecordBase>>? whenany = null)
+        public ModifierRecordBase(ModifierType type, int value, ModifierMode mode = ModifierMode.Add, int consume = 1, List<ConditionRecordBase>? when = null)
         {
             Type = type;
             Mode = mode;
-            Value = value;
+            Value = int.Min(value, 1);
             Consume = consume;
-            WhenAny = whenany ?? new();
+            When = when ?? new();
+            switch (Type)
+            {
+                case ModifierType.Shield:
+                case ModifierType.Element:
+                case ModifierType.Barrier:
+                    Consume = 0;
+                    break;
+            }
         }
         public virtual AbstractTriggerable GetTriggerable()
         {
@@ -44,6 +55,7 @@ namespace TCGBase
             {
                 ModifierType.Damage => Mode == ModifierMode.Add ? SenderTag.DamageIncrease : SenderTag.DamageMul,
                 ModifierType.Element => SenderTag.ElementEnchant,
+                ModifierType.Shield or ModifierType.Barrier => SenderTag.HurtDecrease,
                 _ => throw new NotImplementedException($"UnImplemented Modifier Record Type: {Type}")
             }).ToString(), GetHandler());
         }
@@ -51,7 +63,7 @@ namespace TCGBase
         {
             return (me, p, s, v) =>
             {
-                if ((this as IWhenAnyThenAction).IsConditionValid(me, p, s, v))
+                if ((this as IWhenThenAction).IsConditionValid(me, p, s, v))
                 {
                     Get()?.Invoke(me, p, s, v);
                     p.AvailableTimes -= Consume;
@@ -62,21 +74,56 @@ namespace TCGBase
         {
             return (me, p, s, v) =>
             {
+                ConditionRecordBase targetme = new(ConditionType.TargetMe, false, null);
+
                 if (v is DamageVariable dv)
                 {
                     switch (Type)
                     {
                         case ModifierType.Dice:
+                            //TODO:
                             break;
                         case ModifierType.Damage:
-                            dv.Damage += Value;
+                            switch (Mode)
+                            {
+                                case ModifierMode.Add:
+                                    dv.Damage += Value;
+                                    break;
+                                case ModifierMode.Mul:
+                                    dv.Damage *= Value;
+                                    break;
+                                case ModifierMode.DivideCeil:
+                                    dv.Damage = (Value + 1) / 2;
+                                    break;
+                                case ModifierMode.DivideFloor:
+                                    dv.Damage = Value / 2;
+                                    break;
+                                case ModifierMode.DivideRound:
+                                    dv.Damage = (int)Math.Round(((double)Value) / 2);
+                                    break;
+                            }
                             break;
                         case ModifierType.Element:
-                            dv.Element = (DamageElement)Value;
+                            if (dv.Element == DamageElement.Trival)
+                            {
+                                dv.Element = (DamageElement)Value;
+                                p.AvailableTimes -= 1;
+                            }
                             break;
                         case ModifierType.Shield:
+                            if (targetme.Valid(me, p, s, v))
+                            {
+                                var min = int.Min(p.AvailableTimes, dv.Damage);
+                                dv.Damage -= min;
+                                p.AvailableTimes -= min;
+                            }
                             break;
-                        default:
+                        case ModifierType.Barrier:
+                            if (targetme.Valid(me, p, s, v) && dv.Damage > 0)
+                            {
+                                dv.Damage -= Value;
+                                p.AvailableTimes--;
+                            }
                             break;
                     }
                 }

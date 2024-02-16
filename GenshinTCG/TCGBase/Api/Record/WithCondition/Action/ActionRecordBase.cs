@@ -15,23 +15,23 @@ namespace TCGBase
         Skill,
         SetData
     }
-    public record class ActionRecordBase : IWhenAnyThenAction
+    public record class ActionRecordBase : IWhenThenAction
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TriggerType Type { get; }
 
-        public List<List<ConditionRecordBase>> WhenAny { get; }
+        public List<ConditionRecordBase> When { get; }
 
-        public ActionRecordBase(TriggerType type, List<List<ConditionRecordBase>>? whenany)
+        public ActionRecordBase(TriggerType type, List<ConditionRecordBase>? when)
         {
             Type = type;
-            WhenAny = whenany ?? new();
+            When = when ?? new();
         }
         public EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {
-                if ((this as IWhenAnyThenAction).IsConditionValid(me, p, s, v))
+                if ((this as IWhenThenAction).IsConditionValid(me, p, s, v))
                 {
                     DoAction(triggerable, me, p, s, v);
                 }
@@ -42,8 +42,8 @@ namespace TCGBase
     public record class ActionRecordBaseWithTeam : ActionRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public DamageTargetTeam Team { get; }
-        public ActionRecordBaseWithTeam(TriggerType actionType, DamageTargetTeam team, List<List<ConditionRecordBase>>? whenany = null) : base(actionType, whenany)
+        public TargetTeam Team { get; }
+        public ActionRecordBaseWithTeam(TriggerType actionType, TargetTeam team, List<ConditionRecordBase>? when = null) : base(actionType, when)
         {
             Team = team;
         }
@@ -51,7 +51,7 @@ namespace TCGBase
     public record class ActionRecordBaseWithTarget : ActionRecordBase
     {
         public TargetRecord Target { get; }
-        public ActionRecordBaseWithTarget(TriggerType type, TargetRecord? target = null, List<List<ConditionRecordBase>>? whenany = null) : base(type, whenany)
+        public ActionRecordBaseWithTarget(TriggerType type, TargetRecord? target = null, List<ConditionRecordBase>? when = null) : base(type, when)
         {
             Target = target ?? new();
         }

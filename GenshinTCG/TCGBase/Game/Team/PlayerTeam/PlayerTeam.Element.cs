@@ -149,11 +149,11 @@ namespace TCGBase
             };
             dvToPerson.SubDamage = tag switch
             {
-                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.Indirect, DamageElement.Pierce, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
-                ReactionTags.SwirlCryo => new(DamageSource.Indirect, DamageElement.Cryo, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
-                ReactionTags.SwirlHydro => new(DamageSource.Indirect, DamageElement.Hydro, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
-                ReactionTags.SwirlPyro => new(DamageSource.Indirect, DamageElement.Pyro, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
-                ReactionTags.SwirlElectro => new(DamageSource.Indirect, DamageElement.Electro, 1, dvToPerson.TargetIndex, DamageTargetArea.TargetExcept, dvToPerson.DamageTargetTeam),
+                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => new(DamageSource.Indirect, DamageElement.Pierce, 1, dvToPerson.TargetIndex, TargetArea.TargetExcept, dvToPerson.TargetTeam),
+                ReactionTags.SwirlCryo => new(DamageSource.Indirect, DamageElement.Cryo, 1, dvToPerson.TargetIndex, TargetArea.TargetExcept, dvToPerson.TargetTeam),
+                ReactionTags.SwirlHydro => new(DamageSource.Indirect, DamageElement.Hydro, 1, dvToPerson.TargetIndex, TargetArea.TargetExcept, dvToPerson.TargetTeam),
+                ReactionTags.SwirlPyro => new(DamageSource.Indirect, DamageElement.Pyro, 1, dvToPerson.TargetIndex, TargetArea.TargetExcept, dvToPerson.TargetTeam),
+                ReactionTags.SwirlElectro => new(DamageSource.Indirect, DamageElement.Electro, 1, dvToPerson.TargetIndex, TargetArea.TargetExcept, dvToPerson.TargetTeam),
                 _ => null
             };
             int initialelement = cha.Element;

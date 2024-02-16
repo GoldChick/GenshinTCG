@@ -279,7 +279,7 @@ namespace TCGBase
         //        curr.Remove(d);
         //    }
         //}
-        protected int GetTargetEnumMaxCount(TargetType select, DamageTargetTeam team)
+        protected int GetTargetEnumMaxCount(TargetType select, TargetTeam team)
             => GetTargetEnumMaxCount(((int)select * 2 + (int)team));
         protected int GetTargetEnumMaxCount(TargetEnum e)
             => GetTargetEnumMaxCount((int)e);

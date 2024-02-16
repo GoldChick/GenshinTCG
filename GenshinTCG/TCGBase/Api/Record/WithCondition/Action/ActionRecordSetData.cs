@@ -6,7 +6,7 @@
         /// 如果不为null，就将persistent.data改为此Data
         /// </summary>
         public List<int>? Data { get; }
-        public ActionRecordSetData(List<int>? data = null, TargetRecord? target = null, List<List<ConditionRecordBase>>? whenany = null) : base(TriggerType.SetData, target, whenany)
+        public ActionRecordSetData(List<int>? data = null, TargetRecord? target = null, List<ConditionRecordBase>? when = null) : base(TriggerType.SetData, target, when)
         {
             Data = data;
         }

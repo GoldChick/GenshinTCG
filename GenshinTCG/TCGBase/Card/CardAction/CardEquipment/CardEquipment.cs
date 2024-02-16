@@ -18,7 +18,7 @@ namespace TCGBase
                 {
                     if (targets.Count == 1)
                     {
-                        return tr.WhenAny.Any(with => with.TrueForAll(condition => condition.Valid(me, targets[0], null, null)));
+                        return tr.When.TrueForAll(condition => condition.Valid(me, targets[0], null, null));
                     }
                     return false;
                 };

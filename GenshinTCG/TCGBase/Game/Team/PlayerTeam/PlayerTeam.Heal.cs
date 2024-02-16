@@ -9,7 +9,7 @@
         private List<HealSender> SplitHeal(AbstractTriggerable triggerable, HealVariable d)
         {
             List<HealSender> hss = new();
-            if (d.TargetExcept)
+            if (d.TargetArea==TargetArea.TargetExcept)
             {
                 //except to non-except
                 for (int i = 0; i < Characters.Length; i++)
@@ -17,7 +17,7 @@
                     int index = (i + CurrCharacter) % Characters.Length;
                     if (index != d.TargetIndex)
                     {
-                        hss.AddRange(SplitHeal(triggerable, new(d.DirectSource, d.Amount, index)));
+                        hss.AddRange(SplitHeal(triggerable, new(d.Direct, d.Amount, index)));
                     }
                 }
             }
@@ -48,7 +48,7 @@
         /// </summary>
         public void Heal(AbstractTriggerable triggerable, params HealVariable[] dvs)
         {
-            HealVariable[] dvs_person = dvs.Select(p => new HealVariable(p.Amount, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetExcept)).ToArray();
+            HealVariable[] dvs_person = dvs.Select(p => new HealVariable(p.Amount, (p.TargetIndex + CurrCharacter) % Characters.Length, p.TargetArea)).ToArray();
             List<HealSender> hss = MergeHeal(triggerable, dvs_person);
             foreach (var hs in hss)
             {

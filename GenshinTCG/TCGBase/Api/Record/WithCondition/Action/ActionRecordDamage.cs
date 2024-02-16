@@ -4,7 +4,7 @@
     {
         public DamageRecord Damage { get; }
         public List<ActionRecordBase> With { get; }
-        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase>? with = null, List<List<ConditionRecordBase>>? whenany = null) : base(TriggerType.Damage, whenany)
+        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase>? with = null, List<ConditionRecordBase>? when = null) : base(TriggerType.Damage, when)
         {
             Damage = damage;
             With = with ?? new();

@@ -59,13 +59,19 @@
         {
             return (me, s, v) =>
             {
-                Queue<Action> queue = new();
-                me.Game.TempDelayedTriggerQueue = queue;
-                input?.Invoke(me, s, v);
-                me.Game.TempDelayedTriggerQueue = null;
-                while (queue.TryDequeue(out var action))
+                if (me.Game.TempDelayedTriggerQueue == null)
                 {
-                    action.Invoke();
+                    Queue<Action> queue = new();
+                    me.Game.TempDelayedTriggerQueue = queue;
+                    input?.Invoke(me, s, v);
+                    me.Game.TempDelayedTriggerQueue = null;
+                    while (queue.TryDequeue(out var action))
+                    {
+                        action.Invoke();
+                    }
+                }else
+                {
+                    input?.Invoke(me, s, v);
                 }
             };
         }

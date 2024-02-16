@@ -26,11 +26,11 @@ namespace TCGBase
         public TriggerableType Type { get; }
         public List<ActionRecordBase> Action { get; }
         public List<ConditionRecordBase> When { get; }
-        public TriggerableRecordBase(TriggerableType type, List<ActionRecordBase>? action = null, List<ConditionRecordBase>? when = null)
+        public TriggerableRecordBase(TriggerableType type, List<ActionRecordBase>? action = null)
         {
             Type = type;
             Action = action ?? new();
-            When = when ?? new();
+            When =  new();//TODO: when @desperated
         }
         public virtual AbstractTriggerable GetTriggerable()
         {

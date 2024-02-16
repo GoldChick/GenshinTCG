@@ -34,10 +34,10 @@
     }
     public class TargetDemand
     {
-        public DamageTargetTeam Team { get; }
+        public TargetTeam Team { get; }
         public TargetType Select { get; }
         public Func<PlayerTeam, List<Persistent>, bool> Condition { get; }
-        public TargetDemand(DamageTargetTeam team, TargetType select, Func<PlayerTeam, List<Persistent>, bool> condition)
+        public TargetDemand(TargetTeam team, TargetType select, Func<PlayerTeam, List<Persistent>, bool> condition)
         {
             Team = team;
             Select = select;
@@ -51,7 +51,7 @@
         }
         internal Persistent? GetPersistent(PlayerTeam team, int index)
         {
-            var t = Team == DamageTargetTeam.Enemy ? team.Enemy : team;
+            var t = Team == TargetTeam.Enemy ? team.Enemy : team;
             return Select switch
             {
                 TargetType.Character => t.Characters.ElementAtOrDefault(index),
@@ -62,7 +62,7 @@
         }
         internal bool IsPersistentValid(PlayerTeam team, int index, List<Persistent> old)
         {
-            var t = Team == DamageTargetTeam.Enemy ? team.Enemy : team;
+            var t = Team == TargetTeam.Enemy ? team.Enemy : team;
             var persistent = Select switch
             {
                 TargetType.Character => t.Characters.ElementAtOrDefault(index),
