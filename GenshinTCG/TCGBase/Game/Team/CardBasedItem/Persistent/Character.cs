@@ -85,14 +85,14 @@
         {
             Alive = false;
         }
-        internal void DieTrigger(HurtSender hs)
+        internal void DieTrigger(HurtSourceSender hss, DamageVariable dv)
         {
             while (Effects.Any())
             {
                 var p = Effects.First();
-                if (p.CardBase.TriggerableList.TryGetValue(hs.SenderName, out var h))
+                if (p.CardBase.TriggerableList.TryGetValue(hss.SenderName, out var h))
                 {
-                    GetDelayedHandler((me, s, v) => h?.Trigger(me, this, s, v))?.Invoke(_t, hs, null);
+                    GetDelayedHandler((me, s, v) => h?.Trigger(me, this, s, v))?.Invoke(_t, hss, dv);
                 }
                 Effects.Destroy(0);
             }
@@ -144,7 +144,8 @@
                         {
                             Effects.DestroyFirst(p => p.CardBase.Tags.Contains(CardTag.Weapon.ToString()));
                             Effects.Add(effect);
-                        }else
+                        }
+                        else
                         {
                             Effects.Add(effect);
                         }

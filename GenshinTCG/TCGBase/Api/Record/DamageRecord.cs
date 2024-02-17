@@ -2,12 +2,12 @@
 
 namespace TCGBase
 {
-    public record DamageRecord
+    public record class DamageRecord
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DamageElement Element { get; }
         public int Amount { get; }
-        public int TargetIndexOffset { get; }
+        public int TargetIndexOffset { get; private set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TargetArea TargetArea { get; }
         [JsonConverter(typeof(JsonStringEnumConverter))]

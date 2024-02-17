@@ -69,14 +69,7 @@ namespace TCGBase
                     var card = CardsInHand[evt.Operation.Index].CardBase;
                     if (card is AbstractCardAction action)
                     {
-                        if (card is IEnergyConsumerCard ec)
-                        {
-                            temp = evt.AdditionalTargetArgs.Length > ec.CostMPFromCharacterIndexInArgs && Characters[evt.AdditionalTargetArgs[ec.CostMPFromCharacterIndexInArgs]].MP >= action.Cost.MPCost;
-                        }
-                        else
-                        {
-                            temp = CurrCharacter >= 0 && Characters[CurrCharacter].MP >= action.Cost.MPCost;
-                        }
+                        temp = CurrCharacter >= 0 && Characters[CurrCharacter].MP >= action.Cost.MPCost;
                     }
                 }
                 else if (evt.Operation.Type == OperationType.UseSKill)

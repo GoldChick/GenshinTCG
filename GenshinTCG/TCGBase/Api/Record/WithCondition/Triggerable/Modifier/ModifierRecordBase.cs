@@ -87,19 +87,19 @@ namespace TCGBase
                             switch (Mode)
                             {
                                 case ModifierMode.Add:
-                                    dv.Damage += Value;
+                                    dv.Amount += Value;
                                     break;
                                 case ModifierMode.Mul:
-                                    dv.Damage *= Value;
+                                    dv.Amount *= Value;
                                     break;
                                 case ModifierMode.DivideCeil:
-                                    dv.Damage = (Value + 1) / 2;
+                                    dv.Amount = (Value + 1) / 2;
                                     break;
                                 case ModifierMode.DivideFloor:
-                                    dv.Damage = Value / 2;
+                                    dv.Amount = Value / 2;
                                     break;
                                 case ModifierMode.DivideRound:
-                                    dv.Damage = (int)Math.Round(((double)Value) / 2);
+                                    dv.Amount = (int)Math.Round(((double)Value) / 2);
                                     break;
                             }
                             break;
@@ -113,15 +113,15 @@ namespace TCGBase
                         case ModifierType.Shield:
                             if (targetme.Valid(me, p, s, v))
                             {
-                                var min = int.Min(p.AvailableTimes, dv.Damage);
-                                dv.Damage -= min;
+                                var min = int.Min(p.AvailableTimes, dv.Amount);
+                                dv.Amount -= min;
                                 p.AvailableTimes -= min;
                             }
                             break;
                         case ModifierType.Barrier:
-                            if (targetme.Valid(me, p, s, v) && dv.Damage > 0)
+                            if (targetme.Valid(me, p, s, v) && dv.Amount > 0)
                             {
-                                dv.Damage -= Value;
+                                dv.Amount -= Value;
                                 p.AvailableTimes--;
                             }
                             break;

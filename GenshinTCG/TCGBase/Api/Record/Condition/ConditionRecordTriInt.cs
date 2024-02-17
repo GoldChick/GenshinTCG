@@ -16,7 +16,7 @@ namespace TCGBase
         {
             return Type switch
             {
-                ConditionType.Damage => v is DamageVariable dv && Math.Sign(dv.Damage - Value) == Sign,
+                ConditionType.Damage => v is DamageVariable dv && Math.Sign(dv.Amount - Value) == Sign,
 
                 ConditionType.HPLost => p is Character c && Math.Sign(c.CharacterCard.MaxHP - c.HP - Value) == Sign,
                 ConditionType.MPLost => p is Character c && Math.Sign(c.CharacterCard.MaxMP - c.MP - Value) == Sign,

@@ -16,7 +16,7 @@
             {
                 subhandler += action.GetHandler(triggerable);
             }
-            me.DoDamage(new(Damage), p, triggerable, () =>
+            me.DoDamage(Damage, p, triggerable, () =>
             {
                 subhandler?.Invoke(me, p, s, v);
             });

@@ -11,8 +11,7 @@ namespace TCGBase
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            //TODO: check it
-            me.Heal(triggerable, new HealVariable(Heal.Amount, Heal.TargetIndexOffset, Heal.TargetArea));
+            me.DoHeal(Heal, p, triggerable);
         }
     }
 }
