@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Xml.Linq;
 namespace TCGBase
 {
     public partial class PlayerTeam
@@ -11,12 +12,25 @@ namespace TCGBase
         {
             Game.InnerHurt(damage, new(SenderTag.AfterHurt, TeamIndex, persistent, triggerable), specialAction);
         }
-        public void DoHeal(HealRecord? heal, Persistent persistent, AbstractTriggerable triggerable)
+        //public void DoHeal(HealRecord? heal, Persistent persistent, AbstractTriggerable triggerable)
+        //{
+        //    Game.InnerHeal(heal, new(SenderTag.AfterHeal, TeamIndex, persistent, triggerable));
+        //}
+        public void Heal(Persistent persistent, AbstractTriggerable triggerable, int amount, int targetIndex, bool targetRelative = true)
         {
-            Game.InnerHeal(heal, new(SenderTag.AfterHeal, TeamIndex, persistent, triggerable));
+            var absoluteIndex = targetRelative ? ((targetIndex + CurrCharacter) % Characters.Length + Characters.Length) % Characters.Length : int.Clamp(targetIndex, 0, Characters.Length - 1);
+            var hv = new HealVariable(TeamIndex, amount, DamageSource.Direct, absoluteIndex);
+
+            var cha = Characters[hv.TargetIndex];
+            int actualAmount = int.Min(hv.Amount, cha.CharacterCard.MaxHP - cha.HP);
+            cha.HP += actualAmount;
+            Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(hv.TargetTeam, hv.TargetIndex, actualAmount));
+
+            Game.EffectTrigger(new HurtSourceSender(SenderTag.AfterHeal, TeamIndex, persistent, triggerable), hv);
         }
-        public void AttachElement(AbstractTriggerable source, DamageElement element, List<int> targetIndexs, bool targetRelative = true)
+        public void AttachElement(Persistent persistent, AbstractTriggerable triggerable, DamageElement element, List<int> targetIndexs, bool targetRelative = true)
         {
+            HurtSourceSender sourceSender = new(SenderTag.AfterElementOnly, TeamIndex, persistent, triggerable);
             var absoluteIndexs = (targetRelative ? targetIndexs.Select(i => ((i + CurrCharacter) % Characters.Length + Characters.Length) % Characters.Length) : targetIndexs.Where(i => i >= 0 && i < Characters.Length));
             var evs = absoluteIndexs.Select(i => new ElementVariable(TeamIndex, element, DamageSource.Direct, i)).ToList();
             Action<PlayerTeam>? action = null;
@@ -25,6 +39,8 @@ namespace TCGBase
                 var ev = evs[i];
                 evs.AddRange(Game.GetDamageReaction(ev));
                 action += Game.ReactionActionGenerate(ev);
+
+                Game.EffectTrigger(sourceSender, ev);
             }
             //TODO: reaction modifier 
             action?.Invoke(this);

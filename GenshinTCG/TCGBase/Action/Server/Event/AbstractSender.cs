@@ -76,14 +76,9 @@
         AfterPass,
 
         AfterOperation,
-        /// <summary>
-        /// 受到可能有元素附着、可能有伤害的东西后，发出Sender: HurtSender或NoDamageHurtSender
-        /// </summary>
         AfterHurt,
-        /// <summary>
-        /// 受到治疗后，发出Sender: HealSender
-        /// </summary>
         AfterHeal,
+        AfterElementOnly,
         /// <summary>
         /// 有<b>别的</b>状态被弃置，发出Sender : PersistentDesperatedSender
         /// </summary>

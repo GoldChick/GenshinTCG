@@ -6,8 +6,9 @@ namespace TCGBase
     {
         MP,
         Damage,
-        Effect,
         Heal,
+        Element,
+        Effect,
         Dice,
         Counter,
         Switch,

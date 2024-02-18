@@ -5,7 +5,7 @@
         public int Value { get; }
         public ActionRecordInt(TriggerType type, int value = 0, TargetRecord? target = null, List<ConditionRecordBase>? when = null) : base(type, target, when)
         {
-            Value = value;
+            Value = int.Max(0, value);
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
@@ -20,6 +20,9 @@
                             break;
                         case TriggerType.Skill:
                             team.EffectTrigger(new ActionUseSkillSender(team.TeamIndex, c.PersistentRegion, Value));
+                            break;
+                        case TriggerType.Heal:
+                            team.Heal(p, triggerable, Value, c.PersistentRegion, false);
                             break;
                     }
                 }
