@@ -4,8 +4,8 @@
     {
         public List<TargetRecord> Select { get; }
         public int MaxNumPermitted { get; }
-        public List<CostRecord> Cost { get; }
-        public CardRecordAction(CardType cardType, List<TriggerableRecordBase> skillList, List<string> tags, List<TargetRecord>? select = null, List<CostRecord>? cost = null, bool hidden = false, int maxNumPermitted = 2, List<ModifierRecordBase>? modlist = null) : base(hidden, cardType, skillList, tags, modlist)
+        public List<SingleCostVariable> Cost { get; }
+        public CardRecordAction(CardType cardType, List<TriggerableRecordBase> skillList, List<string> tags, List<TargetRecord>? select = null, List<SingleCostVariable>? cost = null, bool hidden = false, int maxNumPermitted = 2, List<ModifierRecordBase>? modlist = null) : base(hidden, cardType, skillList, tags, modlist)
         {
             MaxNumPermitted = maxNumPermitted;
             Cost = cost ?? new();

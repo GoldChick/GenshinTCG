@@ -6,12 +6,8 @@ namespace TCGBase
         public override CostInit Cost { get; }
         public CardEquipment(CardRecordAction record) : base(record)
         {
-            CostCreate create = new();
-            foreach (var c in record.Cost)
-            {
-                create.Add(c.Type, c.Count);
-            }
-            Cost = create.ToCostInit();
+            Cost = new CostCreate(record.Cost).ToCostInit();
+
             if (record.Select.FirstOrDefault() is TargetRecord tr)
             {
                 _predicate = (me, targets) =>

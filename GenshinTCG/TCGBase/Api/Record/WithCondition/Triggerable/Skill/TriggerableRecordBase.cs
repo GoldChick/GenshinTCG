@@ -63,7 +63,7 @@ namespace TCGBase
     }
     public record TriggerableRecordBaseImplement : TriggerableRecordBase
     {
-        public TriggerableRecordBaseImplement(TriggerableType type, List<ActionRecordBase>? action = null) : base(type, action)
+        public TriggerableRecordBaseImplement(TriggerableType type, List<ActionRecordBase>? action = null, List<ConditionRecordBase>? when = null) : base(type, action, when)
         {
         }
     }

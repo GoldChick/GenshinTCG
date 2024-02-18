@@ -7,6 +7,7 @@ namespace TCGBase
         //↓下为没有参数↓
         Alive,
         CurrCharacter,
+        DataAny,
         //↓下为单string↓
         HasEffect,
         HasEffectWithTag,
@@ -26,13 +27,15 @@ namespace TCGBase
         Direct,
         Summon,
         SourceMe,//要求sender的id为所在team的id
-        TargetMe,//要求伤害的target id为所在team的id
-        TargetThis,//要求受到伤害的targetTeam id为所在team的id；如果是角色状态，进一步要求受到伤害的index为所在角色的index
+        SourceThis,//要求[伤害]来源sender的id为所在team的id；如果是角色状态，进一步要求发出伤害的index为所在角色的index；否则要求发出伤害的东西==自身
+        TargetMe,//要求受到[伤害]的targetTeam id为所在team的id
+        TargetThis,//要求受到[伤害]的targetTeam id为所在team的id；如果是角色状态，进一步要求受到伤害的index为所在角色的index
 
         //↓下为单string↓
         Element,//xx元素
         Reaction,//xx反应
         SkillType,//要求伤害来源于[指定种类技能]，不指定AEQ则表示为[技能]即可
+        ThisCharacterCause,//<预设>"本角色造成指定种类伤害"，要求[来源本(状态附属的)角色]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         OurCharacterCause,//<预设>"我方角色造成指定种类伤害"，要求[来源我方]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         Related,//xx元素相关反应
         //↓下为int↓
@@ -67,11 +70,13 @@ namespace TCGBase
                 ConditionType.Direct => v is DamageVariable dv && dv.Direct == DamageSource.Direct,
                 ConditionType.Summon => s is HurtSourceSender hss && hss.Source.CardBase.CardType == CardType.Summon,
                 ConditionType.SourceMe => s != null && s.TeamID == me.TeamIndex,
+                ConditionType.SourceThis => s is HurtSourceSender hss && hss.TeamID == me.TeamIndex && (hss.Source is Character c ? c.PersistentRegion == p?.PersistentRegion : hss.Source == p),
                 ConditionType.TargetMe => v is DamageVariable dv && dv.TargetTeam == me.TeamIndex,
                 ConditionType.TargetThis => v is DamageVariable dv && dv.TargetTeam == me.TeamIndex && p != null && (me.Characters.ElementAtOrDefault(p.PersistentRegion) is null || p.PersistentRegion == dv.TargetIndex),
 
                 ConditionType.Alive => p is Character c && c.Alive,
                 ConditionType.CurrCharacter => p?.PersistentRegion == me.CurrCharacter,
+                ConditionType.DataAny => p != null && p.Data.Any(),
                 _ => throw new NotImplementedException($"Unknown Predicate In Type: {Type}")
             };
         }

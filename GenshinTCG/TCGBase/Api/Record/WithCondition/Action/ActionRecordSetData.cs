@@ -22,10 +22,20 @@
                 {
                     pe.Data = Data;
                 }
-                else if (pe.Data == null)
+                else
                 {
-                    pe.Data = new();
-
+                    if (Remove >= 0)
+                    {
+                        pe.Data.RemoveAll(i => i == Remove);
+                    }
+                    if (RemoveAt >= 0 && RemoveAt < pe.Data.Count)
+                    {
+                        pe.Data.RemoveAt(RemoveAt);
+                    }
+                    if (Add >= 0)
+                    {
+                        pe.Data.Add(Add);
+                    }
                 }
             });
         }

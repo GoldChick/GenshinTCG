@@ -9,9 +9,9 @@ namespace TCGBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public SkillCategory Category { get; }
-        public List<CostRecord> Cost { get; }
+        public List<SingleCostVariable> Cost { get; }
         public int MP { get; }
-        public TriggerableRecordSkill(SkillCategory category, List<CostRecord> cost, List<ActionRecordBase> action, int mp = 1) : base(TriggerableType.Skill, action)
+        public TriggerableRecordSkill(SkillCategory category, List<SingleCostVariable> cost, List<ActionRecordBase> action, int mp = 1, List<ConditionRecordBase>? when = null) : base(TriggerableType.Skill, action, when)
         {
             Category = category;
             Cost = cost;

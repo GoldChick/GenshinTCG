@@ -176,7 +176,7 @@ namespace TCGBase
             switch (action.Type)
             {
                 case OperationType.Switch:
-                    c = new CostCreate().Void(1).ToCostInit().ToCostVariable();
+                    c = new CostCreate().Add(ElementCategory.Void, 1).ToCostInit().ToCostVariable();
                     dms = new(TeamIndex, realAction);
                     break;
                 case OperationType.UseSKill:

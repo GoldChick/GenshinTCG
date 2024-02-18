@@ -4,17 +4,22 @@ namespace TCGBase
 {
     public enum TriggerType
     {
+        //int with target
         MP,
-        Damage,
+        Skill,
         Heal,
+        //string
+        Trigger,
         Element,
+
+
+        Damage,
         Effect,
         Dice,
         Counter,
         Switch,
-        Skill,
         SetData,
-        Trigger,
+        PopData,
     }
     public record class ActionRecordBase : IWhenThenAction
     {

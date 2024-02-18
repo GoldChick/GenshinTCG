@@ -21,6 +21,7 @@ namespace TCGBase
                         TriggerType.Dice => JsonSerializer.Deserialize<ActionRecordDice>(root.GetRawText(), options),
                         TriggerType.Effect => JsonSerializer.Deserialize<ActionRecordEffect>(root.GetRawText(), options),
                         TriggerType.Counter => JsonSerializer.Deserialize<ActionRecordCounter>(root.GetRawText(), options),
+                        TriggerType.SetData => JsonSerializer.Deserialize<ActionRecordSetData>(root.GetRawText(), options),
 
                         TriggerType.Switch => JsonSerializer.Deserialize<ActionRecordBaseWithTarget>(root.GetRawText(), options),
 

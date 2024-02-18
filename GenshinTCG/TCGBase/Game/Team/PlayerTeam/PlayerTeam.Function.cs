@@ -22,17 +22,21 @@ namespace TCGBase
             var hv = new HealVariable(TeamIndex, amount, DamageSource.Direct, absoluteIndex);
 
             var cha = Characters[hv.TargetIndex];
-            int actualAmount = int.Min(hv.Amount, cha.CharacterCard.MaxHP - cha.HP);
-            cha.HP += actualAmount;
-            Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(hv.TargetTeam, hv.TargetIndex, actualAmount));
+            if (cha.Alive)
+            {
+                int actualAmount = int.Min(hv.Amount, cha.CharacterCard.MaxHP - cha.HP);
+                cha.HP += actualAmount;
+                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(hv.TargetTeam, hv.TargetIndex, actualAmount));
 
-            Game.EffectTrigger(new HurtSourceSender(SenderTag.AfterHeal, TeamIndex, persistent, triggerable), hv);
+                Game.EffectTrigger(new HurtSourceSender(SenderTag.AfterHeal, TeamIndex, persistent, triggerable), hv);
+            }
+
         }
         public void AttachElement(Persistent persistent, AbstractTriggerable triggerable, DamageElement element, List<int> targetIndexs, bool targetRelative = true)
         {
             HurtSourceSender sourceSender = new(SenderTag.AfterElementOnly, TeamIndex, persistent, triggerable);
             var absoluteIndexs = (targetRelative ? targetIndexs.Select(i => ((i + CurrCharacter) % Characters.Length + Characters.Length) % Characters.Length) : targetIndexs.Where(i => i >= 0 && i < Characters.Length));
-            var evs = absoluteIndexs.Select(i => new ElementVariable(TeamIndex, element, DamageSource.Direct, i)).ToList();
+            var evs = absoluteIndexs.Where(i => Characters[i].Alive).Select(i => new ElementVariable(TeamIndex, element, DamageSource.Direct, i)).ToList();
             Action<PlayerTeam>? action = null;
             for (int i = 0; i < evs.Count; i++)
             {

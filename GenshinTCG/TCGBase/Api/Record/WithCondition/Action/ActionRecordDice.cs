@@ -2,9 +2,9 @@
 {
     public record class ActionRecordDice : ActionRecordBaseWithTeam
     {
-        public List<CostRecord> Dice { get; }
+        public List<SingleCostVariable> Dice { get; }
         public bool Gain { get; }
-        public ActionRecordDice(List<CostRecord> dice, bool gain = true, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Dice, team, when)
+        public ActionRecordDice(List<SingleCostVariable> dice, bool gain = true, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Dice, team, when)
         {
             Dice = dice;
             Gain = gain;

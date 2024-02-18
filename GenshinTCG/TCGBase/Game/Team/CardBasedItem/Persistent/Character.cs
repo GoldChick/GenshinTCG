@@ -48,16 +48,12 @@
                 }
             }
         }
-        /// <summary>
-        /// 使用技能后对应技能的值+1，每回合行动阶段开始时清零，记录一个回合内使用技能的次数
-        /// </summary>
-        public List<int> SkillCounter { get; }
         internal Character(CardCharacter character, int index, PlayerTeam t) : base(character)
         {
             CharacterCard = character;
             //多一点怎么了
-            SkillCounter = Enumerable.Repeat(0, character.TriggerableList.Count()).ToList();
-            Data = SkillCounter;
+            // 使用技能后对应技能的值+1，每回合行动阶段开始时清零，记录一个回合内使用技能的次数
+            Data = Enumerable.Repeat(0, character.TriggerableList.Count()).ToList();
 
             PersistentRegion = index;
             _t = t;
@@ -73,9 +69,9 @@
         /// </summary>
         internal void ToDieLimbo()
         {
-            for (int i = 0; i < SkillCounter.Count; i++)
+            for (int i = 0; i < Data.Count; i++)
             {
-                SkillCounter[i] = 0;
+                Data[i] = 0;
             }
             HP = 0;
             MP = 0;

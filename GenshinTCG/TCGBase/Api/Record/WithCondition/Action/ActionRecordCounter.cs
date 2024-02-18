@@ -10,9 +10,11 @@
         public int Set { get; }
         public bool Force { get; }
         public string? Name { get; }
-        public ActionRecordCounter(int add, string? name = null, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, team, when)
+        public ActionRecordCounter(int add, int set = -1, bool force = false, string? name = null, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, team, when)
         {
             Add = add;
+            Set = set;//TODO: set and force
+            Force = force;
             Name = name;
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)

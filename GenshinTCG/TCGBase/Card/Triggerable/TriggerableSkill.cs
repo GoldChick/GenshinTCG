@@ -6,13 +6,7 @@
         {
             NameID = "useskill";//set in INameSetable
             SkillCategory = skill.Category;
-
-            CostCreate cost = new();
-            foreach (var item in skill.Cost)
-            {
-                cost.Add(item.Type, item.Count);
-            }
-            Cost = cost.ToCostInit();
+            Cost = new CostCreate(skill.Cost).ToCostInit();
 
             EventPersistentHandler? inner = null;
             foreach (var item in skill.Action)

@@ -19,7 +19,7 @@ namespace TCGBase
                         => JsonSerializer.Deserialize<ConditionRecordTriInt>(root.GetRawText(), options),
 
                         ConditionType.HasEffect or ConditionType.HasEffectWithTag or ConditionType.HasTag or ConditionType.Name
-                        or ConditionType.SimpleTalent or ConditionType.OurCharacterCause
+                        or ConditionType.SimpleTalent or ConditionType.OurCharacterCause or ConditionType.ThisCharacterCause
                         or ConditionType.Element or ConditionType.Reaction or ConditionType.SkillType or ConditionType.Related
                         => JsonSerializer.Deserialize<ConditionRecordString>(root.GetRawText(), options),
 

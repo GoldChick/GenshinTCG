@@ -37,7 +37,7 @@ namespace TCGBase
             _ => DiceModifierType.Color
         };
         private readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
-        public ModifierRecordDice(ModifierDiceMode mode, ElementCategory element, int value = 1, bool iF = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, consume, when, trigger)
+        public ModifierRecordDice(ModifierDiceMode mode, ElementCategory element, int value = 1, bool adddata = false, bool iF = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, adddata, consume, when, trigger)
         {
             Mode = mode;
             Element = element;
@@ -67,8 +67,8 @@ namespace TCGBase
 
                         bool elementFlag = _demand switch
                         {
-                            DiceModifierType.Void => scv.Element == ElementCategory.Void,
-                            DiceModifierType.Color => scv.Element == ElementCategory.Void || ((int)scv.Element > 0 && (int)scv.Element <= 7 && scv.Element == Element),
+                            DiceModifierType.Void => scv.Type == ElementCategory.Void,
+                            DiceModifierType.Color => scv.Type == ElementCategory.Void || ((int)scv.Type > 0 && (int)scv.Type <= 7 && scv.Type == Element),
                             _ => true
                         };
 

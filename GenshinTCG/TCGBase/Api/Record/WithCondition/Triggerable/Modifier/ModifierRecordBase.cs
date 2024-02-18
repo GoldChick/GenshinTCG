@@ -24,13 +24,18 @@ namespace TCGBase
         public int Consume { get; }
         public List<ConditionRecordBase> When { get; }
         public ActionRecordTrigger? Trigger { get; }
-        public ModifierRecordBase(ModifierType type, int value, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null)
+        /// <summary>
+        /// 如果成功触发，并且为true，向p.Data中添加一个"0"
+        /// </summary>
+        public bool AddData { get; }
+        public ModifierRecordBase(ModifierType type, int value, bool adddata = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null)
         {
             Type = type;
             Value = int.Max(value, 1);
             Consume = consume;
             When = when ?? new();
             Trigger = trigger;
+            AddData = adddata;
             switch (Type)
             {
                 case ModifierType.Shield:
@@ -52,6 +57,10 @@ namespace TCGBase
                 {
                     Get()?.Invoke(me, p, s, v);
                     Trigger?.GetHandler(modTriggerable)?.Invoke(me, p, s, v);
+                    if (AddData)
+                    {
+                        p.Data.Add(0);
+                    }
                 }
             };
         }
@@ -103,7 +112,7 @@ namespace TCGBase
     }
     public record class ModifierRecordBaseImplement : ModifierRecordBase
     {
-        public ModifierRecordBaseImplement(ModifierType type, int value) : base(type, value)
+        public ModifierRecordBaseImplement(ModifierType type, int value, bool adddata = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(type, value, adddata, consume, when, trigger)
         {
         }
     }

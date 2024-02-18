@@ -20,7 +20,7 @@ namespace TCGBase
 
                 ConditionType.HPLost => p is Character c && Math.Sign(c.CharacterCard.MaxHP - c.HP - Value) == Sign,
                 ConditionType.MPLost => p is Character c && Math.Sign(c.CharacterCard.MaxMP - c.MP - Value) == Sign,
-                ConditionType.Counter => p != null && Math.Sign((p is Character c ? c.SkillCounter.ElementAtOrDefault(Index) : p.AvailableTimes) - Value) == Sign,
+                ConditionType.Counter => p != null && Math.Sign((p is Character c ? c.Data.ElementAtOrDefault(Index) : p.AvailableTimes) - Value) == Sign,
                 _ => base.GetPredicate(me, p, s, v)
             };
         }

@@ -11,12 +11,7 @@
             });
             TargetDemands = new();
             //record.Select
-            CostCreate create = new();
-            foreach (var c in record.Cost)
-            {
-                create.Add(c.Type, c.Count);
-            }
-            Cost = create.ToCostInit();
+            Cost = new CostCreate(record.Cost).ToCostInit();
         }
     }
 }

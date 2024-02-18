@@ -1,15 +1,17 @@
-﻿namespace TCGBase
+﻿using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
-    //TODO: 类似 CostRecord，是否考虑合并一下
     public class SingleCostVariable : AbstractVariable
     {
         private int _count;
-        public ElementCategory Element { get; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public ElementCategory Type { get; }
         public int Count { get => _count; set => _count = int.Max(0, value); }
 
-        public SingleCostVariable(ElementCategory element, int count)
+        public SingleCostVariable(ElementCategory type, int count)
         {
-            Element = element;
+            Type = type;
             Count = count;
         }
     }

@@ -36,7 +36,7 @@ namespace TCGBase
         {
             foreach (var singleCostVariable in Costs)
             {
-                if (singleCostVariable.Element == ElementCategory.Void)
+                if (singleCostVariable.Type == ElementCategory.Void)
                 {
                     sender.DiceModType = DiceModifierType.Void;
                     me.InstantTrigger(sender, singleCostVariable);
@@ -48,7 +48,7 @@ namespace TCGBase
                 sender.DiceModType = DiceModifierType.If;
                 me.InstantTrigger(sender, singleCostVariable);
 
-                DiceCost[(int)singleCostVariable.Element] = singleCostVariable.Count;
+                DiceCost[(int)singleCostVariable.Type] = singleCostVariable.Count;
             }
         }
         /// <summary>
@@ -60,7 +60,7 @@ namespace TCGBase
             supply ??= new int[9];
             if (supply.All(p => p >= 0) && supply.Sum() == CostSum)
             {
-                if (Costs.ElementAtOrDefault(0)?.Element == ElementCategory.Trival)
+                if (Costs.ElementAtOrDefault(0)?.Type == ElementCategory.Trival)
                 {
                     //同色
                     int num = supply.Where(i => i > 0).Count();
@@ -70,7 +70,7 @@ namespace TCGBase
                 {
                     //杂色+某(几)种指定颜色
                     //只需要满足 总数量相同+万能能够满足缺少的元素
-                    return supply[0] >= Costs.Where(scv => (int)scv.Element <= 7).Select(scv => scv.Count -= int.Min(scv.Count, supply.ElementAtOrDefault((int)scv.Element))).Sum();
+                    return supply[0] >= Costs.Where(scv => (int)scv.Type <= 7).Select(scv => scv.Count -= int.Min(scv.Count, supply.ElementAtOrDefault((int)scv.Type))).Sum();
                 }
             }
             return false;
@@ -93,6 +93,10 @@ namespace TCGBase
         {
             _costs = new int[11];
         }
+        internal CostCreate(List<SingleCostVariable>? costs) : this()
+        {
+            costs?.ForEach(c => Add(c.Type, c.Count));
+        }
         public CostInit ToCostInit()
         {
             if (_costs[0] > 0)
@@ -103,11 +107,6 @@ namespace TCGBase
                 }
             }
             return new(_costs);
-        }
-        public CostCreate Void(int num)
-        {
-            _costs[8] += num;
-            return this;
         }
         public CostCreate Add(ElementCategory element, int num)
         {
