@@ -8,6 +8,12 @@
             Action = action;
             Tag = tag;
         }
+        public Triggerable(string tag, Func<AbstractTriggerable, EventPersistentHandler>? func)
+        {
+            NameID = "default";//never set in this case
+            Action = func?.Invoke(this);
+            Tag = tag;
+        }
         public EventPersistentHandler? Action { get; internal set; }
         public override string NameID { get; protected set; }
         public override string Tag { get; }

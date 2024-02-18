@@ -14,15 +14,14 @@ namespace TCGBase
                 return typeElement.GetString() switch
                 {
                     //↓下为普通类预设↓
-                    "Card" or "RoundOver" or "RoundStep" 
+                    "Card" or "RoundOver" or "RoundStep"
                     => JsonSerializer.Deserialize<TriggerableRecordBaseImplement>(root.GetRawText(), options),
                     //↓下为不那么具体的具体类预设↓
-                    "AfterUseSkill" => JsonSerializer.Deserialize<TriggerableRecordAfterUseSkill>(root.GetRawText(), options),
                     "Custom" => JsonSerializer.Deserialize<TriggerableRecordCustom>(root.GetRawText(), options),
                     "Skill" => JsonSerializer.Deserialize<TriggerableRecordSkill>(root.GetRawText(), options),
+                    "AfterUseSkill" or "AfterUseCard" => JsonSerializer.Deserialize<TriggerableRecordEnable>(root.GetRawText(), options),
                     //↓下为具体类预设↓
-                    "Skill_A" => JsonSerializer.Deserialize<TriggerableRecordSkill_A>(root.GetRawText(), options),
-                    "Skill_E" => JsonSerializer.Deserialize<TriggerableRecordSkill_E>(root.GetRawText(), options),
+                    "Skill_A" or "Skill_E" => JsonSerializer.Deserialize<TriggerableRecordSkillPreset>(root.GetRawText(), options),
                     _ => throw new JsonException($"UnRegistered Triggerable 'Type' property: {typeElement.GetString()}."),
                 };
             }

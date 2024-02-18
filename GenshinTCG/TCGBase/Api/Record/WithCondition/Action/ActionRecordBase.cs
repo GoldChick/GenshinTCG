@@ -6,14 +6,14 @@ namespace TCGBase
     {
         MP,
         Damage,
-        DamageAorB,
         Effect,
         Heal,
         Dice,
         Counter,
         Switch,
         Skill,
-        SetData
+        SetData,
+        Trigger,
     }
     public record class ActionRecordBase : IWhenThenAction
     {

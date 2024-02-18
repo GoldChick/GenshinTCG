@@ -4,12 +4,17 @@ namespace TCGBase
 {
     public class RegistryFromJson
     {
+        public JsonSerializerOptions JsonOptionGlobal { get; }
         public JsonSerializerOptions JsonOptionCharacter { get; }
         public JsonSerializerOptions JsonOptionActionCard { get; }
         public JsonSerializerOptions JsonOptionEffect { get; }
         public JsonSerializerOptions JsonOptionTriggerable { get; }
         public RegistryFromJson()
         {
+            JsonOptionGlobal = new()
+            {
+                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction(), new JsonConverterModifier() }
+            };
             JsonOptionCharacter = new()
             {
                 Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
@@ -48,18 +53,25 @@ namespace TCGBase
                 {
                     using StreamReader reader = jsonFile.OpenText();
                     var json = reader.ReadToEnd();
-                    T t = create(json);
-                    if (t is INameSetable namesetable)
+                    try
                     {
-                        namesetable.SetName(modid, jsonFile.Name.Split('.')[0]);
+                        T t = create(json);
+                        if (t is INameSetable namesetable)
+                        {
+                            namesetable.SetName(modid, jsonFile.Name.Split('.')[0]);
+                        }
+                        registry(t);
                     }
-                    registry(t);
+                    catch (Exception ex)
+                    {
+                        throw new FileLoadException($"在加载文件{jsonFile.Name}时遇到了问题:{ex.Message}");
+                    }
                 }
             }
         }
         public CardCharacter CreateCharacterCard(string json)
         {
-            CardRecordCharacter? record = JsonSerializer.Deserialize<CardRecordCharacter>(json, JsonOptionCharacter);
+            CardRecordCharacter? record = JsonSerializer.Deserialize<CardRecordCharacter>(json, JsonOptionGlobal);
             if (record != null)
             {
                 return new CardCharacter(record);
@@ -68,11 +80,11 @@ namespace TCGBase
         }
         public AbstractCardAction CreateActionCard(string json)
         {
-            return JsonSerializer.Deserialize<CardRecordAction>(json, JsonOptionActionCard)?.GetCard() ?? throw new Exception("sb?AbstractCardAction");
+            return JsonSerializer.Deserialize<CardRecordAction>(json, JsonOptionGlobal)?.GetCard() ?? throw new Exception("sb?AbstractCardAction");
         }
         public AbstractCardEffect CreateEffectCard(string json)
         {
-            return JsonSerializer.Deserialize<CardRecordEffect>(json, JsonOptionEffect)?.GetCard() ?? throw new Exception("sb?AbstractCardEffect");
+            return JsonSerializer.Deserialize<CardRecordEffect>(json, JsonOptionGlobal)?.GetCard() ?? throw new Exception("sb?AbstractCardEffect");
         }
     }
 }

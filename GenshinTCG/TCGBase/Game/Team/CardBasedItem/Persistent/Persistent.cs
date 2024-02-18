@@ -35,7 +35,7 @@
         /// 用于[已知class的]persistent储存更加详细的数据
         /// 如[桓纳兰那]
         /// </summary>
-        public object? Data { get; set; }
+        public List<int>? Data { get; set; }
         /// <summary>
         /// 依赖于的另一个persistent，在自己的persistent中编写检测机制
         /// </summary>
@@ -69,7 +69,8 @@
                     {
                         action.Invoke();
                     }
-                }else
+                }
+                else
                 {
                     input?.Invoke(me, s, v);
                 }

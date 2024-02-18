@@ -9,6 +9,8 @@
         //↓下面对于Select没用↓
         //本身的Persistent
         This,
+        //从(有些)sender获取对应Persistent
+        Sender,
         //仅用于添加状态，此时不调用GetTargets()
         Team
     }
@@ -54,6 +56,12 @@
                     break;
                 case TargetType.Support:
                     targets.AddRange(team.Supports);
+                    break;
+                case TargetType.Sender:
+                    if (s is AfterUseSkillSender ss)
+                    {
+                        targets.Add(ss.Character);
+                    }
                     break;
                 case TargetType.This:
                     targets.Add(p);

@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using System.Xml.Linq;
 
 namespace TCGBase
 {
@@ -19,45 +19,54 @@ namespace TCGBase
         {
             var chars = Target.GetTargets(me, p, s, v, out var team);
 
-            var removecards = Remove.Select(str => Registry.Instance.EffectCards[str]);
-            foreach (var card in removecards)
+            foreach (var name in Remove)
             {
-                switch (card.CardType)
+                if (Registry.Instance.EffectCards.TryGetValue(name, out var card))
                 {
-                    case CardType.Summon:
-                        //TODO: remove summon
-                        break;
-                    case CardType.Effect:
-                        //: remove effect
-                        if (Target.Type == TargetType.Team)
-                        {
-
-                        }
-                        else
-                        {
-
-                        }
-                        break;
+                    switch (card.CardType)
+                    {
+                        case CardType.Summon:
+                            team.Summons.DestroyFirst(s => s.CardBase.Namespace == card.Namespace && s.CardBase.NameID == card.NameID);
+                            break;
+                        case CardType.Effect:
+                            if (Target.Type == TargetType.Team)
+                            {
+                                team.Effects.DestroyFirst(s => s.CardBase.Namespace == card.Namespace && s.CardBase.NameID == card.NameID);
+                            }
+                            else
+                            {
+                                chars.ForEach(c =>
+                                {
+                                    if (c is Character cha)
+                                    {
+                                        cha.Effects.DestroyFirst(s => s.CardBase.Namespace == card.Namespace && s.CardBase.NameID == card.NameID);
+                                    }
+                                });
+                            }
+                            break;
+                    }
                 }
             }
-            var addcards = Add.Select(str => Registry.Instance.EffectCards[str]);
-            foreach (var card in addcards)
+            foreach (var name in Add)
             {
-                switch (card.CardType)
+                if (Registry.Instance.EffectCards.TryGetValue(name, out var card))
                 {
-                    case CardType.Summon:
-                        team.AddSummon(card);
-                        break;
-                    case CardType.Effect:
-                        if (Target.Type == TargetType.Team)
-                        {
-                            team.AddEffect(card);
-                        }
-                        else
-                        {
-                            chars.ForEach(c => team.AddEffect(card, c.PersistentRegion));
-                        }
-                        break;
+                    switch (card.CardType)
+                    {
+                        case CardType.Summon:
+                            team.AddSummon(card);
+                            break;
+                        case CardType.Effect:
+                            if (Target.Type == TargetType.Team)
+                            {
+                                team.AddEffect(card);
+                            }
+                            else
+                            {
+                                chars.ForEach(c => team.AddEffect(card, c.PersistentRegion));
+                            }
+                            break;
+                    }
                 }
             }
         }

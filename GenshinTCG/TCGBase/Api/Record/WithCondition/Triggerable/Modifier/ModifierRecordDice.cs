@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     /*
         目前观察到的现象：
@@ -10,26 +12,86 @@
         铃铛+魔女+灼灼+烟熏鸡：普攻不消耗灼灼
         冰圣遗物+铃铛+火花+薯条：普攻不消耗薯条
      */
-    public enum ModifierDiceType
+    public enum ModifierDiceMode
     {
-        Card,
         Skill,
+        Card,
         Switch
     }
-    //TODO: card skill switch
+    /// <summary>
+    /// 对于减费来说：<br/>
+    /// value为[非负]表示一次最多能减[value]个费用；value为[负]表示一次最多能减[AvailableTimes]个费用<br/>
+    /// consume为[非负]表示一次消耗[consume]个次数；consume为[负]表示一次最多消耗[减的费用]的次数
+    /// </summary>
     public record class ModifierRecordDice : ModifierRecordBase
     {
-        protected ModifierRecordDice(ModifierRecordBase original) : base(original)
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public ModifierDiceMode Mode { get; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public ElementCategory Element { get; }
+        public bool If { get; }
+        private DiceModifierType _demand => Element switch
         {
+            ElementCategory.Trival => DiceModifierType.Any,
+            ElementCategory.Void => DiceModifierType.Void,
+            _ => DiceModifierType.Color
+        };
+        private readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
+        public ModifierRecordDice(ModifierDiceMode mode, ElementCategory element, int value = 1, bool iF = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, consume, when, trigger)
+        {
+            Mode = mode;
+            Element = element;
+            If = iF;
         }
-
+        protected override string GetSenderName()
+        {
+            return (If ? DiceModifierType.If : _demand).ToString();
+        }
         protected override EventPersistentHandler? Get()
         {
-            EventPersistentHandler handler = (me, p, s, v) =>
+            return (me, p, s, v) =>
             {
+                if (_whensourceme.Valid(me, p, s, v))
+                {
+                    //dms: void=>color=>any=>if
+                    //scv: trival / color=>void
+                    if (s is DiceModifierSender dms && v is SingleCostVariable scv)
+                    {
+                        bool modeFlag = Mode switch
+                        {
+                            ModifierDiceMode.Card => dms.Source is AbstractCardAction,
+                            ModifierDiceMode.Skill => dms.Source is ISkillable,
+                            ModifierDiceMode.Switch => dms.Source is SwitchCost,
+                            _ => true
+                        };
 
+                        bool elementFlag = _demand switch
+                        {
+                            DiceModifierType.Void => scv.Element == ElementCategory.Void,
+                            DiceModifierType.Color => scv.Element == ElementCategory.Void || ((int)scv.Element > 0 && (int)scv.Element <= 7 && scv.Element == Element),
+                            _ => true
+                        };
+
+                        if (modeFlag && elementFlag)
+                        {
+                            if (scv.Count > 0)
+                            {
+                                int sub = Value >= 0 ? Value : p.AvailableTimes;
+                                int min = int.Min(scv.Count, p.AvailableTimes);
+
+                                if (!If || scv.Count <= sub)
+                                {
+                                    scv.Count -= sub;
+                                    if (dms.RealAction)
+                                    {
+                                        p.AvailableTimes -= Consume >= 0 ? Consume : min;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             };
-            return handler;
         }
     }
 }

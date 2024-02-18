@@ -26,34 +26,37 @@ namespace TCGBase
         public TriggerableType Type { get; }
         public List<ActionRecordBase> Action { get; }
         public List<ConditionRecordBase> When { get; }
-        public TriggerableRecordBase(TriggerableType type, List<ActionRecordBase>? action = null)
+        public TriggerableRecordBase(TriggerableType type, List<ActionRecordBase>? action = null, List<ConditionRecordBase>? when = null)
         {
             Type = type;
             Action = action ?? new();
-            When =  new();//TODO: when @desperated
+            When = when ?? new();
         }
         public virtual AbstractTriggerable GetTriggerable()
         {
-            Triggerable t = new(Type switch
+            return new Triggerable(Type switch
             {
                 TriggerableType.Card => SenderTagInner.UseCard.ToString(),
                 _ => Type.ToString()
-            });
-
-            t.Action = GetHandler(t);
-
-            return t;
+            }, GetHandler);
         }
-        protected virtual EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        protected EventPersistentHandler GetHandler(AbstractTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {
                 if (When.TrueForAll(condition => condition.Valid(me, p, s, v)))
                 {
-                    foreach (var ac in Action)
-                    {
-                        ac.GetHandler(triggerable)?.Invoke(me, p, s, v);
-                    }
+                    Get(triggerable)?.Invoke(me, p, s, v);
+                }
+            };
+        }
+        protected virtual EventPersistentHandler? Get(AbstractTriggerable triggerable)
+        {
+            return (me, p, s, v) =>
+            {
+                foreach (var ac in Action)
+                {
+                    ac.GetHandler(triggerable)?.Invoke(me, p, s, v);
                 }
             };
         }

@@ -12,7 +12,7 @@ namespace TCGBase
         HasEffectWithTag,
         HasTag,
         Name,
-        SimpleTalent,//预设普通天赋，要求角色是出战，不能有限制行动状态，或者，并且符合指定名字
+        SimpleTalent,//<预设>"普通天赋"，要求角色是[出战]，[不能有限制行动状态]，[活着]，并且[符合指定nameaid]
         ///↓下为int↓
         HPLost,
         MPLost,
@@ -25,14 +25,16 @@ namespace TCGBase
         //↓下为没有参数↓
         Direct,
         Summon,
-        Skill,//要求伤害来源于技能
         SourceMe,//要求sender的id为所在team的id
         TargetMe,//要求伤害的target id为所在team的id
+        TargetThis,//要求受到伤害的targetTeam id为所在team的id；如果是角色状态，进一步要求受到伤害的index为所在角色的index
+
         //↓下为单string↓
-        Element,
-        Reaction,
-        SkillType,
-        Related,
+        Element,//xx元素
+        Reaction,//xx反应
+        SkillType,//要求伤害来源于[指定种类技能]，不指定AEQ则表示为[技能]即可
+        OurCharacterCause,//<预设>"我方角色造成指定种类伤害"，要求[来源我方]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
+        Related,//xx元素相关反应
         //↓下为int↓
         Damage,
 
@@ -64,9 +66,9 @@ namespace TCGBase
             {
                 ConditionType.Direct => v is DamageVariable dv && dv.Direct == DamageSource.Direct,
                 ConditionType.Summon => s is HurtSourceSender hss && hss.Source.CardBase.CardType == CardType.Summon,
-                ConditionType.Skill => s is HurtSourceSender hss && hss.Triggerable is ISkillable,
                 ConditionType.SourceMe => s != null && s.TeamID == me.TeamIndex,
-                ConditionType.TargetMe => s is HurtSourceSender hss && v is DamageVariable dv && (hss.TeamID ^ (int)dv.TargetTeam) != me.TeamIndex,
+                ConditionType.TargetMe => v is DamageVariable dv && dv.TargetTeam == me.TeamIndex,
+                ConditionType.TargetThis => v is DamageVariable dv && dv.TargetTeam == me.TeamIndex && p != null && (me.Characters.ElementAtOrDefault(p.PersistentRegion) is null || p.PersistentRegion == dv.TargetIndex),
 
                 ConditionType.Alive => p is Character c && c.Alive,
                 ConditionType.CurrCharacter => p?.PersistentRegion == me.CurrCharacter,

@@ -72,9 +72,17 @@
                  * 切换角色+使用技能+使用卡牌+调和卡牌+暂时空过+回合空过
                  */
                 //用于给减费的persistent减少使用次数
-                team.GetEventFinalDiceRequirement(evt.Operation, true);
+                var cv = team.GetEventFinalDiceRequirement(evt.Operation, true);
                 team.CostDices(evt.CostArgs);
-                //TODO:消耗充能在哪里
+
+                int index = cv.DiceCost[9] > 0 && evt.Operation.Type == OperationType.UseCard && team.CardsInHand[evt.Operation.Index].CardBase is AbstractCardAction action && action is ITargetSelector se ?
+                       (se.TargetDemands.Select((td, index) => td.GetPersistent(team, index)).FirstOrDefault(p => p is Character)?.PersistentRegion ?? team.CurrCharacter)
+                       : team.CurrCharacter;
+
+                if (team.Characters.ElementAtOrDefault(index) is Character c)
+                {
+                    c.MP -= cv.DiceCost[9];
+                }
             }
             switch (evt.Operation.Type)
             {
@@ -89,7 +97,7 @@
                     team.ReRollDice(dvr);
                     break;
                 case OperationType.ReRollCard:
-                    //TODO:换牌
+                    //TODO:换牌+优先不换上来换下去的种类
                     //var cards = t.CardsInHand;
                     //var cardcash0 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 0).ToList();
                     //var cardcash1 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 1).ToList();
@@ -103,7 +111,6 @@
                     //{
                     //    t.RollCard(over);
                     //}
-                    //TODO:优先不换上来换下去的种类
                     break;
                 case OperationType.Switch:
                     team.TrySwitchToIndex(evt.Operation.Index);

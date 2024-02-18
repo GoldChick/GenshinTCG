@@ -41,9 +41,12 @@ namespace TCGBase
                     var card = CardsInHand[evt.Operation.Index].CardBase;
                     if (card is AbstractCardAction actioncard)
                     {
-                        if (card.CardType == CardType.Support && Supports.Full)
+                        if (card.CardType == CardType.Support)
                         {
-                            temp = 1 == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs[0] >= 0 && evt.AdditionalTargetArgs[0] < Supports.Count;
+                            if (Supports.Full)
+                            {
+                                temp = 1 == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs[0] >= 0 && evt.AdditionalTargetArgs[0] < Supports.Count;
+                            }
                         }
                         else if (actioncard is ITargetSelector se)
                         {
@@ -67,9 +70,13 @@ namespace TCGBase
                 if (evt.Operation.Type == OperationType.UseCard)
                 {
                     var card = CardsInHand[evt.Operation.Index].CardBase;
-                    if (card is AbstractCardAction action)
+                    if (card is AbstractCardAction action && action.Cost.DiceCost[9] > 0)
                     {
-                        temp = CurrCharacter >= 0 && Characters[CurrCharacter].MP >= action.Cost.MPCost;
+                        var index = action is ITargetSelector se ?
+                            (se.TargetDemands.Select((td, index) => td.GetPersistent(this, index)).FirstOrDefault(p => p is Character)?.PersistentRegion ?? CurrCharacter)
+                            : CurrCharacter;
+
+                        temp = Characters.ElementAtOrDefault(index) is Character c && c.MP >= action.Cost.MPCost;
                     }
                 }
                 else if (evt.Operation.Type == OperationType.UseSKill)
@@ -163,13 +170,14 @@ namespace TCGBase
         /// </summary>
         internal CostVariable GetEventFinalDiceRequirement(NetOperation action, bool realAction = false)
         {
+            //TODO:real action?
             CostVariable c;
             DiceModifierSender? dms = null;
             switch (action.Type)
             {
                 case OperationType.Switch:
                     c = new CostCreate().Void(1).ToCostInit().ToCostVariable();
-                    dms = new(TeamIndex);
+                    dms = new(TeamIndex, realAction);
                     break;
                 case OperationType.UseSKill:
                     CardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
@@ -178,7 +186,7 @@ namespace TCGBase
                         c = skill is ICostable cost ? new(cost.Cost) : new();
                         if (h is ICostable skillcost)
                         {
-                            dms = new(TeamIndex, Characters[CurrCharacter], skillcost);
+                            dms = new(TeamIndex, Characters[CurrCharacter], skillcost, realAction);
                         }
                     }
                     else
@@ -192,7 +200,7 @@ namespace TCGBase
                     {
                         c = new CostVariable(cardaction.Cost.DiceCost);
                         //Game.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
-                        dms = new(TeamIndex, cardaction);
+                        dms = new(TeamIndex, cardaction, realAction);
                     }
                     else
                     {
