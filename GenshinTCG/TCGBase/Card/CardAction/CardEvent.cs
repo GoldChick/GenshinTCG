@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System;
+
+namespace TCGBase
 {
     public class CardEvent : AbstractCardAction, ITargetSelector
     {
@@ -10,11 +12,11 @@
         public List<TargetDemand> TargetDemands { get; }
         public CardEvent(CardRecordAction record) : base(record)
         {
+            TargetDemands = new();
             record.Select.ForEach(s =>
             {
-                //TODO: card event select
+                TargetDemands.Add(new(s));
             });
-            TargetDemands = new();
         }
     }
 }

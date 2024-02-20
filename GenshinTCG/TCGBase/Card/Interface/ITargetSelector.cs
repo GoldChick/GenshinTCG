@@ -36,18 +36,18 @@
     {
         public TargetTeam Team { get; }
         public TargetType Select { get; }
-        public Func<PlayerTeam, List<Persistent>, bool> Condition { get; }
-        public TargetDemand(TargetTeam team, TargetType select, Func<PlayerTeam, List<Persistent>, bool> condition)
+        public Func<PlayerTeam, IEnumerable<Persistent>, Persistent, bool> Condition { get; }
+        public TargetDemand(TargetTeam team, TargetType select, Func<PlayerTeam, IEnumerable<Persistent>, Persistent, bool> condition)
         {
             Team = team;
             Select = select;
             Condition = condition;
         }
-        internal TargetDemand(SelectRecord select)
+        internal TargetDemand(SelectRecord target)
         {
-            Team = select.Team;
-            Select = select.Type;
-            //TODO : condition
+            Team = target.Team;
+            Select = target.Type;
+            Condition = (me, ps, newp) => target.When.TrueForAll(condition => condition.Valid(me, newp, new ActionDuringUseCardSender(me.TeamIndex, ps), null));
         }
         internal Persistent? GetPersistent(PlayerTeam team, int index)
         {
@@ -60,6 +60,10 @@
                 _ => throw new Exception("IsManyTargetDemandValid():不支持的SelectType!")
             };
         }
+        internal TargetEnum ToEnum()
+        {
+            return (TargetEnum)((int)Team + 2 * (int)Select);
+        }
         internal bool IsPersistentValid(PlayerTeam team, int index, List<Persistent> old)
         {
             var t = Team == TargetTeam.Enemy ? team.Enemy : team;
@@ -70,10 +74,10 @@
                 TargetType.Support => t.Supports.ElementAtOrDefault(index),
                 _ => throw new Exception("IsManyTargetDemandValid():不支持的SelectType!")
             };
-            if (persistent != null)
+            if (persistent != null && Condition.Invoke(t, old, persistent))
             {
                 old.Add(persistent);
-                return Condition.Invoke(t, old);
+                return true;
             }
             return false;
         }
@@ -92,5 +96,6 @@
             Target = target;
             Indexs = indexs;
         }
+
     }
 }

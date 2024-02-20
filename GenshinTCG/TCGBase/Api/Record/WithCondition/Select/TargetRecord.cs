@@ -68,7 +68,10 @@
                     {
                         targets.Add(ips.Persistent);
                     }
-
+                    if (s is IMulPersistentSupplier imps)
+                    {
+                        targets.AddRange(imps.Persistents);
+                    }
                     if (v is DamageVariable dv)
                     {
                         targets.Add(team.Game.Teams[dv.TargetTeam].Characters[dv.TargetIndex]);

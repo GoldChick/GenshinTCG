@@ -4,6 +4,10 @@ namespace TCGBase
 {
     public enum ConditionType
     {
+        /// <summary>
+        /// 复合条件，实现[与]
+        /// </summary>
+        Compound,
         //↓下为没有参数↓
         Alive,
         CurrCharacter,
@@ -36,18 +40,19 @@ namespace TCGBase
 
         //↓下为单string↓
         Element,//xx元素
+        ElementRelated,//xx元素相关反应
         Reaction,//xx反应
         SkillType,//要求[伤害]或[费用]来源于[指定种类技能]，不指定AEQ则表示为[技能]即可
         ThisCharacterCause,//<预设>"本角色造成指定种类伤害"，要求[来源本(状态附属的)角色]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         OurCharacterCause,//<预设>"我方角色造成指定种类伤害"，要求[来源我方]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
-        Related,//xx元素相关反应
         //↓下为int↓
         Damage,
 
         //分界线，上为对于Damage，下为对于Dice
 
         //分界线，上为对于Dice，下为对于Target
-        AnyTarget,
+        AnyTarget,//target.any()
+        CanBeAppliedFrom,//p或者p附属的角色，能够被所有target的行动牌CardBase作为使用对象
     }
     public record class ConditionRecordBase
     {

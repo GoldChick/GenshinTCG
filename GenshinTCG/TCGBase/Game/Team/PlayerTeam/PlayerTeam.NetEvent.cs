@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections;
+using System.Text.Json;
 
 namespace TCGBase
 {
@@ -257,34 +258,31 @@ namespace TCGBase
             }
             return ints;
         }
-        //internal List<TargetValid> TargetDemandToAllTargetValid(IEnumerable<TargetDemand> demand)
-        //    => GetTargetValid(demand).Select((ints, index) => new TargetValid(demand.ElementAt(index).Target, ints)).ToList();
-        //private IEnumerable<List<int>> GetTargetValid(IEnumerable<TargetDemand> demand, int depth = 0, List<int>? curr = null)
-        //{
-        //    curr ??= new();
-        //    if (depth == demand.Count())
-        //    {
-        //        yield return curr;
-        //        yield break;
-        //    }
-        //    var nums = Enumerable.Range(0, GetTargetEnumMaxCount(demand.ElementAt(depth).Target));
-        //    foreach (var d in nums)
-        //    {
-        //        curr.Add(d);
-        //        if (demand.ElementAt(depth).Condition.Invoke(this, curr.ToArray()))
-        //        {
-        //            foreach (var item in GetTargetValid(demand, depth + 1, curr))
-        //            {
-        //                yield return item;
-        //            }
-        //        }
-        //        curr.Remove(d);
-        //    }
-        //}
+        internal IEnumerable<IEnumerable<Persistent>> GetTargetValid(IEnumerable<TargetDemand> demands, int depth = 0, IEnumerable<Persistent>? curr = null)
+        {
+            curr ??= new List<Persistent>();
+            if (depth == demands.Count())
+            {
+                yield return curr;
+                yield break;
+            }
+            var ps = GetTargetEnumEnumerable((int)demands.ElementAt(depth).ToEnum());
+            foreach (var p in ps)
+            {
+                if (demands.ElementAt(depth).Condition.Invoke(this, curr, p))
+                {
+                    foreach (var item in GetTargetValid(demands, depth + 1, curr.Append(p)))
+                    {
+                        yield return item;
+                    }
+                }
+            }
+        }
         protected int GetTargetEnumMaxCount(TargetType select, TargetTeam team)
             => GetTargetEnumMaxCount(((int)select * 2 + (int)team));
         protected int GetTargetEnumMaxCount(TargetEnum e)
             => GetTargetEnumMaxCount((int)e);
+
         protected int GetTargetEnumMaxCount(int region) => region switch
         {
             0 => Enemy.Characters.Length,
@@ -294,6 +292,16 @@ namespace TCGBase
             4 => Enemy.Supports.Count,
             5 => Supports.Count,
             _ => throw new Exception("PlayerTeam.NetEvent.TargetEnumToEnumrable():不支持的TargetEnum!")
+        };
+        protected IEnumerable<Persistent> GetTargetEnumEnumerable(int region) => region switch
+        {
+            0 => Enemy.Characters,
+            1 => Characters,
+            2 => Enemy.Summons,
+            3 => Summons,
+            4 => Enemy.Supports,
+            5 => Supports,
+            _ => throw new Exception("PlayerTeam.NetEvent.GetTargetEnumEnumerable():不支持的TargetEnum!")
         };
     }
 }

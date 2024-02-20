@@ -3,12 +3,12 @@
     /// <summary>
     /// 如果EeedEnable为true，则第一次不会触发<br/>
     /// 说的就是你！旋火轮！<br/>
-    /// 会占用persistent的Data
+    /// 会占用persistent的Data，往里面加一个0
     /// </summary>
     public record TriggerableRecordEnable : TriggerableRecordBase
     {
         public bool NeedEnable { get; }
-        public TriggerableRecordEnable(List<ActionRecordBase> action, bool needEnable = false, List<ConditionRecordBase>? when = null) : base(TriggerableType.AfterUseSkill, action, when)
+        public TriggerableRecordEnable(TriggerableType type, List<ActionRecordBase> action, bool needEnable = false, List<ConditionRecordBase>? when = null) : base(type, action, when)
         {
             NeedEnable = needEnable;
         }
@@ -16,9 +16,9 @@
         {
             return (me, p, s, v) =>
             {
-                if (NeedEnable && p.Data == null)
+                if (NeedEnable && p.Data.Count == 0)
                 {
-                    p.Data = new();
+                    p.Data.Add(0);
                 }
                 else
                 {

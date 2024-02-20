@@ -11,8 +11,7 @@
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            var team = Team == TargetTeam.Enemy ? me.Enemy : me;
-            //TODO: draw card
+            (Team == TargetTeam.Enemy ? me.Enemy : me).RollCard(Value, WithTag);
         }
     }
 }

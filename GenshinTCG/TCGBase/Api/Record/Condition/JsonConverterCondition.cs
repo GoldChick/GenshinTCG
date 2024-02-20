@@ -16,23 +16,26 @@ namespace TCGBase
                     return type switch
                     {
                         ConditionType.HPLost or ConditionType.MPLost or ConditionType.Counter or ConditionType.Damage
-                        or ConditionType.HP or ConditionType.MP 
+                        or ConditionType.HP or ConditionType.MP
                         => JsonSerializer.Deserialize<ConditionRecordTriInt>(root.GetRawText(), options),
 
                         ConditionType.HasEffect or ConditionType.HasEffectWithTag or ConditionType.HasTag or ConditionType.Name
                         or ConditionType.SimpleTalent or ConditionType.OurCharacterCause or ConditionType.ThisCharacterCause or ConditionType.SimpleWeapon
-                        or ConditionType.Element or ConditionType.Reaction or ConditionType.SkillType or ConditionType.Related
+                        or ConditionType.Element or ConditionType.Reaction or ConditionType.SkillType or ConditionType.ElementRelated
                         => JsonSerializer.Deserialize<ConditionRecordString>(root.GetRawText(), options),
 
-                        ConditionType.AnyTarget
-                        => JsonSerializer.Deserialize<ConditionRecordAnyTarget>(root.GetRawText(), options),
+                        ConditionType.AnyTarget or ConditionType.CanBeAppliedFrom
+                        => JsonSerializer.Deserialize<ConditionRecordTarget>(root.GetRawText(), options),
+
+                        ConditionType.Compound
+                        => JsonSerializer.Deserialize<ConditionRecordCompound>(root.GetRawText(), options),
 
                         _ => JsonSerializer.Deserialize<ConditionRecordBaseImplement>(root.GetRawText(), options),
                     };
                 }
                 throw new JsonException($"Unregistered Condition 'Type' property: {typeElement.GetString()}.");
             }
-            throw new JsonException("Missing or invalid 'Type' property In Condition Record.(NOT Ignore Case)");
+            throw new JsonException($"Missing or invalid 'Type' property In Condition Record.(NOT Ignore Case). json:\n {root}");
         }
 
         public override void Write(Utf8JsonWriter writer, ConditionRecordBase value, JsonSerializerOptions options)

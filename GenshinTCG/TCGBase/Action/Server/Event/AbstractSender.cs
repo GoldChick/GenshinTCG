@@ -5,8 +5,9 @@
     /// </summary>
     internal enum SenderTagInner
     {
-        UseSkill,
-        UseCard
+        UseSkill,//使用技能，用于触发效果
+        UseCard,//打出卡牌，用于触发效果
+        DuringUseCard,//正在打出卡牌，用于判断是否能够成功打出
     }
     public enum SenderTag
     {

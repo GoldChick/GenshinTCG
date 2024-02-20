@@ -13,7 +13,7 @@
         public ActionRecordCounter(int add, int set = -1, bool force = false, string? name = null, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, team, when)
         {
             Add = add;
-            Set = set;//TODO: set and force
+            Set = set;//TODO: add set and force
             Force = force;
             Name = name;
         }
