@@ -18,6 +18,8 @@ namespace TCGBase
             {
                 ConditionType.Damage => v is DamageVariable dv && Math.Sign(dv.Amount - Value) == Sign,
 
+                ConditionType.HP => p is Character c && Math.Sign(c.HP - Value) == Sign,
+                ConditionType.MP => p is Character c && Math.Sign(c.MP - Value) == Sign,
                 ConditionType.HPLost => p is Character c && Math.Sign(c.CharacterCard.MaxHP - c.HP - Value) == Sign,
                 ConditionType.MPLost => p is Character c && Math.Sign(c.CharacterCard.MaxMP - c.MP - Value) == Sign,
                 ConditionType.Counter => p != null && Math.Sign((p is Character c ? c.Data.ElementAtOrDefault(Index) : p.AvailableTimes) - Value) == Sign,

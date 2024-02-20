@@ -52,7 +52,7 @@
                     //TODO: element modifier
                     var ac = ReactionActionGenerate(dv);
                     //InstantTrigger(xxx)
-                    reactionAction += () => ac?.Invoke(Teams[dv.TargetTeam]);
+                    reactionAction += () => ac?.Invoke();
                 }
             }
             return list;

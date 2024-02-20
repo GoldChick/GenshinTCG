@@ -1,5 +1,11 @@
 ﻿namespace TCGBase
 {
+    /*
+     *                     Sender => Persistent
+     * AfterUseSkillSender => 使用技能的角色
+     * HurtSourceSender   => (要)受到伤害的角色
+     * 
+     */
     public enum TargetType
     {
         //从出战角色开始向右
@@ -61,6 +67,10 @@
                     if (s is AfterUseSkillSender ss)
                     {
                         targets.Add(ss.Character);
+                    }
+                    else if (s is HurtSourceSender hss && v is DamageVariable dv)
+                    {
+                        targets.Add(team.Game.Teams[dv.TargetTeam].Characters[dv.TargetIndex]);
                     }
                     break;
                 case TargetType.This:

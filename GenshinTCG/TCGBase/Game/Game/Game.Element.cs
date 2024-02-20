@@ -101,15 +101,48 @@
 
             return reactiontag;
         }
-        internal Action<PlayerTeam>? ReactionActionGenerate(ElementVariable ev)
+        internal Action? ReactionActionGenerate(ElementVariable ev)
         {
             return ev.Reaction switch
             {
-                ReactionTags.Overloaded => (me) =>
+                ReactionTags.Overloaded => () =>
                 {
-                    if (ev.TargetIndex == me.CurrCharacter)
+                    var team = Teams[ev.TargetTeam];
+                    if (ev.TargetIndex == team.CurrCharacter)
                     {
-                        me.TrySwitchToIndex(1, true);
+                        team.TrySwitchToIndex(1, true);
+                    }
+                }
+                ,
+                ReactionTags.Frozen => () =>
+                {
+                    if (Registry.Instance.EffectCards.TryGetValue("minecraft:effect_frozen", out var v))
+                    {
+                        Teams[ev.TargetTeam].AddEffect(v, ev.TargetTeam);
+                    }
+                }
+                ,
+                ReactionTags.Bloom => () =>
+                {
+                    if (Registry.Instance.EffectCards.TryGetValue("minecraft:effect_seed", out var v))
+                    {
+                        Teams[1 - ev.TargetTeam].AddEffect(v, -1);
+                    }
+                }
+                ,
+                ReactionTags.Burning => () =>
+                {
+                    if (Registry.Instance.EffectCards.TryGetValue("minecraft:summon_burning", out var v))
+                    {
+                        Teams[1 - ev.TargetTeam].AddSummon(v);
+                    }
+                }
+                ,
+                ReactionTags.Catalyze => () =>
+                {
+                    if (Registry.Instance.EffectCards.TryGetValue("minecraft:effect_catalyzefield", out var v))
+                    {
+                        Teams[1 - ev.TargetTeam].AddSummon(v);
                     }
                 }
                 ,

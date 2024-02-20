@@ -20,7 +20,6 @@ namespace TCGBase
     }
     /// <summary>
     /// 对于减费来说：<br/>
-    /// value为[非负]表示一次最多能减[value]个费用；value为[负]表示一次最多能减[AvailableTimes]个费用<br/>
     /// consume为[非负]表示一次消耗[consume]个次数；consume为[负]表示一次最多消耗[减的费用]的次数
     /// </summary>
     public record class ModifierRecordDice : ModifierRecordBase
@@ -36,7 +35,7 @@ namespace TCGBase
             ElementCategory.Void => DiceModifierType.Void,
             _ => DiceModifierType.Color
         };
-        private readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
+        private static readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
         public ModifierRecordDice(ModifierDiceMode mode, ElementCategory element, int value = 1, bool adddata = false, bool iF = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, adddata, consume, when, trigger)
         {
             Mode = mode;
@@ -76,12 +75,11 @@ namespace TCGBase
                         {
                             if (scv.Count > 0)
                             {
-                                int sub = Value >= 0 ? Value : p.AvailableTimes;
                                 int min = int.Min(scv.Count, p.AvailableTimes);
 
-                                if (!If || scv.Count <= sub)
+                                if (!If || scv.Count <= Value)
                                 {
-                                    scv.Count -= sub;
+                                    scv.Count -= Value;
                                     if (dms.RealAction)
                                     {
                                         p.AvailableTimes -= Consume >= 0 ? Consume : min;

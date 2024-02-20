@@ -1,5 +1,11 @@
 ﻿namespace TCGBase
 {
+    /*
+     * 注册流程：
+     * 首先，注册内部的triggerable、card
+     * 然后，注册外部的triggerable
+     * 最后，注册外部的card
+     */
     public class Registry
     {
         private readonly static Registry _instance = new();
@@ -8,7 +14,7 @@
         public RegistryFromJson RFJson { get; }
         internal RegistryCardCollection<CardCharacter> CharacterCards { get; }
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; }
-        internal RegistryCardCollection<AbstractCardEffect> EffectCards { get; }
+        internal RegistryCardCollection<CardEffect> EffectCards { get; }
         internal RegistryCardCollection<AbstractTriggerable> CustomTriggerable { get; }
         private Registry()
         {
@@ -23,7 +29,7 @@
         }
         public List<CardCharacter> GetCharacterCards() => CharacterCards.Select(kvp => kvp.Value).ToList();
         public List<AbstractCardAction> GetActionCards() => ActionCards.Select(kvp => kvp.Value).ToList();
-        public List<AbstractCardEffect> GetEffectCards() => EffectCards.Select(kvp => kvp.Value).ToList();
+        public List<CardEffect> GetEffectCards() => EffectCards.Select(kvp => kvp.Value).ToList();
         public List<AbstractTriggerable> GetTriggerables() => CustomTriggerable.Select(kvp => kvp.Value).ToList();
     }
 }

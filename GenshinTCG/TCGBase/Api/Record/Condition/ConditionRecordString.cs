@@ -25,8 +25,9 @@ namespace TCGBase
                 ConditionType.HasTag => p != null && p.CardBase.Tags.Contains(Value),
                 ConditionType.Name => $"{p?.CardBase.Namespace}:{p?.CardBase.NameID}" == Value,
                 ConditionType.SimpleTalent => p?.PersistentRegion == me.CurrCharacter && $"{p?.CardBase.Namespace}:{p?.CardBase.NameID}" == Value && p is Character c && !c.Effects.Contains(ef => ef.CardBase.Tags.Contains("AntiSkill")) && c.Alive,
+                ConditionType.SimpleWeapon => p is Character c && Enum.TryParse(Value, true, out WeaponCategory _) && c.CardBase.Tags.Contains(Value),
                 _ => base.GetPredicate(me, p, s, v)
-            };
+            }; ;
         }
     }
 }

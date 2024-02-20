@@ -14,7 +14,10 @@ namespace TCGBase
         HasTag,
         Name,
         SimpleTalent,//<预设>"普通天赋"，要求角色是[出战]，[不能有限制行动状态]，[活着]，并且[符合指定nameaid]
-        ///↓下为int↓
+        SimpleWeapon,//<预设>"普通武器"，要求[活着]，并且[具有指定weapon tag]
+        //↓下为int↓
+        HP,
+        MP,
         HPLost,
         MPLost,
         //Index用来表示第几个技能(若用于角色)

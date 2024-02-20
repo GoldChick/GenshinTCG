@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GenshinTCG")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+152827f630758af90f18718765648bb0f7270594")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0e11ae55e0856042872c3f6eaede4b30bb743eb")]
 [assembly: System.Reflection.AssemblyProductAttribute("GenshinTCG")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GenshinTCG")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

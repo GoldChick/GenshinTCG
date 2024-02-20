@@ -5,31 +5,11 @@ namespace TCGBase
     public class RegistryFromJson
     {
         public JsonSerializerOptions JsonOptionGlobal { get; }
-        public JsonSerializerOptions JsonOptionCharacter { get; }
-        public JsonSerializerOptions JsonOptionActionCard { get; }
-        public JsonSerializerOptions JsonOptionEffect { get; }
-        public JsonSerializerOptions JsonOptionTriggerable { get; }
         public RegistryFromJson()
         {
             JsonOptionGlobal = new()
             {
                 Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction(), new JsonConverterModifier() }
-            };
-            JsonOptionCharacter = new()
-            {
-                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
-            };
-            JsonOptionActionCard = new()
-            {
-                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
-            };
-            JsonOptionEffect = new()
-            {
-                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
-            };
-            JsonOptionTriggerable = new()
-            {
-                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction() }
             };
         }
         public void LoadFolders(string path, string modid)
@@ -38,7 +18,7 @@ namespace TCGBase
             LoadITriggerable(path, modid, "actioncard", Registry.Instance.ActionCards.Accept, CreateActionCard);
             LoadITriggerable(path, modid, "effect", Registry.Instance.EffectCards.Accept, CreateEffectCard);
         }
-        private void LoadITriggerable<T>(string path, string modid, string suffix, Action<T> registry, Func<string, T> create)
+        private static void LoadITriggerable<T>(string path, string modid, string suffix, Action<T> registry, Func<string, T> create)
         {
             path = $"{path}/{modid}/{suffix}";
             if (!Directory.Exists(path))
@@ -82,7 +62,7 @@ namespace TCGBase
         {
             return JsonSerializer.Deserialize<CardRecordAction>(json, JsonOptionGlobal)?.GetCard() ?? throw new Exception("sb?AbstractCardAction");
         }
-        public AbstractCardEffect CreateEffectCard(string json)
+        public CardEffect CreateEffectCard(string json)
         {
             return JsonSerializer.Deserialize<CardRecordEffect>(json, JsonOptionGlobal)?.GetCard() ?? throw new Exception("sb?AbstractCardEffect");
         }

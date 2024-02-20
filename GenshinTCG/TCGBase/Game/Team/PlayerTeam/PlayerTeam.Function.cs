@@ -37,7 +37,7 @@ namespace TCGBase
             HurtSourceSender sourceSender = new(SenderTag.AfterElementOnly, TeamIndex, persistent, triggerable);
             var absoluteIndexs = (targetRelative ? targetIndexs.Select(i => ((i + CurrCharacter) % Characters.Length + Characters.Length) % Characters.Length) : targetIndexs.Where(i => i >= 0 && i < Characters.Length));
             var evs = absoluteIndexs.Where(i => Characters[i].Alive).Select(i => new ElementVariable(TeamIndex, element, DamageSource.Direct, i)).ToList();
-            Action<PlayerTeam>? action = null;
+            Action? action = null;
             for (int i = 0; i < evs.Count; i++)
             {
                 var ev = evs[i];
@@ -47,7 +47,7 @@ namespace TCGBase
                 Game.EffectTrigger(sourceSender, ev);
             }
             //TODO: reaction modifier 
-            action?.Invoke(this);
+            action?.Invoke();
         }
         /// <summary>
         /// 强制切换到某一个[活]角色（可指定绝对坐标或相对坐标，默认绝对）<br/>

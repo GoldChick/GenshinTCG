@@ -137,6 +137,7 @@
 
             if (demand == OperationType.Trival)
             {
+                //TODO:预期风自将额外占用一轮速切结算
                 EffectTrigger(new AfterOperationSender(teamid, evt.Operation.Type), afterEventFastActionVariable);
                 //必须是当前行动的队伍才有意义做出[战斗行动]并且发生[队伍交替]
                 if (CurrTeam == teamid)

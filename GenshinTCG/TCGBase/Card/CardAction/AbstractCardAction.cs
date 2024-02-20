@@ -18,23 +18,15 @@
         /// </summary>
         public virtual bool CanBeArmed(List<CardCharacter> chars) => true;
         /// <summary>
-        /// 用于custom，会自动生成在SenderTagInner.UseCard下<br/>
-        /// 如果想加一些其他的触发，可以自行维护TriggerableList
-        /// </summary>
-        public virtual void AfterUseAction(PlayerTeam me, List<Persistent> targets) { }
-        /// <summary>
         /// 是否满足额外的打出条件（不包括骰子条件）
         /// </summary>
         public virtual bool CanBeUsed(PlayerTeam me) => true;
-        public abstract CostInit Cost { get; }
-        protected private AbstractCardAction() : base("null")
-        {
-            TriggerableList.Add(SenderTagInner.UseCard, (me, p, s, v) => AfterUseAction(me, new() { p }));
-        }
+        public CostInit Cost { get; }
         protected private AbstractCardAction(CardRecordAction record) : base(record)
         {
             MaxNumPermitted = record.MaxNumPermitted;
             FastAction = !record.Tags.Contains(CardTag.Slowly.ToString());
+            Cost = new CostCreate(record.Cost).ToCostInit();
         }
     }
 }

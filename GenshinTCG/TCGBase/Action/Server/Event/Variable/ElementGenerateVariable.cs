@@ -1,7 +1,7 @@
 ﻿namespace TCGBase
 {
     /// <summary>
-    /// 实现妮露之类的异化反应
+    /// TODO:实现妮露之类的异化反应
     /// </summary>
     public class ElementGenerateVariable : AbstractVariable
     {
