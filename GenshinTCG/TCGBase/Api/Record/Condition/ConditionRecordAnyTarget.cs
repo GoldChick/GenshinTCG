@@ -7,7 +7,7 @@
         {
             Target = target;
         }
-        protected override bool GetPredicate(PlayerTeam me, Persistent? p, AbstractSender? s, AbstractVariable? v)
+        protected override bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
             return Target.GetTargets(me, p, s, v, out _).Any();
         }

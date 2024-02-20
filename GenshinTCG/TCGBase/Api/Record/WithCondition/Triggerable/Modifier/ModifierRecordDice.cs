@@ -12,20 +12,12 @@ namespace TCGBase
         铃铛+魔女+灼灼+烟熏鸡：普攻不消耗灼灼
         冰圣遗物+铃铛+火花+薯条：普攻不消耗薯条
      */
-    public enum ModifierDiceMode
-    {
-        Skill,
-        Card,
-        Switch
-    }
     /// <summary>
     /// 对于减费来说：<br/>
     /// consume为[非负]表示一次消耗[consume]个次数；consume为[负]表示一次最多消耗[减的费用]的次数
     /// </summary>
     public record class ModifierRecordDice : ModifierRecordBase
     {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public ModifierDiceMode Mode { get; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ElementCategory Element { get; }
         public bool If { get; }
@@ -36,9 +28,8 @@ namespace TCGBase
             _ => DiceModifierType.Color
         };
         private static readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
-        public ModifierRecordDice(ModifierDiceMode mode, ElementCategory element, int value = 1, bool adddata = false, bool iF = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, adddata, consume, when, trigger)
+        public ModifierRecordDice(ElementCategory element, int value = 1, bool adddata = false, bool iF = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, adddata, consume, when, trigger)
         {
-            Mode = mode;
             Element = element;
             If = iF;
         }
@@ -56,14 +47,6 @@ namespace TCGBase
                     //scv: trival / color=>void
                     if (s is DiceModifierSender dms && v is SingleCostVariable scv)
                     {
-                        bool modeFlag = Mode switch
-                        {
-                            ModifierDiceMode.Card => dms.Source is AbstractCardAction,
-                            ModifierDiceMode.Skill => dms.Source is ISkillable,
-                            ModifierDiceMode.Switch => dms.Source is SwitchCost,
-                            _ => true
-                        };
-
                         bool elementFlag = _demand switch
                         {
                             DiceModifierType.Void => scv.Type == ElementCategory.Void,
@@ -71,19 +54,16 @@ namespace TCGBase
                             _ => true
                         };
 
-                        if (modeFlag && elementFlag)
+                        if (elementFlag && scv.Count > 0)
                         {
-                            if (scv.Count > 0)
-                            {
-                                int min = int.Min(scv.Count, p.AvailableTimes);
+                            int min = int.Min(scv.Count, p.AvailableTimes);
 
-                                if (!If || scv.Count <= Value)
+                            if (!If || scv.Count <= Value)
+                            {
+                                scv.Count -= Value;
+                                if (dms.RealAction)
                                 {
-                                    scv.Count -= Value;
-                                    if (dms.RealAction)
-                                    {
-                                        p.AvailableTimes -= Consume >= 0 ? Consume : min;
-                                    }
+                                    p.AvailableTimes -= Consume >= 0 ? Consume : min;
                                 }
                             }
                         }

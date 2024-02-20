@@ -5,19 +5,19 @@ namespace TCGBase
     public enum TriggerType
     {
         //int with target
-        MP,
-        Skill,
-        Heal,
+        MP,//target角色增加value点mp
+        Skill,//target角色使用value技能
+        Heal,//target角色治疗value点mp
         //string
-        Trigger,
-        Element,
+        Trigger,//从所在队伍发送，全局触发名为value的状态结算轮
+        Element,//target角色附着value元素
 
-
-        Damage,
-        Effect,
-        Dice,
+        DrawCard,//指定team抽value张满足withtag的牌
+        Damage,//造成特殊效果为with的damage
+        Effect,//针对target先删除remove的状态，再添加add的状态
+        Dice,//根据gain，获得或失去dice中的内容
         Counter,
-        Switch,
+        Switch,//target的team切换到第一个可用角色目标
         SetData,
         PopData,
     }
@@ -67,9 +67,9 @@ namespace TCGBase
             {
                 case TriggerType.Switch:
                     var ps = Target.GetTargets(me, p, s, v, out var team);
-                    if (ps.Any())
+                    if (ps.ElementAtOrDefault(0) is Character c)
                     {
-                        team.TrySwitchToIndex(ps[0].PersistentRegion);
+                        team.TrySwitchToIndex(c.PersistentRegion);
                     }
                     break;
                 default:

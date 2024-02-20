@@ -10,7 +10,8 @@
         /// <summary>
         /// 目标角色的绝对坐标
         /// </summary>
-        public int TargetIndex { get; private set; }
+        public int TargetIndex { get; private set; }//TODO:考虑把DV坐标改成不可更改？
+
         protected private AbstractAmountVariable(int targetTeam, DamageSource direct, int targetIndex)
         {
             TargetTeam = targetTeam;

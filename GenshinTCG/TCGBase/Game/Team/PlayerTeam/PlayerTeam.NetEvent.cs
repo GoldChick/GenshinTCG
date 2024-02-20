@@ -170,14 +170,16 @@ namespace TCGBase
         /// </summary>
         internal CostVariable GetEventFinalDiceRequirement(NetOperation action, bool realAction = false)
         {
-            //TODO:real action?
             CostVariable c;
             DiceModifierSender? dms = null;
             switch (action.Type)
             {
                 case OperationType.Switch:
                     c = new CostCreate().Add(ElementCategory.Void, 1).ToCostInit().ToCostVariable();
-                    dms = new(TeamIndex, realAction);
+                    if (CurrCharacter != -1)
+                    {
+                        dms = new(TeamIndex, Characters[CurrCharacter], realAction);
+                    }
                     break;
                 case OperationType.UseSKill:
                     CardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
@@ -195,12 +197,11 @@ namespace TCGBase
                     }
                     break;
                 case OperationType.UseCard:
-                    var card = CardsInHand[action.Index % CardsInHand.Count()].CardBase;
-                    if (card is AbstractCardAction cardaction)
+                    var card = CardsInHand[action.Index];
+                    if (card.CardBase is AbstractCardAction cardaction)
                     {
                         c = new CostVariable(cardaction.Cost.DiceCost);
-                        //Game.InstantTrigger(new UseDiceFromCardSender(TeamIndex, card, realAction), c, false);
-                        dms = new(TeamIndex, cardaction, realAction);
+                        dms = new(TeamIndex, card, cardaction, realAction);
                     }
                     else
                     {

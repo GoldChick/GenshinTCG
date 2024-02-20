@@ -12,7 +12,7 @@ namespace TCGBase
             Value = value;
             Sign = Math.Sign(sign);
         }
-        protected override bool GetPredicate(PlayerTeam me, Persistent? p, AbstractSender? s, AbstractVariable? v)
+        protected override bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
             return Type switch
             {

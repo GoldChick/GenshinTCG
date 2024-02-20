@@ -28,6 +28,7 @@
                 {
                     if (targets.Count == 1)
                     {
+                        //TODO: use card sender ....
                         return tr.When.TrueForAll(condition => condition.Valid(me, targets[0], null, null));
                     }
                     return false;

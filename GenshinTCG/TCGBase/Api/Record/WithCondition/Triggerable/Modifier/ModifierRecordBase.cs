@@ -8,6 +8,7 @@ namespace TCGBase
         Element,
         //下面一个When SourceMe
         Dice,
+        Fast,
         //下面两个内置 When TargetThis
         Shield,
         Barrier

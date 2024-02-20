@@ -54,11 +54,12 @@ namespace TCGBase
         /// </summary>
         public void TrySwitchToIndex(int index, bool relative = false)
         {
+            index = (index % Characters.Length + Characters.Length) % Characters.Length;
             Debug.Assert(Characters.Any(c => c.Alive), "AbstractTeam.Prefab.SwitchToIndex():所有角色都已经死亡!");
             int curr = CurrCharacter;
             if (relative)
             {
-                if (index % Characters.Length != 0)
+                if (index != 0)
                 {
                     do
                     {
@@ -69,7 +70,7 @@ namespace TCGBase
             }
             else
             {
-                curr = (index + Characters.Length) % Characters.Length;
+                curr = index;
             }
             if (curr != CurrCharacter && Characters[curr].Alive)
             {

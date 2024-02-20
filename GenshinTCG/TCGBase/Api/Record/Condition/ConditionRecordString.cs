@@ -9,13 +9,13 @@ namespace TCGBase
         {
             Value = value ?? "test";
         }
-        protected override bool GetPredicate(PlayerTeam me, Persistent? p, AbstractSender? s, AbstractVariable? v)
+        protected override bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
             return Type switch
             {
                 ConditionType.Element => v is DamageVariable dv && dv.Element.ToString() == Value,
                 ConditionType.Reaction => v is DamageVariable dv && dv.Reaction.ToString() == Value,
-                ConditionType.SkillType => s is HurtSourceSender hss && hss.Triggerable is ISkillable skill && !(Enum.TryParse(Value, true, out SkillCategory skilltype) && skill.SkillCategory != skilltype),
+                ConditionType.SkillType => s is IMaySkillSupplier ssp && ssp.MaySkill is ISkillable skill && !(Enum.TryParse(Value, true, out SkillCategory skilltype) && skill.SkillCategory != skilltype),
                 ConditionType.Related => v is DamageVariable dv && (((DamageElement)((int)dv.Reaction / 10)).ToString() == Value || ((DamageElement)((int)dv.Reaction % 10)).ToString() == Value),
                 ConditionType.ThisCharacterCause => v is DamageVariable dv && dv.Direct == DamageSource.Direct && s is HurtSourceSender hss && hss.TeamID == me.TeamIndex && hss.Source is Character c && c.PersistentRegion == p?.PersistentRegion && hss.Triggerable is ISkillable skill && !(Enum.TryParse(Value, true, out SkillCategory skilltype) && skill.SkillCategory != skilltype),
                 ConditionType.OurCharacterCause => v is DamageVariable dv && dv.Direct == DamageSource.Direct && s is HurtSourceSender hss && hss.TeamID == me.TeamIndex && hss.Triggerable is ISkillable skill && !(Enum.TryParse(Value, true, out SkillCategory skilltype) && skill.SkillCategory != skilltype),

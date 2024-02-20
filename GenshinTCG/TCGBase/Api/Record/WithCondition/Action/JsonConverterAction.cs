@@ -22,7 +22,7 @@ namespace TCGBase
                         TriggerType.Effect => JsonSerializer.Deserialize<ActionRecordEffect>(root.GetRawText(), options),
                         TriggerType.Counter => JsonSerializer.Deserialize<ActionRecordCounter>(root.GetRawText(), options),
                         TriggerType.SetData => JsonSerializer.Deserialize<ActionRecordSetData>(root.GetRawText(), options),
-
+                        TriggerType.DrawCard => JsonSerializer.Deserialize<ActionRecordDrawCard>(root.GetRawText(), options),
                         TriggerType.Switch => JsonSerializer.Deserialize<ActionRecordBaseWithTarget>(root.GetRawText(), options),
 
                         _ => throw new JsonException($"Unimplemented ActionRecord 'Type' property: {typeElement}."),

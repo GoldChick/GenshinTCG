@@ -37,7 +37,7 @@ namespace TCGBase
         //↓下为单string↓
         Element,//xx元素
         Reaction,//xx反应
-        SkillType,//要求伤害来源于[指定种类技能]，不指定AEQ则表示为[技能]即可
+        SkillType,//要求[伤害]或[费用]来源于[指定种类技能]，不指定AEQ则表示为[技能]即可
         ThisCharacterCause,//<预设>"本角色造成指定种类伤害"，要求[来源本(状态附属的)角色]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         OurCharacterCause,//<预设>"我方角色造成指定种类伤害"，要求[来源我方]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         Related,//xx元素相关反应
@@ -65,8 +65,8 @@ namespace TCGBase
             Not = not;
             Or = or;
         }
-        public bool Valid(PlayerTeam me, Persistent? p, AbstractSender? s, AbstractVariable? v) => (Not ^ GetPredicate(me, p, s, v)) | (Or?.Valid(me, p, s, v) ?? false);
-        protected virtual bool GetPredicate(PlayerTeam me, Persistent? p, AbstractSender? s, AbstractVariable? v)
+        public bool Valid(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v) => (Not ^ GetPredicate(me, p, s, v)) | (Or?.Valid(me, p, s, v) ?? false);
+        protected virtual bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
             return Type switch
             {

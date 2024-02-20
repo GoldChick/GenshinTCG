@@ -3,8 +3,8 @@
     /*
      *                     Sender => Persistent
      * AfterUseSkillSender => 使用技能的角色
-     * HurtSourceSender   => (要)受到伤害的角色
-     * 
+     * HurtSourceSender   => 作为来源的Persistent+(要)受到伤害的角色
+     * DiceModifierSender => 作为费用来源的Persistent
      */
     public enum TargetType
     {
@@ -37,7 +37,7 @@
             Reverse = reverse;
         }
 
-        public List<Persistent> GetTargets(PlayerTeam me, Persistent p, AbstractSender? s, AbstractVariable? v, out PlayerTeam team)
+        public List<Persistent> GetTargets(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, out PlayerTeam team)
         {
             var localteam = Team == TargetTeam.Enemy ? me.Enemy : me;
             team = localteam;
@@ -64,11 +64,12 @@
                     targets.AddRange(team.Supports);
                     break;
                 case TargetType.Sender:
-                    if (s is AfterUseSkillSender ss)
+                    if (s is IPeristentSupplier ips)
                     {
-                        targets.Add(ss.Character);
+                        targets.Add(ips.Persistent);
                     }
-                    else if (s is HurtSourceSender hss && v is DamageVariable dv)
+
+                    if (v is DamageVariable dv)
                     {
                         targets.Add(team.Game.Teams[dv.TargetTeam].Characters[dv.TargetIndex]);
                     }
@@ -77,16 +78,15 @@
                     targets.Add(p);
                     break;
             }
-            targets = targets.Where(pe => (this as IWhenThenAction).IsConditionValid(localteam, pe, s, v)).ToList();
             if (Reverse)
             {
                 targets.Reverse();
             }
             if (Index >= 0 && Index < targets.Count)
             {
-                return new() { targets[Index] };
+                targets = new() { targets[Index] };
             }
-            return targets;
+            return targets.Where(pe => (this as IWhenThenAction).IsConditionValid(localteam, pe, s, v)).ToList();
         }
     }
 }
