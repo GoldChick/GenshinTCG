@@ -121,7 +121,22 @@
                 case OperationType.UseCard:
                     afterEventFastActionVariable.Fast = (team.CardsInHand[evt.Operation.Index].CardBase as AbstractCardAction)?.FastAction ?? true;
                     BroadCast(ClientUpdateCreate.CardUpdate(teamid, ClientUpdateCreate.CardUpdateCategory.Use, evt.Operation.Index));
-                    EffectTrigger(new ActionUseCardSender(team.TeamIndex, evt.Operation.Index, evt.AdditionalTargetArgs));
+                    var card = team.CardsInHand[evt.Operation.Index];
+                    if (card.CardBase is AbstractCardAction actioncard)
+                    {
+                        List<Persistent> ps = new();
+                        if (actioncard is ITargetSelector se)
+                        {
+                            for (int i = 0; i < se.TargetDemands.Count; i++)
+                            {
+                                if (se.TargetDemands[i].GetPersistent(team, evt.AdditionalTargetArgs[i]) is Persistent p)
+                                {
+                                    ps.Add(p);
+                                }
+                            }
+                        }
+                        EffectTrigger(new ActionUseCardSender(team.TeamIndex, evt.Operation.Index, ps));
+                    }
                     break;
                 case OperationType.Blend://调和
                     team.CardsInHand.TryDestroyAt(evt.Operation.Index);

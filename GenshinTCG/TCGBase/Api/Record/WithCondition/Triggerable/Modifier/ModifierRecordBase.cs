@@ -29,7 +29,7 @@ namespace TCGBase
         /// 如果成功触发，并且为true，向p.Data中添加一个"0"
         /// </summary>
         public bool AddData { get; }
-        public ModifierRecordBase(ModifierType type, int value, bool adddata = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null)
+        public ModifierRecordBase(ModifierType type, int value = 1, bool adddata = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null)
         {
             Type = type;
             Value = int.Max(value, 1);

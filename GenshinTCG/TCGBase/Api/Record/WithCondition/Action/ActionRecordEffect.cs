@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Linq;
+using System.Xml.Linq;
 
 namespace TCGBase
 {
@@ -9,15 +10,51 @@ namespace TCGBase
     {
         public List<string> Add { get; }
         public List<string> Remove { get; }
-
-        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, TargetRecord? target = null, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, target, when)
+        public List<string> Update { get; }
+        public ActionRecordEffect(List<string>? add = null, List<string>? remove = null, List<string>? update = null, TargetRecord? target = null, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, target, when)
         {
             Add = add ?? new();
             Remove = remove ?? new();
+            Update = update ?? new();
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
             var chars = Target.GetTargets(me, p, s, v, out var team);
+            foreach (var name in Update)
+            {
+                if (Registry.Instance.EffectCards.TryGetValue(name, out var card))
+                {
+                    switch (card.CardType)
+                    {
+                        case CardType.Summon:
+                            if (team.Summons.Contains(card.Namespace, card.NameID))
+                            {
+                                team.AddSummon(card);
+                            }
+                            break;
+                        case CardType.Effect:
+                            if (Target.Type == TargetType.Team)
+                            {
+                                if (team.Effects.Contains(card.Namespace, card.NameID))
+                                {
+                                    team.AddEffect(card);
+                                }
+                                team.AddEffect(card);
+                            }
+                            else
+                            {
+                                chars.ForEach(c =>
+                                {
+                                    if (c is Character cha && cha.Effects.Contains(card.Namespace, card.NameID))
+                                    {
+                                        team.AddEffect(card, c.PersistentRegion);
+                                    }
+                                });
+                            }
+                            break;
+                    }
+                }
+            }
 
             foreach (var name in Remove)
             {

@@ -15,6 +15,8 @@
         //↓下面对于Select没用↓
         //本身的Persistent
         This,
+        //本身是角色状态，则添加对应的角色
+        Owner,
         //从(有些)sender获取对应Persistent
         Sender,
         //仅用于添加状态，此时不调用GetTargets()
@@ -79,6 +81,12 @@
                     break;
                 case TargetType.This:
                     targets.Add(p);
+                    break;
+                case TargetType.Owner:
+                    if (team.Characters.ElementAtOrDefault(p.PersistentRegion) is Character c)
+                    {
+                        targets.Add(c);
+                    }
                     break;
             }
             if (Reverse)

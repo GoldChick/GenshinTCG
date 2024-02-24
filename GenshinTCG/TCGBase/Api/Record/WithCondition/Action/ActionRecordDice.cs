@@ -1,12 +1,31 @@
-﻿namespace TCGBase
+﻿using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
+    public enum DiceGainType
+    {
+        Trival,
+        Cryo,
+        Hydro,
+        Pyro,
+        Electro,
+        Geo,
+        Dendro,
+        Anemo,
+        Void,
+        Random,
+        Owner
+    }
     public record class ActionRecordDice : ActionRecordBaseWithTeam
     {
-        public List<SingleCostVariable> Dice { get; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public DiceGainType Element { get; }
+        public int Count { get; }
         public bool Gain { get; }
-        public ActionRecordDice(List<SingleCostVariable> dice, bool gain = true, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Dice, team, when)
+        public ActionRecordDice(DiceGainType element, int count, bool gain = true, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Dice, team, when)
         {
-            Dice = dice;
+            Element = element;
+            Count = count;
             Gain = gain;
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
@@ -14,9 +33,20 @@
             var team = Team == TargetTeam.Enemy ? me.Enemy : me;
             if (Gain)
             {
-                foreach (var record in Dice)
+                switch (Element)
                 {
-                    team.GainDice(record.Type, record.Count);
+                    case DiceGainType.Random:
+                        throw new NotImplementedException("ActionRecordDice:获得随机基础元素骰还没做");
+                        break;
+                    case DiceGainType.Owner:
+                        if (me.Characters.ElementAtOrDefault(p.PersistentRegion) is Character c && c.CardBase is CardCharacter cc)
+                        {
+                            team.GainDice(cc.CharacterElement, Count);
+                        }
+                        break;
+                    default:
+                        team.GainDice((int)Element, Count);
+                        break;
                 }
             }
             else

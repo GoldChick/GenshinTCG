@@ -41,7 +41,7 @@
     {
         public virtual string Namespace { get; protected set; }
         public virtual string NameID { get; protected set; }
-        public virtual int InitialUseTimes => 1;
+        public virtual int InitialUseTimes => 0;
         public bool Hidden { get; }
         public CardType CardType { get; }
         public int Variant { get; protected set; }

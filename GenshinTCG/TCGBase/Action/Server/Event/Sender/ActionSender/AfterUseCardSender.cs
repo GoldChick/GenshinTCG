@@ -1,18 +1,16 @@
-﻿namespace TCGBase
+﻿
+namespace TCGBase
 {
-    /// <summary>
-    /// After使用Card的sender
-    /// </summary>
-    public class AfterUseCardSender : AbstractAfterActionSender
+    public class AfterUseCardSender : AbstractAfterActionSender, IPeristentSupplier, IMulPersistentSupplier
     {
         public override string SenderName => SenderTag.AfterUseCard.ToString();
-        public AbstractCardAction Card { get; set; }
-        public int[]? AdditionalTargetArgs { get; set; }
-
-        internal AfterUseCardSender(int teamID, AbstractCardAction card, int[]? targetArgs = null) : base(teamID)
+        public Persistent Card { get; }
+        public IEnumerable<Persistent> Persistents { get; }
+        Persistent IPeristentSupplier.Persistent => Card;
+        internal AfterUseCardSender(int teamID, Persistent card, IEnumerable<Persistent> persistents) : base(teamID)
         {
             Card = card;
-            AdditionalTargetArgs = targetArgs;
+            Persistents = persistents;
         }
     }
 }

@@ -10,9 +10,10 @@
         /// </summary>
         public int MaxNumPermitted { get; }
         /// <summary>
-        /// 是否快速行动，默认为true
+        /// 是否快速行动，默认为true，通过tags里的CardTag.Slowly设置
         /// </summary>
         public bool FastAction { get; }
+        public override int InitialUseTimes { get; }
         /// <summary>
         /// //是否可以加入卡组里
         /// </summary>
@@ -24,6 +25,7 @@
         public CostInit Cost { get; }
         protected private AbstractCardAction(CardRecordAction record) : base(record)
         {
+            InitialUseTimes = record.InitialUseTimes;
             MaxNumPermitted = record.MaxNumPermitted;
             FastAction = !record.Tags.Contains(CardTag.Slowly.ToString());
             Cost = new CostCreate(record.Cost).ToCostInit();

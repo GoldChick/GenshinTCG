@@ -9,6 +9,7 @@ namespace TCGBase
         Skill,
         Card,
         //↓下为预设，转化为TriggerableRecordWithAction↓
+        RoundStart,
         RoundOver,
         RoundStep,
         AfterUseSkill,

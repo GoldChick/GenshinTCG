@@ -43,10 +43,13 @@ namespace TCGBase
                     switch (card.CardBase.CardType)
                     {
                         case CardType.Equipment:
-                            me.Characters[cs.Args.ElementAtOrDefault(0)].AddEffect(card.CardBase);
+                            if (cs.Persistents.FirstOrDefault() is Character c)
+                            {
+                                c.AddEffect(card.CardBase);
+                            }
                             break;
                         case CardType.Support:
-                            me.AddSupport(card.CardBase, cs.Args.FirstOrDefault(-1));
+                            me.AddSupport(card.CardBase, cs.Persistents.FirstOrDefault()?.PersistentRegion ?? -1);
                             break;
                         case CardType.Event:
                             break;
@@ -54,6 +57,7 @@ namespace TCGBase
                             throw new ArgumentException($"CardsInHand:你把什么东西扔到手里了？{card.CardBase.CardType}?");
                     }
                     handler?.Invoke(me, card, s, v);
+                    me.Game.EffectTrigger(new AfterUseCardSender(me.TeamIndex, card, cs.Persistents));
                 });
             }
             return null;

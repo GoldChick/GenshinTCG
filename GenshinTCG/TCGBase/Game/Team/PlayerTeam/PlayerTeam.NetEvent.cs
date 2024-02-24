@@ -177,9 +177,9 @@ namespace TCGBase
             {
                 case OperationType.Switch:
                     c = new CostCreate().Add(ElementCategory.Void, 1).ToCostInit().ToCostVariable();
-                    if (CurrCharacter != -1)
+                    if (CurrCharacter != -1 && Characters.ElementAtOrDefault(action.Index) is Character target)
                     {
-                        dms = new(TeamIndex, Characters[CurrCharacter], realAction);
+                        dms = new(TeamIndex, Characters[CurrCharacter], target, realAction);
                     }
                     break;
                 case OperationType.UseSKill:

@@ -1,6 +1,6 @@
 ﻿namespace TCGBase
 {
-    public abstract class AbstractAmountVariable : AbstractVariable
+    public abstract class AbstractAmountVariable : AbstractVariable, IPersistentIndirectSupplier
     {
         //给子类用...
         protected int _amount;
@@ -18,6 +18,7 @@
             Direct = direct;
             TargetIndex = targetIndex;
         }
+        Persistent IPersistentIndirectSupplier.GetPersistent(PlayerTeam team) => team.Game.Teams[TargetTeam].Characters[TargetIndex];
     }
     public class ElementVariable : AbstractAmountVariable
     {

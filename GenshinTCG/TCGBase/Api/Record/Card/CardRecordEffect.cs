@@ -8,7 +8,19 @@
         public CardRecordEffect(List<TriggerableRecordBase> skillList, int maxUseTimes, bool customDesperated = false, List<ModifierRecordBase>? modlist = null, int initialUseTimes = -1, List<string>? tags = null, bool hidden = false, CardType cardtype = CardType.Effect) : base(hidden, cardtype, skillList, tags, modlist)
         {
             MaxUseTimes = int.Max(maxUseTimes, 0);
-            InitialUseTimes = initialUseTimes > 0 ? initialUseTimes : MaxUseTimes;
+            if (initialUseTimes > MaxUseTimes)
+            {
+                MaxUseTimes = initialUseTimes;
+                InitialUseTimes = initialUseTimes;
+            }
+            else if (initialUseTimes > 0)
+            {
+                InitialUseTimes = initialUseTimes;
+            }
+            else
+            {
+                InitialUseTimes = MaxUseTimes;
+            }
             CustomDesperated = customDesperated;
         }
         public CardEffect GetCard() => new CardEffect(this);

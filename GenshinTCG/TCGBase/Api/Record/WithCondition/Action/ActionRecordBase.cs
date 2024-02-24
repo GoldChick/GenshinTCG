@@ -16,8 +16,10 @@ namespace TCGBase
         Damage,//造成特殊效果为with的damage
         Effect,//针对target先删除remove的状态，再添加add的状态
         Dice,//根据gain，获得或失去dice中的内容
-        Counter,
+        EatDice,//收集未使用的元素骰/吐出已收集的元素骰,可设置最大数量、是否允许同色
+        Counter,//(force去)add或set指定Name的persistent或者自身的Counter
         Switch,//target的team切换到第一个可用角色目标
+        DestroySelf,//弃置状态
         SetData,
         PopData,
     }
@@ -71,6 +73,9 @@ namespace TCGBase
                     {
                         team.TrySwitchToIndex(c.PersistentRegion);
                     }
+                    break;
+                case TriggerType.DestroySelf:
+                    p.Active = false;
                     break;
                 default:
                     base.DoAction(triggerable, me, p, s, v);

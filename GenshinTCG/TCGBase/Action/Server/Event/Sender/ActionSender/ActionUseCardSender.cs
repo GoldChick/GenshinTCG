@@ -1,14 +1,14 @@
 ﻿namespace TCGBase
 {
-    public class ActionUseCardSender : AbstractSender
+    public class ActionUseCardSender : AbstractSender, IMulPersistentSupplier
     {
         public override string SenderName => SenderTagInner.UseCard.ToString();
         public int Card { get; }
-        public int[] Args { get; }
-        public ActionUseCardSender(int teamID, int card, int[] args) : base(teamID)
+        public IEnumerable<Persistent> Persistents { get; }
+        public ActionUseCardSender(int teamID, int card, IEnumerable<Persistent> persistents) : base(teamID)
         {
             Card = card;
-            Args = args;
+            Persistents = persistents;
         }
     }
     /// <summary>

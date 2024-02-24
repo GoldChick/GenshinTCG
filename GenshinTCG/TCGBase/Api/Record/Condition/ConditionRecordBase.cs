@@ -11,7 +11,7 @@ namespace TCGBase
         //↓下为没有参数↓
         Alive,
         CurrCharacter,
-        DataAny,
+        SimpleFood,//<预设>"普通食物"，要求角色[活着]，并且没有[饱腹]状态
         //↓下为单string↓
         HasEffect,
         HasEffectWithTag,
@@ -24,6 +24,7 @@ namespace TCGBase
         MP,
         HPLost,
         MPLost,
+        DataCount,
         //Index用来表示第几个技能(若用于角色)
         Counter,
 
@@ -32,16 +33,16 @@ namespace TCGBase
 
         //↓下为没有参数↓
         Direct,
-        Summon,
+        SourceSummon,
         SourceMe,//要求sender的id为所在team的id
-        SourceThis,//要求[伤害]来源sender的id为所在team的id；如果是角色状态，进一步要求发出伤害的index为所在角色的index；否则要求发出伤害的东西==自身
+        SourceThis,//要求来源sender的id为所在team的id；如果是角色状态，进一步要求sender提供的persistent为所在角色；否则要求提供的persistent==自身
         TargetMe,//要求受到[伤害]的targetTeam id为所在team的id
         TargetThis,//要求受到[伤害]的targetTeam id为所在team的id；如果是角色状态，进一步要求受到伤害的index为所在角色的index
 
         //↓下为单string↓
-        Element,//xx元素
-        ElementRelated,//xx元素相关反应
-        Reaction,//xx反应
+        Element,//造成了[指定元素]，不指定元素则表示为[七元素]即可(不一定是伤害！)
+        ElementRelated,//是伤害，并且造成了[指定元素相关反应]
+        ElementReaction,//造成了[指定反应]，不指定反应则表示为[任意反应]即可(不一定是伤害！)
         SkillType,//要求[伤害]或[费用]来源于[指定种类技能]，不指定AEQ则表示为[技能]即可
         ThisCharacterCause,//<预设>"本角色造成指定种类伤害"，要求[来源本(状态附属的)角色]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         OurCharacterCause,//<预设>"我方角色造成指定种类伤害"，要求[来源我方]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
@@ -52,6 +53,7 @@ namespace TCGBase
 
         //分界线，上为对于Dice，下为对于Target
         AnyTarget,//target.any()
+        AnyTargetWithSameIndex,//target.any() && target.all(t=>t.persistentregion==p.persistentregion)
         CanBeAppliedFrom,//p或者p附属的角色，能够被所有target的行动牌CardBase作为使用对象
     }
     public record class ConditionRecordBase
@@ -75,16 +77,16 @@ namespace TCGBase
         {
             return Type switch
             {
-                ConditionType.Direct => v is DamageVariable dv && dv.Direct == DamageSource.Direct,
-                ConditionType.Summon => s is HurtSourceSender hss && hss.Source.CardBase.CardType == CardType.Summon,
-                ConditionType.SourceMe => s != null && s.TeamID == me.TeamIndex,
-                ConditionType.SourceThis => s is HurtSourceSender hss && hss.TeamID == me.TeamIndex && (hss.Source is Character c ? c.PersistentRegion == p?.PersistentRegion : hss.Source == p),
-                ConditionType.TargetMe => v is DamageVariable dv && dv.TargetTeam == me.TeamIndex,
-                ConditionType.TargetThis => v is DamageVariable dv && dv.TargetTeam == me.TeamIndex && p != null && (me.Characters.ElementAtOrDefault(p.PersistentRegion) is null || p.PersistentRegion == dv.TargetIndex),
+                ConditionType.Direct => v is AbstractAmountVariable aav && aav.Direct == DamageSource.Direct,
+                ConditionType.SourceSummon => s is IPeristentSupplier ips && ips.Persistent.CardBase.CardType == CardType.Summon,
+                ConditionType.SourceMe => s.TeamID == me.TeamIndex,
+                ConditionType.SourceThis => s.TeamID == me.TeamIndex && s is IPeristentSupplier ips && (ips.Persistent is Character c ? c.PersistentRegion == p.PersistentRegion : ips.Persistent == p),
+                ConditionType.TargetMe => v is AbstractAmountVariable aav && aav.TargetTeam == me.TeamIndex,
+                ConditionType.TargetThis => v is AbstractAmountVariable aav && aav.TargetTeam == me.TeamIndex && p != null && (me.Characters.ElementAtOrDefault(p.PersistentRegion) is null || p.PersistentRegion == aav.TargetIndex),
 
                 ConditionType.Alive => p is Character c && c.Alive,
                 ConditionType.CurrCharacter => p?.PersistentRegion == me.CurrCharacter,
-                ConditionType.DataAny => p != null && p.Data.Any(),
+                ConditionType.SimpleFood => p is Character c && c.Alive && !c.Effects.Contains("minecraft:effect_full"),
                 _ => throw new NotImplementedException($"Unknown Predicate In Type: {Type}")
             };
         }

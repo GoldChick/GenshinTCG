@@ -8,13 +8,11 @@
     {
         public int Add { get; }
         public int Set { get; }
-        public bool Force { get; }
         public string? Name { get; }
-        public ActionRecordCounter(int add, int set = -1, bool force = false, string? name = null, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, team, when)
+        public ActionRecordCounter(int add, int set = -1, string? name = null, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, team, when)
         {
             Add = add;
-            Set = set;//TODO: add set and force
-            Force = force;
+            Set = set;
             Name = name;
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
@@ -33,17 +31,28 @@
             }
             else if (p is not Character)
             {
-                p.AvailableTimes += Add;
+                Modifier(p);
             }
         }
         private bool TryAdd(PersistentSet<AbstractCardBase> set)
         {
             if (set.TryFind(ef => $"{ef.CardBase.Namespace}:{ef.CardBase.NameID}" == Name, out var target))
             {
-                target.AvailableTimes += Add;
+                Modifier(target);
                 return true;
             }
             return false;
+        }
+        private void Modifier(Persistent p)
+        {
+            if (Set >= 0)
+            {
+                p.AvailableTimes = Set;
+            }
+            else
+            {
+                p.AvailableTimes += Add;
+            }
         }
     }
 }
