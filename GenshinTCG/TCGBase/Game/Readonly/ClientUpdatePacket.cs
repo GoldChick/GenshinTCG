@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace TCGBase
 {
     public enum ClientUpdateType
     {
@@ -143,8 +145,18 @@
         }
         internal static class PersistentUpdate
         {
-            public static ClientUpdatePacket ObtainUpdate(int teamID, int region, int variant, int availabletimes, string cardNameSpace, string cardNameID) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, new int[] { region, variant, availabletimes }, new string[] { cardNameSpace, cardNameID });
-            public static ClientUpdatePacket TriggerUpdate(int teamID, int region, int index, int availabletimes) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Trigger, region, index, availabletimes);
+            public static ClientUpdatePacket ObtainUpdate(int teamID, int region, int availabletimes, List<int> data, string cardNameSpace, string cardNameID)
+            {
+                List<int> ints = new() { region, availabletimes };
+                ints.AddRange(data);
+                return new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, ints.ToArray(), new string[] { cardNameSpace, cardNameID });
+            }
+            public static ClientUpdatePacket TriggerUpdate(int teamID, int region, int index, int availabletimes, List<int> data)
+            {
+                List<int> ints = new() { region, index, availabletimes };
+                ints.AddRange(data);
+                return new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Trigger, ints.ToArray());
+            }
             public static ClientUpdatePacket LoseUpdate(int teamID, int region, int index) => new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Lose, region, index);
         }
         internal static ClientUpdatePacket DiceUpdate(int teamID, params int[] dices) => new(ClientUpdateType.Dice, 10 * teamID, dices);

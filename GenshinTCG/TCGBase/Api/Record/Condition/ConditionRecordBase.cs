@@ -25,15 +25,14 @@ namespace TCGBase
         HPLost,
         MPLost,
         DataCount,
-        //Index用来表示第几个技能(若用于角色)
-        Counter,
-
+        Counter,//Index用来表示第几个技能(若用于角色，并且信息不带有技能)；如果信息带有技能，则自动查找对应的index
+        Region,//p的persistentregion
 
         //分界线，上为刚需Persistent，下为对于Damage
 
         //↓下为没有参数↓
-        Direct,
-        SourceSummon,
+        Direct,//要求[伤害/元素]是直接伤害
+        SourceSummon,//要求sender提供的persistent为召唤物
         SourceMe,//要求sender的id为所在team的id
         SourceThis,//要求来源sender的id为所在team的id；如果是角色状态，进一步要求sender提供的persistent为所在角色；否则要求提供的persistent==自身
         TargetMe,//要求受到[伤害]的targetTeam id为所在team的id

@@ -38,8 +38,8 @@ namespace TCGBase
         {
             HP = c.HP;
             MP = c.MP;
-            MaxHP = c.CharacterCard.MaxHP;
-            MaxMP = c.CharacterCard.MaxMP;
+            MaxHP = c.Card.MaxHP;
+            MaxMP = c.Card.MaxMP;
             Element = c.Element;
             Effects = c.Effects.Copy().Select(e => new ReadonlyPersistent(e)).ToList();
             SkillCount = c.CardBase.TriggerableList.Where(t => t.Tag == SenderTagInner.UseSkill.ToString()).Count();
@@ -47,17 +47,16 @@ namespace TCGBase
     }
     public class ReadonlyPersistent : ReadonlyObject
     {
-        public int Variant { get; }
         public int AvailableTimes { get; internal set; }
+        public List<int> Data { get; }
         [JsonConstructor]
-        public ReadonlyPersistent(string nameSpace, string nameid, int variant, int availabletimes) : base(nameSpace, nameid)
+        public ReadonlyPersistent(string nameSpace, string nameid, int availabletimes, IEnumerable<int> data) : base(nameSpace, nameid)
         {
-            Variant = variant;
             AvailableTimes = availabletimes;
+            Data = data.ToList();
         }
-        internal ReadonlyPersistent(Persistent p) : this("sb", p.CardBase.NameID, p.CardBase.Variant, p.AvailableTimes)
+        internal ReadonlyPersistent(Persistent p) : this(p.CardBase.Namespace, p.CardBase.NameID,  p.AvailableTimes, p.Data)
         {
-            //TODO: p.CardBase.Namespace TODO23
         }
     }
 

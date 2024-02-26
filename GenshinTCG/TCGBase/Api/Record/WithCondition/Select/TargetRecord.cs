@@ -5,6 +5,7 @@
      * AfterUseSkillSender => 使用技能的角色
      * HurtSourceSender   => 作为来源的Persistent+(要)受到伤害的角色
      * DiceModifierSender => 作为费用来源的Persistent
+     * OnCharacterOnSender>入场的角色
      */
     public enum TargetType
     {
@@ -19,6 +20,8 @@
         Owner,
         //从(有些)sender获取对应Persistent
         Sender,
+        //获取所有角色状态、出战状态、召唤、支援（不进行排序）
+        Effect,
         //仅用于添加状态，此时不调用GetTargets()
         Team
     }
@@ -87,6 +90,15 @@
                     {
                         targets.Add(c);
                     }
+                    break;
+                case TargetType.Effect:
+                    foreach (var cha in team.Characters)
+                    {
+                        targets.AddRange(cha.Effects);
+                    }
+                    targets.AddRange(team.Effects);
+                    targets.AddRange(team.Summons);
+                    targets.AddRange(team.Supports);
                     break;
             }
             if (Reverse)

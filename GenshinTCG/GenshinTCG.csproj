@@ -8,21 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="TCGMod\Minecraft\Effect\effect_catalystfield.json" />
-    <None Remove="TCGMod\Minecraft\Effect\effect_frozen.json" />
-    <None Remove="TCGMod\Minecraft\Effect\effect_seed.json" />
-    <None Remove="TCGMod\Minecraft\Effect\summon_burning.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="TCGMod\Minecraft\Effect\effect_catalystfield.json" />
-    <EmbeddedResource Include="TCGMod\Minecraft\Effect\effect_frozen.json" />
-    <EmbeddedResource Include="TCGMod\Minecraft\Effect\effect_seed.json" />
-    <EmbeddedResource Include="TCGMod\Minecraft\Effect\summon_burning.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="TCGMod\Minecraft\Triggerable\" />
     <Folder Include="TCGMod\Sample\Triggerable\" />
   </ItemGroup>
 

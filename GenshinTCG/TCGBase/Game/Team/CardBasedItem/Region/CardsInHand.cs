@@ -3,32 +3,32 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace TCGBase
 {
-    public class CardsInHand : AbstractPersistentSet, IEnumerable<Persistent>
+    public class CardsInHand : AbstractPersistentSet, IEnumerable<Persistent<AbstractCardAction>>
     {
-        private readonly List<Persistent> _data;
-        private readonly PlayerTeam _t;
+        private readonly List<Persistent<AbstractCardAction>> _data;
+        private readonly PlayerTeam _me;
         public CardsInHand(PlayerTeam t)
         {
             PersistentRegion = -10;
             _data = new();
-            _t = t;
+            _me = t;
         }
         public Persistent this[int i] => _data[i];
         internal void Add(AbstractCardAction card)
         {
             if (_data.Count >= 10)
             {
-                _t.Game.BroadCast(ClientUpdateCreate.CardUpdate(_t.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace, card.NameID));
+                _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace, card.NameID));
             }
             else
             {
                 _data.Add(new(card));
-                _t.Game.BroadCast(ClientUpdateCreate.CardUpdate(_t.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
+                _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
             }
         }
         internal EventPersistentSetHandler? GetHandlers(AbstractSender sender)
         {
-            if (sender.TeamID == _t.TeamIndex && sender is ActionUseCardSender cs && cs.Card >= 0 && cs.Card <= _data.Count)
+            if (sender.TeamID == _me.TeamIndex && sender is ActionUseCardSender cs && cs.Card >= 0 && cs.Card <= _data.Count)
             {
                 EventPersistentHandler? handler = null;
                 var card = _data[cs.Card];
@@ -99,7 +99,7 @@ namespace TCGBase
             }
             return sum;
         }
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_data).GetEnumerator();
-        public IEnumerator<Persistent> GetEnumerator() => ((IEnumerable<Persistent>)_data).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
+        public IEnumerator<Persistent<AbstractCardAction>> GetEnumerator() => _data.GetEnumerator();
     }
 }

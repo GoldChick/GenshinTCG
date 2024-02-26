@@ -1,8 +1,7 @@
 ﻿namespace TCGBase
 {
-    public class Character : Persistent
+    public class Character : Persistent<CardCharacter>
     {
-        public CardCharacter CharacterCard { get; }
         private int _hp;
         private int _mp;
         private int _element;
@@ -19,7 +18,7 @@
             {
                 if (Alive)
                 {
-                    _hp = int.Clamp(value, 0, CharacterCard.MaxHP);
+                    _hp = int.Clamp(value, 0, Card.MaxHP);
                 }
             }
         }
@@ -29,7 +28,7 @@
             {
                 if (Alive)
                 {
-                    _mp = int.Clamp(value, 0, CharacterCard.MaxMP);
+                    _mp = int.Clamp(value, 0, Card.MaxMP);
                     _t.Game.BroadCast(ClientUpdateCreate.CharacterUpdate.MPUpdate(_t.TeamIndex, PersistentRegion, _mp));
                 }
             }
@@ -50,7 +49,6 @@
         }
         internal Character(CardCharacter character, int index, PlayerTeam t) : base(character)
         {
-            CharacterCard = character;
             //多一点怎么了
             // 使用技能后对应技能的值+1，每回合行动阶段开始时清零，记录一个回合内使用技能的次数
             Data = Enumerable.Repeat(0, character.TriggerableList.Count()).ToList();
@@ -61,7 +59,7 @@
 
             Alive = true;
             Active = true;
-            HP = CharacterCard.MaxHP;
+            HP = Card.MaxHP;
         }
         /// <summary>
         /// 被击倒角色会在异次元空间中参与结算......<br/>
@@ -103,14 +101,14 @@
             {
                 if (sender is ActionUseSkillSender ss)
                 {
-                    if (ss.TeamID == _t.TeamIndex && PersistentRegion == ss.Character && CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var skill, ss.Skill))
+                    if (ss.TeamID == _t.TeamIndex && PersistentRegion == ss.Character && Card.TriggerableList.TryGetValue(sender.SenderName, out var skill, ss.Skill))
                     {
                         hs += GetDelayedHandler((me, s, v) => skill.Trigger(me, this, sender, v));
                     }
                 }
                 else
                 {
-                    if (CharacterCard.TriggerableList.TryGetValue(sender.SenderName, out var h))
+                    if (Card.TriggerableList.TryGetValue(sender.SenderName, out var h))
                     {
                         hs += GetDelayedHandler((me, s, v) => h.Trigger(me, this, sender, v));
                     }

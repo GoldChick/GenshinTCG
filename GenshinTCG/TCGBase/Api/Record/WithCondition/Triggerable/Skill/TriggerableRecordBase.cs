@@ -17,6 +17,7 @@ namespace TCGBase
         AfterSwitch,
         AfterHurt,
         AfterHealed,
+        OnCharacterOn,
         //↓下为预设，有设置好的类↓
         Skill_A,
         Skill_E,

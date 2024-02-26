@@ -1,47 +1,31 @@
 ﻿namespace TCGBase
 {
-    /// <summary>
-    /// NameID的状态的<see cref="Persistent.AvailableTimes"/>增加Add(可以为负)<br/>
-    /// 如果NameID为null，并且调用该Handler的Persistent不为Character，那就直接增加给他
-    /// </summary>
-    public record class ActionRecordCounter : ActionRecordBaseWithTeam
+    public record class ActionRecordCounter : ActionRecordBaseWithTarget
     {
         public int Add { get; }
         public int Set { get; }
-        public string? Name { get; }
-        public ActionRecordCounter(int add, int set = -1, string? name = null, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, team, when)
+        public ActionRecordCounter(int add = 0, int set = -1, TargetRecord? target = null, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, target, when)
         {
             Add = add;
             Set = set;
-            Name = name;
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            if (Name != null)
+            if (Target.Type is not TargetType.Character)
             {
-                Queue<PersistentSet<AbstractCardBase>> queue = new(me.Characters.Select(c => c.Effects));
-                queue.Enqueue(me.Effects);
-                queue.Enqueue(me.Summons);
-                queue.Enqueue(me.Supports);
-                bool flag = false;
-                while (!flag && queue.TryDequeue(out var set))
+                var targets = Target.GetTargets(me, p, s, v, out _);
+                foreach (var t in targets)
                 {
-                    flag = TryAdd(set);
+                    if (t is not Character)
+                    {
+                        Modifier(t);
+                    }
                 }
             }
             else if (p is not Character)
             {
                 Modifier(p);
             }
-        }
-        private bool TryAdd(PersistentSet<AbstractCardBase> set)
-        {
-            if (set.TryFind(ef => $"{ef.CardBase.Namespace}:{ef.CardBase.NameID}" == Name, out var target))
-            {
-                Modifier(target);
-                return true;
-            }
-            return false;
         }
         private void Modifier(Persistent p)
         {

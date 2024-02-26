@@ -28,6 +28,7 @@ namespace TCGBase
             h = any ? targets.ElementAt(int.Clamp(index, 0, targets.Count() - 1)) : null;
             return any;
         }
+        internal int FindIndex(AbstractTriggerable input) => _list.FindIndex(t => t == input);
         public List<AbstractTriggerable> this[string st] => GetAllValue(st);
         public List<AbstractTriggerable> GetAllValue(string st) => _list.Where(p => p.Tag == st).ToList();
         /// <summary>

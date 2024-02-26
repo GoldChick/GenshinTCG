@@ -24,7 +24,7 @@ namespace TCGBase
             var cha = Characters[hv.TargetIndex];
             if (cha.Alive)
             {
-                int actualAmount = int.Min(hv.Amount, cha.CharacterCard.MaxHP - cha.HP);
+                int actualAmount = int.Min(hv.Amount, cha.Card.MaxHP - cha.HP);
                 cha.HP += actualAmount;
                 Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(hv.TargetTeam, hv.TargetIndex, actualAmount));
 
@@ -93,7 +93,7 @@ namespace TCGBase
                 if (i != except)
                 {
                     var c = Characters[i];
-                    int hplost = c.CharacterCard.MaxHP - c.HP;
+                    int hplost = c.Card.MaxHP - c.HP;
                     if (hplost > currhplost)
                     {
                         currid = i;

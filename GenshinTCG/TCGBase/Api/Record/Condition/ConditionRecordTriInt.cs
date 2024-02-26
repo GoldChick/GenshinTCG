@@ -20,10 +20,13 @@ namespace TCGBase
 
                 ConditionType.HP => p is Character c && Math.Sign(c.HP - Value) == Sign,
                 ConditionType.MP => p is Character c && Math.Sign(c.MP - Value) == Sign,
-                ConditionType.HPLost => p is Character c && Math.Sign(c.CharacterCard.MaxHP - c.HP - Value) == Sign,
-                ConditionType.MPLost => p is Character c && Math.Sign(c.CharacterCard.MaxMP - c.MP - Value) == Sign,
-                ConditionType.Counter => p != null && Math.Sign((p is Character c ? c.Data.ElementAtOrDefault(Index) : p.AvailableTimes) - Value) == Sign,
-                ConditionType.DataCount => p != null && Math.Sign(p.Data.Count - Value) == Sign,
+                ConditionType.HPLost => p is Character c && Math.Sign(c.Card.MaxHP - c.HP - Value) == Sign,
+                ConditionType.MPLost => p is Character c && Math.Sign(c.Card.MaxMP - c.MP - Value) == Sign,
+                ConditionType.Counter => Math.Sign((p is Character c ? (c.Data.ElementAtOrDefault(
+                    (s is IMaySkillSupplier ssp && ssp.MaySkill is AbstractTriggerable skilltriggerable && c.Card.TriggerableList.FindIndex(skilltriggerable) is int temp && temp >= 0) ? temp : Index
+                    )) : p.AvailableTimes) - Value) == Sign,
+                ConditionType.DataCount => Math.Sign(p.Data.Count - Value) == Sign,
+                ConditionType.Region => Math.Sign(p.PersistentRegion - Value) == Sign,
                 _ => base.GetPredicate(me, p, s, v)
             };
         }

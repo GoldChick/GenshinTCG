@@ -115,7 +115,7 @@ namespace TCGBase
                     switch (persistentcategory)
                     {
                         case ClientUpdateCreate.PersistentUpdateCategory.Obtain:
-                            effects.Add(new(packet.Strings[0], packet.Strings[1], packet.Ints[1], packet.Ints[2]));
+                            effects.Add(new(packet.Strings[0], packet.Strings[1], packet.Ints[1], packet.Ints[2..]));
                             break;
                         case ClientUpdateCreate.PersistentUpdateCategory.Trigger:
                             effects[packet.Ints[1]].AvailableTimes = packet.Ints[2];

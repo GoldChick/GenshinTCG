@@ -9,9 +9,10 @@ namespace TCGBase
         /// 如果Value不为Null，将会通过Value作为json，按照通过Name找到的类型创建一个对象（所以这种情况要有构造函数）
         /// </summary>
         public object? Value { get; }
-        public TriggerableRecordCustom(string name) : base(TriggerableType.Custom, null)
+        public TriggerableRecordCustom(string name, object? value = null) : base(TriggerableType.Custom, null)
         {
             Name = name;
+            Value = value;
         }
         public override AbstractTriggerable GetTriggerable()
         {

@@ -63,7 +63,7 @@ namespace TCGBase
         {
             if (evt.Operation.Type == OperationType.Blend)
             {
-                return evt.CostArgs != null && evt.CostArgs.Sum() == 1 && evt.CostArgs[(int)Characters[CurrCharacter].CharacterCard.CharacterElement] == 0 && ContainsCost(evt.CostArgs);
+                return evt.CostArgs != null && evt.CostArgs.Sum() == 1 && evt.CostArgs[(int)Characters[CurrCharacter].Card.CharacterElement] == 0 && ContainsCost(evt.CostArgs);
             }
             else
             {
@@ -183,7 +183,7 @@ namespace TCGBase
                     }
                     break;
                 case OperationType.UseSKill:
-                    CardCharacter chaCard = Characters[CurrCharacter].CharacterCard;
+                    CardCharacter chaCard = Characters[CurrCharacter].Card;
                     if (chaCard.TriggerableList.TryGetValue(SenderTagInner.UseSkill.ToString(), out var h, action.Index) && h is ISkillable skill)
                     {
                         c = skill is ICostable cost ? new(cost.Cost) : new();
@@ -217,7 +217,7 @@ namespace TCGBase
                     }
                     else
                     {
-                        ints[(int)Characters[CurrCharacter].CharacterCard.CharacterElement] = 1;
+                        ints[(int)Characters[CurrCharacter].Card.CharacterElement] = 1;
                     }
                     //对于Blend并不是需要该种元素，而是不能是该种元素
                     c = new(ints);

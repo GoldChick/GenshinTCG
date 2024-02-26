@@ -118,13 +118,13 @@
                 {
                     if (Registry.Instance.EffectCards.TryGetValue("minecraft:effect_frozen", out var v))
                     {
-                        Teams[ev.TargetTeam].AddEffect(v, ev.TargetTeam);
+                        Teams[ev.TargetTeam].AddEffect(v, ev.TargetIndex);
                     }
                 }
                 ,
                 ReactionTags.Bloom => () =>
                 {
-                    if (Registry.Instance.EffectCards.TryGetValue("minecraft:effect_seed", out var v))
+                    if (Registry.Instance.EffectCards.TryGetValue("minecraft:effect_dendrocore", out var v))
                     {
                         Teams[1 - ev.TargetTeam].AddEffect(v, -1);
                     }
@@ -142,7 +142,15 @@
                 {
                     if (Registry.Instance.EffectCards.TryGetValue("minecraft:effect_catalyzefield", out var v))
                     {
-                        Teams[1 - ev.TargetTeam].AddSummon(v);
+                        Teams[1 - ev.TargetTeam].AddEffect(v);
+                    }
+                }
+                ,
+                ReactionTags.CrystallizeCryo or ReactionTags.CrystallizeHydro or ReactionTags.CrystallizePyro or ReactionTags.CrystallizeElectro => () =>
+                {
+                    if (Registry.Instance.EffectCards.TryGetValue("minecraft:effect_crystal", out var v))
+                    {
+                        Teams[1 - ev.TargetTeam].AddEffect(v);
                     }
                 }
                 ,

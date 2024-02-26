@@ -32,6 +32,10 @@
         /// 我方行动开始前，如[天狐霆雷]
         /// </summary>
         RoundMeStart,
+        /// <summary>
+        /// 角色上场时（开局上场，或者复活）
+        /// </summary>
+        OnCharacterOn,
         #region 用于减费
         UseDiceFromCard,
         UseDiceFromSkill,

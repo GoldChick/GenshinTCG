@@ -140,7 +140,7 @@
                     break;
                 case OperationType.Blend://调和
                     team.CardsInHand.TryDestroyAt(evt.Operation.Index);
-                    team.AddSingleDice((int)team.Characters[team.CurrCharacter].CharacterCard.CharacterElement);
+                    team.AddSingleDice((int)team.Characters[team.CurrCharacter].Card.CharacterElement);
                     afterEventFastActionVariable.Fast = true;
                     break;
                 case OperationType.Break://行动空过

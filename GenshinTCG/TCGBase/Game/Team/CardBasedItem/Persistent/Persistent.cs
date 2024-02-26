@@ -28,12 +28,8 @@
         /// </summary>
         public bool Active { get; set; }
         /// <summary>
-        /// 偷懒所使用的，不过确实有用捏
-        /// </summary>
-        public Type Type { get; protected init; }
-        /// <summary>
-        /// 用于[已知class的]persistent储存更加详细的数据
-        /// 如[桓纳兰那]
+        /// 用于[已知class的]persistent储存更加详细的数据，自行维护<br/>
+        /// 如[桓纳兰那][立本]
         /// </summary>
         public List<int> Data { get; internal set; }
         /// <summary>
@@ -47,7 +43,6 @@
         public Persistent(AbstractCardBase card, Persistent? bind = null)
         {
             CardBase = card;
-            Type = card.GetType();
             Active = true;
             Childs = new();
             Data = new();
@@ -76,6 +71,14 @@
                     input?.Invoke(me, s, v);
                 }
             };
+        }
+    }
+    public class Persistent<T> : Persistent where T : AbstractCardBase
+    {
+        public T Card { get; }
+        public Persistent(T card, Persistent? bind = null) : base(card, bind)
+        {
+            Card = card;
         }
     }
 }
