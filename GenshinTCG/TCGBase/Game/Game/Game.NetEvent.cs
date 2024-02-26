@@ -75,7 +75,7 @@
                 var cv = team.GetEventFinalDiceRequirement(evt.Operation, true);
                 team.CostDices(evt.CostArgs);
 
-                int index = cv.DiceCost[9] > 0 && evt.Operation.Type == OperationType.UseCard && team.CardsInHand[evt.Operation.Index].CardBase is AbstractCardAction action && action is ITargetSelector se ?
+                int index = cv.DiceCost[9] > 0 && evt.Operation.Type == OperationType.UseCard && team.CardsInHand[evt.Operation.Index].Card is ITargetSelector se ?
                        (se.TargetDemands.Select((td, index) => td.GetPersistent(team, index)).FirstOrDefault(p => p is Character)?.PersistentRegion ?? team.CurrCharacter)
                        : team.CurrCharacter;
 
@@ -119,24 +119,20 @@
                     EffectTrigger(new ActionUseSkillSender(team.TeamIndex, team.CurrCharacter, evt.Operation.Index));
                     break;
                 case OperationType.UseCard:
-                    afterEventFastActionVariable.Fast = (team.CardsInHand[evt.Operation.Index].CardBase as AbstractCardAction)?.FastAction ?? true;
+                    afterEventFastActionVariable.Fast = team.CardsInHand[evt.Operation.Index].Card.FastAction;
                     BroadCast(ClientUpdateCreate.CardUpdate(teamid, ClientUpdateCreate.CardUpdateCategory.Use, evt.Operation.Index));
-                    var card = team.CardsInHand[evt.Operation.Index];
-                    if (card.CardBase is AbstractCardAction actioncard)
+                    List<Persistent> ps = new();
+                    if (team.CardsInHand[evt.Operation.Index].Card is ITargetSelector se)
                     {
-                        List<Persistent> ps = new();
-                        if (actioncard is ITargetSelector se)
+                        for (int i = 0; i < se.TargetDemands.Count; i++)
                         {
-                            for (int i = 0; i < se.TargetDemands.Count; i++)
+                            if (se.TargetDemands[i].GetPersistent(team, evt.AdditionalTargetArgs[i]) is Persistent p)
                             {
-                                if (se.TargetDemands[i].GetPersistent(team, evt.AdditionalTargetArgs[i]) is Persistent p)
-                                {
-                                    ps.Add(p);
-                                }
+                                ps.Add(p);
                             }
                         }
-                        EffectTrigger(new ActionUseCardSender(team.TeamIndex, evt.Operation.Index, ps));
                     }
+                    EffectTrigger(new ActionUseCardSender(team.TeamIndex, evt.Operation.Index, ps));
                     break;
                 case OperationType.Blend://调和
                     team.CardsInHand.TryDestroyAt(evt.Operation.Index);

@@ -6,14 +6,12 @@ namespace TCGBase
     public class CardsInHand : AbstractPersistentSet, IEnumerable<Persistent<AbstractCardAction>>
     {
         private readonly List<Persistent<AbstractCardAction>> _data;
-        private readonly PlayerTeam _me;
-        public CardsInHand(PlayerTeam t)
+        public CardsInHand(PlayerTeam me) : base(me)
         {
             PersistentRegion = -10;
             _data = new();
-            _me = t;
         }
-        public Persistent this[int i] => _data[i];
+        public Persistent<AbstractCardAction> this[int i] => _data[i];
         internal void Add(AbstractCardAction card)
         {
             if (_data.Count >= 10)
@@ -62,7 +60,7 @@ namespace TCGBase
             }
             return null;
         }
-        public bool TryPopAt(int index, [NotNullWhen(true)] out Persistent? persistent)
+        public bool TryPopAt(int index, [NotNullWhen(true)] out Persistent<AbstractCardAction>? persistent)
         {
             if (index >= 0 && index < _data.Count)
             {
@@ -76,14 +74,14 @@ namespace TCGBase
         internal void DestroyAt(int index)
         {
             _data.RemoveAt(index);
-            //RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, index));
+            _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, index));
         }
         public void TryDestroyAt(int index)
         {
             if (index >= 0 && index < _data.Count)
             {
                 _data.RemoveAt(index);
-                //RealGame.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, index));
+                _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, index));
             }
         }
         public int TryDestroyAll(Predicate<AbstractCardBase> condition)

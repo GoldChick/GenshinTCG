@@ -3,13 +3,10 @@
     public abstract class AbstractPersistentSet
     {
         public int PersistentRegion { get; init; }
-    }
-    public abstract class AbstractPersistentSet<T> : AbstractPersistentSet where T : AbstractCardBase
-    {
-        protected readonly List<Persistent<T>> _data;
-        protected private AbstractPersistentSet()
+        protected readonly PlayerTeam _me;
+        protected private AbstractPersistentSet(PlayerTeam me)
         {
-            _data = new();
+            _me = me;
         }
     }
 }

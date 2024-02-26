@@ -12,10 +12,6 @@ namespace TCGBase
         {
             Game.InnerHurt(damage, new(SenderTag.AfterHurt, TeamIndex, persistent, triggerable), specialAction);
         }
-        //public void DoHeal(HealRecord? heal, Persistent persistent, AbstractTriggerable triggerable)
-        //{
-        //    Game.InnerHeal(heal, new(SenderTag.AfterHeal, TeamIndex, persistent, triggerable));
-        //}
         public void Heal(Persistent persistent, AbstractTriggerable triggerable, int amount, int targetIndex, bool targetRelative = true)
         {
             var absoluteIndex = targetRelative ? ((targetIndex + CurrCharacter) % Characters.Length + Characters.Length) % Characters.Length : int.Clamp(targetIndex, 0, Characters.Length - 1);

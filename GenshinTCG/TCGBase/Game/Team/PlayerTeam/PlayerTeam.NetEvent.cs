@@ -39,22 +39,19 @@ namespace TCGBase
                     temp = CardsInHand.Count() == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs.All(i => i == 0 || i == 1);
                     break;
                 case OperationType.UseCard:
-                    var card = CardsInHand[evt.Operation.Index].CardBase;
-                    if (card is AbstractCardAction actioncard)
+                    var card = CardsInHand[evt.Operation.Index].Card;
+                    if (card.CardType == CardType.Support)
                     {
-                        if (card.CardType == CardType.Support)
+                        if (Supports.Full)
                         {
-                            if (Supports.Full)
-                            {
-                                temp = 1 == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs[0] >= 0 && evt.AdditionalTargetArgs[0] < Supports.Count;
-                            }
+                            temp = 1 == evt.AdditionalTargetArgs.Length && evt.AdditionalTargetArgs[0] >= 0 && evt.AdditionalTargetArgs[0] < Supports.Count;
                         }
-                        else if (actioncard is ITargetSelector se)
-                        {
-                            temp = evt.AdditionalTargetArgs.Length == se.TargetDemands.Count && IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs, out _);
-                        }
-                        temp &= actioncard.CanBeUsed(this);
                     }
+                    else if (card is ITargetSelector se)
+                    {
+                        temp = evt.AdditionalTargetArgs.Length == se.TargetDemands.Count && IsManyTargetDemandValid(se.TargetDemands, evt.AdditionalTargetArgs, out _);
+                    }
+                    temp &= card.CanBeUsed(this);
                     break;
             }
             return temp;
@@ -70,14 +67,14 @@ namespace TCGBase
                 bool temp = true;
                 if (evt.Operation.Type == OperationType.UseCard)
                 {
-                    var card = CardsInHand[evt.Operation.Index].CardBase;
-                    if (card is AbstractCardAction action && action.Cost.DiceCost[9] > 0)
+                    var card = CardsInHand[evt.Operation.Index].Card;
+                    if (card.Cost.DiceCost[9] > 0)
                     {
-                        var index = action is ITargetSelector se ?
+                        var index = card is ITargetSelector se ?
                             (se.TargetDemands.Select((td, index) => td.GetPersistent(this, index)).FirstOrDefault(p => p is Character)?.PersistentRegion ?? CurrCharacter)
                             : CurrCharacter;
 
-                        temp = Characters.ElementAtOrDefault(index) is Character c && c.MP >= action.Cost.MPCost;
+                        temp = Characters.ElementAtOrDefault(index) is Character c && c.MP >= card.Cost.MPCost;
                     }
                 }
                 else if (evt.Operation.Type == OperationType.UseSKill)
@@ -97,7 +94,7 @@ namespace TCGBase
         internal List<TargetEnum> GetCardTargetEnums(int cardindex)
         {
             List<TargetEnum> enums = new();
-            var actioncard = CardsInHand[cardindex].CardBase;
+            var actioncard = CardsInHand[cardindex].Card;
             if (actioncard.CardType == CardType.Support && Supports.Full)
             {
                 enums.Add(TargetEnum.Support_Me);
@@ -198,16 +195,9 @@ namespace TCGBase
                     }
                     break;
                 case OperationType.UseCard:
-                    var card = CardsInHand[action.Index];
-                    if (card.CardBase is AbstractCardAction cardaction)
-                    {
-                        c = new CostVariable(cardaction.Cost.DiceCost);
-                        dms = new(TeamIndex, card, cardaction, realAction);
-                    }
-                    else
-                    {
-                        throw new Exception($"第{action.Index}个Card不是AbstractCardAction");
-                    }
+                    var cardpersistent = CardsInHand[action.Index];
+                    c = new CostVariable(cardpersistent.Card.Cost.DiceCost);
+                    dms = new(TeamIndex, cardpersistent, cardpersistent.Card, realAction);
                     break;
                 case OperationType.Blend:
                     int[] ints = new int[8];
@@ -238,8 +228,7 @@ namespace TCGBase
         internal List<int> GetNextValidTargets(int cardindex, int[] parameters_already)
         {
             List<int> ints = new();
-            var card = CardsInHand[cardindex].CardBase;
-            if (card is ITargetSelector se)
+            if (CardsInHand[cardindex].Card is ITargetSelector se)
             {
                 if (se.TargetDemands.Count > parameters_already.Length)
                 {

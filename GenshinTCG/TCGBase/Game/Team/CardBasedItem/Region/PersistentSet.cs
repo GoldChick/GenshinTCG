@@ -7,7 +7,6 @@ namespace TCGBase
     public class PersistentSet<T> : AbstractPersistentSet, IEnumerable<Persistent> where T : AbstractCardBase
     {
         private readonly List<Persistent> _data;
-        private readonly PlayerTeam _me;
         private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
         /// <summary>
         /// 为正代表最多x个，为负或0代表无限制
@@ -23,14 +22,13 @@ namespace TCGBase
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
         /// </param>
-        internal PersistentSet(int region, PlayerTeam team, int size = 0, bool multisame = false)
+        internal PersistentSet(int region, PlayerTeam me, int size = 0, bool multisame = false):base(me)
         {
             PersistentRegion = region;
             _data = new();
             _handlers = new();
             MaxSize = size;
             MultiSame = multisame;
-            _me = team;
         }
         public Persistent this[int i] => _data[i];
         /// <summary>
