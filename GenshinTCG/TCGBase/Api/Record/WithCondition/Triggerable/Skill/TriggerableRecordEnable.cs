@@ -12,22 +12,16 @@
         {
             NeedEnable = needEnable;
         }
-        protected override EventPersistentHandler? Get(AbstractTriggerable triggerable)
+        protected override void Get(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            return (me, p, s, v) =>
+            if (NeedEnable && p.Data.Count == 0)
             {
-                if (NeedEnable && p.Data.Count == 0)
-                {
-                    p.Data.Add(0);
-                }
-                else
-                {
-                    foreach (var item in Action)
-                    {
-                        item.GetHandler(triggerable)?.Invoke(me, p, s, v);
-                    }
-                }
-            };
+                p.Data.Add(0);
+            }
+            else
+            {
+                base.Get(triggerable, me, p, s, v);
+            }
         }
     }
 }

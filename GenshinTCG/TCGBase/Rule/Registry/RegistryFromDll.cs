@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Minecraft;
+using System.Reflection;
 namespace TCGBase
 {
     public class RegistryFromDll
@@ -6,10 +7,12 @@ namespace TCGBase
         internal List<string> Mods { get; } = new();
 
         //不知为何的namespace黑名单
-        private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "minecraft", "equipment", "nilou", "hutao" };
+        private readonly string[] _blacklist = new string[] { "nullable", "null", "blacklist", "equipment", "nilou", "hutao" };
 
         public string[] GetMods() => Mods.ToArray();
-
+        internal RegistryFromDll()
+        {
+        }
         internal void Register(AbstractModUtil util)
         {
             string name = util.NameSpace;
@@ -19,9 +22,7 @@ namespace TCGBase
             }
             Mods.Add(name);
 
-            AbstractRegister reg = util.GetRegister();
-
-            reg.RegisterTriggerable(Registry.Instance.CustomTriggerable);
+            util.GetRegister().RegisterTriggerable(Registry.Instance.CustomTriggerable);
         }
 
         public void LoadDlls(string path)

@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using Minecraft;
+
+namespace TCGBase
 {
     /*
      * 注册流程：
@@ -26,7 +28,12 @@
 
             RFDll = new();
             RFJson = new();
+
+
+            var util = new Minecraft_Util();
+            util.GetRegister().RegisterTriggerable(CustomTriggerable);
         }
+
         public List<CardCharacter> GetCharacterCards() => CharacterCards.Select(kvp => kvp.Value).ToList();
         public List<AbstractCardAction> GetActionCards() => ActionCards.Select(kvp => kvp.Value).ToList();
         public List<CardEffect> GetEffectCards() => EffectCards.Select(kvp => kvp.Value).ToList();

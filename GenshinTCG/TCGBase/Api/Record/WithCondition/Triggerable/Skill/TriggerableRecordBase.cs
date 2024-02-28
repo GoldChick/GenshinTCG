@@ -8,8 +8,10 @@ namespace TCGBase
 
         Skill,
         Card,
+        Prepare,
         //↓下为预设，转化为TriggerableRecordWithAction↓
         RoundStart,
+        RoundDuring,
         RoundOver,
         RoundStep,
         AfterUseSkill,
@@ -50,19 +52,16 @@ namespace TCGBase
             {
                 if (When.TrueForAll(condition => condition.Valid(me, p, s, v)))
                 {
-                    Get(triggerable)?.Invoke(me, p, s, v);
+                    Get(triggerable, me, p, s, v);
                 }
             };
         }
-        protected virtual EventPersistentHandler? Get(AbstractTriggerable triggerable)
+        protected virtual void Get(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            return (me, p, s, v) =>
+            foreach (var ac in Action)
             {
-                foreach (var ac in Action)
-                {
-                    ac.GetHandler(triggerable)?.Invoke(me, p, s, v);
-                }
-            };
+                ac.GetHandler(triggerable)?.Invoke(me, p, s, v);
+            }
         }
     }
     public record TriggerableRecordBaseImplement : TriggerableRecordBase

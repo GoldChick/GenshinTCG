@@ -7,12 +7,12 @@ namespace TCGBase
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DamageElement Element { get; }
         public int Amount { get; }
-        public int TargetIndexOffset { get; private set; }
+        public int TargetIndexOffset { get; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TargetArea TargetArea { get; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TargetTeam Team { get; }
-        public DamageRecord? SubDamage { get; internal set; }
+        public DamageRecord? SubDamage { get;}
         public DamageRecord(DamageElement element, int amount, int targetIndexOffset = 0, TargetArea targetArea = TargetArea.TargetOnly, TargetTeam team = TargetTeam.Enemy, DamageRecord? subDamage = null)
         {
             Element = element;

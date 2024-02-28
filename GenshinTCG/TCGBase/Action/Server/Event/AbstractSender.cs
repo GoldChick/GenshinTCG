@@ -7,6 +7,7 @@
     {
         UseSkill,//使用技能，用于触发效果
         UseCard,//打出卡牌，用于触发效果
+        Prepare,//触发准备技能，自带一个空过
         DuringUseCard,//正在打出卡牌，用于判断是否能够成功打出
     }
     public enum SenderTag
@@ -31,6 +32,10 @@
         /// 我方行动开始前，如[天狐霆雷]
         /// </summary>
         RoundMeStart,
+        /// <summary>
+        /// 行动阶段中，如[准备技能]
+        /// </summary>
+        RoundDuring,
         /// <summary>
         /// 角色上场时（开局上场，或者复活）
         /// </summary>

@@ -19,7 +19,7 @@ namespace TCGBase
         }
         public override AbstractTriggerable GetTriggerable()
         {
-            return new TriggerableSkill(Type switch
+            return new TriggerableRecordSkill.TriggerableSkill(Type switch
             {
                 TriggerableType.Skill_E => new TriggerableRecordSkill(
                 SkillCategory.E,
