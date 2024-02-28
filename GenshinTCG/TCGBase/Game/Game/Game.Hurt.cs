@@ -64,11 +64,11 @@
         internal void InnerHurt(DamageRecord? damage, HurtSourceSender sourceSender, Action? specialAction = null)
         {
             List<DamageVariable> valid_dvs = new();
-            
+
             Action? todie_or_nottodie = null;
             if (damage != null)
             {
-                TempDelayedTriggerQueue?.Enqueue(() =>
+                DelayedTriggerQueue.TryTrigger(() =>
                 {
                     if (Teams.Any(t => t.Characters.All(c => !c.Alive)))
                     {
@@ -76,7 +76,7 @@
                     }
                 });
                 var dvs = InnerHurtCompute(sourceSender, damage, out Action? reactionAction);
-                
+
                 foreach (var dv in dvs)
                 {
                     var currteam = Teams[dv.TargetTeam];
@@ -109,7 +109,7 @@
                     }
                     BroadCast(ClientUpdateCreate.CharacterUpdate.HurtUpdate(currteam.TeamIndex, dv.TargetIndex, dv.Element, dv.Amount));
                 }
-                
+
                 reactionAction?.Invoke();
             }
             specialAction?.Invoke();
@@ -118,7 +118,7 @@
             var alive_dvs = valid_dvs.Where(dv => Teams[dv.TargetTeam].Characters[dv.TargetIndex].Alive);
             var died_dvs = valid_dvs.Where(dv => !Teams[dv.TargetTeam].Characters[dv.TargetIndex].Alive).DistinctBy(dv => dv.TargetIndex);
 
-            TempDelayedTriggerQueue?.Enqueue(() =>
+            DelayedTriggerQueue.TryTrigger(() =>
             {
                 sourceSender.ModifierName = SenderTag.AfterHurt;
                 foreach (var dv in alive_dvs)
@@ -127,6 +127,7 @@
                 }
                 foreach (var dv in died_dvs)
                 {
+                    dv.Deadly = true;
                     Teams[dv.TargetTeam].Characters[dv.TargetIndex].DieTrigger(sourceSender, dv);
                     NetEventRecords.Last().Add(new DieRecord(dv.TargetTeam, Teams[dv.TargetTeam].Characters[dv.TargetIndex]));
                     EffectTrigger(sourceSender, dv);

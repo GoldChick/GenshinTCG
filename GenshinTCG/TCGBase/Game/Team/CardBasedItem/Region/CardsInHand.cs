@@ -84,6 +84,19 @@ namespace TCGBase
                 _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, index));
             }
         }
+        public int TryDestroyAll(Predicate<Persistent> condition)
+        {
+            int sum = 0;
+            for (int i = _data.Count - 1; i >= 0; i--)
+            {
+                if (condition.Invoke(_data[i]))
+                {
+                    DestroyAt(i);
+                    sum++;
+                }
+            }
+            return sum;
+        }
         public int TryDestroyAll(Predicate<AbstractCardBase> condition)
         {
             int sum = 0;

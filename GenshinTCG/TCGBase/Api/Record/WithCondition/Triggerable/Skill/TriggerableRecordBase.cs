@@ -15,7 +15,9 @@ namespace TCGBase
         AfterUseSkill,
         AfterUseCard,
         AfterSwitch,
+        AfterOperation,
         AfterHurt,
+        AfterElement,
         AfterHealed,
         OnCharacterOn,
         //↓下为预设，有设置好的类↓

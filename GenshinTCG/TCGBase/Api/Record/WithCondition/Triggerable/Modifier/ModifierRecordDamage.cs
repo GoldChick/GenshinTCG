@@ -14,7 +14,7 @@ namespace TCGBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierDamageMode Mode { get; }
-        public ModifierRecordDamage(int value, bool adddata = false, ModifierDamageMode mode = ModifierDamageMode.Add, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Damage, value, adddata, consume, when, trigger)
+        public ModifierRecordDamage(int value, ModifierDamageMode mode = ModifierDamageMode.Add, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Damage, value, consume, when, trigger)
         {
             Mode = mode;
         }

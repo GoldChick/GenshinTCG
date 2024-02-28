@@ -32,10 +32,40 @@
         /// 自己检测满了没有，也不一定添加成功
         /// </summary>
         public void AddSupport(AbstractCardBase support, int replace = -1) => AddSupport(new Persistent(support), replace);
-        public void AddSummon(AbstractCardBase summon) => AddSummon(1, summon);
-        public void AddSummon(int num, params AbstractCardBase[] summons)
+        public void AddSummon(Persistent summon) => AddSummon(1, summon);
+        public void AddSummon(CardEffect summon) => AddSummon(1, summon);
+        public void AddSummon(int num, params Persistent[] summons)
         {
-            var left = summons.Where(s => !Summons.Contains(s.Namespace, s.NameID) && s.CardType == CardType.Summon).ToList();
+            var left = summons.Where(s => !Summons.Contains(s.CardBase) && s.CardBase.CardType == CardType.Summon).ToList();
+            while (num > 0)
+            {
+                if (left.Count == 0)//全都召唤了，刷新
+                {
+                    var pool = summons.Select(p => p).ToList();
+                    for (int i = 0; i < num && pool.Count > 0; i++)
+                    {
+                        int j = Random.Next(pool.Count);
+                        Summons.Add(pool[j]);
+                        pool.RemoveAt(j);
+                    }
+                    break;
+                }
+                else if (!Summons.Full)
+                {
+                    var choose = Random.Next(left.Count);
+                    Summons.Add(left[choose]);
+                    left.RemoveAt(choose);
+                    num--;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        public void AddSummon(int num, params CardEffect[] summons)
+        {
+            var left = summons.Where(s => !Summons.Contains(s) && s.CardType == CardType.Summon).ToList();
             while (num > 0)
             {
                 if (left.Count == 0)//全都召唤了，刷新
@@ -118,14 +148,7 @@
         /// </summary>
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
-            if (Game.TempDelayedTriggerQueue != null)
-            {
-                Game.TempDelayedTriggerQueue.Enqueue(() => InstantTrigger(sender, variable));
-            }
-            else
-            {
-                InstantTrigger(sender, variable);
-            }
+            Game.DelayedTriggerQueue.TryTrigger(() => InstantTrigger(sender, variable));
         }
     }
 }

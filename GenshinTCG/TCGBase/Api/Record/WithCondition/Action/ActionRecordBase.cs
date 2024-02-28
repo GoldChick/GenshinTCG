@@ -14,7 +14,8 @@ namespace TCGBase
 
         DrawCard,//指定team抽value张满足withtag的牌
         Damage,//造成特殊效果为with的damage
-        Effect,//针对target先删除remove的状态，再添加add的状态
+        Effect,//针对target先删除remove的，再添加add的，支持 行动牌、召唤物、状态
+        SampleEffect,//从给出的池子里抽取一定数量effect
         Dice,//根据gain，获得或失去dice中的内容
         EatDice,//收集未使用的元素骰/吐出已收集的元素骰,可设置最大数量、是否允许同色
         Counter,//(force去)add或set指定targer的persistent或者自身的Counter
@@ -75,16 +76,17 @@ namespace TCGBase
                     }
                     break;
                 case TriggerType.Destroy:
-                    if (Target.Type is not TargetType.Character)
+                    switch (Target.Type)
                     {
-                        foreach (var per in ps)
-                        {
-                            per.Active = false;
-                        }
-                    }
-                    else
-                    {
-                        p.Active = false;
+                        case TargetType.Character:
+                            p.Active = false;
+                            break;
+                        default:
+                            foreach (var per in ps)
+                            {
+                                per.Active = false;
+                            }
+                            break;
                     }
                     break;
                 default:

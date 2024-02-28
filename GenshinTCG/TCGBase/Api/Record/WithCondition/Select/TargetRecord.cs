@@ -14,12 +14,13 @@
         Summon,
         Support,
         //↓下面对于Select没用↓
+        //从(有些)sender获取对应Persistent
+        Sender,
+
         //本身的Persistent
         This,
         //本身是角色状态，则添加对应的角色
         Owner,
-        //从(有些)sender获取对应Persistent
-        Sender,
         //获取所有角色状态、出战状态、召唤、支援（不进行排序）
         Effect,
         //仅用于添加状态，此时不调用GetTargets()
@@ -28,7 +29,8 @@
     public record class TargetRecord : SelectRecord
     {
         /// <summary>
-        /// 默认为0，即第一个；可置为负表示全部
+        /// 默认为0，即第一个；可置为负表示全部；超过.count()之后为空<br/>
+        /// 只对Character、Summon、Support、Sender这种已知或部分已知的有效
         /// </summary>
         public int Index { get; }
         /// <summary>
@@ -82,6 +84,7 @@
                         targets.Add(team.Game.Teams[dv.TargetTeam].Characters[dv.TargetIndex]);
                     }
                     break;
+
                 case TargetType.This:
                     targets.Add(p);
                     break;
@@ -97,17 +100,24 @@
                         targets.AddRange(cha.Effects);
                     }
                     targets.AddRange(team.Effects);
-                    targets.AddRange(team.Summons);
-                    targets.AddRange(team.Supports);
                     break;
             }
-            if (Reverse)
+            
+            if (Type != TargetType.Effect)
             {
-                targets.Reverse();
-            }
-            if (Index >= 0 && Index < targets.Count)
-            {
-                targets = new() { targets[Index] };
+                if (Reverse)
+                {
+                    targets.Reverse();
+                }
+                if (Index >= 0)
+                {
+                    var oldtargets = targets;
+                    targets = new();
+                    if (Index < oldtargets.Count)
+                    {
+                        targets.Add(oldtargets[Index]);
+                    }
+                }
             }
             return targets.Where(pe => (this as IWhenThenAction).IsConditionValid(localteam, pe, s, v)).ToList();
         }

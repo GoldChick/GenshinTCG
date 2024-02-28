@@ -8,6 +8,7 @@
         private readonly PlayerTeam _t;
 
         public PersistentSet<AbstractCardBase> Effects { get; }
+        public Dictionary<string, int> SkillCounter { get; }
         /// <summary>
         /// HP并不在改变时发包，而在治疗、受伤时发包
         /// </summary>
@@ -49,11 +50,17 @@
         }
         internal Character(CardCharacter character, int index, PlayerTeam t) : base(character)
         {
-            //多一点怎么了
+            // 多一点怎么了
             // 使用技能后对应技能的值+1，每回合行动阶段开始时清零，记录一个回合内使用技能的次数
-            Data = Enumerable.Repeat(0, character.TriggerableList.Count()).ToList();
+            SkillCounter = new();
+            foreach (var triggerable in character.TriggerableList)
+            {
+                SkillCounter.TryAdd(triggerable.NameID, 0);
+            }
 
             PersistentRegion = index;
+            AvailableTimes = 1;
+
             _t = t;
             Effects = new(index, t);
 
@@ -61,16 +68,20 @@
             Active = true;
             HP = Card.MaxHP;
         }
+        private void ResetCounter()
+        {
+            foreach (var triggerable in Card.TriggerableList)
+            {
+                SkillCounter[triggerable.NameID] = 0;
+            }
+        }
         /// <summary>
         /// 被击倒角色会在异次元空间中参与结算......<br/>
         /// 此时仍然alive，但是predie
         /// </summary>
         internal void ToDieLimbo()
         {
-            for (int i = 0; i < Data.Count; i++)
-            {
-                Data[i] = 0;
-            }
+            ResetCounter();
             HP = 0;
             MP = 0;
             Element = 0;
@@ -105,6 +116,10 @@
                     {
                         hs += GetDelayedHandler((me, s, v) => skill.Trigger(me, this, sender, v));
                     }
+                }
+                else if (sender.SenderName == SenderTag.RoundStep.ToString())
+                {
+                    hs += (me, s, v) => ResetCounter();
                 }
                 else
                 {

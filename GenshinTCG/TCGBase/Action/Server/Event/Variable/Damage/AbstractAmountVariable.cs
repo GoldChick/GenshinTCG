@@ -31,6 +31,7 @@
     }
     public class DamageVariable : ElementVariable
     {
+        public bool Deadly { get; internal set; }
         public DamageVariable(int targetTeam, DamageElement element, int amount, DamageSource direct, int targetIndex) : base(targetTeam, element, direct, targetIndex)
         {
             Amount = amount;

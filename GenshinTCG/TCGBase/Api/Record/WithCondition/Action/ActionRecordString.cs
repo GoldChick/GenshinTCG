@@ -32,6 +32,13 @@
                                 break;
                         }
                     }
+                    else if (Value.StartsWith("add", true, null))
+                    {
+                        if (int.TryParse(Value[3..], out int num))
+                        {
+                            p.Data.Add(num);
+                        }
+                    }
                     break;
             }
         }

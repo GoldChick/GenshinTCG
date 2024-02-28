@@ -19,7 +19,7 @@
                             c.MP += Value;
                             break;
                         case TriggerType.Skill:
-                            team.EffectTrigger(new ActionUseSkillSender(team.TeamIndex, c.PersistentRegion, Value));
+                            team.Game.EffectTrigger(new ActionUseSkillSender(team.TeamIndex, c.PersistentRegion, Value));
                             break;
                         case TriggerType.Heal:
                             team.Heal(p, triggerable, Value, c.PersistentRegion, false);

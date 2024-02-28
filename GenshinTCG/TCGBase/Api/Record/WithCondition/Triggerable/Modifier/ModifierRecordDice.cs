@@ -28,7 +28,7 @@ namespace TCGBase
             _ => DiceModifierType.Color
         };
         private static readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
-        public ModifierRecordDice(ElementCategory element, int value = 1, bool adddata = false, bool iF = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, adddata, consume, when, trigger)
+        public ModifierRecordDice(ElementCategory element, int value = 1,  bool iF = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, consume, when, trigger)
         {
             Element = element;
             If = iF;

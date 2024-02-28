@@ -10,11 +10,12 @@ namespace TCGBase
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ElementCategory Element { get; }
         public bool DoElementDamage { get; }
-
-        public TriggerableRecordSkillPreset(ElementCategory element, bool doelementdamage = false) : base(TriggerableType.Skill_A)
+        public string CardName { get; }
+        public TriggerableRecordSkillPreset(ElementCategory element, string? cardname = null, bool doelementdamage = false) : base(TriggerableType.Skill_A)
         {
             Element = element;
             DoElementDamage = doelementdamage;
+            CardName = cardname ?? "skill";
         }
         public override AbstractTriggerable GetTriggerable()
         {
@@ -23,12 +24,14 @@ namespace TCGBase
                 TriggerableType.Skill_E => new TriggerableRecordSkill(
                 SkillCategory.E,
                 new() { new(Element, 3) },
-                new() { new ActionRecordDamage(new((DamageElement)Element, 3)) }),
+                new() { new ActionRecordDamage(new((DamageElement)Element, 3)) },
+                CardName),
 
                 _ => new TriggerableRecordSkill(
                 SkillCategory.A,
                 new() { new(ElementCategory.Void, 2), new(Element, 1) },
-                new() { new ActionRecordDamage(new(DoElementDamage ? (DamageElement)Element : DamageElement.Trival, DoElementDamage ? 1 : 2)) })
+                new() { new ActionRecordDamage(new(DoElementDamage ? (DamageElement)Element : DamageElement.Trival, DoElementDamage ? 1 : 2)) },
+                CardName)
             });
         }
     }

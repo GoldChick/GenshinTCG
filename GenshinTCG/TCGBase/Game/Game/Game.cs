@@ -16,10 +16,10 @@
         /// </summary>
         internal List<AbstractClient> Clients { get; init; }
         /// <summary>
-        /// 不为null时，会存储非立即结算状态<br/>
+        /// 存储非立即结算状态<br/>
         /// 在任意triggerable结算完毕后，会清空queue
         /// </summary>
-        internal Queue<Action>? TempDelayedTriggerQueue { get; set; }
+        internal DelayedTriggerQueue DelayedTriggerQueue { get; }
         /// <summary>
         /// 用来存储[队伍做出的]行动
         /// </summary>
@@ -48,6 +48,7 @@
             Clients = new();
             NetEventRecords = new();
             ActionRecords = new();
+            DelayedTriggerQueue = new();
         }
         public void AddClient(AbstractClient c) => Clients.Add(c);
         /// <summary>
@@ -115,7 +116,13 @@
             HandleNetEvent(t0.Result, 0, OperationType.Switch);
             HandleNetEvent(t1.Result, 1, OperationType.Switch);
 
-            EffectTrigger(new SimpleSender(SenderTag.GameStart));
+            foreach (var team in Teams)
+            {
+                foreach (var c in team.Characters)
+                {
+                    EffectTrigger(new OnCharacterOnSender(team.TeamIndex, c, true));
+                }
+            }
 
             while (!IsGameOver())
             {
@@ -126,6 +133,7 @@
                 Task.WaitAll(Task.Run(() => Teams[0].RoundStart()), Task.Run(() => Teams[1].RoundStart()));
 
                 Stage = GameStage.Gaming;
+                DelayedTriggerQueue.TryEmpty();
                 EffectTrigger(new SimpleSender(SenderTag.RoundStart));
 
                 Array.ForEach(Teams, t => t.Pass = false);
@@ -161,14 +169,7 @@
         /// </summary>
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
         {
-            if (TempDelayedTriggerQueue != null)
-            {
-                TempDelayedTriggerQueue.Enqueue(() => InstantTrigger(sender, variable, broadcast));
-            }
-            else
-            {
-                InstantTrigger(sender, variable);
-            }
+            DelayedTriggerQueue.TryTrigger(() => InstantTrigger(sender, variable, broadcast));
         }
         /// <summary>
         /// 按照 当前队伍-另一队伍；角色-出战-召唤-支援 顺序，依次<b>立即</b>触发双方所有状态<br/>

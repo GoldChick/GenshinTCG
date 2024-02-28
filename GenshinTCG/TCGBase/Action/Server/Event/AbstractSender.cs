@@ -11,7 +11,6 @@
     }
     public enum SenderTag
     {
-        GameStart,
         /// <summary>
         /// 投掷阶段，此sendertag只会触发自己Team中的效果
         /// </summary>
@@ -44,17 +43,6 @@
         #region 某个Player Action前
         BeforeRerollDice,
         BeforeRerollCard,
-        BeforeSwitch,
-        /// <summary>
-        /// 并没有实际作用，只是占位符
-        /// </summary>
-        BeforeBlend,
-        BeforeUseCard,
-        BeforeUseSkill,
-        /// <summary>
-        /// 并没有实际作用，只是占位符
-        /// </summary>
-        BeforePass,
         //附魔(重华叠霜领域)>=反应增伤(火共鸣)≈普通增伤(武器)>乘伤(泡影)>除伤(护体岩铠)>减伤(盾)
         ElementEnchant,
         /// <summary>
@@ -62,35 +50,27 @@
         /// </summary>
         ElementItemGenerate,
         DamageIncrease,
+        DamageMul,//乘除，如[泡影][护体岩铠]
         /// <summary>
         /// 只会对自己的队伍调用，用于[护盾]
         /// </summary>
         HurtDecrease,
-        /// <summary>
-        /// 乘除，如[泡影][护体岩铠]
-        /// </summary>
-        DamageMul,
         #endregion
         #region 某个Player Action结算后
-        AfterRerollDice,
-        AfterRerollCard,
         AfterSwitch,
-        AfterBlend,
         AfterUseCard,
         AfterUseSkill,
-        AfterPass,
 
-        AfterOperation,
+        AfterOperation,//用于结算是否快速行动
         AfterHurt,
+        AfterElement,
         AfterHeal,
-        AfterElementOnly,
         /// <summary>
         /// 有<b>别的</b>状态被弃置，发出Sender : PersistentDesperatedSender
         /// </summary>
-        AfterPersistentOtherDesperated,
+        AfterEffectDesperated,
         #endregion
         PreDie,
-        PreHurt
     }
 
     /// <summary>

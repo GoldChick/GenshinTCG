@@ -27,8 +27,9 @@
             }
             _counter = cr._counter;
         }
-        /// <returns>0-maxValue-1</returns>
+        /// <returns>0~maxValue-1</returns>
         public int Next(int maxValue) => _random.Next(0, maxValue);
+        /// <returns>minValue~maxValue-1</returns>
         public int Next(int minValue, int maxValue)
         {
             _counter++;

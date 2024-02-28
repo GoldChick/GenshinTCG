@@ -19,7 +19,7 @@ namespace TCGBase
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierActionMode Mode { get; }
         private static readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
-        public ModifierRecordFast(ModifierActionMode mode, int value = 1, bool adddata = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, adddata, consume, when, trigger)
+        public ModifierRecordFast(ModifierActionMode mode, int value = 1,  int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, consume, when, trigger)
         {
             Mode = mode;
         }

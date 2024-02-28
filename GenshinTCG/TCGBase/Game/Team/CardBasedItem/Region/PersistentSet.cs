@@ -22,7 +22,7 @@ namespace TCGBase
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
         /// -1=团队 0-5=角色 11=召唤物 12=支援区
         /// </param>
-        internal PersistentSet(int region, PlayerTeam me, int size = 0, bool multisame = false):base(me)
+        internal PersistentSet(int region, PlayerTeam me, int size = 0, bool multisame = false) : base(me)
         {
             PersistentRegion = region;
             _data = new();
@@ -68,7 +68,7 @@ namespace TCGBase
                 Clear(p => !p.Active);
             }
         }
-        public bool Contains(string nameSpace, string nameID) => _data.Exists(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID);
+        public bool Contains(INameable nameable) => _data.Exists(e => e.CardBase.Namespace == nameable.Namespace && e.CardBase.NameID == nameable.NameID);
         public bool Contains(string name) => _data.Exists(e => $"{e.CardBase.Namespace}:{e.CardBase.NameID}" == name);
         public bool Contains(Predicate<Persistent> condition) => _data.Exists(condition);
         public Persistent? Find(Predicate<Persistent> condition) => _data.Find(condition);

@@ -30,7 +30,7 @@ namespace TCGBase
         }
         public void AttachElement(Persistent persistent, AbstractTriggerable triggerable, DamageElement element, List<int> targetIndexs, bool targetRelative = true)
         {
-            HurtSourceSender sourceSender = new(SenderTag.AfterElementOnly, TeamIndex, persistent, triggerable);
+            HurtSourceSender sourceSender = new(SenderTag.AfterElement, TeamIndex, persistent, triggerable);
             var absoluteIndexs = (targetRelative ? targetIndexs.Select(i => ((i + CurrCharacter) % Characters.Length + Characters.Length) % Characters.Length) : targetIndexs.Where(i => i >= 0 && i < Characters.Length));
             var evs = absoluteIndexs.Where(i => Characters[i].Alive).Select(i => new ElementVariable(TeamIndex, element, DamageSource.Direct, i)).ToList();
             Action? action = null;
@@ -72,7 +72,7 @@ namespace TCGBase
             {
                 var initial = CurrCharacter;
                 CurrCharacter = curr;
-                EffectTrigger(new AfterSwitchSender(TeamIndex, initial, CurrCharacter));
+                Game.EffectTrigger(new AfterSwitchSender(TeamIndex, initial, CurrCharacter));
                 SpecialState.DownStrike = true;
             }
         }

@@ -4,7 +4,7 @@
     {
         public TriggerableSkill(TriggerableRecordSkill skill)
         {
-            NameID = "useskill";//set in INameSetable
+            NameID = skill.CardName;//set in INameSetable
             SkillCategory = skill.Category;
             Cost = new CostCreate(skill.Cost).ToCostInit();
 

@@ -5,7 +5,7 @@ namespace TCGBase
     public enum ModifierType
     {
         Damage,
-        Element,
+        Enchant,
         //下面一个When SourceMe
         Dice,
         Fast,
@@ -25,23 +25,16 @@ namespace TCGBase
         public int Consume { get; }
         public List<ConditionRecordBase> When { get; }
         public ActionRecordTrigger? Trigger { get; }
-        /// <summary>
-        /// 如果成功触发，并且为true，向p.Data中添加一个"0"
-        /// </summary>
-        public bool AddData { get; }
-        public ModifierRecordBase(ModifierType type, int value = 1, bool adddata = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null)
+        public ModifierRecordBase(ModifierType type, int value = 1,int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null)
         {
             Type = type;
             Value = int.Max(value, 1);
             Consume = consume;
             When = when ?? new();
             Trigger = trigger;
-            AddData = adddata;
             switch (Type)
             {
                 case ModifierType.Shield:
-                case ModifierType.Element:
-                case ModifierType.Barrier:
                     Consume = 0;
                     break;
             }
@@ -58,10 +51,6 @@ namespace TCGBase
                 {
                     Get()?.Invoke(me, p, s, v);
                     Trigger?.GetHandler(modTriggerable)?.Invoke(me, p, s, v);
-                    if (AddData)
-                    {
-                        p.Data.Add(0);
-                    }
                 }
             };
         }
@@ -69,7 +58,7 @@ namespace TCGBase
         {
             return (Type switch
             {
-                ModifierType.Element => SenderTag.ElementEnchant,
+                ModifierType.Enchant => SenderTag.ElementEnchant,
                 ModifierType.Shield or ModifierType.Barrier => SenderTag.HurtDecrease,
                 _ => throw new NotImplementedException($"UnImplemented Modifier Record Type: {Type}")
             }).ToString();
@@ -84,7 +73,7 @@ namespace TCGBase
                 {
                     switch (Type)
                     {
-                        case ModifierType.Element:
+                        case ModifierType.Enchant:
                             if (dv.Element == DamageElement.Trival)
                             {
                                 dv.Element = (DamageElement)Value;
@@ -103,7 +92,7 @@ namespace TCGBase
                             if (targetthis.Valid(me, p, s, v) && dv.Amount > 0)
                             {
                                 dv.Amount -= Value;
-                                p.AvailableTimes--;
+                                p.AvailableTimes -= Consume;
                             }
                             break;
                     }
@@ -113,7 +102,7 @@ namespace TCGBase
     }
     public record class ModifierRecordBaseImplement : ModifierRecordBase
     {
-        public ModifierRecordBaseImplement(ModifierType type, int value, bool adddata = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(type, value, adddata, consume, when, trigger)
+        public ModifierRecordBaseImplement(ModifierType type, int value, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(type, value, consume, when, trigger)
         {
         }
     }
