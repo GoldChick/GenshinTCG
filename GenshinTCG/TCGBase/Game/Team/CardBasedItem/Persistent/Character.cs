@@ -90,6 +90,18 @@
         {
             Alive = false;
         }
+        internal void Revive()
+        {
+            Alive = true;
+            AbstractSender sender = new OnCharacterOnSender(_t.TeamIndex, this);
+            foreach (var triggerable in CardBase.TriggerableList)
+            {
+                if (triggerable.Tag == SenderTag.OnCharacterOn.ToString())
+                {
+                    _t.Game.DelayedTriggerQueue.TryTrigger(() => GetDelayedHandler((me, s, v) => triggerable.Trigger(_t, this, s, v))?.Invoke(_t, sender, null));
+                }
+            }
+        }
         internal void DieTrigger(HurtSourceSender hss, DamageVariable dv)
         {
             while (Effects.Any())
@@ -130,9 +142,9 @@
                 }
                 else
                 {
-                    if (Card.TriggerableList.TryGetValue(sender.SenderName, out var h))
+                    foreach (var it in CardBase.TriggerableList[sender.SenderName])
                     {
-                        hs += GetDelayedHandler((me, s, v) => h.Trigger(me, this, sender, v));
+                        hs += GetDelayedHandler((me, s, v) => it.Trigger(me, this, sender, v));
                     }
                     hs += Effects.GetPersistentHandlers(sender);
                 }

@@ -37,6 +37,7 @@
         /// max_size=16,默认顺序为 万能 冰水火雷岩草风(0-7)
         /// </summary>
         internal List<int> Dices { get; }
+        public int LegendPoint { get; }
         /// <param name="cardset">经过处理确认正确的卡组</param>
         internal PlayerTeam(ServerPlayerCardSet cardset, Game game, int teamindex)
         {
@@ -58,6 +59,7 @@
             Dices = new();
 
             _currcharacter = -1;
+            LegendPoint = 1;
         }
         /// <summary>
         /// 回合开始时最先调用，如扔骰子等
@@ -65,7 +67,7 @@
         internal void RoundStart()
         {
             DiceRollingVariable drv = new();
-            EffectTrigger(new SimpleSender(TeamIndex, SenderTag.RollingStart), drv);
+            InstantTrigger(new SimpleSender(TeamIndex, SenderTag.RollingStart), drv);
             RollDice(drv);
             for (int i = 0; i < drv.RollingTimes; i++)
             {

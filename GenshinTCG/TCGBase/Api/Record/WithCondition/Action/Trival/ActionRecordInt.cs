@@ -27,6 +27,9 @@
                         case TriggerType.Heal:
                             team.Heal(p, triggerable, Value, c.PersistentRegion, false);
                             break;
+                        case TriggerType.Revive:
+                            team.Heal(p, triggerable, Value, c.PersistentRegion, false, true);
+                            break;
                     }
                 }
             });

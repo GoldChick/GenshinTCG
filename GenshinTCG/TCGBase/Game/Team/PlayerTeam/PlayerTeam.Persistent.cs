@@ -28,10 +28,6 @@
             }
             Supports.Add(support);
         }
-        /// <summary>
-        /// 自己检测满了没有，也不一定添加成功
-        /// </summary>
-        public void AddSupport(AbstractCardBase support, int replace = -1) => AddSupport(new Persistent(support), replace);
         public void AddSummon(Persistent summon) => AddSummon(1, summon);
         public void AddSummon(CardEffect summon) => AddSummon(1, summon);
         public void AddSummon(int num, params Persistent[] summons)
@@ -148,7 +144,6 @@
         /// </summary>
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
-            Game.DelayedTriggerQueue.TryTrigger(() => InstantTrigger(sender, variable));
         }
     }
 }

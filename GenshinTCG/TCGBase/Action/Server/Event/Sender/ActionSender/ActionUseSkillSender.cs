@@ -4,11 +4,12 @@
     /// 触发[出战角色]技能效果的sender<br/>
     /// 需指定角色、技能的index<br/>
     /// </summary>
-    public class ActionUseSkillSender : AbstractSender
+    public class ActionUseSkillSender : AbstractSender, ITriggerableIndexSupplier
     {
         public override string SenderName => SenderTagInner.UseSkill.ToString();
         public int Character { get; set; }
         public int Skill { get; set; }
+        int ITriggerableIndexSupplier.Index => Skill;
 
         public ActionUseSkillSender(int teamID, int character, int skill) : base(teamID)
         {

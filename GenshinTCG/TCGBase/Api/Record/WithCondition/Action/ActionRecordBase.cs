@@ -8,7 +8,8 @@ namespace TCGBase
         MP,//target角色增加value点mp
         Skill,//target角色使用value技能
         Prepare,//target角色使用value准备技能
-        Heal,//target角色治疗value点mp
+        Heal,//target角色治疗value点hp
+        Revive,//target角色复苏，并治疗value点hp
         //string
         Trigger,//从所在队伍发送，全局触发名为value的状态结算轮
         Element,//target角色附着value元素

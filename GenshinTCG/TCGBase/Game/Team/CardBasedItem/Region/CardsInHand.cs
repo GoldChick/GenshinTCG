@@ -47,7 +47,7 @@ namespace TCGBase
                             }
                             break;
                         case CardType.Support:
-                            me.AddSupport(card.CardBase, cs.Persistents.FirstOrDefault()?.PersistentRegion ?? -1);
+                            me.AddSupport(new Persistent(card.CardBase), cs.Persistents.FirstOrDefault()?.PersistentRegion ?? -1);
                             break;
                         case CardType.Event:
                             break;

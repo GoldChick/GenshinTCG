@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Xml.Linq;
 namespace TCGBase
 {
     public partial class PlayerTeam
@@ -12,21 +11,27 @@ namespace TCGBase
         {
             Game.InnerHurt(damage, new(SenderTag.AfterHurt, TeamIndex, persistent, triggerable), specialAction);
         }
-        public void Heal(Persistent persistent, AbstractTriggerable triggerable, int amount, int targetIndex, bool targetRelative = true)
+        /// <summary>
+        /// 如果revive=false，则在目标角色被击倒时，会复苏
+        /// </summary>
+        public void Heal(Persistent persistent, AbstractTriggerable triggerable, int amount, int targetIndex, bool targetRelative = true, bool revive = false)
         {
             var absoluteIndex = targetRelative ? ((targetIndex + CurrCharacter) % Characters.Length + Characters.Length) % Characters.Length : int.Clamp(targetIndex, 0, Characters.Length - 1);
             var hv = new HealVariable(TeamIndex, amount, DamageSource.Direct, absoluteIndex);
 
             var cha = Characters[hv.TargetIndex];
+            if (!cha.Alive && revive)
+            {
+                cha.Revive();
+            }
             if (cha.Alive)
             {
-                int actualAmount = int.Min(hv.Amount, cha.Card.MaxHP - cha.HP);
-                cha.HP += actualAmount;
-                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(hv.TargetTeam, hv.TargetIndex, actualAmount));
+                hv.Amount = int.Min(hv.Amount, cha.Card.MaxHP - cha.HP);
+                cha.HP += hv.Amount;
+                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(hv.TargetTeam, hv.TargetIndex, hv.Amount));
 
                 Game.EffectTrigger(new HurtSourceSender(SenderTag.AfterHeal, TeamIndex, persistent, triggerable), hv);
             }
-
         }
         public void AttachElement(Persistent persistent, AbstractTriggerable triggerable, DamageElement element, List<int> targetIndexs, bool targetRelative = true)
         {
@@ -76,28 +81,6 @@ namespace TCGBase
                 SpecialState.DownStrike = true;
             }
         }
-        /// <summary>
-        /// 找到失去生命值最多的角色，默认值为当前出战<br/>
-        /// except可以排除某个index的角色
-        /// </summary>
-        public int FindHPLostMost(int except = -1)
-        {
-            int currid = CurrCharacter;
-            int currhplost = 0;
-            for (int i = 0; i < Characters.Length; i++)
-            {
-                if (i != except)
-                {
-                    var c = Characters[i];
-                    int hplost = c.Card.MaxHP - c.HP;
-                    if (hplost > currhplost)
-                    {
-                        currid = i;
-                        currhplost = hplost;
-                    }
-                }
-            }
-            return currid;
-        }
+
     }
 }
