@@ -153,7 +153,7 @@ namespace TCGBase
                     _handlers[trigger.Tag] += h;
                 }
             }
-            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, PersistentRegion, p.AvailableTimes, p.Data, p.CardBase.Namespace, p.CardBase.NameID));
+            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, p));
         }
         private void Unregister(int index, Persistent p)
         {

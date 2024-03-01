@@ -6,7 +6,7 @@ namespace TCGBase
         public int Sign { get; }
         public int Index { get; }
         public int Value { get; }
-        public ConditionRecordTriInt(ConditionType type, int value, int index = 0, int sign = 0, bool not = false, ConditionRecordBase? or = null) : base(type, not, or)
+        public ConditionRecordTriInt(ConditionType type, int value, int index = -1, int sign = 0, bool not = false, ConditionRecordBase? or = null) : base(type, not, or)
         {
             Index = index;
             Value = value;
@@ -22,8 +22,8 @@ namespace TCGBase
                 ConditionType.MP => p is Character c && Math.Sign(c.MP - Value) == Sign,
                 ConditionType.HPLost => p is Character c && Math.Sign(c.Card.MaxHP - c.HP - Value) == Sign,
                 ConditionType.MPLost => p is Character c && Math.Sign(c.Card.MaxMP - c.MP - Value) == Sign,
-                ConditionType.Counter => Math.Sign((p is Character c ? (
-                    (s is IMaySkillSupplier ssp && ssp.MaySkill is AbstractTriggerable skilltriggerable && c.SkillCounter.TryGetValue(skilltriggerable.NameID, out var counter)) ? counter : c.SkillCounter.ElementAtOrDefault(Index).Value
+                ConditionType.Counter => Math.Sign((p is Character c ? ( //index未指定，则考虑从sender获取
+                    (Index<0 && s is IMaySkillSupplier ssp && ssp.MaySkill is AbstractTriggerable skilltriggerable && c.SkillCounter.TryGetValue(skilltriggerable.NameID, out var counter)) ? counter : c.SkillCounter.ElementAtOrDefault(Index).Value
                     ) : p.AvailableTimes) - Value) == Sign,
                 ConditionType.DataCount => Math.Sign(p.Data.Count - Value) == Sign,
                 ConditionType.DataContains => p.Data.Contains(Value),

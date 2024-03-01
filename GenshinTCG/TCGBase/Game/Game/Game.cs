@@ -143,6 +143,7 @@
                     //wait until both pass
                     var oldteam = CurrTeam;
                     EffectTrigger(new SimpleSender(CurrTeam, SenderTag.RoundMeStart));
+                    EffectTrigger(new SimpleSender(CurrTeam, SenderTag.RoundDuring));
                     if (oldteam == CurrTeam)
                     {
                         RequestAndHandleEvent(CurrTeam, 30000, OperationType.Trival);

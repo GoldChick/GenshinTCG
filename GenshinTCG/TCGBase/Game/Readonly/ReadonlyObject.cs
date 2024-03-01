@@ -47,16 +47,55 @@ namespace TCGBase
     }
     public class ReadonlyPersistent : ReadonlyObject
     {
+        public PersistentType Type { get; }
         public int AvailableTimes { get; internal set; }
-        public List<int> Data { get; }
+        public IEnumerable<int> Data { get; }
         [JsonConstructor]
-        public ReadonlyPersistent(string nameSpace, string nameid, int availabletimes, IEnumerable<int> data) : base(nameSpace, nameid)
+        public ReadonlyPersistent(string nameSpace, string nameid, PersistentType type, int availabletimes, IEnumerable<int> data) : base(nameSpace, nameid)
         {
+            Type = type;
             AvailableTimes = availabletimes;
-            Data = data.ToList();
+            Data = data;
         }
-        internal ReadonlyPersistent(Persistent p) : this(p.CardBase.Namespace, p.CardBase.NameID,  p.AvailableTimes, p.Data)
+        internal ReadonlyPersistent(Persistent p) : this(p.CardBase.Namespace, p.CardBase.NameID, GetPersistentType(p.CardBase), p.AvailableTimes, p.Data)
         {
+        }
+        public static PersistentType GetPersistentType(AbstractCardBase cardbase)
+        {
+            switch (cardbase.CardType)
+            {
+                case CardType.Summon:
+                    return PersistentType.Summon;
+                case CardType.Equipment:
+                    if (cardbase.Tags.Contains(CardTag.Weapon.ToString()))
+                    {
+                        return PersistentType.Weapon;
+                    }
+                    else if (cardbase.Tags.Contains(CardTag.Artifact.ToString()))
+                    {
+                        return PersistentType.Artifact;
+                    }
+                    else if (cardbase.Tags.Contains(CardTag.Talent.ToString()))
+                    {
+                        return PersistentType.Talent;
+                    }
+                    return PersistentType.Effect;
+                case CardType.Support:
+                    return PersistentType.Support;
+                case CardType.Effect:
+                    return PersistentType.Effect;
+                default:
+                    throw new ArgumentException($"ReadonlyPersistent: Wrong CardType as Persistent ! Name: {cardbase.Namespace}:{cardbase.NameID}");
+            }
+        }
+        public enum PersistentType
+        {
+            Effect,
+            Weapon,
+            Artifact,
+            Talent,
+            Summon,
+            Support
         }
     }
 

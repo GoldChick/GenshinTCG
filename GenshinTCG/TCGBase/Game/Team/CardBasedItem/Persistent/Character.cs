@@ -121,6 +121,13 @@
                 {
                     hs += (me, s, v) => ResetCounter();
                 }
+                else if (sender is ActionUsePrepareSender ps)
+                {
+                    if (ps.TeamID == _t.TeamIndex && PersistentRegion == ps.Character && Card.TriggerableList.TryGetValue(sender.SenderName, out var prepareskill, ps.Index))
+                    {
+                        hs += GetDelayedHandler((me, s, v) => prepareskill.Trigger(me, this, sender, v));
+                    }
+                }
                 else
                 {
                     if (Card.TriggerableList.TryGetValue(sender.SenderName, out var h))

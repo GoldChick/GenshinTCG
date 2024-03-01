@@ -45,7 +45,7 @@ namespace TCGBase
                         }
                         break;
                     default:
-                        team.GainDice((int)Element, Count);
+                        team.GainDice((ElementCategory)Element, Count);
                         break;
                 }
             }

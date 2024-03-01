@@ -1,4 +1,5 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TCGBase
 {
@@ -41,9 +42,7 @@ namespace TCGBase
         public int Category { get; }
         public int[] Ints { get; }
         public string[] Strings { get; }
-        /// <summary>
-        /// 仅为json使用
-        /// </summary>
+        [JsonConstructor]
         public ClientUpdatePacket(ClientUpdateType type, int category, int[] ints, string[] strings)
         {
             Type = type;
@@ -130,7 +129,7 @@ namespace TCGBase
         public enum PersistentUpdateCategory
         {
             /// <summary>
-            /// int[1] variant int[2] availabletimes <br/>
+            /// int[1] perisistenttype int[2] availabletimes int[3..]data<br/>
             /// str[0]:str[1] cardnamespace+nameid
             /// </summary>
             Obtain,
@@ -145,11 +144,11 @@ namespace TCGBase
         }
         internal static class PersistentUpdate
         {
-            public static ClientUpdatePacket ObtainUpdate(int teamID, int region, int availabletimes, List<int> data, string cardNameSpace, string cardNameID)
+            public static ClientUpdatePacket ObtainUpdate(int teamID, Persistent per)
             {
-                List<int> ints = new() { region, availabletimes };
-                ints.AddRange(data);
-                return new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, ints.ToArray(), new string[] { cardNameSpace, cardNameID });
+                List<int> ints = new() { per.PersistentRegion, (int)ReadonlyPersistent.GetPersistentType(per.CardBase), per.AvailableTimes };
+                ints.AddRange(per.Data);
+                return new(ClientUpdateType.Persistent, 10 * teamID + (int)PersistentUpdateCategory.Obtain, ints.ToArray(), new string[] { per.CardBase.Namespace, per.CardBase.NameID });
             }
             public static ClientUpdatePacket TriggerUpdate(int teamID, int region, int index, int availabletimes, List<int> data)
             {

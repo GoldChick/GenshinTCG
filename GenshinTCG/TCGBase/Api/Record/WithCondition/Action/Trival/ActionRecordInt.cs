@@ -21,6 +21,9 @@
                         case TriggerType.Skill:
                             team.Game.EffectTrigger(new ActionUseSkillSender(team.TeamIndex, c.PersistentRegion, Value));
                             break;
+                        case TriggerType.Prepare:
+                            team.Game.EffectTrigger(new ActionUsePrepareSender(team.TeamIndex, c.PersistentRegion, Value));
+                            break;
                         case TriggerType.Heal:
                             team.Heal(p, triggerable, Value, c.PersistentRegion, false);
                             break;

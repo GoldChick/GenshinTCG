@@ -40,6 +40,12 @@
                         }
                     }
                     break;
+                case TriggerType.Element:
+                    if (Enum.TryParse(Value, out DamageElement ele))
+                    {
+                        me.AttachElement(p, triggerable, ele, new List<int>() { p.PersistentRegion }, false);
+                    }
+                    break;
             }
         }
     }

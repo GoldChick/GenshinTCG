@@ -26,7 +26,8 @@
         /// <summary>
         /// 具有该Tag的卡牌，被视为圣遗物，受到1人1张的限制
         /// </summary>
-        Artifact
+        Artifact,
+        Talent,
     }
     public enum CardType
     {

@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using static TCGBase.ReadonlyPersistent;
 
 namespace TCGBase
 {
@@ -115,7 +116,7 @@ namespace TCGBase
                     switch (persistentcategory)
                     {
                         case ClientUpdateCreate.PersistentUpdateCategory.Obtain:
-                            effects.Add(new(packet.Strings[0], packet.Strings[1], packet.Ints[1], packet.Ints[2..]));
+                            effects.Add(new(packet.Strings[0], packet.Strings[1], (PersistentType)packet.Ints[1], packet.Ints[2], packet.Ints[3..]));
                             break;
                         case ClientUpdateCreate.PersistentUpdateCategory.Trigger:
                             effects[packet.Ints[1]].AvailableTimes = packet.Ints[2];

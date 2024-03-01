@@ -13,6 +13,8 @@ namespace TCGBase
         CurrCharacter,
         GameStart,//游戏开始时，用于[潜行大师]等被动触发
         SimpleFood,//<预设>"普通食物"，要求角色[活着]，并且没有[饱腹]状态
+        HeavyStrike,//是否是重击状态
+        DownStrike,//是否是下落攻击状态
         //↓下为单string↓
         HasEffect,
         HasEffectWithTag,
@@ -31,7 +33,7 @@ namespace TCGBase
         Counter,//Index用来表示第几个技能(若用于角色，并且信息不带有技能)；如果信息带有技能，则自动查找对应的index
         Region,//p的persistentregion
 
-        //分界线，上为刚需Persistent，下为对于Damage
+        //分界线，下为对于Damage
 
         //↓下为没有参数↓
         Deadly,//要求伤害打死了人
@@ -40,7 +42,7 @@ namespace TCGBase
         SourceMe,//要求sender的id为所在team的id
         SourceThis,//要求来源sender的id为所在team的id；如果是角色状态，进一步要求sender提供的persistent为所在角色；否则要求提供的persistent==自身
         TargetMe,//要求受到[伤害]的targetTeam id为所在team的id
-        TargetThis,//要求受到[伤害]的targetTeam id为所在team的id；如果是角色状态，进一步要求受到伤害的index为所在角色的index
+        TargetThis,//要求受到[伤害]的targetTeam id为所在team的id；如果是角色状态，进一步要求受到伤害的index为所在角色的index；否则要求index为出战角色
 
         //↓下为单string↓
         Element,//造成了[指定元素]，不指定元素则表示为[七元素]即可(不一定是伤害！)
@@ -87,12 +89,14 @@ namespace TCGBase
                 ConditionType.SourceMe => s.TeamID == me.TeamIndex,
                 ConditionType.SourceThis => s.TeamID == me.TeamIndex && s is IPeristentSupplier ips && (ips.Persistent is Character c ? c.PersistentRegion == p.PersistentRegion : ips.Persistent == p),
                 ConditionType.TargetMe => v is AbstractAmountVariable aav && aav.TargetTeam == me.TeamIndex,
-                ConditionType.TargetThis => v is AbstractAmountVariable aav && aav.TargetTeam == me.TeamIndex && p != null && (me.Characters.ElementAtOrDefault(p.PersistentRegion) is null || p.PersistentRegion == aav.TargetIndex),
+                ConditionType.TargetThis => v is AbstractAmountVariable aav && aav.TargetTeam == me.TeamIndex && (me.Characters.ElementAtOrDefault(p.PersistentRegion) is null ? aav.TargetIndex == me.CurrCharacter : p.PersistentRegion == aav.TargetIndex),
 
                 ConditionType.Alive => p is Character c && c.Alive,
                 ConditionType.CurrCharacter => p.PersistentRegion == me.CurrCharacter,
                 ConditionType.GameStart => s is OnCharacterOnSender ocos && ocos.Start,
                 ConditionType.SimpleFood => p is Character c && c.Alive && !c.Effects.Contains("minecraft:effect_full"),
+                ConditionType.HeavyStrike => me.SpecialState.HeavyStrike,
+                ConditionType.DownStrike => me.SpecialState.DownStrike,
                 _ => throw new NotImplementedException($"Unknown Predicate In Type: {Type}")
             };
         }
