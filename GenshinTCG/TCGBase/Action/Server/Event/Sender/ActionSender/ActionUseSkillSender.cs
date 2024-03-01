@@ -9,7 +9,8 @@
         public override string SenderName => SenderTagInner.UseSkill.ToString();
         public int Character { get; set; }
         public int Skill { get; set; }
-        int ITriggerableIndexSupplier.Index => Skill;
+        int ITriggerableIndexSupplier.TriggerableIndex => Skill;
+        int ITriggerableIndexSupplier.SourceIndex => Character;
 
         public ActionUseSkillSender(int teamID, int character, int skill) : base(teamID)
         {

@@ -116,6 +116,7 @@
             HandleNetEvent(t0.Result, 0, OperationType.Switch);
             HandleNetEvent(t1.Result, 1, OperationType.Switch);
 
+            DelayedTriggerQueue.Active = true;
             foreach (var team in Teams)
             {
                 foreach (var c in team.Characters)
@@ -165,23 +166,36 @@
             Clients[0].BindTeam(Teams[0]);
             Clients[1].BindTeam(Teams[1]);
         }
-        /// <summary>
-        /// 如果你确信此次effecttrigger不会改变variable，那么可以不检测teamid
-        /// </summary>
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
-        {
-            DelayedTriggerQueue.TryTrigger(() => InstantTrigger(sender, variable, broadcast));
-        }
+                => DelayedTriggerQueue.TryTrigger(() => InstantTrigger(sender, variable, broadcast, false));
         /// <summary>
-        /// 按照 当前队伍-另一队伍；角色-出战-召唤-支援 顺序，依次<b>立即</b>触发双方所有状态<br/>
+        /// 按照 当前队伍-另一队伍；出战角色-出战-其他角色-召唤-支援 顺序，依次<b>立即</b>触发双方所有状态<br/>
         /// 这里的状态都不会改变CurrTeam
         /// </summary>
-        internal void InstantTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
+        internal void InstantTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true, bool instant = true)
         {
-            EventPersistentSetHandler? hsC = Teams[CurrTeam].GetEffectHandlers(sender);
-            EventPersistentSetHandler? hsO = Teams[1 - CurrTeam].GetEffectHandlers(sender);
-            hsC?.Invoke(Teams[CurrTeam], sender, variable);
-            hsO?.Invoke(Teams[1 - CurrTeam], sender, variable);
+            List<EventPersistentSetHandler> handlers = new();
+
+            handlers.AddRange(Teams[CurrTeam].GetEffectHandlers(sender));
+            handlers.AddRange(Teams[1 - CurrTeam].GetEffectHandlers(sender));
+
+            if (instant)
+            {
+                foreach (var h in handlers)
+                {
+                    h.Invoke(sender, variable);
+                }
+            }
+            else
+            {
+                foreach (var h in handlers)
+                {
+                    DelayedTriggerQueue.Active = true;
+                    h.Invoke(sender, variable);
+                    DelayedTriggerQueue.TryEmpty();
+                }
+            }
+
             if (broadcast)
             {
                 BroadCastRegion();

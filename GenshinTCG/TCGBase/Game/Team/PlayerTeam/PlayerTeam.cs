@@ -17,9 +17,9 @@
         /// </summary>
         public CounterRandom Random { get; init; }
         public TeamSpecialState SpecialState { get; init; }
-        public PersistentSet<AbstractCardBase> Supports { get; init; }
-        public PersistentSet<AbstractCardBase> Summons { get; init; }
-        public PersistentSet<AbstractCardBase> Effects { get; init; }
+        public PersistentSet Supports { get; init; }
+        public PersistentSet Summons { get; init; }
+        public PersistentSet Effects { get; init; }
         private int _currcharacter;
         public int CurrCharacter
         {

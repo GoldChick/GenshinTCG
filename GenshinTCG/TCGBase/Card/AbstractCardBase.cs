@@ -65,7 +65,7 @@
         protected private AbstractCardBase(CardRecordBase record)
         {
             Namespace = (GetType().Namespace ?? "minecraft").ToLower();
-            NameID = "todo";
+            NameID = "name404";
             CardType = record.CardType;
             Hidden = record.Hidden;
             Tags = record.Tags;

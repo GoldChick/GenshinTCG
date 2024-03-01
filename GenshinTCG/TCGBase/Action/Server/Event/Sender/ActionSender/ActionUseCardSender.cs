@@ -5,8 +5,8 @@
         public override string SenderName => SenderTagInner.UseCard.ToString();
         public int Card { get; }
         public IEnumerable<Persistent> Persistents { get; }
-
-        int ITriggerableIndexSupplier.Index => Card;
+        int ITriggerableIndexSupplier.SourceIndex => throw new NotImplementedException("ActionUseCardSender: 作为ITriggerableIndexSupplier，没有SourceIndex这个信息。（一般用来指定技能、准备技能的角色）");
+        int ITriggerableIndexSupplier.TriggerableIndex => Card;
 
         public ActionUseCardSender(int teamID, int card, IEnumerable<Persistent> persistents) : base(teamID)
         {

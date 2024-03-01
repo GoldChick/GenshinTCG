@@ -20,7 +20,7 @@
         public AbstractCardBase CardBase { get; }
         /// <summary>
         /// 用来表明persistent在谁身上，在加入PersistentSet时赋值:<br/>
-        /// -1=团队 0-5=角色 11=召唤物 12=支援区
+        /// -1=团队 0-5=角色 11=召唤物 12=支援区 -20~-11=手牌
         /// </summary>
         public int PersistentRegion { get; internal set; }
         /// <summary>
@@ -50,22 +50,6 @@
 
             Father = bind;
             bind?.Childs?.Add(this);
-        }
-        internal static EventPersistentSetHandler GetDelayedHandler(EventPersistentSetHandler? input)
-        {
-            return (me, s, v) =>
-            {
-                if (!me.Game.DelayedTriggerQueue.Active)
-                {
-                    me.Game.DelayedTriggerQueue.Active = true;
-                    input?.Invoke(me, s, v);
-                    me.Game.DelayedTriggerQueue.TryEmpty();
-                }
-                else
-                {
-                    input?.Invoke(me, s, v);
-                }
-            };
         }
     }
     public class Persistent<T> : Persistent where T : AbstractCardBase

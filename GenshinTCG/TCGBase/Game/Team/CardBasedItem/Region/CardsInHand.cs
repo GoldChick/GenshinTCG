@@ -6,9 +6,12 @@ namespace TCGBase
     public class CardsInHand : AbstractPersistentSet, IEnumerable<Persistent<AbstractCardAction>>
     {
         private readonly List<Persistent<AbstractCardAction>> _data;
+        /// <summary>
+        /// 其中的卡牌PersistentRegion为-20~-11
+        /// </summary>
         public CardsInHand(PlayerTeam me) : base(me)
         {
-            PersistentRegion = -10;
+            PersistentRegion = -20;
             _data = new();
         }
         public Persistent<AbstractCardAction> this[int i] => _data[i];
@@ -20,23 +23,19 @@ namespace TCGBase
             }
             else
             {
-                _data.Add(new(card));
+                _data.Add(new(card) { PersistentRegion = _data.Count + PersistentRegion });
                 _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
             }
         }
-        internal EventPersistentSetHandler? GetHandlers(AbstractSender sender)
+        internal List<EventPersistentSetHandler> GetHandlers(AbstractSender sender)
         {
+            List<EventPersistentSetHandler> sethandlers = new();
             if (sender.TeamID == _me.TeamIndex && sender is ActionUseCardSender cs && cs.Card >= 0 && cs.Card <= _data.Count)
             {
-                EventPersistentHandler? handler = null;
-                var card = _data[cs.Card];
-                foreach (var it in card.CardBase.TriggerableList[cs.SenderName])
-                {
-                    handler += it.Trigger;
-                }
                 //这里的s就是上面的cs
-                return Persistent.GetDelayedHandler((me, s, v) =>
+                sethandlers.Add((s, v) =>
                 {
+                    var card = _data[cs.Card];
                     _data.RemoveAt(cs.Card);
                     switch (card.CardBase.CardType)
                     {
@@ -47,18 +46,21 @@ namespace TCGBase
                             }
                             break;
                         case CardType.Support:
-                            me.AddSupport(new Persistent(card.CardBase), cs.Persistents.FirstOrDefault()?.PersistentRegion ?? -1);
+                            _me.AddSupport(new Persistent(card.CardBase), cs.Persistents.FirstOrDefault()?.PersistentRegion ?? -1);
                             break;
                         case CardType.Event:
                             break;
                         default:
                             throw new ArgumentException($"CardsInHand:你把什么东西扔到手里了？{card.CardBase.CardType}?");
                     }
-                    handler?.Invoke(me, card, s, v);
-                    me.Game.EffectTrigger(new AfterUseCardSender(me.TeamIndex, card, cs.Persistents));
+                    foreach (var it in card.CardBase.TriggerableList[cs.SenderName])
+                    {
+                        it.Trigger(_me, card, s, v);
+                    }
+                    _me.Game.EffectTrigger(new AfterUseCardSender(_me.TeamIndex, card, cs.Persistents));
                 });
             }
-            return null;
+            return sethandlers;
         }
         public bool TryPopAt(int index, [NotNullWhen(true)] out Persistent<AbstractCardAction>? persistent)
         {
@@ -70,6 +72,15 @@ namespace TCGBase
             }
             persistent = null;
             return false;
+        }
+        internal List<Persistent<AbstractCardAction>> Pop(IEnumerable<int> args)
+        {
+            //args 0 1组成的list，1代表要pop出去
+            var cashe = _data.Where((persistent, index) => args.ElementAtOrDefault(index) == 0).ToList();
+            var pop = _data.Where((persistent, index) => args.ElementAtOrDefault(index) == 1).ToList();
+            _data.Clear();
+            _data.AddRange(cashe);
+            return pop;
         }
         internal void DestroyAt(int index)
         {

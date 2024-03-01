@@ -7,7 +7,7 @@
         private int _element;
         private readonly PlayerTeam _t;
 
-        public PersistentSet<AbstractCardBase> Effects { get; }
+        public PersistentSet Effects { get; }
         public Dictionary<string, int> SkillCounter { get; }
         /// <summary>
         /// HP并不在改变时发包，而在治疗、受伤时发包
@@ -93,15 +93,11 @@
         internal void Revive()
         {
             Alive = true;
-            AbstractSender sender = new OnCharacterOnSender(_t.TeamIndex, this);
-            foreach (var triggerable in CardBase.TriggerableList)
-            {
-                if (triggerable.Tag == SenderTag.OnCharacterOn.ToString())
-                {
-                    _t.Game.DelayedTriggerQueue.TryTrigger(() => GetDelayedHandler((me, s, v) => triggerable.Trigger(_t, this, s, v))?.Invoke(_t, sender, null));
-                }
-            }
+            _t.Game.EffectTrigger(new OnCharacterOnSender(_t.TeamIndex, this));
         }
+        /// <summary>
+        /// 死亡时只触发第一个 TODO:Check It
+        /// </summary>
         internal void DieTrigger(HurtSourceSender hss, DamageVariable dv)
         {
             while (Effects.Any())
@@ -109,7 +105,7 @@
                 var p = Effects.First();
                 if (p.CardBase.TriggerableList.TryGetValue(hss.SenderName, out var h))
                 {
-                    GetDelayedHandler((me, s, v) => h?.Trigger(me, this, s, v))?.Invoke(_t, hss, dv);
+                    h?.Trigger(_t, this, hss, dv);
                 }
                 Effects.Destroy(0);
             }
@@ -117,39 +113,32 @@
         /// <summary>
         /// not alive => null
         /// </summary>
-        internal EventPersistentSetHandler? GetPersistentHandlers(AbstractSender sender)
+        internal List<EventPersistentSetHandler> GetPersistentHandlers(AbstractSender sender)
         {
-            EventPersistentSetHandler? hs = null;
+            List<EventPersistentSetHandler> hss = new();
             if (Alive)
             {
-                if (sender is ActionUseSkillSender ss)
+                if (sender is ITriggerableIndexSupplier indexSp)
                 {
-                    if (ss.TeamID == _t.TeamIndex && PersistentRegion == ss.Character && Card.TriggerableList.TryGetValue(sender.SenderName, out var skill, ss.Skill))
+                    if (sender.TeamID == _t.TeamIndex && PersistentRegion == indexSp.SourceIndex && Card.TriggerableList.TryGetValue(sender.SenderName, out var skill, indexSp.TriggerableIndex))
                     {
-                        hs += GetDelayedHandler((me, s, v) => skill.Trigger(me, this, sender, v));
+                        hss.Add((s, v) => skill.Trigger(_t, this, sender, v));
                     }
                 }
                 else if (sender.SenderName == SenderTag.RoundStep.ToString())
                 {
-                    hs += (me, s, v) => ResetCounter();
-                }
-                else if (sender is ActionUsePrepareSender ps)
-                {
-                    if (ps.TeamID == _t.TeamIndex && PersistentRegion == ps.Character && Card.TriggerableList.TryGetValue(sender.SenderName, out var prepareskill, ps.Index))
-                    {
-                        hs += GetDelayedHandler((me, s, v) => prepareskill.Trigger(me, this, sender, v));
-                    }
+                    hss.Add((s, v) => ResetCounter());
                 }
                 else
                 {
                     foreach (var it in CardBase.TriggerableList[sender.SenderName])
                     {
-                        hs += GetDelayedHandler((me, s, v) => it.Trigger(me, this, sender, v));
+                        hss.Add((s, v) => it.Trigger(_t, this, sender, v));
                     }
-                    hs += Effects.GetPersistentHandlers(sender);
+                    hss.AddRange(Effects.GetPersistentHandlers(sender));
                 }
             }
-            return hs;
+            return hss;
         }
         public void AddEffect(AbstractCardBase effect) => AddEffect(new Persistent(effect));
         /// <summary>

@@ -2,6 +2,7 @@
 {
     public interface ITriggerableIndexSupplier
     {
-        public int Index { get; }   
+        public int SourceIndex { get; }
+        public int TriggerableIndex { get; }   
     }
 }

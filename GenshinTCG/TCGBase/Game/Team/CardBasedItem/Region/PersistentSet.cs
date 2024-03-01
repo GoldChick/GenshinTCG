@@ -3,8 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace TCGBase
 {
-    public delegate void EventPersistentSetHandler(PlayerTeam me, AbstractSender s, AbstractVariable? v);
-    public class PersistentSet<T> : AbstractPersistentSet, IEnumerable<Persistent> where T : AbstractCardBase
+    public delegate void EventPersistentSetHandler(AbstractSender s, AbstractVariable? v);
+    public class PersistentSet : AbstractPersistentSet, IEnumerable<Persistent>
     {
         private readonly List<Persistent> _data;
         private readonly Dictionary<string, EventPersistentSetHandler?> _handlers;
@@ -84,29 +84,22 @@ namespace TCGBase
             p = _data.Find(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID);
             return p != null;
         }
-        internal EventPersistentSetHandler? GetPersistentHandlers(AbstractSender sender)
+        internal List<EventPersistentSetHandler> GetPersistentHandlers(AbstractSender sender)
         {
-            EventPersistentSetHandler? acs = null;
-            if (sender is not (ActionUseCardSender or ActionUseSkillSender))
+            List<EventPersistentSetHandler> acs = new();
+            if (sender is not (ActionUseSkillSender))
             {
-                if (_handlers.TryGetValue(sender.SenderName, out var hs))
+                foreach (var h in _handlers)
                 {
-                    acs += hs;
+                    if (h.Key == sender.SenderName && h.Value != null)
+                    {
+                        acs.Add(h.Value);
+                    }
                 }
             }
             return acs;
         }
         public List<Persistent> Copy() => _data.ToList();
-        public void TryRemoveAt(int index)
-        {
-            //TODO:弃置状态..
-            if (_data.Count > index && index >= 0)
-            {
-                var d = _data[index];
-                d.Active = false;
-                Update();
-            }
-        }
         internal void Clear(Func<Persistent, bool>? condition = null)
         {
             for (int i = _data.Count - 1; i >= 0; i--)
@@ -123,46 +116,71 @@ namespace TCGBase
                 }
             }
         }
-        private EventPersistentSetHandler PersistentHandelerConvert(Persistent p, AbstractTriggerable value)
+        private IEnumerable<KeyValuePair<string, EventPersistentSetHandler>> HandlerToPersistentSet(Persistent p)
         {
-            return Persistent.GetDelayedHandler((me, s, v) =>
+            return p.CardBase.TriggerableList.GroupBy(it => it.Tag).Select(ig => new KeyValuePair<string, EventPersistentSetHandler>(ig.Key, (s, v) =>
             {
-                if (p.Active)
+                foreach (var it in ig)
                 {
-                    value.Trigger(me, p, s, v);
-                    int index = _data.FindIndex(d => d == p);
-                    if (index >= 0)
+                    if (!p.Active)
                     {
-                        me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(me.TeamIndex, PersistentRegion, index, p.AvailableTimes, p.Data));
+                        break;
                     }
+                    it.Trigger(_me, p, s, v);
                 }
-            });
+                int index = _data.FindIndex(d => d == p);
+                if (index >= 0)
+                {
+                    _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, p.AvailableTimes, p.Data));
+                }
+                Update();
+            }));
         }
         private void Register(Persistent p)
         {
             _data.Add(p);
-            foreach (var trigger in p.CardBase.TriggerableList)
+            var handlersDic = HandlerToPersistentSet(p);
+            foreach (var kvp in handlersDic)
             {
-                var h = PersistentHandelerConvert(p, trigger);
-                if (!_handlers.ContainsKey(trigger.Tag))
+                if (!_handlers.ContainsKey(kvp.Key))
                 {
-                    _handlers.Add(trigger.Tag, h);
+                    _handlers.Add(kvp.Key, kvp.Value);
                 }
                 else
                 {
-                    _handlers[trigger.Tag] += h;
+                    _handlers[kvp.Key] += kvp.Value;
                 }
             }
             _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, p));
         }
         private void Unregister(int index, Persistent p)
         {
-            foreach (var trigger in p.CardBase.TriggerableList)
+            var handlersDic = HandlerToPersistentSet(p);
+            foreach (var kvp in handlersDic)
             {
-                _handlers[trigger.Tag] -= PersistentHandelerConvert(p, trigger);
+                _handlers[kvp.Key] -= kvp.Value;
             }
             _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
             _data.RemoveAt(index);
+        }
+        public void PopTo(Persistent p, AbstractPersistentSet destination)
+        {
+            int index = _data.FindIndex(pe => pe == p);
+            if (index > 0)
+            {
+                Unregister(index, p);
+                if (destination is CardsInHand inhand)
+                {
+                    if (p.CardBase is AbstractCardAction action)
+                    {
+                        inhand.Add(action);
+                    }
+                }
+                else if (destination is PersistentSet set)
+                {
+                    set.Add(p);
+                }
+            }
         }
         public void Destroy(int index)
         {

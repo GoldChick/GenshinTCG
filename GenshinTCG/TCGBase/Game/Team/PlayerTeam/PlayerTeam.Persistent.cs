@@ -88,29 +88,29 @@
                 }
             }
         }
-        internal EventPersistentSetHandler? GetEffectHandlers(AbstractSender sender)
+        internal List<EventPersistentSetHandler> GetEffectHandlers(AbstractSender sender)
         {
-            EventPersistentSetHandler? hs = null;
+            List<EventPersistentSetHandler> hs = new();
             if (CurrCharacter == -1)
             {
-                hs += Effects.GetPersistentHandlers(sender);
+                hs.AddRange(Effects.GetPersistentHandlers(sender));
                 for (int i = 0; i < Characters.Length; i++)
                 {
-                    hs += Characters[i].GetPersistentHandlers(sender);
+                    hs.AddRange(Characters[i].GetPersistentHandlers(sender));
                 }
             }
             else
             {
-                hs += Characters[CurrCharacter].GetPersistentHandlers(sender);
-                hs += Effects.GetPersistentHandlers(sender);
+                hs.AddRange(Characters[CurrCharacter].GetPersistentHandlers(sender));
+                hs.AddRange(Effects.GetPersistentHandlers(sender));
                 for (int i = 1; i < Characters.Length; i++)
                 {
-                    hs += Characters[(i + CurrCharacter) % Characters.Length].GetPersistentHandlers(sender);
+                    hs.AddRange(Characters[(i + CurrCharacter) % Characters.Length].GetPersistentHandlers(sender));
                 }
             }
-            hs += Summons.GetPersistentHandlers(sender);
-            hs += Supports.GetPersistentHandlers(sender);
-            hs += CardsInHand.GetHandlers(sender);
+            hs.AddRange(Summons.GetPersistentHandlers(sender));
+            hs.AddRange(Supports.GetPersistentHandlers(sender));
+            hs.AddRange(CardsInHand.GetHandlers(sender));
             return hs;
         }
         /// <summary>
@@ -118,32 +118,10 @@
         /// </summary>
         internal void InstantTrigger(AbstractSender sender, AbstractVariable? variable = null)
         {
-            GetEffectHandlers(sender)?.Invoke(this, sender, variable);
-            if (CurrCharacter == -1)
+            foreach (var handler in GetEffectHandlers(sender))
             {
-                Effects.Update();
-                for (int i = 0; i < Characters.Length; i++)
-                {
-                    Characters[i].Effects.Update();
-                }
+                handler.Invoke(sender, variable);
             }
-            else
-            {
-                Characters[CurrCharacter].Effects.Update();
-                Effects.Update();
-                for (int i = 1; i < Characters.Length; i++)
-                {
-                    Characters[(i + CurrCharacter) % Characters.Length].Effects.Update();
-                }
-            }
-            Summons.Update();
-            Supports.Update();
-        }
-        /// <summary>
-        /// effect按照 (curr)角色=>团队=>(curr+1->curr+2->...)角色=>召唤物=>支援区 的顺序结算<br/>
-        /// </summary>
-        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null)
-        {
         }
     }
 }

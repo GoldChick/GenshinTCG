@@ -9,6 +9,9 @@
         public override string SenderName => SenderTagInner.Prepare.ToString();
         public int Character { get; }
         public int Index { get; }
+        int ITriggerableIndexSupplier.SourceIndex => Character;
+        int ITriggerableIndexSupplier.TriggerableIndex => Index;
+
         internal ActionUsePrepareSender(int teamID, int character, int index) : base(teamID)
         {
             Character = character;

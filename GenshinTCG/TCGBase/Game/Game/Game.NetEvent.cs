@@ -97,20 +97,21 @@
                     team.ReRollDice(dvr);
                     break;
                 case OperationType.ReRollCard:
-                    //TODO:换牌+优先不换上来换下去的种类
-                    //var cards = t.CardsInHand;
-                    //var cardcash0 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 0).ToList();
-                    //var cardcash1 = cards.Where((value, index) => evt.AdditionalTargetArgs[index] == 1).ToList();
-                    //BroadCast(ClientUpdateCreate.CardUpdate(currTeam, ClientUpdateCreate.CardUpdateCategory.Push, cards.Select((value, index) => evt.AdditionalTargetArgs[index] == 1 ? index : -1).Where(p => p >= 0).ToArray()));
-                    //cards.Clear();
-                    //cards.AddRange(cardcash0);
-                    //var over = cardcash1.Count - t.LeftCards.Count;
-                    //t.RollCard(cardcash1.Count);
-                    //t.LeftCards.AddRange(cardcash1);
-                    //if (over > 0)
-                    //{
-                    //    t.RollCard(over);
-                    //}
+                    var pop = team.CardsInHand.Pop(evt.AdditionalTargetArgs);
+                    BroadCast(ClientUpdateCreate.CardUpdate(CurrTeam, ClientUpdateCreate.CardUpdateCategory.Push,
+                        pop.Select(p => p.PersistentRegion - team.CardsInHand.PersistentRegion).ToArray()));
+
+                    var available = team.LeftCards.Where(card => !pop.Any(popcard => popcard.Card.NameID == card.NameID && popcard.Card.Namespace == card.Namespace));
+
+                    int overCount = pop.Count - available.Count();
+
+                    team.RollCard(pop.Count, available);
+                    
+                    team.LeftCards.AddRange(pop.Select(p => p.Card));
+                    if (overCount > 0)
+                    {
+                        team.RollCard(overCount);
+                    }
                     break;
                 case OperationType.Switch:
                     team.TrySwitchToIndex(evt.Operation.Index);

@@ -11,7 +11,7 @@
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            (Team == TargetTeam.Enemy ? me.Enemy : me).RollCard(Count, WithTag);
+            (Team == TargetTeam.Enemy ? me.Enemy : me).RollCard(Count, c => WithTag.All(c.Tags.Contains));
         }
     }
 }

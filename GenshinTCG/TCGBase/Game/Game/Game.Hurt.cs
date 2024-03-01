@@ -36,19 +36,22 @@
 
             for (int i = 0; i < list.Count; i++)
             {
-                var dv = list[i];
+                DamageVariable dv = list[i];
                 if (dv.Element is not DamageElement.Pierce)
                 {
                     sourceSender.ModifierName = SenderTag.ElementEnchant;
-                    InstantTrigger(sourceSender, dv);
+                    InstantTrigger(sourceSender, dv, instant: true);
                     //element reaction subdamage here ↓
                     list.AddRange(GetDamageReaction(dv));
+
                     sourceSender.ModifierName = SenderTag.DamageIncrease;
-                    InstantTrigger(sourceSender, dv);
+                    InstantTrigger(sourceSender, dv, instant: true);
+
                     sourceSender.ModifierName = SenderTag.DamageMul;
-                    InstantTrigger(sourceSender, dv);
+                    InstantTrigger(sourceSender, dv, instant: true);
+
                     sourceSender.ModifierName = SenderTag.HurtDecrease;
-                    InstantTrigger(sourceSender, dv);
+                    Teams[dv.TargetTeam].InstantTrigger(sourceSender, dv);
                     //TODO: element modifier
                     var ac = ReactionActionGenerate(dv);
                     //InstantTrigger(xxx)
