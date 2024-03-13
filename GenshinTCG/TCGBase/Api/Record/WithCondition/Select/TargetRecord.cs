@@ -1,4 +1,6 @@
-﻿namespace TCGBase
+﻿using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     /*
      *                     Sender => Persistent
@@ -21,29 +23,39 @@
         This,
         //本身是角色状态，则添加对应的角色
         Owner,
-        //获取所有角色状态、出战状态、召唤、支援（不进行排序）
+        //获取所有角色状态、出战状态（不进行排序）
         Effect,
         //仅用于添加状态，此时不调用GetTargets()
-        Team
+        Team,
+        //仅用于转移状态
+        Hand,
+    }
+    public enum CharacterSortType
+    {
+        None,
+        Reverse,
+        ClosestToEnemy,
+        HPLostMost,
     }
     public record class TargetRecord : SelectRecord
     {
         /// <summary>
         /// 默认为0，即第一个；可置为负表示全部；超过.count()之后为空<br/>
-        /// 只对Character、Summon、Support、Sender这种已知或部分已知的有效
+        /// 对于Character,Summon,Effect,Support，先取When，再取Index<br/>
+        /// 对于Sender，先取Index，再取When
         /// </summary>
         public int Index { get; }
         /// <summary>
-        /// 是否逆序TargetList，默认否，对Custom无效
+        /// 仅对Character有效
         /// </summary>
-        public bool Reverse { get; }
-
-        public TargetRecord(TargetType type = TargetType.Character, int index = 0, bool reverse = false, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(type, team, when)
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public CharacterSortType SortBy { get; }
+        public TargetRecord(TargetType type = TargetType.Character, int index = 0, CharacterSortType sortby = CharacterSortType.None, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(type, team, when)
         {
             Index = index;
-            Reverse = reverse;
+            SortBy = sortby;
         }
-
+        /// <param name="team">对于sender,this,owner类型，team为me</param>
         public List<Persistent> GetTargets(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, out PlayerTeam team)
         {
             var localteam = Team == TargetTeam.Enemy ? me.Enemy : me;
@@ -52,16 +64,58 @@
             switch (Type)
             {
                 case TargetType.Character:
+                    List<Character> chars = new();
                     if (team.CurrCharacter == -1)
                     {
-                        targets.AddRange(team.Characters);
+                        chars.AddRange(team.Characters);
                     }
                     else
                     {
                         for (int i = 0; i < team.Characters.Length; i++)
                         {
-                            targets.Add(team.Characters[(i + team.CurrCharacter) % team.Characters.Length]);
+                            chars.Add(team.Characters[(i + team.CurrCharacter) % team.Characters.Length]);
                         }
+                    }
+                    switch (SortBy)
+                    {
+                        case CharacterSortType.Reverse:
+                            chars.Reverse();
+                            break;
+                        case CharacterSortType.ClosestToEnemy:
+                            chars.Clear();
+                            switch (team.Enemy.CurrCharacter)
+                            {
+                                case 1:
+                                    chars.Add(team.Characters[0]);
+                                    chars.Add(team.Characters[1]);
+                                    chars.Add(team.Characters[2]);
+                                    break;
+                                case 2:
+                                    chars.Add(team.Characters[1]);
+                                    chars.Add(team.Characters[0]);
+                                    chars.Add(team.Characters[2]);
+                                    break;
+                                default:
+                                    chars.Add(team.Characters[2]);
+                                    chars.Add(team.Characters[0]);
+                                    chars.Add(team.Characters[1]);
+                                    break;
+                            }
+                            break;
+                        case CharacterSortType.HPLostMost:
+                            chars = chars.OrderByDescending(c => c.Card.MaxHP - c.HP).ToList();
+                            break;
+                    }
+                    if (Index >= 0)
+                    {
+                        if (chars.Where(pe => (this as IWhenThenAction).IsConditionValid(localteam, pe, s, v)).ElementAtOrDefault(Index) is Character valid)
+                        {
+                            targets.Add(valid);
+                        }
+                    }
+                    else
+                    {
+                        targets.AddRange(chars);
                     }
                     break;
                 case TargetType.Summon:
@@ -71,6 +125,7 @@
                     targets.AddRange(team.Supports);
                     break;
                 case TargetType.Sender:
+                    team = me;
                     if (s is IPeristentSupplier ips)
                     {
                         targets.Add(ips.Persistent);
@@ -83,12 +138,22 @@
                     {
                         targets.Add(team.Game.Teams[dv.TargetTeam].Characters[dv.TargetIndex]);
                     }
+                    if (Index >= 0)
+                    {
+                        var oldtargets = targets;
+                        targets = new();
+                        if (Index < oldtargets.Count)
+                        {
+                            targets.Add(oldtargets[Index]);
+                        }
+                    }
                     break;
-
                 case TargetType.This:
+                    team = me;
                     targets.Add(p);
                     break;
                 case TargetType.Owner:
+                    team = me;
                     if (team.Characters.ElementAtOrDefault(p.PersistentRegion) is Character c)
                     {
                         targets.Add(c);
@@ -101,23 +166,6 @@
                     }
                     targets.AddRange(team.Effects);
                     break;
-            }
-            
-            if (Type != TargetType.Effect)
-            {
-                if (Reverse)
-                {
-                    targets.Reverse();
-                }
-                if (Index >= 0)
-                {
-                    var oldtargets = targets;
-                    targets = new();
-                    if (Index < oldtargets.Count)
-                    {
-                        targets.Add(oldtargets[Index]);
-                    }
-                }
             }
             return targets.Where(pe => (this as IWhenThenAction).IsConditionValid(localteam, pe, s, v)).ToList();
         }

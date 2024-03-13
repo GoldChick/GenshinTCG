@@ -75,7 +75,10 @@
         /// </summary>
         AfterEffectDesperated,
         #endregion
-        PreDie,
+        /// <summary>
+        /// 免于被击倒，注意：必须有治疗效果，要不然会导致0血活角色
+        /// </summary>
+        AntiDie,
     }
 
     /// <summary>

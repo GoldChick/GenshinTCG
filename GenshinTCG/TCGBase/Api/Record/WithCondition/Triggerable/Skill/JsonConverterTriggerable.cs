@@ -15,6 +15,7 @@ namespace TCGBase
                 {
                     //↓下为不那么具体的具体类预设↓
                     "Custom" => JsonSerializer.Deserialize<TriggerableRecordCustom>(root.GetRawText(), options),
+                    "CustomSenderName" => JsonSerializer.Deserialize<TriggerableRecordWithString>(root.GetRawText(), options),
                     "Skill" => JsonSerializer.Deserialize<TriggerableRecordSkill>(root.GetRawText(), options),
                     "Prepare" => JsonSerializer.Deserialize<TriggerableRecordPrepare>(root.GetRawText(), options),
                     "AfterUseSkill" or "AfterUseCard" => JsonSerializer.Deserialize<TriggerableRecordEnable>(root.GetRawText(), options),

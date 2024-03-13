@@ -19,7 +19,7 @@ namespace TCGBase
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierActionMode Mode { get; }
         private static readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
-        public ModifierRecordFast(ModifierActionMode mode, int value = 1,  int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, consume, when, trigger)
+        public ModifierRecordFast(ModifierActionMode mode, int value = 1, int consume = 1, int adddata = -1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, consume, adddata, when, trigger)
         {
             Mode = mode;
         }
@@ -27,7 +27,7 @@ namespace TCGBase
         {
             return SenderTag.AfterOperation.ToString();
         }
-        protected override EventPersistentHandler? Get()
+        protected override EventPersistentHandler? Get(Action whensuccess)
         {
             return (me, p, s, v) =>
             {
@@ -45,10 +45,8 @@ namespace TCGBase
                         if (modeFlag && !fav.Fast)
                         {
                             fav.Fast = true;
-                            if (Consume > 0)
-                            {
-                                p.AvailableTimes -= Consume;
-                            }
+                            p.AvailableTimes -= Consume;
+                            whensuccess.Invoke();
                         }
                     }
                 }

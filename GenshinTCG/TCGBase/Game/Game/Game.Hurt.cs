@@ -90,15 +90,15 @@
                         cha.HP -= dv.Amount;
                         if (cha.HP == 0)
                         {
-                            if (cha.Effects.TryFind(e => e.CardBase.Tags.Contains(CardTag.AntiDie.ToString()), out var p) && p.CardBase.TriggerableList.ContainsKey(SenderTag.PreDie.ToString()))
+                            if (cha.Effects.TryFind(e => e.CardBase.TriggerableList.ContainsKey(SenderTag.AntiDie.ToString()), out var p))
                             {
                                 todie_or_nottodie += () =>
                                 {
                                     foreach (var it in p.CardBase.TriggerableList)
                                     {
-                                        if (it.Tag == SenderTag.PreDie.ToString())
+                                        if (it.Tag == SenderTag.AntiDie.ToString())
                                         {
-                                            it.Trigger(currteam, p, new SimpleSender(SenderTag.PreDie), null);
+                                            it.Trigger(currteam, p, new SimpleSender(SenderTag.AntiDie), null);
                                         }
                                     }
                                 };

@@ -5,11 +5,13 @@ namespace TCGBase
     public enum TriggerableType
     {
         Custom,
+        CustomSenderName,
 
         Skill,
         Card,
         Prepare,
         //↓下为预设，转化为TriggerableRecordWithAction↓
+        RoundMeStart,
         RoundStart,
         RoundDuring,
         RoundOver,
@@ -22,6 +24,8 @@ namespace TCGBase
         AfterElement,
         AfterHealed,
         OnCharacterOn,
+        OnOtherDesperated,
+        AntiDie,
         //↓下为预设，有设置好的类↓
         Skill_A,
         Skill_E,

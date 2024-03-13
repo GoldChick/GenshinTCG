@@ -3,7 +3,7 @@
     public class Persistent
     {
         protected int _availableTimes;
-
+        internal PersistentSet? Owner { get; set; }
         public int AvailableTimes
         {
             get => _availableTimes;

@@ -118,7 +118,7 @@
             List<EventPersistentSetHandler> hss = new();
             if (Alive)
             {
-                if (sender is ITriggerableIndexSupplier indexSp)
+                if (sender is ITriggerableIndexSupplier indexSp && sender is not ActionUseCardSender)
                 {
                     if (sender.TeamID == _t.TeamIndex && PersistentRegion == indexSp.SourceIndex && Card.TriggerableList.TryGetValue(sender.SenderName, out var skill, indexSp.TriggerableIndex))
                     {

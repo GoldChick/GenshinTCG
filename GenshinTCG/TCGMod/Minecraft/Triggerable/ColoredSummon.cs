@@ -10,13 +10,12 @@ namespace Minecraft
         public override string Tag => SenderTag.RoundOver.ToString();
 
         public DamageRecord Damage { get; }
-        public int Consume { get; }
-
+        public List<ActionRecordBase> With { get; } 
         [JsonConstructor]
-        public ColoredSummon(DamageRecord damage, int consume = 1)
+        public ColoredSummon(DamageRecord damage, List<ActionRecordBase>? with = null)
         {
             Damage = damage;
-            Consume = consume;
+            With = with??new();
         }
         /// <summary>
         /// 不考虑CurrCharacter为-1
@@ -31,7 +30,13 @@ namespace Minecraft
                 damage = new((DamageElement)color, damage.Amount, damage.TargetIndexOffset, damage.TargetArea, damage.Team, damage.SubDamage);
             }
 
-            me.DoDamage(damage, persitent, this, () => persitent.AvailableTimes -= Consume);
+            me.DoDamage(damage, persitent, this, ()=>
+            {
+                foreach (var action in With)
+                {
+                    action.GetHandler(this)?.Invoke(me,persitent,sender,variable);
+                }
+            });
         }
     }
 }

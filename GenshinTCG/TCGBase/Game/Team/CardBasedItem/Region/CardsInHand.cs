@@ -40,7 +40,7 @@ namespace TCGBase
                     switch (card.CardBase.CardType)
                     {
                         case CardType.Equipment:
-                            if (cs.Persistents.FirstOrDefault() is Character c)
+                            if (cs.Persistents.FirstOrDefault(pe => pe is Character) is Character c)
                             {
                                 c.AddEffect(card.CardBase);
                             }

@@ -17,7 +17,7 @@
             switch (Type)
             {
                 case TriggerType.Trigger:
-                    me.Game.EffectTrigger(new SimpleSender(me.TeamIndex, Value));
+                    me.Game.EffectTrigger(new SimpleSourceSender(me.TeamIndex, Value, p));
                     break;
                 case TriggerType.SetData:
                     if (Enum.TryParse(Value, true, out DataSetType type))

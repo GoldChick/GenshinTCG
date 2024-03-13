@@ -4,6 +4,7 @@ namespace TCGBase
 {
     public enum TriggerType
     {
+        AorB,
         //int with target
         MP,//target角色增加value点mp
         Skill,//target角色使用value技能
@@ -22,6 +23,7 @@ namespace TCGBase
         Damage,//造成特殊效果为with的damage
         Effect,//针对target先删除remove的，再添加add的，支持 行动牌、召唤物、状态
         SampleEffect,//从给出的池子里抽取一定数量effect
+        PopEffect,//通过target获取某些状态、召唤、支援，转移到其他区域
         Dice,//根据gain，获得或失去dice中的内容
         EatDice,//收集未使用的元素骰/吐出已收集的元素骰,可设置最大数量、是否允许同色
         Counter,//(force去)add或set指定targer的persistent或者自身的Counter
@@ -39,7 +41,7 @@ namespace TCGBase
             Type = type;
             When = when ?? new();
         }
-        public EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
+        public virtual EventPersistentHandler? GetHandler(AbstractTriggerable triggerable)
         {
             return (me, p, s, v) =>
             {

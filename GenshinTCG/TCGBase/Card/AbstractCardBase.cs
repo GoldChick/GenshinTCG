@@ -3,11 +3,6 @@
     public enum CardTag
     {
         /// <summary>
-        /// 具有该Tag的<b>[角色状态]</b>，会在造成伤害的[扣血]时被检测，然后稍后触发<br/>
-        /// 注意：需要搭配治疗使用，否则会产生0血活角色，引起难以预料的游戏bug！<br/>
-        /// </summary>
-        AntiDie,
-        /// <summary>
         /// 具有该Tag的状态，被视为能组织所附属角色使用技能，用于[冻结][石化]
         /// </summary>
         AntiSkill,

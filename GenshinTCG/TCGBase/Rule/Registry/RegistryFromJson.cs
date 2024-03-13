@@ -4,13 +4,12 @@ namespace TCGBase
 {
     public class RegistryFromJson
     {
-        public JsonSerializerOptions JsonOptionGlobal { get; }
+        public readonly static JsonSerializerOptions JsonOptionGlobal = new()
+        {
+            Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction(), new JsonConverterModifier() }
+        };
         public RegistryFromJson()
         {
-            JsonOptionGlobal = new()
-            {
-                Converters = { new JsonConverterCondition(), new JsonConverterTriggerable(), new JsonConverterAction(), new JsonConverterModifier() }
-            };
         }
         public void LoadFolders(string path, string modid)
         {

@@ -28,7 +28,7 @@ namespace TCGBase
             _ => DiceModifierType.Color
         };
         private static readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
-        public ModifierRecordDice(ElementCategory element, int value = 1,  bool iF = false, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, consume, when, trigger)
+        public ModifierRecordDice(ElementCategory element, int value = 1, bool iF = false, int adddata = -1, int consume = 1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, consume, adddata, when, trigger)
         {
             Element = element;
             If = iF;
@@ -37,7 +37,7 @@ namespace TCGBase
         {
             return (If ? DiceModifierType.If : _demand).ToString();
         }
-        protected override EventPersistentHandler? Get()
+        protected override EventPersistentHandler? Get(Action whensuccess)
         {
             return (me, p, s, v) =>
             {
@@ -64,6 +64,7 @@ namespace TCGBase
                                 if (dms.RealAction)
                                 {
                                     p.AvailableTimes -= Consume >= 0 ? Consume : min;
+                                    whensuccess.Invoke();
                                 }
                             }
                         }

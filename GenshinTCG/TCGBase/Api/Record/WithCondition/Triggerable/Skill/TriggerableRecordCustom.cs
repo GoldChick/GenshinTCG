@@ -22,7 +22,7 @@ namespace TCGBase
                 {
                     if (Value != null)
                     {
-                        if (JsonSerializer.Deserialize(Value.ToString() ?? "{}", value.GetType()) is AbstractTriggerable obj)
+                        if (JsonSerializer.Deserialize(Value.ToString() ?? "{}", value.GetType(), RegistryFromJson.JsonOptionGlobal) is AbstractTriggerable obj)
                         {
                             return obj;
                         }

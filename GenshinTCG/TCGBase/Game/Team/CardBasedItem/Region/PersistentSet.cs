@@ -56,6 +56,7 @@ namespace TCGBase
                 }
                 else
                 {
+                    input.Owner = this;
                     input.PersistentRegion = PersistentRegion;
                     Register(input);
                 }
@@ -168,16 +169,17 @@ namespace TCGBase
             int index = _data.FindIndex(pe => pe == p);
             if (index > 0)
             {
-                Unregister(index, p);
                 if (destination is CardsInHand inhand)
                 {
                     if (p.CardBase is AbstractCardAction action)
                     {
+                        Unregister(index, p);
                         inhand.Add(action);
                     }
                 }
-                else if (destination is PersistentSet set)
+                else if (destination is PersistentSet set && !set.Full)
                 {
+                    Unregister(index, p);
                     set.Add(p);
                 }
             }
@@ -188,7 +190,7 @@ namespace TCGBase
             if (p != null)
             {
                 Unregister(index, p);
-                _me.Game.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, p.PersistentRegion, p.CardBase), null);
+                _me.Game.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, PersistentRegion, p.CardBase));
             }
         }
         public void DestroyFirst(Predicate<Persistent> condition) => Destroy(_data.FindIndex(condition));

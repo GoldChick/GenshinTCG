@@ -10,7 +10,7 @@ namespace TCGBase
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public SkillCategory Category { get; }
         public string CardName { get; }
-        public TriggerableRecordPrepare(SkillCategory category, List<ActionRecordBase> action, string? cardname = null, List<ConditionRecordBase>? when = null) : base(TriggerableType.Skill, action, when)
+        public TriggerableRecordPrepare(SkillCategory category, List<ActionRecordBase> action, string? cardname = null, List<ConditionRecordBase>? when = null) : base(TriggerableType.Prepare, action, when)
         {
             Category = category;
             CardName = cardname ?? "prepareskill";
