@@ -4,6 +4,7 @@ namespace TCGBase
 {
     public enum TriggerType
     {
+        Lua,
         AorB,
         //int with target
         MP,//target角色增加value点mp

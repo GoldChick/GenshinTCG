@@ -10,16 +10,17 @@
         private PlayerTeam Me { get; set; }
 
         /// <summary>
-        /// 客户端=>服务端
+        /// 服务端=>客户端=>服务端
         /// 游戏开始前传入卡组
         /// </summary>
         public abstract ServerPlayerCardSet RequestCardSet();
         /// <summary>
-        /// 客户端=>服务端
+        /// 服务端=>客户端=>服务端
         /// 游戏进行中调用索取对应行动
         /// </summary>
         public abstract NetEvent RequestEvent(OperationType demand);
         /// <summary>
+        /// 服务端=>客户端
         /// 表示正在向对方request需要的event
         /// </summary>
         public virtual void RequestEnemyEvent(OperationType demand) { }

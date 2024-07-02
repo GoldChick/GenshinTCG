@@ -58,6 +58,7 @@ namespace TCGBase
                 {
                     input.Owner = this;
                     input.PersistentRegion = PersistentRegion;
+                    _me.Game.RegisterPersistent(input);
                     Register(input);
                 }
             }
@@ -111,7 +112,6 @@ namespace TCGBase
                     if (condition == null || condition(d))
                     {
                         d.Childs.ForEach(c => c.Active = false);
-                        d.Father?.Childs.Remove(d);
                         Unregister(i, d);
                     }
                 }

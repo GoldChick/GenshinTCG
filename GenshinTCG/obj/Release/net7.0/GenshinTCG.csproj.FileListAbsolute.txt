@@ -10,3 +10,4 @@ C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\refint\Genshin
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.pdb
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\ref\GenshinTCG.dll
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.sourcelink.json
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Release\net7.0\GenshinTCG.csproj.AssemblyReference.cache

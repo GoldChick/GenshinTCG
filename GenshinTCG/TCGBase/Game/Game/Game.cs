@@ -49,6 +49,7 @@
             NetEventRecords = new();
             ActionRecords = new();
             DelayedTriggerQueue = new();
+            GlobalPersistents = new();
         }
         public void AddClient(AbstractClient c) => Clients.Add(c);
         /// <summary>

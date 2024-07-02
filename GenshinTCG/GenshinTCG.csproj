@@ -11,4 +11,8 @@
     <Folder Include="TCGMod\Sample\Triggerable\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NLua" Version="1.7.2" />
+  </ItemGroup>
+
 </Project>

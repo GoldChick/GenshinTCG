@@ -5,13 +5,19 @@ namespace TCGBase
     public enum ConditionType
     {
         /// <summary>
+        /// 使用lua脚本描述条件，自带me,p,s,v作为参数，由于并非即时运行，所以可能含有隐含错误。建议编写时进行模拟测试。<br/> 
+        /// 返回值：需要在脚本中为名叫result的变量赋值true或false，否则默认为false<br/>
+        /// 注意：lua中的索引从1开始，而C#中的索引从0开始！<br/>
+        /// TODO:加入日志系统
+        /// </summary>
+        Lua,
+        /// <summary>
         /// 复合条件，实现[与]
         /// </summary>
         Compound,
         //↓下为没有参数↓
         Alive,
         CurrCharacter,
-        CurrTeam,
         GameStart,//游戏开始时，用于[潜行大师]等被动触发
         SimpleFood,//<预设>"普通食物"，要求角色[活着]，并且没有[饱腹]状态
         HeavyStrike,//是否是重击状态
@@ -55,16 +61,11 @@ namespace TCGBase
         OurCharacterCause,//<预设>"我方角色造成指定种类伤害"，要求[来源我方]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         //↓下为int↓
         Damage,
-        SkillCostSum,
-        CardCount,
-        DiceCount,
-        DiceTypeCount,
         //分界线，上为对于Damage，下为对于Dice
 
         //分界线，上为对于Dice，下为对于Target
         AnyTarget,//target.any()
         AnyTargetWithSameIndex,//target.any() && target.all(t=>t.persistentregion==p.persistentregion)
-        TargetCount,//target.count
         CanBeAppliedFrom,//p或者p附属的角色，能够被所有target的行动牌CardBase作为使用对象
     }
     public record class ConditionRecordBase
@@ -98,7 +99,6 @@ namespace TCGBase
 
                 ConditionType.Alive => p is Character c && c.Alive,
                 ConditionType.CurrCharacter => p.PersistentRegion == me.CurrCharacter,
-                ConditionType.CurrTeam => me.TeamIndex == me.Game.CurrTeam,
                 ConditionType.GameStart => s is OnCharacterOnSender ocos && ocos.Start,
                 ConditionType.SimpleFood => p is Character c && c.Alive && !c.Effects.Contains("minecraft:effect_full"),
                 ConditionType.HeavyStrike => me.SpecialState.HeavyStrike,

@@ -1,9 +1,17 @@
-﻿namespace TCGBase
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     public class Persistent
     {
-        protected int _availableTimes;
+        [JsonIgnore]
         internal PersistentSet? Owner { get; set; }
+        /// <summary>
+        /// 整局游戏的状态自增ID，场上的每个状态的ID各不相同
+        /// </summary>
+        public int ID { get; internal set; }
+        protected int _availableTimes;
         public int AvailableTimes
         {
             get => _availableTimes;
@@ -33,13 +41,9 @@
         /// </summary>
         public List<int> Data { get; internal set; }
         /// <summary>
-        /// 依赖于的另一个persistent，在自己的persistent中编写检测机制
-        /// </summary>
-        public Persistent? Father { get; set; }
-        /// <summary>
         /// 依赖于自己的persistent们，此状态清除时将把list中的其他状态也清除
         /// </summary>
-        public List<Persistent> Childs { get; }
+        public List<int> Childs { get; }
         public Persistent(AbstractCardBase card, Persistent? bind = null)
         {
             CardBase = card;
@@ -48,8 +52,8 @@
             Data = new();
             AvailableTimes = card.InitialUseTimes;
 
-            Father = bind;
-            bind?.Childs?.Add(this);
+            //TODO: lazy add
+            //bind?.Childs?.Add(this);
         }
     }
     public class Persistent<T> : Persistent where T : AbstractCardBase
@@ -60,4 +64,31 @@
             Card = card;
         }
     }
+    public class JsonConverterPersistent : JsonConverter<Persistent>
+    {
+        public override Persistent? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            using JsonDocument doc = JsonDocument.ParseValue(ref reader);
+            var root = doc.RootElement;
+            if (root.TryGetProperty("Type", out JsonElement typeElement))
+            {
+                if (Enum.TryParse(typeElement.GetString(), out TriggerType type))
+                {
+                    return type switch
+                    {
+                        TriggerType.AorB => JsonSerializer.Deserialize<Persistent>(root.GetRawText(), options),
+
+                        _ => throw new JsonException($"Unimplemented ActionRecord 'Type' property: {typeElement}."),
+                    };
+                }
+            }
+            throw new JsonException($"JsonConverterAction.Read() : Missing or invalid 'Type' property:(NOT Ignore Case)Json: \n{root}");
+        }
+
+        public override void Write(Utf8JsonWriter writer, Persistent value, JsonSerializerOptions options)
+        {
+            JsonSerializer.Serialize(writer, value, value.GetType(), options);
+        }
+    }
+
 }

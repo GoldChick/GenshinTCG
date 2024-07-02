@@ -1,4 +1,7 @@
-﻿namespace TCGBase
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace TCGBase
 {
     public enum CardTag
     {
@@ -78,6 +81,34 @@
         {
             Namespace = @namespace;
             NameID = nameid;
+        }
+    }
+    public class JsonConverterAbstractCardBase : JsonConverter<AbstractCardBase>
+    {
+        public override AbstractCardBase? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            using JsonDocument doc = JsonDocument.ParseValue(ref reader);
+            var root = doc.RootElement;
+            if (root.TryGetProperty("Type", out JsonElement typeElement) && root.TryGetProperty("Name", out JsonElement nameElement))
+            {
+                if (Enum.TryParse(typeElement.GetString(), out CardType type))
+                {
+                    return type switch
+                    {
+                        //TODO:check it
+                        CardType.Character => Registry.Instance.CharacterCards.GetValueOrDefault(nameElement.GetString()),
+                        _ => throw new JsonException($"Unimplemented ActionRecord 'Type' property: {typeElement}."),
+                    };
+                }
+            }
+            throw new JsonException($"JsonConverterAction.Read() : Missing or invalid 'Type' property:(NOT Ignore Case)Json: \n{root}");
+        }
+        public override void Write(Utf8JsonWriter writer, AbstractCardBase value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("Type", value.CardType.ToString());
+            writer.WriteString("Name", $"{value.Namespace}:{value.NameID}");
+            writer.WriteEndObject();
         }
     }
 }

@@ -6,8 +6,9 @@ namespace TCGBase
     public class CardsInHand : AbstractPersistentSet, IEnumerable<Persistent<AbstractCardAction>>
     {
         private readonly List<Persistent<AbstractCardAction>> _data;
+        public int Count => _data.Count;
         /// <summary>
-        /// 其中的卡牌PersistentRegion为-20~-11
+        /// 其中的卡牌PersistentRegion为-20
         /// </summary>
         public CardsInHand(PlayerTeam me) : base(me)
         {

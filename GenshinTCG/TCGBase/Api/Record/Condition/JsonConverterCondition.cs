@@ -15,9 +15,11 @@ namespace TCGBase
                 {
                     return type switch
                     {
-                        ConditionType.HPLost or ConditionType.MPLost or ConditionType.Counter or ConditionType.Damage or ConditionType.SkillCostSum
+                        ConditionType.Lua => JsonSerializer.Deserialize<ConditionRecordLua>(root.GetRawText(), options),
+
+                        ConditionType.HPLost or ConditionType.MPLost or ConditionType.Counter or ConditionType.Damage
                         or ConditionType.HP or ConditionType.MP or ConditionType.DataCount or ConditionType.DataContains or ConditionType.Region 
-                        or ConditionType.DiceCount or ConditionType.CardCount or ConditionType.DiceTypeCount
+                       
                         => JsonSerializer.Deserialize<ConditionRecordTriInt>(root.GetRawText(), options),
 
                         ConditionType.HasEffect or ConditionType.HasEffectWithTag or ConditionType.HasTag or ConditionType.HasCard or ConditionType.Name or ConditionType.OperationType

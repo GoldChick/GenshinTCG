@@ -29,13 +29,6 @@ namespace TCGBase
                         return true;
                     }
                     break;
-                case ConditionType.SkillCostSum:
-                    if (s is IMaySkillSupplier ssp && ssp.MaySkill is ICostable cost)
-                    {
-                        value = cost.Cost.DiceCost.Sum();
-                        return true;
-                    }
-                    break;
                 case ConditionType.HP:
                     if (me.Characters.ElementAtOrDefault(p.PersistentRegion) is Character c)
                     {
@@ -81,15 +74,6 @@ namespace TCGBase
                     return true;
                 case ConditionType.DataCount:
                     value = p.Data.Count;
-                    return true;
-                case ConditionType.DiceCount:
-                    value = me.DiceNum;
-                    return true;
-                case ConditionType.CardCount:
-                    value = me.CardNum;
-                    return true;
-                case ConditionType.DiceTypeCount:
-                    value = me.GetDicesArray().Select((dice, index) => index == 0 ? dice : Math.Sign(dice)).Sum();
                     return true;
                 case ConditionType.Region:
                     value = p.PersistentRegion;
