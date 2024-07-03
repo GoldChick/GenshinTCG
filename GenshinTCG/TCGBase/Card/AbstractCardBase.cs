@@ -1,5 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace TCGBase
 {
@@ -36,7 +38,7 @@ namespace TCGBase
         Event,
         Effect
     }
-    public abstract class AbstractCardBase : INameable, ICard, INameSetable
+    public abstract partial class AbstractCardBase : INameable, ICard, INameSetable
     {
         public virtual string Namespace { get; protected set; }
         public virtual string NameID { get; protected set; }
@@ -77,11 +79,24 @@ namespace TCGBase
                 TriggerableList.Add(item.GetTriggerable());
             }
         }
+        /// <summary>
+        /// 提供一些可供展示的值，可以在文本里以"{0}"、"{4}"的形式提现(见于FillDescription())
+        /// </summary>
+        protected virtual List<int> GetSpecialValues(Persistent p) => new() { p.AvailableTimes };
+        public string FillDescription(Persistent p, string description)
+        {
+            var values = GetSpecialValues(p);
+            // TODO:正则匹配还没搞好
+            return FillDescriptionRegex().Replace(description, m => int.TryParse(m.Value, out int index) ? values.ElementAtOrDefault(index).ToString() : "0");
+        }
         void INameSetable.SetName(string @namespace, string nameid)
         {
             Namespace = @namespace;
             NameID = nameid;
         }
+
+        [GeneratedRegex(@"{(\d+)}")]
+        private static partial Regex FillDescriptionRegex();
     }
     public class JsonConverterAbstractCardBase : JsonConverter<AbstractCardBase>
     {

@@ -111,7 +111,7 @@ namespace TCGBase
                     var d = _data[i];
                     if (condition == null || condition(d))
                     {
-                        d.Childs.ForEach(c => c.Active = false);
+                        d.Childs.ForEach(c => _me.Game.GlobalPersistents[c].Active = false);
                         Unregister(i, d);
                     }
                 }

@@ -10,8 +10,7 @@
         private NetEvent RequestEvent(int teamid, int millisecondsTimeout, OperationType demand)
         {
             CancellationTokenSource ts = new();
-            var t = new Task<NetEvent>(() => Clients[teamid].RequestEvent(demand), ts.Token);
-            Clients[1 - teamid].RequestEnemyEvent(demand);
+            var t = new Task<NetEvent>(() => Server.RequestEvent(teamid, demand), ts.Token);
             t.Start();
 
             Task.WaitAny(t, Task.Run(() => Thread.Sleep(millisecondsTimeout)));
@@ -106,7 +105,7 @@
                     int overCount = pop.Count - available.Count();
 
                     team.RollCard(pop.Count, available);
-                    
+
                     team.LeftCards.AddRange(pop.Select(p => p.Card));
                     if (overCount > 0)
                     {

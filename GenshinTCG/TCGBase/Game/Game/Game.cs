@@ -12,10 +12,6 @@
     {
         public PlayerTeam[] Teams { get; init; }
         /// <summary>
-        /// 对战双方，暂无观战模式
-        /// </summary>
-        internal List<AbstractClient> Clients { get; init; }
-        /// <summary>
         /// 存储非立即结算状态<br/>
         /// 在任意triggerable结算完毕后，会清空queue
         /// </summary>
@@ -41,58 +37,32 @@
                 BroadCast(ClientUpdateCreate.CurrTeamUpdate(value));
             }
         }
-
-        public Game()
+        internal Game(AbstractServer server)
         {
             Teams = new PlayerTeam[2];
-            Clients = new();
+            Server = server;
             NetEventRecords = new();
             ActionRecords = new();
             DelayedTriggerQueue = new();
             GlobalPersistents = new();
         }
-        public void AddClient(AbstractClient c) => Clients.Add(c);
-        /// <summary>
-        /// 将clients设置完毕之后才能开启
-        /// </summary>
-        public void StartGame()
+        internal void StartGame(IEnumerable<ServerPlayerCardSet> cardsets, IEnumerable<AbstractClient> playerClients)
         {
             if (Stage == GameStage.PreGame)
             {
-                if (Clients.Count >= 2)
-                {
-                    ServerPlayerCardSet[] c = new ServerPlayerCardSet[2];
-                    for (int i = 0; i < 2; i++)
-                    {
-                        try
-                        {
-                            c[i] = Clients[i].RequestCardSet();
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception($"编号为{i}的玩家的卡组无效！报错原因{ex.Message}");
-                        }
-                        if (!c[i].Valid)
-                        {
-                            throw new Exception($"编号为{i}的玩家的卡组无效！可能的原因：检测到无效卡、数量不为3和30、携带了无法携带的卡。");
-                        }
-                    }
-                    InitTeam(c[0], c[1]);
-
-                    Gaming();
-                    Stage = GameStage.PreGame;
-                }
-                else
-                {
-                    throw new Exception("客户端还未完全就位,无法启动!");
-                }
+                Teams[0] = new(cardsets.ElementAt(0), this, 0);
+                Teams[1] = new(cardsets.ElementAt(1), this, 1);
+                playerClients.ElementAt(0).BindTeam(Teams[0]);
+                playerClients.ElementAt(1).BindTeam(Teams[1]);
+                Stage = GameStage.PreGame;
+                Gaming();
             }
             else
             {
                 throw new Exception($"此局游戏已经启动！目前游戏状态：{Stage}");
             }
         }
-        public virtual void Gaming()
+        protected virtual void Gaming()
         {
             NetEventRecords.Add(new());
             for (int i = 0; i < 2; i++)
@@ -158,14 +128,6 @@
                 Teams[1 - CurrTeam].RoundEnd();
                 EffectTrigger(new SimpleSender(SenderTag.RoundStep));
             }
-        }
-        protected void InitTeam(ServerPlayerCardSet set0, ServerPlayerCardSet set1)
-        {
-            //TODO:写的很不完善
-            Teams[0] = new PlayerTeam(set0, this, 0);
-            Teams[1] = new PlayerTeam(set1, this, 1);
-            Clients[0].BindTeam(Teams[0]);
-            Clients[1].BindTeam(Teams[1]);
         }
         public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
                 => DelayedTriggerQueue.TryTrigger(() => InstantTrigger(sender, variable, broadcast, false));
