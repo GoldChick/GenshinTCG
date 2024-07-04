@@ -60,7 +60,7 @@ namespace TCGBase
             supply ??= new int[9];
             if (supply.All(p => p >= 0) && supply.Sum() == CostSum)
             {
-                if (Costs.ElementAtOrDefault(0)?.Type == ElementCategory.Trival)
+                if (Costs.ElementAtOrDefault(0)?.Type == ElementCategory.Trivial)
                 {
                     //同色
                     int num = supply.Where(i => i > 0).Count();

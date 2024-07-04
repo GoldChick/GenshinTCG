@@ -28,7 +28,7 @@
                 subhandler += action.GetHandler(triggerable);
             }
             me.DoDamage(Target != null && Target.GetTargets(me, p, s, v, out var team).FirstOrDefault(p => p is Character) is Character cha
-                ? GetDamageRecordWithTarget(cha.PersistentRegion - me.CurrCharacter, (TargetTeam)(1 - team.TeamIndex ^ me.TeamIndex), Damage)
+                ? GetDamageRecordWithTarget(cha.PersistentRegion - me.CurrCharacter, (TargetTeam)(1 - team.TeamID ^ me.TeamID), Damage)
                 : Damage, p, triggerable, () =>
             {
                 subhandler?.Invoke(me, p, s, v);

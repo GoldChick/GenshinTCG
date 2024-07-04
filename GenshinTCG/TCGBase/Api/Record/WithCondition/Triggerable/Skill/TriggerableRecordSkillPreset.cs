@@ -30,7 +30,7 @@ namespace TCGBase
                 _ => new TriggerableRecordSkill(
                 SkillCategory.A,
                 new() { new(ElementCategory.Void, 2), new(Element, 1) },
-                new() { new ActionRecordDamage(new(DoElementDamage ? (DamageElement)Element : DamageElement.Trival, DoElementDamage ? 1 : 2)) },
+                new() { new ActionRecordDamage(new(DoElementDamage ? (DamageElement)Element : DamageElement.Trivial, DoElementDamage ? 1 : 2)) },
                 CardName)
             });
         }

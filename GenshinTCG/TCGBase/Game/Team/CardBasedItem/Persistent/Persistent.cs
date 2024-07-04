@@ -64,31 +64,4 @@ namespace TCGBase
             Card = card;
         }
     }
-    public class JsonConverterPersistent : JsonConverter<Persistent>
-    {
-        public override Persistent? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            using JsonDocument doc = JsonDocument.ParseValue(ref reader);
-            var root = doc.RootElement;
-            if (root.TryGetProperty("Type", out JsonElement typeElement))
-            {
-                if (Enum.TryParse(typeElement.GetString(), out TriggerType type))
-                {
-                    return type switch
-                    {
-                        TriggerType.AorB => JsonSerializer.Deserialize<Persistent>(root.GetRawText(), options),
-
-                        _ => throw new JsonException($"Unimplemented ActionRecord 'Type' property: {typeElement}."),
-                    };
-                }
-            }
-            throw new JsonException($"JsonConverterAction.Read() : Missing or invalid 'Type' property:(NOT Ignore Case)Json: \n{root}");
-        }
-
-        public override void Write(Utf8JsonWriter writer, Persistent value, JsonSerializerOptions options)
-        {
-            JsonSerializer.Serialize(writer, value, value.GetType(), options);
-        }
-    }
-
 }

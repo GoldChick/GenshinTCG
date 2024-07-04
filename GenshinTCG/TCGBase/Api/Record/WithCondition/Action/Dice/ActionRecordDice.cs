@@ -4,7 +4,7 @@ namespace TCGBase
 {
     public enum DiceGainType
     {
-        Trival,
+        Trivial,
         Cryo,
         Hydro,
         Pyro,
@@ -46,7 +46,6 @@ namespace TCGBase
                     {
                         case DiceGainType.Random:
                             throw new NotImplementedException("ActionRecordDice:获得随机基础元素骰还没做");
-                            break;
                         case DiceGainType.Owner:
                             if (me.Characters.ElementAtOrDefault(p.PersistentRegion) is Character cc1)
                             {

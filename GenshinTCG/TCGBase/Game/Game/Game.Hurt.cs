@@ -109,7 +109,7 @@
                             }
                         }
                     }
-                    BroadCast(ClientUpdateCreate.CharacterUpdate.HurtUpdate(currteam.TeamIndex, dv.TargetIndex, dv.Element, dv.Amount));
+                    BroadCast(ClientUpdateCreate.CharacterUpdate.HurtUpdate(currteam.TeamID, dv.TargetIndex, dv.Element, dv.Amount));
                 }
 
                 reactionAction?.Invoke();
@@ -148,7 +148,7 @@
                 }
                 else if (dieTeams.Count() == 1)
                 {
-                    RequestAndHandleEvent(dieTeams.ElementAt(0).TeamIndex, 30000, OperationType.Switch);
+                    RequestAndHandleEvent(dieTeams.ElementAt(0).TeamID, 30000, OperationType.Switch);
                 }
             });
         }

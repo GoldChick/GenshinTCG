@@ -33,7 +33,7 @@
         internal void BindTeam(PlayerTeam me)
         {
             _me = me;
-            Game = new(me.Game, me.TeamIndex);
+            Game = new(me.Game, me.TeamID);
             BindInit();
         }
         public virtual void BindInit() { }

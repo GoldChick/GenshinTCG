@@ -15,8 +15,7 @@ namespace TCGBase
                 {
                     return type switch
                     {
-                        TriggerType.AorB => JsonSerializer.Deserialize<ActionRecordAorB>(root.GetRawText(), options),
-                        TriggerType.MP or TriggerType.Skill or TriggerType.Prepare or TriggerType.Heal or TriggerType.Revive => JsonSerializer.Deserialize<ActionRecordInt>(root.GetRawText(), options),
+                        TriggerType.Skill or TriggerType.Prepare or TriggerType.Heal or TriggerType.Revive => JsonSerializer.Deserialize<ActionRecordInt>(root.GetRawText(), options),
                         TriggerType.Trigger or TriggerType.Element or TriggerType.SetData => JsonSerializer.Deserialize<ActionRecordString>(root.GetRawText(), options),
                         TriggerType.Damage => JsonSerializer.Deserialize<ActionRecordDamage>(root.GetRawText(), options),
                         TriggerType.Dice => JsonSerializer.Deserialize<ActionRecordDice>(root.GetRawText(), options),
@@ -28,11 +27,11 @@ namespace TCGBase
                         TriggerType.DrawCard => JsonSerializer.Deserialize<ActionRecordDrawCard>(root.GetRawText(), options),
                         TriggerType.Switch or TriggerType.Destroy => JsonSerializer.Deserialize<ActionRecordBaseWithTarget>(root.GetRawText(), options),
 
-                        _ => throw new JsonException($"Unimplemented ActionRecord 'Type' property: {typeElement}."),
+                        _ => JsonSerializer.Deserialize<ActionRecordLua>(root.GetRawText(), options),
                     };
                 }
             }
-            throw new JsonException($"JsonConverterAction.Read() : Missing or invalid 'Type' property:(NOT Ignore Case)Json: \n{root}");
+            return JsonSerializer.Deserialize<ActionRecordLua>(root.GetRawText(), options);
         }
 
         public override void Write(Utf8JsonWriter writer, ActionRecordBase value, JsonSerializerOptions options)

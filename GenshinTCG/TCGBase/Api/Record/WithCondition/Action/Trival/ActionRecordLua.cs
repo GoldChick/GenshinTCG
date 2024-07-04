@@ -1,32 +1,19 @@
-﻿using NLua;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
-    public record class ActionRecordLua : ActionRecordBase
+    public record class ActionRecordLua : ActionRecordBase, ILuaable
     {
-        public List<string> Value { get; }
-        public ActionRecordLua(List<string>? value = null, List<ConditionRecordBase>? when = null) : base(TriggerType.Lua, when)
+        public List<string> Lua { get; }
+
+        public bool LuaID { get; }
+
+        public ActionRecordLua(List<string>? lua = null, bool luaID = false, List<ConditionRecordBase>? when = null) : base(TriggerType.Lua, when)
         {
-            Value = value ?? new();
+            Lua = lua ?? new();
+            LuaID = luaID;
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            try
-            {
-                using Lua lua = new();
-                lua.LoadCLRPackage();
-                lua.DoString("import('TCGBase')");
-                lua.DoString("import('System.Linq')");
-                lua["this"] = triggerable;
-                lua["me"] = me;
-                lua["p"] = p;
-                lua["s"] = s;
-                lua["v"] = v;
-                lua.DoString(string.Join('\n', Value));
-            }
-            catch (Exception)
-            {
-            }
+            (this as ILuaable).DoLua(me, p, s, v, triggerable);
         }
     }
 }

@@ -3,7 +3,7 @@
     public partial class PlayerTeam
     {
         public Game Game { get; }
-        public PlayerTeam Enemy => Game.Teams[1 - TeamIndex];
+        public PlayerTeam Enemy => Game.Teams[1 - TeamID];
         /// <summary>
         /// 用于pvp模式仅限3个角色(然而设计模式似乎允许使用最多10个角色 Warning:未经测试)
         /// </summary>
@@ -11,7 +11,7 @@
         /// <summary>
         /// 在Game.Teams中的index
         /// </summary>
-        public int TeamIndex { get; private init; }
+        public int TeamID { get; private init; }
         /// <summary>
         /// 只允许使用队内的random
         /// </summary>
@@ -26,7 +26,7 @@
             get => _currcharacter; internal set
             {
                 _currcharacter = value;
-                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.SwitchUpdate(TeamIndex, value));
+                Game.BroadCast(ClientUpdateCreate.CharacterUpdate.SwitchUpdate(TeamID, value));
             }
         }
         public bool Pass { get; internal set; }
@@ -41,7 +41,7 @@
         /// <param name="cardset">经过处理确认正确的卡组</param>
         internal PlayerTeam(ServerPlayerCardSet cardset, Game game, int teamindex)
         {
-            TeamIndex = teamindex;
+            TeamID = teamindex;
             Game = game;
 
             Random = new();//TODO:SEED
@@ -67,11 +67,11 @@
         internal void RoundStart()
         {
             DiceRollingVariable drv = new();
-            InstantTrigger(new SimpleSender(TeamIndex, SenderTag.RollingStart), drv);
+            InstantTrigger(new SimpleSender(TeamID, SenderTag.RollingStart), drv);
             RollDice(drv);
             for (int i = 0; i < drv.RollingTimes; i++)
             {
-                Game.RequestAndHandleEvent(TeamIndex, 30000, OperationType.ReRollDice);
+                Game.RequestAndHandleEvent(TeamID, 30000, OperationType.ReRollDice);
             }
         }
         /// <summary>

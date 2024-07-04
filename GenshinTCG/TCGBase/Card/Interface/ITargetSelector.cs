@@ -47,7 +47,7 @@
         {
             Team = target.Team;
             Select = target.Type;
-            Condition = (me, ps, newp) => target.When.TrueForAll(condition => condition.Valid(me, newp, new ActionDuringUseCardSender(me.TeamIndex, ps), null));
+            Condition = (me, ps, newp) => target.When.TrueForAll(condition => condition.Valid(me, newp, new ActionDuringUseCardSender(me.TeamID, ps), null));
         }
         internal Persistent? GetPersistent(PlayerTeam team, int index)
         {

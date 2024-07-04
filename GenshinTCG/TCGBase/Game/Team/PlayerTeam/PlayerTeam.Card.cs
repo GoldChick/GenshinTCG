@@ -13,7 +13,7 @@ namespace TCGBase
                 if (collection.Any())
                 {
                     int index = Random.Next(collection.Count());
-                    Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamIndex, ClientUpdateCreate.CardUpdateCategory.Pop));
+                    Game.BroadCast(ClientUpdateCreate.CardUpdate(TeamID, ClientUpdateCreate.CardUpdateCategory.Pop));
                     GainCard(collection.ElementAt(index));
                     LeftCards.RemoveAt(index);
                 }

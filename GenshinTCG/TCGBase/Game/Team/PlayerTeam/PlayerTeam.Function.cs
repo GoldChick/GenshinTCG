@@ -9,7 +9,7 @@ namespace TCGBase
         /// </summary>
         public void DoDamage(DamageRecord? damage, Persistent persistent, AbstractTriggerable triggerable, Action? specialAction = null)
         {
-            Game.InnerHurt(damage, new(SenderTag.AfterHurt, TeamIndex, persistent, triggerable), specialAction);
+            Game.InnerHurt(damage, new(SenderTag.AfterHurt, TeamID, persistent, triggerable), specialAction);
         }
         /// <summary>
         /// 如果revive=false，则在目标角色被击倒时，会复苏
@@ -17,7 +17,7 @@ namespace TCGBase
         public void Heal(Persistent persistent, AbstractTriggerable triggerable, int amount, int targetIndex, bool targetRelative = true, bool revive = false)
         {
             var absoluteIndex = targetRelative ? ((targetIndex + CurrCharacter) % Characters.Length + Characters.Length) % Characters.Length : int.Clamp(targetIndex, 0, Characters.Length - 1);
-            var hv = new HealVariable(TeamIndex, amount, DamageSource.Direct, absoluteIndex);
+            var hv = new HealVariable(TeamID, amount, DamageSource.Direct, absoluteIndex);
 
             var cha = Characters[hv.TargetIndex];
             if (!cha.Alive && revive)
@@ -30,14 +30,14 @@ namespace TCGBase
                 cha.HP += hv.Amount;
                 Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(hv.TargetTeam, hv.TargetIndex, hv.Amount));
 
-                Game.EffectTrigger(new HurtSourceSender(SenderTag.AfterHeal, TeamIndex, persistent, triggerable), hv);
+                Game.EffectTrigger(new HurtSourceSender(SenderTag.AfterHeal, TeamID, persistent, triggerable), hv);
             }
         }
         public void AttachElement(Persistent persistent, AbstractTriggerable triggerable, DamageElement element, List<int> targetIndexs, bool targetRelative = true)
         {
-            HurtSourceSender sourceSender = new(SenderTag.AfterElement, TeamIndex, persistent, triggerable);
+            HurtSourceSender sourceSender = new(SenderTag.AfterElement, TeamID, persistent, triggerable);
             var absoluteIndexs = (targetRelative ? targetIndexs.Select(i => ((i + CurrCharacter) % Characters.Length + Characters.Length) % Characters.Length) : targetIndexs.Where(i => i >= 0 && i < Characters.Length));
-            var evs = absoluteIndexs.Where(i => Characters[i].Alive).Select(i => new ElementVariable(TeamIndex, element, DamageSource.Direct, i)).ToList();
+            var evs = absoluteIndexs.Where(i => Characters[i].Alive).Select(i => new ElementVariable(TeamID, element, DamageSource.Direct, i)).ToList();
             Action? action = null;
             for (int i = 0; i < evs.Count; i++)
             {
@@ -77,7 +77,7 @@ namespace TCGBase
             {
                 var initial = CurrCharacter;
                 CurrCharacter = curr;
-                Game.EffectTrigger(new AfterSwitchSender(TeamIndex, initial, CurrCharacter));
+                Game.EffectTrigger(new AfterSwitchSender(TeamID, initial, CurrCharacter));
                 SpecialState.DownStrike = true;
             }
         }

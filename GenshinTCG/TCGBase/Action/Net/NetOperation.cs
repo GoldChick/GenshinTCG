@@ -7,7 +7,7 @@ namespace TCGBase
         /// <summary>
         /// 无意义...
         /// </summary>
-        Trival,
+        Trivial,
         /// <summary>
         /// Index:0表示不重投，1表示重投<br/>
         /// 选择任意骰子重投

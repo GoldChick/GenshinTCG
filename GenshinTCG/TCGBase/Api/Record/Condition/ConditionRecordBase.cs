@@ -16,8 +16,6 @@ namespace TCGBase
         /// </summary>
         Compound,
         //↓下为没有参数↓
-        Alive,
-        CurrCharacter,
         GameStart,//游戏开始时，用于[潜行大师]等被动触发
         SimpleFood,//<预设>"普通食物"，要求角色[活着]，并且没有[饱腹]状态
         HeavyStrike,//是否是重击状态
@@ -25,9 +23,7 @@ namespace TCGBase
         //↓下为单string↓
         HasEffect,
         HasEffectWithTag,
-        HasTag,
         HasCard,//CardsInHand是否有指定名字的卡牌
-        Name,
         OperationType,//用于afteroperation，指定必须是给定的种类，未指定则任意即可
         SimpleTalent,//<预设>"普通天赋"，要求角色是[出战]，[不能有限制行动状态]，[活着]，并且[符合指定nameaid]
         SimpleWeapon,//<预设>"普通武器"，要求[活着]，并且[具有指定weapon tag]
@@ -53,10 +49,8 @@ namespace TCGBase
         TargetThis,//要求受到[伤害]的targetTeam id为所在team的id；如果是角色状态，进一步要求受到伤害的index为所在角色的index；否则要求index为出战角色
 
         //↓下为单string↓
-        Element,//造成了[指定元素]，不指定元素则表示为[七元素]即可(不一定是伤害！)
         ElementRelated,//是伤害，并且造成了[指定元素相关反应]
         ElementReaction,//造成了[指定反应]，不指定反应则表示为[任意反应]即可(不一定是伤害！)
-        SkillType,//要求[伤害]或[费用]来源于[指定种类技能]，不指定AEQ则表示为[技能]即可
         ThisCharacterCause,//<预设>"本角色造成指定种类伤害"，要求[来源本(状态附属的)角色]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         OurCharacterCause,//<预设>"我方角色造成指定种类伤害"，要求[来源我方]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         //↓下为int↓
@@ -92,13 +86,11 @@ namespace TCGBase
                 ConditionType.Deadly => v is DamageVariable dv && dv.Deadly,
                 ConditionType.Direct => v is AbstractAmountVariable aav && aav.Direct == DamageSource.Direct,
                 ConditionType.SourceSummon => s is IPeristentSupplier ips && ips.Persistent.CardBase.CardType == CardType.Summon,
-                ConditionType.SourceMe => s.TeamID == me.TeamIndex,
-                ConditionType.SourceThis => s.TeamID == me.TeamIndex && s is IPeristentSupplier ips && (ips.Persistent is Character c ? c.PersistentRegion == p.PersistentRegion : ips.Persistent == p),
-                ConditionType.TargetMe => v is AbstractAmountVariable aav && aav.TargetTeam == me.TeamIndex,
-                ConditionType.TargetThis => v is AbstractAmountVariable aav && aav.TargetTeam == me.TeamIndex && (me.Characters.ElementAtOrDefault(p.PersistentRegion) is null ? aav.TargetIndex == me.CurrCharacter : p.PersistentRegion == aav.TargetIndex),
+                ConditionType.SourceMe => s.TeamID == me.TeamID,
+                ConditionType.SourceThis => s.TeamID == me.TeamID && s is IPeristentSupplier ips && (ips.Persistent is Character c ? c.PersistentRegion == p.PersistentRegion : ips.Persistent == p),
+                ConditionType.TargetMe => v is AbstractAmountVariable aav && aav.TargetTeam == me.TeamID,
+                ConditionType.TargetThis => v is AbstractAmountVariable aav && aav.TargetTeam == me.TeamID && (me.Characters.ElementAtOrDefault(p.PersistentRegion) is null ? aav.TargetIndex == me.CurrCharacter : p.PersistentRegion == aav.TargetIndex),
 
-                ConditionType.Alive => p is Character c && c.Alive,
-                ConditionType.CurrCharacter => p.PersistentRegion == me.CurrCharacter,
                 ConditionType.GameStart => s is OnCharacterOnSender ocos && ocos.Start,
                 ConditionType.SimpleFood => p is Character c && c.Alive && !c.Effects.Contains("minecraft:effect_full"),
                 ConditionType.HeavyStrike => me.SpecialState.HeavyStrike,

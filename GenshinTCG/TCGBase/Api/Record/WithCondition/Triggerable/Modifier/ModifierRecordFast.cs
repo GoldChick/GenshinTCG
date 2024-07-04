@@ -1,6 +1,4 @@
-﻿using NLua;
-using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace TCGBase
 {
@@ -23,36 +21,23 @@ namespace TCGBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierActionMode Mode { get; }
-        public ModifierRecordFast(ModifierActionMode mode, List<string>? lua = null, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, lua, when, trigger)
+        public ModifierRecordFast(ModifierActionMode mode, List<string>? lua = null, bool luaID = false, List<ConditionRecordBase>? when = null, ActionRecordBase? afterSuccess = null) : base(ModifierType.Dice, lua, luaID, when, afterSuccess)
         {
             Mode = mode;
         }
-        protected override string GetSenderName() => SenderTag.AfterOperation.ToString();
         protected override bool DefaultConditionCheck(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, AbstractTriggerable modTriggerable)
         {
             if (_whensourceme.Valid(me, p, s, v) && s is AfterOperationSender aos && v is FastActionVariable fav)
             {
-                bool modeFlag = Mode switch
+                return Mode switch
                 {
                     ModifierActionMode.Card => aos.ActionType == OperationType.UseCard,
                     ModifierActionMode.Skill => aos.ActionType == OperationType.UseSKill,
                     ModifierActionMode.Switch => aos.ActionType == OperationType.Switch,
                     _ => true
                 };
-                if (modeFlag && !fav.Fast)
-                {
-                    return true;
-                }
             }
             return false;
-        }
-        protected override void Modify(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, Lua lua)
-        {
-            if (v is FastActionVariable fav)
-            {
-                fav.Fast = true;
-                base.Modify(me, p, s, v, lua);
-            }
         }
     }
 }

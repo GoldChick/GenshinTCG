@@ -49,7 +49,7 @@ namespace TCGBase
             public override string Tag => SenderTagInner.UseSkill.ToString();
             public override void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable)
             {
-                if (me.TeamIndex == sender.TeamID && persitent.PersistentRegion == me.CurrCharacter)
+                if (me.TeamID == sender.TeamID && persitent.PersistentRegion == me.CurrCharacter)
                 {
                     if (persitent is Character c && c.Effects.All(ef => !ef.CardBase.Tags.Contains(CardTag.AntiSkill.ToString())) && sender is ActionUseSkillSender ss)
                     {
@@ -57,7 +57,7 @@ namespace TCGBase
                         {
                             Action?.Invoke(me, persitent, sender, variable);
                             c.SkillCounter[skill.NameID]++;
-                            me.Game.EffectTrigger(new AfterUseSkillSender(me.TeamIndex, c, skill));
+                            me.Game.EffectTrigger(new AfterUseSkillSender(me.TeamID, c, skill));
                             me.SpecialState.DownStrike = false;
                         }
                     }

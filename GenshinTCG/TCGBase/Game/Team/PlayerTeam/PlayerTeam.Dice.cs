@@ -63,7 +63,7 @@
             {
                 Dices.Add(int.Clamp(d, 0, 7));
                 Dices.Sort();
-                Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+                Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamID, Dices.ToArray()));
             }
         }
         /// <summary>
@@ -80,7 +80,7 @@
                 Dices.Add(int.Clamp(d, 0, 7));
             }
             Dices.Sort();
-            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamID, Dices.ToArray()));
         }
         public void GainDice(ElementCategory element, int count = 1)
         {
@@ -104,7 +104,7 @@
                 Dices.Add(int.Clamp(ds.ElementAt(i), 0, 7));
             }
             Dices.Sort();
-            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamID, Dices.ToArray()));
         }
         public void TryRemoveDice(int element)
         {
@@ -125,7 +125,7 @@
                     Dices.Remove(i);
                 }
             }
-            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamIndex, Dices.ToArray()));
+            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamID, Dices.ToArray()));
         }
         /// <summary>
         /// 是否包含所需要的骰子

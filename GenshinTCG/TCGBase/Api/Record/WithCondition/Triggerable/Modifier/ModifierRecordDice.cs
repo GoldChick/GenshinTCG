@@ -1,5 +1,4 @@
-﻿using NLua;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace TCGBase
 {
@@ -24,11 +23,11 @@ namespace TCGBase
         public bool Late { get; }
         private DiceModifierType _demand => Element switch
         {
-            ElementCategory.Trival => DiceModifierType.Any,
+            ElementCategory.Trivial => DiceModifierType.Any,
             ElementCategory.Void => DiceModifierType.Void,
             _ => DiceModifierType.Color
         };
-        public ModifierRecordDice(ElementCategory element, List<string>? lua = null, bool late = false, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, lua, when, trigger)
+        public ModifierRecordDice(ElementCategory element, List<string>? lua = null, bool luaID = false, bool late = false, List<ConditionRecordBase>? when = null, ActionRecordBase? afterSuccess = null) : base(ModifierType.Dice, lua, luaID, when, afterSuccess)
         {
             Element = element;
             Late = late;
@@ -42,7 +41,7 @@ namespace TCGBase
             if (_whensourceme.Valid(me, p, s, v) && v is SingleCostVariable scv)
             {
                 //dms: void=>color=>any=>if
-                //scv: trival / color=>void
+                //scv: Trivial / color=>void
                 bool elementFlag = _demand switch
                 {
                     DiceModifierType.Void => scv.Type == ElementCategory.Void,

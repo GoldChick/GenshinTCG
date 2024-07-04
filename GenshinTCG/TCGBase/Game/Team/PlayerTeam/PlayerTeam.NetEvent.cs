@@ -5,9 +5,9 @@ namespace TCGBase
 {
     public partial class PlayerTeam
     {
-        internal bool IsEventValid(NetEvent evt, OperationType demand = OperationType.Trival)
+        internal bool IsEventValid(NetEvent evt, OperationType demand = OperationType.Trivial)
         {
-            if (demand == OperationType.Trival)
+            if (demand == OperationType.Trivial)
             {
                 return IsLimitValid(evt.Operation) && IsAdditionalTargetValid(evt) && IsCostValid(evt);
             }
@@ -176,7 +176,7 @@ namespace TCGBase
                     c = new CostCreate().Add(ElementCategory.Void, 1).ToCostInit().ToCostVariable();
                     if (CurrCharacter != -1 && Characters.ElementAtOrDefault(action.Index) is Character target)
                     {
-                        dms = new(TeamIndex, Characters[CurrCharacter], target, realAction);
+                        dms = new(TeamID, Characters[CurrCharacter], target, realAction);
                     }
                     break;
                 case OperationType.UseSKill:
@@ -186,7 +186,7 @@ namespace TCGBase
                         c = skill is ICostable cost ? new(cost.Cost) : new();
                         if (h is ICostable skillcost)
                         {
-                            dms = new(TeamIndex, Characters[CurrCharacter], skillcost, realAction);
+                            dms = new(TeamID, Characters[CurrCharacter], skillcost, realAction);
                         }
                     }
                     else
@@ -197,7 +197,7 @@ namespace TCGBase
                 case OperationType.UseCard:
                     var cardpersistent = CardsInHand[action.Index];
                     c = new CostVariable(cardpersistent.Card.Cost.DiceCost);
-                    dms = new(TeamIndex, cardpersistent, cardpersistent.Card, realAction);
+                    dms = new(TeamID, cardpersistent, cardpersistent.Card, realAction);
                     break;
                 case OperationType.Blend:
                     int[] ints = new int[8];
@@ -247,10 +247,10 @@ namespace TCGBase
             }
             return ints;
         }
-        internal IEnumerable<IEnumerable<Persistent>> GetTargetValid(IEnumerable<TargetDemand> demands, int depth = 0, IEnumerable<Persistent>? curr = null)
+        internal IEnumerable<List<Persistent>> GetTargetValid(List<TargetDemand> demands, int depth = 0, List<Persistent>? curr = null)
         {
             curr ??= new List<Persistent>();
-            if (depth == demands.Count())
+            if (depth == demands.Count)
             {
                 yield return curr;
                 yield break;
@@ -260,7 +260,7 @@ namespace TCGBase
             {
                 if (demands.ElementAt(depth).Condition.Invoke(this, curr, p))
                 {
-                    foreach (var item in GetTargetValid(demands, depth + 1, curr.Append(p)))
+                    foreach (var item in GetTargetValid(demands, depth + 1, curr.Append(p).ToList()))
                     {
                         yield return item;
                     }

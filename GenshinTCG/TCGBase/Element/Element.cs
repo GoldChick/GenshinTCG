@@ -5,7 +5,7 @@
         /// <summary>
         /// 用于费用表示[同色骰]；用于元素表示无元素；
         /// </summary>
-        Trival = 0,
+        Trivial = 0,
         // ↓ 冰水火雷岩草风 ↓
         Cryo = 1,
         Hydro = 2,
@@ -21,7 +21,7 @@
     }
     public enum DamageElement
     {
-        Trival = 0,
+        Trivial = 0,
         Cryo = 1,
         Hydro = 2,
         Pyro = 3,

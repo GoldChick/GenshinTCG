@@ -1,36 +1,17 @@
-﻿using NLua;
-
-namespace TCGBase
+﻿namespace TCGBase
 {
-    public record class ConditionRecordLua : ConditionRecordBase
+    public record class ConditionRecordLua : ConditionRecordBase, ILuaable
     {
-        public List<string> Value { get; }
-        public ConditionRecordLua(List<string>? value = null, bool not = false, ConditionRecordBase? or = null) : base(ConditionType.Lua, not, or)
+        public List<string> Lua { get; }
+        public bool LuaID { get; }
+        public ConditionRecordLua(List<string>? lua = null, bool luaID = false, bool not = false, ConditionRecordBase? or = null) : base(ConditionType.Lua, not, or)
         {
-            Value = value ?? new();
+            Lua = lua ?? new();
+            LuaID = luaID;
         }
         protected override bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            try
-            {
-                using Lua lua = new();
-                lua.LoadCLRPackage();
-                lua.DoString("import('TCGBase')");
-                lua.DoString("import('System.Linq')");
-                lua["me"] = me;
-                lua["p"] = p;
-                lua["s"] = s;
-                lua["v"] = v;
-                lua.DoString(string.Join('\n', Value));
-                if (lua["result"] is bool r)
-                {
-                    return r;
-                }
-            }
-            catch (Exception)
-            {
-            }
-            return false;
+            return (this as ILuaable).DoLua(me, p, s, v).All(objs => objs?.FirstOrDefault()?.Equals(true) ?? false);
         }
     }
 }

@@ -34,7 +34,7 @@
             MaxHP = record.MaxHP;
             MaxMP = record.MaxMP;
             string? ele = Tags.Find(t => Enum.TryParse(t, true, out ElementCategory _));
-            CharacterElement = ele == null ? ElementCategory.Trival : Enum.Parse<ElementCategory>(ele, true);
+            CharacterElement = ele == null ? ElementCategory.Trivial : Enum.Parse<ElementCategory>(ele, true);
         }
     }
 }

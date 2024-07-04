@@ -30,7 +30,7 @@
                 if (Alive)
                 {
                     _mp = int.Clamp(value, 0, Card.MaxMP);
-                    _t.Game.BroadCast(ClientUpdateCreate.CharacterUpdate.MPUpdate(_t.TeamIndex, PersistentRegion, _mp));
+                    _t.Game.BroadCast(ClientUpdateCreate.CharacterUpdate.MPUpdate(_t.TeamID, PersistentRegion, _mp));
                 }
             }
         }
@@ -44,7 +44,7 @@
                 if (Alive)
                 {
                     _element = value;
-                    _t.Game.BroadCast(ClientUpdateCreate.CharacterUpdate.ElementUpdate(_t.TeamIndex, PersistentRegion, _element));
+                    _t.Game.BroadCast(ClientUpdateCreate.CharacterUpdate.ElementUpdate(_t.TeamID, PersistentRegion, _element));
                 }
             }
         }
@@ -93,7 +93,7 @@
         internal void Revive()
         {
             Alive = true;
-            _t.Game.EffectTrigger(new OnCharacterOnSender(_t.TeamIndex, this));
+            _t.Game.EffectTrigger(new OnCharacterOnSender(_t.TeamID, this));
         }
         /// <summary>
         /// 死亡时只触发第一个 TODO:Check It
@@ -120,7 +120,7 @@
             {
                 if (sender is ITriggerableIndexSupplier indexSp && sender is not ActionUseCardSender)
                 {
-                    if (sender.TeamID == _t.TeamIndex && PersistentRegion == indexSp.SourceIndex && Card.TriggerableList.TryGetValue(sender.SenderName, out var skill, indexSp.TriggerableIndex))
+                    if (sender.TeamID == _t.TeamID && PersistentRegion == indexSp.SourceIndex && Card.TriggerableList.TryGetValue(sender.SenderName, out var skill, indexSp.TriggerableIndex))
                     {
                         hss.Add((s, v) => skill.Trigger(_t, this, sender, v));
                     }

@@ -15,7 +15,7 @@
 
             Task.WaitAny(t, Task.Run(() => Thread.Sleep(millisecondsTimeout)));
 
-            if (t.IsCompleted && Teams[teamid].IsEventValid(t.Result, demand) && (demand == OperationType.Trival || demand == t.Result.Operation.Type))
+            if (t.IsCompleted && Teams[teamid].IsEventValid(t.Result, demand) && (demand == OperationType.Trivial || demand == t.Result.Operation.Type))
             {
                 return t.Result;
             }
@@ -58,13 +58,13 @@
         /// <b>注：这里处理的是事件，不完全等于行动</b>
         /// </summary>
         /// <param name="evt">已经证明是valid的NetEvent</param>
-        internal void HandleNetEvent(NetEvent evt, int teamid, OperationType demand = OperationType.Trival)
+        internal void HandleNetEvent(NetEvent evt, int teamid, OperationType demand = OperationType.Trivial)
         {
             var team = Teams[teamid];
 
             FastActionVariable afterEventFastActionVariable = new(false);
 
-            if (demand == OperationType.Trival)
+            if (demand == OperationType.Trivial)
             {
                 /*
                  * 行动一览：
@@ -116,7 +116,7 @@
                     team.TrySwitchToIndex(evt.Operation.Index);
                     break;
                 case OperationType.UseSKill:
-                    EffectTrigger(new ActionUseSkillSender(team.TeamIndex, team.CurrCharacter, evt.Operation.Index));
+                    EffectTrigger(new ActionUseSkillSender(team.TeamID, team.CurrCharacter, evt.Operation.Index));
                     break;
                 case OperationType.UseCard:
                     afterEventFastActionVariable.Fast = team.CardsInHand[evt.Operation.Index].Card.FastAction;
@@ -132,7 +132,7 @@
                             }
                         }
                     }
-                    EffectTrigger(new ActionUseCardSender(team.TeamIndex, evt.Operation.Index, ps));
+                    EffectTrigger(new ActionUseCardSender(team.TeamID, evt.Operation.Index, ps));
                     break;
                 case OperationType.Blend://调和
                     team.CardsInHand.TryDestroyAt(evt.Operation.Index);
@@ -146,7 +146,7 @@
                     break;
             }
 
-            if (demand == OperationType.Trival)
+            if (demand == OperationType.Trivial)
             {
                 //TODO:预期风自将额外占用一轮速切结算
                 EffectTrigger(new AfterOperationSender(teamid, evt.Operation.Type), afterEventFastActionVariable);

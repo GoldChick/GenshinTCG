@@ -52,7 +52,7 @@ namespace TCGBase
                         t.AvailableTimes = t.CardBase.InitialUseTimes;
                         t.Data.Clear();
                     }
-                    _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, t.AvailableTimes, t.Data));
+                    _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamID, PersistentRegion, index, t.AvailableTimes, t.Data));
                 }
                 else
                 {
@@ -132,7 +132,7 @@ namespace TCGBase
                 int index = _data.FindIndex(d => d == p);
                 if (index >= 0)
                 {
-                    _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamIndex, PersistentRegion, index, p.AvailableTimes, p.Data));
+                    _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamID, PersistentRegion, index, p.AvailableTimes, p.Data));
                 }
                 Update();
             }));
@@ -152,7 +152,7 @@ namespace TCGBase
                     _handlers[kvp.Key] += kvp.Value;
                 }
             }
-            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamIndex, p));
+            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.ObtainUpdate(_me.TeamID, p));
         }
         private void Unregister(int index, Persistent p)
         {
@@ -161,7 +161,7 @@ namespace TCGBase
             {
                 _handlers[kvp.Key] -= kvp.Value;
             }
-            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamIndex, PersistentRegion, index));
+            _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.LoseUpdate(_me.TeamID, PersistentRegion, index));
             _data.RemoveAt(index);
         }
         public void PopTo(Persistent p, AbstractPersistentSet destination)
@@ -190,7 +190,7 @@ namespace TCGBase
             if (p != null)
             {
                 Unregister(index, p);
-                _me.Game.EffectTrigger(new PersistentDesperatedSender(_me.TeamIndex, PersistentRegion, p.CardBase));
+                _me.Game.EffectTrigger(new PersistentDesperatedSender(_me.TeamID, PersistentRegion, p.CardBase));
             }
         }
         public void DestroyFirst(Predicate<Persistent> condition) => Destroy(_data.FindIndex(condition));

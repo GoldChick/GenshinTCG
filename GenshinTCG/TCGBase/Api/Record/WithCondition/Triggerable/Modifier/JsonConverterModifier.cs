@@ -17,11 +17,11 @@ namespace TCGBase
                     {
                         ModifierType.Dice => JsonSerializer.Deserialize<ModifierRecordDice>(root.GetRawText(), options),
                         ModifierType.Fast => JsonSerializer.Deserialize<ModifierRecordFast>(root.GetRawText(), options),
-                        _ => JsonSerializer.Deserialize<ModifierRecordBase>(root.GetRawText(), options),
+                        _ => JsonSerializer.Deserialize<ModifierRecordBaseImpl>(root.GetRawText(), options),
                     };
                 }
             }
-            throw new JsonException($"JsonConverterModifier.Read() : Missing or invalid 'Type' property:(NOT Ignore Case)Json: \n{root}");
+            return JsonSerializer.Deserialize<ModifierRecordBaseImpl>(root.GetRawText(), options);
         }
 
         public override void Write(Utf8JsonWriter writer, ModifierRecordBase value, JsonSerializerOptions options)

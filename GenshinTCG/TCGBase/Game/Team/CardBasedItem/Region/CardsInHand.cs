@@ -20,18 +20,18 @@ namespace TCGBase
         {
             if (_data.Count >= 10)
             {
-                _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace, card.NameID));
+                _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamID, ClientUpdateCreate.CardUpdateCategory.Broke, card.Namespace, card.NameID));
             }
             else
             {
                 _data.Add(new(card) { PersistentRegion = _data.Count + PersistentRegion });
-                _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
+                _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamID, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
             }
         }
         internal List<EventPersistentSetHandler> GetHandlers(AbstractSender sender)
         {
             List<EventPersistentSetHandler> sethandlers = new();
-            if (sender.TeamID == _me.TeamIndex && sender is ActionUseCardSender cs && cs.Card >= 0 && cs.Card <= _data.Count)
+            if (sender.TeamID == _me.TeamID && sender is ActionUseCardSender cs && cs.Card >= 0 && cs.Card <= _data.Count)
             {
                 //这里的s就是上面的cs
                 sethandlers.Add((s, v) =>
@@ -58,7 +58,7 @@ namespace TCGBase
                     {
                         it.Trigger(_me, card, s, v);
                     }
-                    _me.Game.EffectTrigger(new AfterUseCardSender(_me.TeamIndex, card, cs.Persistents));
+                    _me.Game.EffectTrigger(new AfterUseCardSender(_me.TeamID, card, cs.Persistents));
                 });
             }
             return sethandlers;
@@ -86,14 +86,14 @@ namespace TCGBase
         internal void DestroyAt(int index)
         {
             _data.RemoveAt(index);
-            _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, index));
+            _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamID, ClientUpdateCreate.CardUpdateCategory.Blend, index));
         }
         public void TryDestroyAt(int index)
         {
             if (index >= 0 && index < _data.Count)
             {
                 _data.RemoveAt(index);
-                _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamIndex, ClientUpdateCreate.CardUpdateCategory.Blend, index));
+                _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamID, ClientUpdateCreate.CardUpdateCategory.Blend, index));
             }
         }
         public int TryDestroyAll(Predicate<Persistent> condition)

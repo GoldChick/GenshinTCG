@@ -8,7 +8,7 @@
             //角色身上附着的元素(只允许附着 无0 冰1 水2 火3 雷4 草6 <b>冰+草5</b>
             nextElementState = currElement;
 
-            if (elementToApply is not (DamageElement.Trival or DamageElement.Pierce))
+            if (elementToApply is not (DamageElement.Trivial or DamageElement.Pierce))
             {
                 nextElementState = 0;
 
@@ -184,11 +184,11 @@
 
             return tag switch
             {
-                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => dvs.Select(i => new DamageVariable(currteam.TeamIndex, DamageElement.Pierce, 1, DamageSource.Indirect, i)),
-                ReactionTags.SwirlCryo => dvs.Select(i => new DamageVariable(currteam.TeamIndex, DamageElement.Cryo, 1, DamageSource.Indirect, i)),
-                ReactionTags.SwirlHydro => dvs.Select(i => new DamageVariable(currteam.TeamIndex, DamageElement.Hydro, 1, DamageSource.Indirect, i)),
-                ReactionTags.SwirlPyro => dvs.Select(i => new DamageVariable(currteam.TeamIndex, DamageElement.Pyro, 1, DamageSource.Indirect, i)),
-                ReactionTags.SwirlElectro => dvs.Select(i => new DamageVariable(currteam.TeamIndex, DamageElement.Electro, 1, DamageSource.Indirect, i)),
+                ReactionTags.SuperConduct or ReactionTags.ElectroCharged => dvs.Select(i => new DamageVariable(currteam.TeamID, DamageElement.Pierce, 1, DamageSource.Indirect, i)),
+                ReactionTags.SwirlCryo => dvs.Select(i => new DamageVariable(currteam.TeamID, DamageElement.Cryo, 1, DamageSource.Indirect, i)),
+                ReactionTags.SwirlHydro => dvs.Select(i => new DamageVariable(currteam.TeamID, DamageElement.Hydro, 1, DamageSource.Indirect, i)),
+                ReactionTags.SwirlPyro => dvs.Select(i => new DamageVariable(currteam.TeamID, DamageElement.Pyro, 1, DamageSource.Indirect, i)),
+                ReactionTags.SwirlElectro => dvs.Select(i => new DamageVariable(currteam.TeamID, DamageElement.Electro, 1, DamageSource.Indirect, i)),
                 _ => new List<DamageVariable>()
             };
         }

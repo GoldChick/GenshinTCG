@@ -1,5 +1,4 @@
-﻿using NLua;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace TCGBase
 {
@@ -25,7 +24,7 @@ namespace TCGBase
         /// </summary>
         Barrier
     }
-    public record class ModifierRecordBase : IWhenThenAction
+    public record class ModifierRecordBase : IWhenThenAction, ILuaable
     {
         protected static readonly ConditionRecordBase _whensourceme = new(ConditionType.SourceMe, false);
         protected static readonly ConditionRecordBase _targetThis = new(ConditionType.TargetThis, false);
@@ -33,14 +32,16 @@ namespace TCGBase
         public ModifierType Type { get; }
 
         public List<string> Lua { get; }
+        public bool LuaID { get; }
         public List<ConditionRecordBase> When { get; }
-        public ActionRecordTrigger? WhenSuccess { get; }
-        public ModifierRecordBase(ModifierType type, List<string>? lua = null, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null)
+        public ActionRecordBase? AfterSuccess { get; }
+        public ModifierRecordBase(ModifierType type, List<string>? lua = null, bool luaID = false, List<ConditionRecordBase>? when = null, ActionRecordBase? afterSuccess = null)
         {
             Type = type;
             Lua = lua ?? new();
+            LuaID = luaID;
             When = when ?? new();
-            WhenSuccess = trigger;
+            AfterSuccess = afterSuccess;
         }
         public AbstractTriggerable GetTriggerable()
         {
@@ -52,19 +53,10 @@ namespace TCGBase
             {
                 if (DefaultConditionCheck(me, p, s, v, modTriggerable) && (this as IWhenThenAction).IsConditionValid(me, p, s, v))
                 {
-                    using Lua lua = new();
-                    lua.LoadCLRPackage();
-                    lua.DoString("import('TCGBase')");
-                    lua.DoString("import('System.Linq')");
-                    lua["this"] = modTriggerable;
-                    lua["me"] = me;
-                    lua["p"] = p;
-                    lua["s"] = s;
-                    lua["v"] = v;
-                    Modify(me, p, s, v, lua);
+                    Modify(me, p, s, v);
                     if (v is IModifier im && im.RealAction)
                     {
-                        WhenSuccess?.GetHandler(modTriggerable)?.Invoke(me, p, s, v);
+                        AfterSuccess?.GetHandler(modTriggerable)?.Invoke(me, p, s, v);
                     }
                 }
             };
@@ -73,7 +65,7 @@ namespace TCGBase
         {
             return Type switch
             {
-                ModifierType.Enchant => v is DamageVariable dv && dv.Element == DamageElement.Trival,
+                ModifierType.Enchant => v is DamageVariable dv && dv.Element == DamageElement.Trivial,
                 ModifierType.Shield or ModifierType.Barrier => v is DamageVariable dv && dv.Amount > 0 && _targetThis.Valid(me, p, s, v),
                 _ => true
             };
@@ -85,17 +77,18 @@ namespace TCGBase
                 ModifierType.Enchant => SenderTag.ElementEnchant,
                 ModifierType.Damage => SenderTag.DamageIncrease,
                 ModifierType.Shield or ModifierType.Barrier => SenderTag.HurtDecrease,
+                ModifierType.Fast => SenderTag.AfterOperation,
                 _ => throw new NotImplementedException($"UnImplemented Modifier Record Type: {Type}")
             }).ToString();
         }
         /// <summary>
         /// 当预设条件都通过时，调用这里；默认为执行lua脚本<br/>
         /// <list type="number">
-        /// <item>对于Shield，已经提前写好了扣盾方式，但之后仍然会执行lua脚本</item>
+        /// <item>对于Shield，已经提前写好了[扣盾方式]，但之后仍然会执行lua脚本</item>
         /// <item>1</item>
         /// </list>
         /// </summary>
-        protected virtual void Modify(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, Lua lua)
+        protected virtual void Modify(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
             switch (Type)
             {
@@ -108,23 +101,13 @@ namespace TCGBase
                     }
                     break;
             }
-            //lua文件格式: "minecraft:enchant.cryo"
-            foreach (var name in Lua)
-            {
-                try
-                {
-                    var array = name.Split('.');
-                    if (Registry.Instance.LuaScripts.TryGetValue(array[0], out var script))
-                    {
-                        lua.DoString(script);
-                        (lua[array.ElementAtOrDefault(1) ?? "main"] as LuaFunction)?.Call(me, p, s, v);
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Exception($"执行lua脚本{name}出现问题，详细原因：{e.Message}");
-                }
-            }
+            (this as ILuaable).DoLua(me, p, s, v);
+        }
+    }
+    public record class ModifierRecordBaseImpl : ModifierRecordBase
+    {
+        public ModifierRecordBaseImpl(ModifierType type, List<string>? lua = null, bool luaID = false, List<ConditionRecordBase>? when = null, ActionRecordBase? afterSuccess = null) : base(type, lua, luaID, when, afterSuccess)
+        {
         }
     }
 }

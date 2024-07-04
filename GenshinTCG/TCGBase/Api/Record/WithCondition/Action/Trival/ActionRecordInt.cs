@@ -15,14 +15,11 @@
                 {
                     switch (Type)
                     {
-                        case TriggerType.MP:
-                            c.MP += Value;
-                            break;
                         case TriggerType.Skill:
-                            team.Game.EffectTrigger(new ActionUseSkillSender(team.TeamIndex, c.PersistentRegion, Value));
+                            team.Game.EffectTrigger(new ActionUseSkillSender(team.TeamID, c.PersistentRegion, Value));
                             break;
                         case TriggerType.Prepare:
-                            team.Game.EffectTrigger(new ActionUsePrepareSender(team.TeamIndex, c.PersistentRegion, Value));
+                            team.Game.EffectTrigger(new ActionUsePrepareSender(team.TeamID, c.PersistentRegion, Value));
                             break;
                         case TriggerType.Heal:
                             team.Heal(p, triggerable, Value, c.PersistentRegion, false);

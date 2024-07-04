@@ -87,7 +87,7 @@
             {
                 foreach (var c in team.Characters)
                 {
-                    EffectTrigger(new OnCharacterOnSender(team.TeamIndex, c, true));
+                    EffectTrigger(new OnCharacterOnSender(team.TeamID, c, true));
                 }
             }
 
@@ -113,7 +113,7 @@
                     EffectTrigger(new SimpleSender(CurrTeam, SenderTag.RoundDuring));
                     if (oldteam == CurrTeam)
                     {
-                        RequestAndHandleEvent(CurrTeam, 30000, OperationType.Trival);
+                        RequestAndHandleEvent(CurrTeam, 30000, OperationType.Trivial);
                     }
                 }
 

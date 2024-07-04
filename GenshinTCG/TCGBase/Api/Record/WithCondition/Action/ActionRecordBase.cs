@@ -5,9 +5,7 @@ namespace TCGBase
     public enum TriggerType
     {
         Lua,
-        AorB,
         //int with target
-        MP,//target角色增加value点mp
         Skill,//target角色使用value技能
         Prepare,//target角色使用value准备技能
         Heal,//target角色治疗value点hp
@@ -99,6 +97,12 @@ namespace TCGBase
                     base.DoAction(triggerable, me, p, s, v);
                     break;
             }
+        }
+    }
+    public record class ActionRecordBaseImpl : ActionRecordBase
+    {
+        public ActionRecordBaseImpl(TriggerType type, List<ConditionRecordBase>? when) : base(type, when)
+        {
         }
     }
 }

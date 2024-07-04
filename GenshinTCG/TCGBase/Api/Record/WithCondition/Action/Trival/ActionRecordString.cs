@@ -17,7 +17,7 @@
             switch (Type)
             {
                 case TriggerType.Trigger:
-                    me.Game.EffectTrigger(new SimpleSourceSender(me.TeamIndex, Value, p));
+                    me.Game.EffectTrigger(new SimpleSourceSender(me.TeamID, Value, p));
                     break;
                 case TriggerType.SetData:
                     if (Enum.TryParse(Value, true, out DataSetType type))
@@ -47,12 +47,6 @@
                     }
                     break;
             }
-        }
-    }
-    public record class ActionRecordTrigger : ActionRecordString
-    {
-        public ActionRecordTrigger(string? value = null, List<ConditionRecordBase>? when = null) : base(TriggerType.Trigger, value, when)
-        {
         }
     }
 }

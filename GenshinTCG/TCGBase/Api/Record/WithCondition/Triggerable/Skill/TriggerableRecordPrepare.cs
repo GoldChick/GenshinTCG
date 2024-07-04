@@ -36,14 +36,14 @@ namespace TCGBase
 
             public override void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable)
             {
-                if (me.TeamIndex == sender.TeamID && persitent.PersistentRegion == me.CurrCharacter)
+                if (me.TeamID == sender.TeamID && persitent.PersistentRegion == me.CurrCharacter)
                 {
                     if (persitent is Character c && c.Effects.All(ef => !ef.CardBase.Tags.Contains(CardTag.AntiSkill.ToString())))
                     {
                         Action?.Invoke(me, persitent, sender, variable);
-                        if (me.Game.CurrTeam == me.TeamIndex)
+                        if (me.Game.CurrTeam == me.TeamID)
                         {
-                            me.Game.HandleNetEvent(new NetEvent(new NetOperation(OperationType.Break)), me.TeamIndex);
+                            me.Game.HandleNetEvent(new NetEvent(new NetOperation(OperationType.Break)), me.TeamID);
                         }
                     }
                 }
