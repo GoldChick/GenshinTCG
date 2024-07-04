@@ -5,12 +5,16 @@
         //给子类用...
         protected int _amount;
         public int Amount { get => _amount; set => _amount = int.Max(0, value); }
+        /// <summary>
+        /// 倍率，增伤(除也算)算完之后乘到Amount上
+        /// </summary>
+        public double Mul { get; set; }
         public int TargetTeam { get; }
         public DamageSource Direct { get; private set; }
         /// <summary>
         /// 目标角色的绝对坐标
         /// </summary>
-        public int TargetIndex { get; private set; }//TODO:考虑把DV坐标改成不可更改？
+        public int TargetIndex { get; private set; }
 
         protected private AbstractAmountVariable(int targetTeam, DamageSource direct, int targetIndex)
         {

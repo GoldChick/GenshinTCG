@@ -64,28 +64,23 @@
         }
         protected virtual void Gaming()
         {
+            _currteam = 0;
+            
             NetEventRecords.Add(new());
-            for (int i = 0; i < 2; i++)
-            {
-                Teams[i].RollCard(5);
-            }
-            var t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, OperationType.ReRollCard));
-            var t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, OperationType.ReRollCard));
+
+            Teams[0].RollCard(5);
+            Teams[1].RollCard(5);
+
+            Task.WaitAll(Task.Run(() => RequestEvent(0, 30000, OperationType.ReRollCard)), Task.Run(() => RequestEvent(1, 30000, OperationType.ReRollCard)));
+            
+            var t0 = new Task<NetEvent>(() => RequestEvent(CurrTeam, 30000, OperationType.Switch));
+            var t1 = new Task<NetEvent>(() => RequestEvent(1- CurrTeam, 30000, OperationType.Switch));
             t0.Start();
             t1.Start();
             Task.WaitAll(t0, t1);
 
-            HandleNetEvent(t0.Result, 0, OperationType.ReRollCard);
-            HandleNetEvent(t1.Result, 1, OperationType.ReRollCard);
-
-            t0 = new Task<NetEvent>(() => RequestEvent(0, 30000, OperationType.Switch));
-            t1 = new Task<NetEvent>(() => RequestEvent(1, 30000, OperationType.Switch));
-            t0.Start();
-            t1.Start();
-            Task.WaitAll(t0, t1);
-
-            HandleNetEvent(t0.Result, 0, OperationType.Switch);
-            HandleNetEvent(t1.Result, 1, OperationType.Switch);
+            HandleNetEvent(t0.Result, CurrTeam, OperationType.Switch);
+            HandleNetEvent(t1.Result, 1- CurrTeam, OperationType.Switch);
 
             DelayedTriggerQueue.Active = true;
             foreach (var team in Teams)
@@ -101,11 +96,11 @@
                 Round++;
                 NetEventRecords.Add(new());
 
+                DelayedTriggerQueue.TryEmpty();
                 Stage = GameStage.Rolling;
-                Task.WaitAll(Task.Run(() => Teams[0].RoundStart()), Task.Run(() => Teams[1].RoundStart()));
+                Task.WaitAll(Task.Run(() => Teams[CurrTeam].RoundStart()), Task.Run(() => Teams[1- CurrTeam].RoundStart()));
 
                 Stage = GameStage.Gaming;
-                DelayedTriggerQueue.TryEmpty();
                 EffectTrigger(new SimpleSender(SenderTag.RoundStart));
 
                 Array.ForEach(Teams, t => t.Pass = false);

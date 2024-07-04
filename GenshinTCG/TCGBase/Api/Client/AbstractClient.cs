@@ -6,10 +6,8 @@
     /// </summary>
     public abstract class AbstractClient
     {
-        protected AbstractServer? _server;
+        private PlayerTeam _me;
         public ReadonlyGame Game { get; protected set; }
-        private PlayerTeam Me { get; set; }
-
         /// <summary>
         /// 服务端=>客户端=>服务端
         /// 游戏开始前传入卡组
@@ -25,34 +23,24 @@
         /// 表示正在向对方request需要的event
         /// </summary>
         public virtual void RequestEnemyEvent(OperationType demand) { }
-        public List<TargetEnum> GetCardTargetEnums(int cardindex) => Me.GetCardTargetEnums(cardindex);
+        public List<TargetEnum> GetCardTargetEnums(int cardindex) => _me.GetCardTargetEnums(cardindex);
         /// <summary>
         /// 对于cardindex这张卡，已经有already_params这些选中的参数了，但是还需要选择更多
         /// </summary>
         /// <returns>可供选择的对象在其区域的index们</returns>
-        public List<int> GetCardNextValidTargets(int cardindex, int[] already_params) => Me.GetNextValidTargets(cardindex, already_params);
-        public CostVariable GetEventFinalDiceRequirement(NetOperation action) => Me.GetEventFinalDiceRequirement(action);
-        public CostVariable GetCardCostRequirement(int index) => Me.GetEventFinalDiceRequirement(new(OperationType.UseCard, index));
-        public CostVariable GetSkillCostRequirement(int index) => Me.GetEventFinalDiceRequirement(new(OperationType.UseSKill, index));
-        //public bool IsEventValid(NetEvent evt) => Me.IsEventValid(evt);
-        /// <summary>
-        /// 服务端=>客户端
-        /// 游戏进行中更新Team<br/>
-        /// </summary>
-        public void BindTeam(PlayerTeam me)
+        public List<int> GetCardNextValidTargets(int cardindex, int[] already_params) => _me.GetNextValidTargets(cardindex, already_params);
+        public CostVariable GetEventFinalDiceRequirement(NetOperation action) => _me.GetEventFinalDiceRequirement(action);
+        internal void BindTeam(PlayerTeam me)
         {
-            Me = me;
+            _me = me;
             Game = new(me.Game, me.TeamIndex);
-            BindInit(Game);
+            BindInit();
         }
-        public virtual void BindInit(ReadonlyGame game)
-        {
-
-        }
+        public virtual void BindInit() { }
         public virtual void Update(ClientUpdatePacket packet) => Game.Update(packet);
         /// <summary>
         /// TODO:偷个懒
         /// </summary>
-        public virtual void UpdateRegion() => Game.UpdateRegion(Me, Me.Enemy);
+        public virtual void UpdateRegion() => Game.UpdateRegion(_me, _me.Enemy);
     }
 }

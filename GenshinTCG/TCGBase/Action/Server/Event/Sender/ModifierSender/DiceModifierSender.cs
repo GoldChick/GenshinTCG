@@ -1,14 +1,18 @@
 ﻿
 namespace TCGBase
 {
+    public interface IModifier
+    {
+        public bool RealAction { get; }
+    }
     internal enum DiceModifierType
     {
         Void,
         Color,
         Any,
-        If
+        Late
     }
-    public class DiceModifierSender : AbstractSender, IMaySkillSupplier, IPeristentSupplier, IMulPersistentSupplier
+    public class DiceModifierSender : AbstractSender, IMaySkillSupplier, IPeristentSupplier, IMulPersistentSupplier, IModifier
     {
         public override string SenderName => DiceModType.ToString();
         internal DiceModifierType DiceModType { get; set; }

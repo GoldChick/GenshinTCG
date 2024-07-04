@@ -12,21 +12,23 @@ namespace TCGBase
     {
         private readonly static Registry _instance = new();
         public static Registry Instance => _instance;
-        public RegistryFromDll RFDll { get; }
+        //public RegistryFromDll RFDll { get; }
         public RegistryFromJson RFJson { get; }
         internal RegistryCardCollection<CardCharacter> CharacterCards { get; }
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; }
         internal RegistryCardCollection<CardEffect> EffectCards { get; }
+        internal Dictionary<string, string> LuaScripts { get; }
         internal RegistryCardCollection<AbstractTriggerable> CustomTriggerable { get; }
         private Registry()
         {
             ActionCards = new();
             CharacterCards = new();
             EffectCards = new();
+            LuaScripts = new();
 
             CustomTriggerable = new();
 
-            RFDll = new();
+            //RFDll = new();
             RFJson = new();
 
 

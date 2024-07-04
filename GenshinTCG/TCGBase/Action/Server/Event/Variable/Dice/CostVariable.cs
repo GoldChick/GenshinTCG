@@ -45,7 +45,7 @@ namespace TCGBase
                 me.InstantTrigger(sender, singleCostVariable);
                 sender.DiceModType = DiceModifierType.Any;
                 me.InstantTrigger(sender, singleCostVariable);
-                sender.DiceModType = DiceModifierType.If;
+                sender.DiceModType = DiceModifierType.Late;
                 me.InstantTrigger(sender, singleCostVariable);
 
                 DiceCost[(int)singleCostVariable.Type] = singleCostVariable.Count;

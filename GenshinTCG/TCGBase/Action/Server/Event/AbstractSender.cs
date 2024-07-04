@@ -54,8 +54,7 @@
         /// 反应后产生物品
         /// </summary>
         ElementItemGenerate,
-        DamageIncrease,
-        DamageMul,//乘除，如[泡影][护体岩铠]
+        DamageIncrease, //加、乘、除，但乘除作用于倍率乘区
         /// <summary>
         /// 只会对自己的队伍调用，用于[护盾]
         /// </summary>

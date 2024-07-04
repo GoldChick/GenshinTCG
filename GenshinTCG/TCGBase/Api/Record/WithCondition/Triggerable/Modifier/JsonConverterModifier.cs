@@ -15,11 +15,9 @@ namespace TCGBase
                 {
                     return type switch
                     {
-                        ModifierType.Damage => JsonSerializer.Deserialize<ModifierRecordDamage>(root.GetRawText(), options),
                         ModifierType.Dice => JsonSerializer.Deserialize<ModifierRecordDice>(root.GetRawText(), options),
                         ModifierType.Fast => JsonSerializer.Deserialize<ModifierRecordFast>(root.GetRawText(), options),
-                        ModifierType.Enchant => JsonSerializer.Deserialize<ModifierRecordEnchant>(root.GetRawText(), options),
-                        _ => JsonSerializer.Deserialize<ModifierRecordBaseImplement>(root.GetRawText(), options),
+                        _ => JsonSerializer.Deserialize<ModifierRecordBase>(root.GetRawText(), options),
                     };
                 }
             }

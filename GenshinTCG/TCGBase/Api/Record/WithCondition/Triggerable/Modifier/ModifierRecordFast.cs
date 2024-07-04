@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using NLua;
+using System;
+using System.Text.Json.Serialization;
 
 namespace TCGBase
 {
@@ -14,43 +16,43 @@ namespace TCGBase
         Card,
         Switch
     }
+    /// <summary>
+    /// 参数见于<see cref="AfterOperationSender"/> and <seealso cref="FastActionVariable"/>
+    /// </summary>
     public record class ModifierRecordFast : ModifierRecordBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierActionMode Mode { get; }
-        private static readonly ConditionRecordBase _whensourceme = new ConditionRecordBaseImplement(ConditionType.SourceMe, false);
-        public ModifierRecordFast(ModifierActionMode mode, int value = 1, int consume = 1, int adddata = -1, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, value, consume, adddata, when, trigger)
+        public ModifierRecordFast(ModifierActionMode mode, List<string>? lua = null, List<ConditionRecordBase>? when = null, ActionRecordTrigger? trigger = null) : base(ModifierType.Dice, lua, when, trigger)
         {
             Mode = mode;
         }
-        protected override string GetSenderName()
+        protected override string GetSenderName() => SenderTag.AfterOperation.ToString();
+        protected override bool DefaultConditionCheck(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, AbstractTriggerable modTriggerable)
         {
-            return SenderTag.AfterOperation.ToString();
-        }
-        protected override EventPersistentHandler? Get(Action whensuccess)
-        {
-            return (me, p, s, v) =>
+            if (_whensourceme.Valid(me, p, s, v) && s is AfterOperationSender aos && v is FastActionVariable fav)
             {
-                if (_whensourceme.Valid(me, p, s, v))
+                bool modeFlag = Mode switch
                 {
-                    if (s is AfterOperationSender aos && v is FastActionVariable fav)
-                    {
-                        bool modeFlag = Mode switch
-                        {
-                            ModifierActionMode.Card => aos.ActionType == OperationType.UseCard,
-                            ModifierActionMode.Skill => aos.ActionType == OperationType.UseSKill,
-                            ModifierActionMode.Switch => aos.ActionType == OperationType.Switch,
-                            _ => true
-                        };
-                        if (modeFlag && !fav.Fast)
-                        {
-                            fav.Fast = true;
-                            p.AvailableTimes -= Consume;
-                            whensuccess.Invoke();
-                        }
-                    }
+                    ModifierActionMode.Card => aos.ActionType == OperationType.UseCard,
+                    ModifierActionMode.Skill => aos.ActionType == OperationType.UseSKill,
+                    ModifierActionMode.Switch => aos.ActionType == OperationType.Switch,
+                    _ => true
+                };
+                if (modeFlag && !fav.Fast)
+                {
+                    return true;
                 }
-            };
+            }
+            return false;
+        }
+        protected override void Modify(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, Lua lua)
+        {
+            if (v is FastActionVariable fav)
+            {
+                fav.Fast = true;
+                base.Modify(me, p, s, v, lua);
+            }
         }
     }
 }

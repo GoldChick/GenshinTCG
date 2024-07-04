@@ -28,14 +28,6 @@ namespace TCGBase
             OtherClients = new();
             State = ServerState.WaitingForBoth;
         }
-        /// <summary>
-        /// 某个客户端创建一体的服务器
-        /// </summary>
-        protected AbstractServer(AbstractClient localclient) : this()
-        {
-            PlayerClients.Add(localclient);
-            State = ServerState.WaitingForOne;
-        }
         public void Register(AbstractClient client)
         {
             if (PlayerClients.Count < 2)
@@ -99,9 +91,6 @@ namespace TCGBase
                 _ => packet
             });
         }
-        /// <summary>
-        /// TODO：偷个懒
-        /// </summary>
         public void BroadCastRegion() => PlayerClients.ForEach(c => c.UpdateRegion());
         public NetEvent RequestEvent(int playerid, OperationType demand)
         {

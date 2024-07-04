@@ -78,7 +78,7 @@ namespace TCGBase
         /// 如果本条件不满足，Or满足也可以捏
         /// </summary>
         public ConditionRecordBase? Or { get; }
-        public ConditionRecordBase(ConditionType type, bool not, ConditionRecordBase? or)
+        public ConditionRecordBase(ConditionType type, bool not, ConditionRecordBase? or = null)
         {
             Type = type;
             Not = not;
@@ -105,12 +105,6 @@ namespace TCGBase
                 ConditionType.DownStrike => me.SpecialState.DownStrike,
                 _ => throw new NotImplementedException($"Unknown Predicate In Type: {Type}")
             };
-        }
-    }
-    public record class ConditionRecordBaseImplement : ConditionRecordBase
-    {
-        public ConditionRecordBaseImplement(ConditionType type, bool not, ConditionRecordBase? or = null) : base(type, not, or)
-        {
         }
     }
 }

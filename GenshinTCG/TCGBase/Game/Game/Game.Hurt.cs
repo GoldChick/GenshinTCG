@@ -47,8 +47,7 @@
                     sourceSender.ModifierName = SenderTag.DamageIncrease;
                     InstantTrigger(sourceSender, dv, instant: true);
 
-                    sourceSender.ModifierName = SenderTag.DamageMul;
-                    InstantTrigger(sourceSender, dv, instant: true);
+                    dv.Amount = (int)(dv.Amount * dv.Mul);
 
                     sourceSender.ModifierName = SenderTag.HurtDecrease;
                     Teams[dv.TargetTeam].InstantTrigger(sourceSender, dv);

@@ -33,7 +33,7 @@ namespace TCGBase
                         ConditionType.Compound
                         => JsonSerializer.Deserialize<ConditionRecordCompound>(root.GetRawText(), options),
 
-                        _ => JsonSerializer.Deserialize<ConditionRecordBaseImplement>(root.GetRawText(), options),
+                        _ => JsonSerializer.Deserialize<ConditionRecordBase>(root.GetRawText(), options),
                     };
                 }
                 throw new JsonException($"Unregistered Condition 'Type' property: {typeElement.GetString()}.\n detail: \n{root}");
