@@ -11,6 +11,7 @@ namespace TCGBase
      */
     public enum TargetType
     {
+        Lua,
         //从出战角色开始向右
         Character,
         Summon,
@@ -50,7 +51,7 @@ namespace TCGBase
         /// </summary>
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public CharacterSortType SortBy { get; }
-        public TargetRecord(TargetType type = TargetType.Character, int index = 0, CharacterSortType sortby = CharacterSortType.None, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(type, team, when)
+        public TargetRecord(TargetType type = TargetType.Character, int index = 0, CharacterSortType sortby = CharacterSortType.None, TargetTeam team = TargetTeam.Me) : base(type, team)
         {
             Index = index;
             SortBy = sortby;
@@ -160,14 +161,15 @@ namespace TCGBase
                     }
                     break;
                 case TargetType.Effect:
-                    foreach (var cha in team.Characters)
+                    for (int i = 0; i < team.Characters.Length; i++)
                     {
-                        targets.AddRange(cha.Effects);
+                        targets.AddRange(team.Characters[(i + team.CurrCharacter) % team.Characters.Length].Effects);
                     }
                     targets.AddRange(team.Effects);
                     break;
             }
-            return targets.Where(pe => (this as IWhenThenAction).IsConditionValid(localteam, pe, s, v)).ToList();
+            return targets.Where(pe => (this as ILuaable).Valid(localteam, pe, s, v)).ToList();
         }
+
     }
 }

@@ -11,7 +11,7 @@
         }
         protected override bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            return (this as ILuaable).DoLua(me, p, s, v).All(objs => objs?.FirstOrDefault()?.Equals(true) ?? false);
+            return (this as ILuaable).Valid(me,p,s,v);
         }
     }
 }

@@ -11,7 +11,6 @@
         {
             return Type switch
             {
-                ConditionType.ElementReaction => v is ElementVariable ev && (Enum.TryParse(Value, true, out ReactionTags reaction) ? ev.Reaction == reaction : ev.Reaction is not ReactionTags.None),
                 ConditionType.ElementRelated => v is DamageVariable dv && (((DamageElement)((int)dv.Reaction / 10)).ToString() == Value || ((DamageElement)((int)dv.Reaction % 10)).ToString() == Value),
                 ConditionType.ThisCharacterCause => v is ElementVariable dv && dv.Direct == DamageSource.Direct && s.TeamID == me.TeamID && s is IPeristentSupplier ips && ips.Persistent is Character c && c.PersistentRegion == p?.PersistentRegion && s is IMaySkillSupplier imss && imss.MaySkill is ISkillable skill && !(Enum.TryParse(Value, true, out SkillCategory skilltype) && skill.SkillCategory != skilltype),
                 ConditionType.OurCharacterCause => v is ElementVariable dv && dv.Direct == DamageSource.Direct && s.TeamID == me.TeamID && s is IMaySkillSupplier imss && imss.MaySkill is ISkillable skill && !(Enum.TryParse(Value, true, out SkillCategory skilltype) && skill.SkillCategory != skilltype),

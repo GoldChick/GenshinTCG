@@ -22,41 +22,6 @@ namespace TCGBase
             value = 0;
             switch (Type)
             {
-                case ConditionType.Damage:
-                    if (v is DamageVariable dv)
-                    {
-                        value = dv.Amount;
-                        return true;
-                    }
-                    break;
-                case ConditionType.HP:
-                    if (me.Characters.ElementAtOrDefault(p.PersistentRegion) is Character c)
-                    {
-                        value = c.HP;
-                        return true;
-                    }
-                    break;
-                case ConditionType.MP:
-                    if (me.Characters.ElementAtOrDefault(p.PersistentRegion) is Character c1)
-                    {
-                        value = c1.HP;
-                        return true;
-                    }
-                    break;
-                case ConditionType.MPLost:
-                    if (me.Characters.ElementAtOrDefault(p.PersistentRegion) is Character c2)
-                    {
-                        value = c2.Card.MaxMP - c2.MP;
-                        return true;
-                    }
-                    break;
-                case ConditionType.HPLost:
-                    if (me.Characters.ElementAtOrDefault(p.PersistentRegion) is Character c3)
-                    {
-                        value = c3.Card.MaxHP - c3.HP;
-                        return true;
-                    }
-                    break;
                 case ConditionType.Counter:
                     if (p is Character c4)
                     {
@@ -72,12 +37,6 @@ namespace TCGBase
                     }
                     value = p.AvailableTimes;
                     return true;
-                case ConditionType.DataCount:
-                    value = p.Data.Count;
-                    return true;
-                case ConditionType.Region:
-                    value = p.PersistentRegion;
-                    return true;
             }
             return false;
         }
@@ -87,10 +46,6 @@ namespace TCGBase
 
             return Type switch
             {
-                ConditionType.DataContains => p.Data.Contains(destinationValue),
-                //ConditionType.Damage or ConditionType.SkillCostSum or
-                //ConditionType.HP or ConditionType.MP or ConditionType.HPLost or ConditionType.MPLost or ConditionType.Counter or
-                //ConditionType.DataCount or ConditionType.Region
                 _ => GetNum(me, p, s, v, out var currValue) && Math.Sign(currValue - destinationValue) == Sign
             };
         }

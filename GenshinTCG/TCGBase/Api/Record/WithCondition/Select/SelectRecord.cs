@@ -3,9 +3,9 @@
 namespace TCGBase
 {
     /// <summary>
-    /// 用于Select时，Type只能为Character，Summon，Support
+    /// 用于Select时，Type只能为Character，Summon，Support，还有Lua
     /// </summary>
-    public record class SelectRecord : IWhenThenAction
+    public record class SelectRecord : IWhenThenAction, ILuaable
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TargetType Type { get; }
@@ -18,10 +18,6 @@ namespace TCGBase
             Type = type;
             Team = team;
             When = when ?? new();
-        }
-        public int GetIndexs()
-        {
-            return 0;
         }
     }
 }

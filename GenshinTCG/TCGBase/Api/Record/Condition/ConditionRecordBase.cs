@@ -28,16 +28,7 @@ namespace TCGBase
         SimpleTalent,//<预设>"普通天赋"，要求角色是[出战]，[不能有限制行动状态]，[活着]，并且[符合指定nameaid]
         SimpleWeapon,//<预设>"普通武器"，要求[活着]，并且[具有指定weapon tag]
         //↓下为int↓
-        HP,//该角色/角色状态对应的角色 生命值 >/=/< Value，下同
-        MP,
-        HPLost,
-        MPLost,
-        DataCount,
-        DataContains,
         Counter,//Index用来表示第几个技能(若用于角色，并且信息不带有技能)；如果信息带有技能，则自动查找对应的index
-        Region,//p的persistentregion
-
-        //分界线，下为对于Damage
 
         //↓下为没有参数↓
         Deadly,//要求伤害打死了人
@@ -50,14 +41,10 @@ namespace TCGBase
 
         //↓下为单string↓
         ElementRelated,//是伤害，并且造成了[指定元素相关反应]
-        ElementReaction,//造成了[指定反应]，不指定反应则表示为[任意反应]即可(不一定是伤害！)
         ThisCharacterCause,//<预设>"本角色造成指定种类伤害"，要求[来源本(状态附属的)角色]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
         OurCharacterCause,//<预设>"我方角色造成指定种类伤害"，要求[来源我方]，[技能伤害]，[直接伤害]，不指定AEQ则表示为[技能]即可
-        //↓下为int↓
-        Damage,
-        //分界线，上为对于Damage，下为对于Dice
 
-        //分界线，上为对于Dice，下为对于Target
+        //下为对于Target
         AnyTarget,//target.any()
         AnyTargetWithSameIndex,//target.any() && target.all(t=>t.persistentregion==p.persistentregion)
         CanBeAppliedFrom,//p或者p附属的角色，能够被所有target的行动牌CardBase作为使用对象

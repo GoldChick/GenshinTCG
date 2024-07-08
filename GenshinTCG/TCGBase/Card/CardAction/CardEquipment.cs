@@ -20,7 +20,7 @@
             TargetDemands = new()
             {
             new(TargetTeam.Me,TargetType.Character,(me, oldps,newp) => record.Select.FirstOrDefault() is TargetRecord tr && !oldps.Any() &&
-                    tr.When.TrueForAll(condition => condition.Valid(me, newp, new ActionDuringUseCardSender(me.TeamID, oldps), null)))
+                    (tr as ILuaable).Valid(me, newp, new ActionDuringUseCardSender(me.TeamID, oldps), null))
             };
         }
     }
