@@ -44,7 +44,7 @@ namespace TCGBase
         /// 依赖于自己的persistent们，此状态清除时将把list中的其他状态也清除
         /// </summary>
         public List<int> Childs { get; }
-        public Persistent(AbstractCardBase card, Persistent? bind = null)
+        public Persistent(AbstractCardBase card, Persistent? father = null)
         {
             CardBase = card;
             Active = true;
@@ -52,8 +52,8 @@ namespace TCGBase
             Data = new();
             AvailableTimes = card.InitialUseTimes;
 
-            //TODO: lazy add
-            //bind?.Childs?.Add(this);
+            //TODO: lazy add And Father
+            //father?.Childs?.Add(this);
         }
     }
     public class Persistent<T> : Persistent where T : AbstractCardBase

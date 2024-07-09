@@ -28,8 +28,13 @@
             }
             Supports.Add(support);
         }
-        public void AddSummon(Persistent summon) => AddSummon(1, summon);
-        public void AddSummon(CardEffect summon) => AddSummon(1, summon);
+        public void AddSummon(CardEffect summon)
+        {
+            if (summon.CardType == CardType.Summon)
+            {
+                Summons.Add(new(summon));
+            }
+        }
         public void AddSummon(int num, params Persistent[] summons)
         {
             var left = summons.Where(s => !Summons.Contains(s.CardBase) && s.CardBase.CardType == CardType.Summon).ToList();

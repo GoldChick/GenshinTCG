@@ -32,36 +32,36 @@ namespace TCGBase
         }
         public Persistent this[int i] => _data[i];
         /// <summary>
-        /// 无则加入（未满），有则刷新
+        /// 返回是否加入/刷新成功
         /// </summary>
-        internal void Add([NotNull] Persistent input)
+        internal bool Add([NotNull] Persistent input)
         {
             Update();
-            if (MaxSize <= 0 || _data.Count < MaxSize)
+            int index = _data.FindIndex(p => p.CardBase.Namespace == input.CardBase.Namespace && p.CardBase.NameID == input.CardBase.NameID);
+            if (!MultiSame && index >= 0)
             {
-                int index = _data.FindIndex(p => p.CardBase.Namespace == input.CardBase.Namespace && p.CardBase.NameID == input.CardBase.NameID);
-                if (!MultiSame && index >= 0)
+                var t = _data[index];
+                if (t.CardBase is IEffect ef)
                 {
-                    var t = _data[index];
-                    if (t.CardBase is IEffect ef)
-                    {
-                        ef.Update(_me, t);
-                    }
-                    else
-                    {
-                        t.AvailableTimes = t.CardBase.InitialUseTimes;
-                        t.Data.Clear();
-                    }
-                    _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamID, PersistentRegion, index, t.AvailableTimes, t.Data));
+                    ef.Update(_me, t);
                 }
                 else
                 {
-                    input.Owner = this;
-                    input.PersistentRegion = PersistentRegion;
-                    _me.Game.RegisterPersistent(input);
-                    Register(input);
+                    t.AvailableTimes = t.CardBase.InitialUseTimes;
+                    t.Data.Clear();
                 }
+                _me.Game.BroadCast(ClientUpdateCreate.PersistentUpdate.TriggerUpdate(_me.TeamID, PersistentRegion, index, t.AvailableTimes, t.Data));
+                return true;
             }
+            else if (MaxSize <= 0 || _data.Count < MaxSize)
+            {
+                input.Owner = this;
+                input.PersistentRegion = PersistentRegion;
+                _me.Game.RegisterPersistent(input);
+                Register(input);
+                return true;
+            }
+            return false;
         }
         internal void Update()
         {

@@ -5,7 +5,7 @@
         private int _hp;
         private int _mp;
         private int _element;
-        private readonly PlayerTeam _t;
+        internal readonly PlayerTeam _t;
 
         public PersistentSet Effects { get; }
         public Dictionary<string, int> SkillCounter { get; }

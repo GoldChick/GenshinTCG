@@ -4,7 +4,7 @@
     {
         public int Count { get; }
         public List<string> WithTag { get; }
-        public ActionRecordDrawCard(int count = 1, List<string>? withtag = null, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Dice, team, when)
+        public ActionRecordDrawCard(int count = 1, List<string>? withtag = null, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.DrawCard, team, when)
         {
             Count = count;
             WithTag = withtag ?? new();

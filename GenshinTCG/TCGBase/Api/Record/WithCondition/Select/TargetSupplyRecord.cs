@@ -13,7 +13,7 @@
             Lua = lua ?? new();
             LuaID = luaID;
         }
-        public List<Persistent> GetPersistents(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        public List<Persistent> GetTargets(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
                 => (this as ILuaable).DoLua<Persistent>(me, p, s, v);
     }
 }

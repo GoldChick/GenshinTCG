@@ -3,14 +3,14 @@
     public record class ActionRecordDamage : ActionRecordBase
     {
         /// <summary>
-        /// 不为null并且有效时，对且仅对其中的第一个角色应用damage<br/>
+        /// 不为null并且有效时，对且仅对其中的**第一个**应用damage<br/>
         /// targetexcept依然有效，而targetindexoffset、targetteam无效<br/>
         /// 上述效果也会应用于subdamage
         /// </summary>
-        public TargetRecord? Target { get; }
+        public TargetSupplyRecord? Target { get; }
         public DamageRecord Damage { get; }
         public List<ActionRecordBase> With { get; }
-        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase>? with = null, TargetRecord? target = null, List<ConditionRecordBase>? when = null) : base(TriggerType.Damage, when)
+        public ActionRecordDamage(DamageRecord damage, List<ActionRecordBase>? with = null, TargetSupplyRecord? target = null, List<ConditionRecordBase>? when = null) : base(TriggerType.Damage, when)
         {
             Damage = damage;
             With = with ?? new();
@@ -27,12 +27,12 @@
             {
                 subhandler += action.GetHandler(triggerable);
             }
-            me.DoDamage(Target != null && Target.GetTargets(me, p, s, v, out var team).FirstOrDefault(p => p is Character) is Character cha
-                ? GetDamageRecordWithTarget(cha.PersistentRegion - me.CurrCharacter, (TargetTeam)(1 - team.TeamID ^ me.TeamID), Damage)
+            me.DoDamage(Target != null && Target.GetTargets(me, p, s, v).FirstOrDefault() is Character cha ?
+                GetDamageRecordWithTarget(cha.PersistentRegion - me.CurrCharacter, (TargetTeam)(1 - cha._t.TeamID ^ me.TeamID), Damage)
                 : Damage, p, triggerable, () =>
-            {
-                subhandler?.Invoke(me, p, s, v);
-            });
+                {
+                    subhandler?.Invoke(me, p, s, v);
+                });
         }
     }
 }

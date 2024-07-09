@@ -15,15 +15,10 @@ namespace TCGBase
                 {
                     return type switch
                     {
-                        TriggerType.Skill or TriggerType.Prepare or TriggerType.Heal or TriggerType.Revive => JsonSerializer.Deserialize<ActionRecordInt>(root.GetRawText(), options),
-                        TriggerType.Trigger or TriggerType.Element or TriggerType.SetData => JsonSerializer.Deserialize<ActionRecordString>(root.GetRawText(), options),
+                        TriggerType.Element=> JsonSerializer.Deserialize<ActionRecordString>(root.GetRawText(), options),
                         TriggerType.Damage => JsonSerializer.Deserialize<ActionRecordDamage>(root.GetRawText(), options),
-                        TriggerType.Dice => JsonSerializer.Deserialize<ActionRecordDice>(root.GetRawText(), options),
                         TriggerType.EatDice => JsonSerializer.Deserialize<ActionRecordEatDice>(root.GetRawText(), options),
-                        TriggerType.Effect => JsonSerializer.Deserialize<ActionRecordEffect>(root.GetRawText(), options),
-                        TriggerType.PopEffect => JsonSerializer.Deserialize<ActionRecordPopEffect>(root.GetRawText(), options),
                         TriggerType.SampleEffect => JsonSerializer.Deserialize<ActionRecordSampleEffect>(root.GetRawText(), options),
-                        TriggerType.Counter => JsonSerializer.Deserialize<ActionRecordCounter>(root.GetRawText(), options),
                         TriggerType.DrawCard => JsonSerializer.Deserialize<ActionRecordDrawCard>(root.GetRawText(), options),
                         TriggerType.Switch or TriggerType.Destroy => JsonSerializer.Deserialize<ActionRecordBaseWithTarget>(root.GetRawText(), options),
 

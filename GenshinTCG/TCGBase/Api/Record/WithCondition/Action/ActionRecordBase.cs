@@ -5,13 +5,7 @@ namespace TCGBase
     public enum TriggerType
     {
         Lua,
-        //int with target
-        Skill,//target角色使用value技能
-        Prepare,//target角色使用value准备技能
-        Heal,//target角色治疗value点hp
-        Revive,//target角色复苏，并治疗value点hp
         //string
-        Trigger,//从所在队伍发送，全局触发名为value的状态结算轮
         Element,//target角色附着value元素
 
         //with target
@@ -22,15 +16,11 @@ namespace TCGBase
         Damage,//造成特殊效果为with的damage
         Effect,//针对target先删除remove的，再添加add的，支持 行动牌、召唤物、状态
         SampleEffect,//从给出的池子里抽取一定数量effect
-        PopEffect,//通过target获取某些状态、召唤、支援，转移到其他区域
-        Dice,//根据gain，获得或失去dice中的内容
         EatDice,//收集未使用的元素骰/吐出已收集的元素骰,可设置最大数量、是否允许同色
-        Counter,//(force去)add或set指定targer的persistent或者自身的Counter
-        SetData,
     }
     public record class ActionRecordBase : IWhenThenAction
     {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(JsonStringEnumConverter))] 
         public TriggerType Type { get; }
 
         public List<ConditionRecordBase> When { get; }
@@ -63,34 +53,26 @@ namespace TCGBase
     }
     public record class ActionRecordBaseWithTarget : ActionRecordBase
     {
-        public TargetRecord Target { get; }
-        public ActionRecordBaseWithTarget(TriggerType type, TargetRecord? target = null, List<ConditionRecordBase>? when = null) : base(type, when)
+        public TargetSupplyRecord Target { get; }
+        public ActionRecordBaseWithTarget(TriggerType type, TargetSupplyRecord? target = null, List<ConditionRecordBase>? when = null) : base(type, when)
         {
             Target = target ?? new();
         }
         protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
         {
-            var ps = Target.GetTargets(me, p, s, v, out var team);
+            var ps = Target.GetTargets(me, p, s, v);
             switch (Type)
             {
                 case TriggerType.Switch:
                     if (ps.ElementAtOrDefault(0) is Character c)
                     {
-                        team.TrySwitchToIndex(c.PersistentRegion);
+                        me.TrySwitchToIndex(c.PersistentRegion);
                     }
                     break;
                 case TriggerType.Destroy:
-                    switch (Target.Type)
+                    foreach (var per in ps)
                     {
-                        case TargetType.Character:
-                            p.Active = false;
-                            break;
-                        default:
-                            foreach (var per in ps)
-                            {
-                                per.Active = false;
-                            }
-                            break;
+                        per.Active = false;
                     }
                     break;
                 default:

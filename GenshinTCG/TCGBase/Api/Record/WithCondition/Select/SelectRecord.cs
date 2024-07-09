@@ -5,7 +5,7 @@ namespace TCGBase
     /// <summary>
     /// 用于Select时，Type只能为Character，Summon，Support，还有Lua
     /// </summary>
-    public record class SelectRecord : IWhenThenAction, ILuaable
+    public record class SelectRecord : IWhenThenAction
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TargetType Type { get; }
