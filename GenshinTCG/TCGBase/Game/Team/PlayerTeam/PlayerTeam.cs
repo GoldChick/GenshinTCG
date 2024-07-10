@@ -7,7 +7,7 @@
         /// <summary>
         /// 用于pvp模式仅限3个角色(然而设计模式似乎允许使用最多10个角色 Warning:未经测试)
         /// </summary>
-        public Character[] Characters { get; protected init; }
+        public List<Character> Characters { get; protected init; }
         /// <summary>
         /// 在Game.Teams中的index
         /// </summary>
@@ -51,7 +51,7 @@
             Supports = new(12, this, 4, true);
             Effects = new(-1, this);
 
-            Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i, this)).ToArray();
+            Characters = cardset.CharacterCards.Select((c, i) => new Character(c, i, this)).ToList();
             LeftCards = cardset.ActionCards.ToList();
             CardsInHand = new(this);
 

@@ -110,7 +110,7 @@
                     var team = Teams[ev.TargetTeam];
                     if (ev.TargetIndex == team.CurrCharacter)
                     {
-                        team.TrySwitchToIndex(1, true);
+                        team.SwitchTo(1, true);
                     }
                 }
                 ,
@@ -178,8 +178,8 @@
             cha.Element = nextElement;
             evToPerson.Reaction = tag;
 
-            var dvs = Enumerable.Range(0, currteam.Characters.Length)
-                    .OrderBy(i => ((i - evToPerson.TargetIndex) % currteam.Characters.Length + currteam.Characters.Length) % currteam.Characters.Length)
+            var dvs = Enumerable.Range(0, currteam.Characters.Count)
+                    .OrderBy(i => ((i - evToPerson.TargetIndex) % currteam.Characters.Count + currteam.Characters.Count) % currteam.Characters.Count)
                     .Skip(1).Where(i => currteam.Characters[i].Alive);
 
             return tag switch

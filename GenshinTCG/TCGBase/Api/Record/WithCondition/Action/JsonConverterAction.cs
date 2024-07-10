@@ -15,12 +15,8 @@ namespace TCGBase
                 {
                     return type switch
                     {
-                        TriggerType.Element=> JsonSerializer.Deserialize<ActionRecordString>(root.GetRawText(), options),
                         TriggerType.Damage => JsonSerializer.Deserialize<ActionRecordDamage>(root.GetRawText(), options),
                         TriggerType.EatDice => JsonSerializer.Deserialize<ActionRecordEatDice>(root.GetRawText(), options),
-                        TriggerType.SampleEffect => JsonSerializer.Deserialize<ActionRecordSampleEffect>(root.GetRawText(), options),
-                        TriggerType.DrawCard => JsonSerializer.Deserialize<ActionRecordDrawCard>(root.GetRawText(), options),
-                        TriggerType.Switch or TriggerType.Destroy => JsonSerializer.Deserialize<ActionRecordBaseWithTarget>(root.GetRawText(), options),
 
                         _ => JsonSerializer.Deserialize<ActionRecordLua>(root.GetRawText(), options),
                     };

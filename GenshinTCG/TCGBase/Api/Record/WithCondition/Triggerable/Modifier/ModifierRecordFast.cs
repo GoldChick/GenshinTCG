@@ -21,7 +21,7 @@ namespace TCGBase
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ModifierActionMode Mode { get; }
-        public ModifierRecordFast(ModifierActionMode mode, List<string>? lua = null, bool luaID = false, List<ConditionRecordBase>? when = null, ActionRecordBase? afterSuccess = null) : base(ModifierType.Dice, lua, luaID, when, afterSuccess)
+        public ModifierRecordFast(ModifierActionMode mode, List<string>? lua = null, bool luaID = false, List<ConditionRecordBase>? when = null, ActionRecordBase? afterSuccess = null) : base(ModifierType.Fast, lua, luaID, when, afterSuccess)
         {
             Mode = mode;
         }

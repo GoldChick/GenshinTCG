@@ -16,7 +16,7 @@ namespace TCGBase
             _data = new();
         }
         public Persistent<AbstractCardAction> this[int i] => _data[i];
-        internal void Add(AbstractCardAction card)
+        internal Persistent? Add(AbstractCardAction card)
         {
             if (_data.Count >= 10)
             {
@@ -24,9 +24,12 @@ namespace TCGBase
             }
             else
             {
-                _data.Add(new(card) { PersistentRegion = _data.Count + PersistentRegion });
+                Persistent<AbstractCardAction> p = new(card) { PersistentRegion = _data.Count + PersistentRegion };
+                _data.Add(p);
                 _me.Game.BroadCast(ClientUpdateCreate.CardUpdate(_me.TeamID, ClientUpdateCreate.CardUpdateCategory.Obtain, card.Namespace, card.NameID));
+                return p;
             }
+            return null;
         }
         internal List<EventPersistentSetHandler> GetHandlers(AbstractSender sender)
         {

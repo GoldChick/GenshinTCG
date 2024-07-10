@@ -18,7 +18,7 @@
                 var currteam = Teams[currteamid];
                 if (curr.TargetArea == TargetArea.TargetOnly)
                 {
-                    list.Add(new DamageVariable(currteamid, curr.Element, curr.Amount, DamageSource.Direct, ((currteam.CurrCharacter + curr.TargetIndexOffset) % currteam.Characters.Length + currteam.Characters.Length) % currteam.Characters.Length));
+                    list.Add(new DamageVariable(currteamid, curr.Element, curr.Amount, DamageSource.Direct, ((currteam.CurrCharacter + curr.TargetIndexOffset) % currteam.Characters.Count + currteam.Characters.Count) % currteam.Characters.Count));
                 }
                 else
                 {
@@ -26,8 +26,8 @@
                     {
                         throw new ArgumentOutOfRangeException(nameof(start), "InnerHurtCompute:怎么有队伍的CurrCharacter是-1啊？");
                     }
-                    list.AddRange(Enumerable.Range(0, currteam.Characters.Length)
-                        .OrderBy(i => ((i - currteam.CurrCharacter - curr.TargetIndexOffset) % currteam.Characters.Length + currteam.Characters.Length) % currteam.Characters.Length)
+                    list.AddRange(Enumerable.Range(0, currteam.Characters.Count)
+                        .OrderBy(i => ((i - currteam.CurrCharacter - curr.TargetIndexOffset) % currteam.Characters.Count + currteam.Characters.Count) % currteam.Characters.Count)
                         .Skip(1).Where(i => currteam.Characters[i].Alive)
                         .Select(i => new DamageVariable(currteamid, curr.Element, curr.Amount, DamageSource.Direct, i)));
                 }

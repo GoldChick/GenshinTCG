@@ -14,7 +14,7 @@
         /// 最多能吃几个（注：限制为Data中的数量，不是去一次吃）
         /// </summary>
         public int Count { get; }
-        public ActionRecordEatDice(int count, bool same = true, bool eat = true, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.Effect, team, when)
+        public ActionRecordEatDice(int count, bool same = true, bool eat = true, TargetTeam team = TargetTeam.Me, List<ConditionRecordBase>? when = null) : base(TriggerType.EatDice, team, when)
         {
             Eat = eat;
             Same = same;

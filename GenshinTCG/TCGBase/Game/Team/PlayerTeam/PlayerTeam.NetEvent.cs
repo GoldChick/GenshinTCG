@@ -22,7 +22,7 @@ namespace TCGBase
         private bool IsLimitValid(NetOperation action) => action.Index >= 0 && action.Type switch
         {
             OperationType.Pass => true,
-            OperationType.Switch => action.Index < Characters.Length && action.Index != CurrCharacter && Characters[action.Index].Alive,
+            OperationType.Switch => action.Index < Characters.Count && action.Index != CurrCharacter && Characters[action.Index].Alive,
             OperationType.UseSKill => Characters[CurrCharacter].Active && action.Index < Characters[CurrCharacter].CardBase.TriggerableList.Where(t => t.Tag == SenderTagInner.UseSkill.ToString()).Count(),
             OperationType.UseCard or OperationType.Blend => action.Index < CardsInHand.Count(),
             _ => false
@@ -274,8 +274,8 @@ namespace TCGBase
 
         protected int GetTargetEnumMaxCount(int region) => region switch
         {
-            0 => Enemy.Characters.Length,
-            1 => Characters.Length,
+            0 => Enemy.Characters.Count,
+            1 => Characters.Count,
             2 => Enemy.Summons.Count,
             3 => Summons.Count,
             4 => Enemy.Supports.Count,

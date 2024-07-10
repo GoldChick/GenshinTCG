@@ -31,6 +31,7 @@
         public ElementVariable(int targetTeam, DamageElement element, DamageSource direct, int targetIndex) : base(targetTeam, direct, targetIndex)
         {
             Element = element;
+            Amount = -1;
         }
     }
     public class DamageVariable : ElementVariable

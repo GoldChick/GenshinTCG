@@ -67,29 +67,6 @@
             }
         }
         /// <summary>
-        /// int值代表元素类型
-        /// </summary>
-        public void GainDice(params int[] dices)
-        {
-            foreach (var d in dices)
-            {
-                if (Dices.Count >= 16)
-                {
-                    break;
-                }
-                Dices.Add(int.Clamp(d, 0, 7));
-            }
-            Dices.Sort();
-            Game.BroadCast(ClientUpdateCreate.DiceUpdate(TeamID, Dices.ToArray()));
-        }
-        public void GainDice(ElementCategory element, int count = 1)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                GainDice((int)element);
-            }
-        }
-        /// <summary>
         /// 获得很多骰子<br/>
         /// 会进行broadcast
         /// </summary>

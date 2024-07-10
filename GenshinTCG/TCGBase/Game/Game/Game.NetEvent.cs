@@ -33,7 +33,7 @@
                 case OperationType.Switch:
                     {
                         var chas = Teams[teamid].Characters;
-                        for (int i = 0; i < chas.Length; i++)
+                        for (int i = 0; i < chas.Count; i++)
                         {
                             if (chas[i].Alive)
                             {
@@ -113,7 +113,7 @@
                     }
                     break;
                 case OperationType.Switch:
-                    team.TrySwitchToIndex(evt.Operation.Index);
+                    team.SwitchTo(evt.Operation.Index);
                     break;
                 case OperationType.UseSKill:
                     EffectTrigger(new ActionUseSkillSender(team.TeamID, team.CurrCharacter, evt.Operation.Index));

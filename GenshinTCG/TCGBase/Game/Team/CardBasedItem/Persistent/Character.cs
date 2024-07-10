@@ -140,12 +140,12 @@
             }
             return hss;
         }
-        public void AddEffect(AbstractCardBase effect) => AddEffect(new Persistent(effect));
+        public Persistent? AddEffect(AbstractCardBase effect) => AddEffect(new Persistent(effect));
         /// <summary>
         /// 只有活着的时候，并且添加的是普通的effect，才能添加状态<br/>
         /// 如果添加的是圣遗物或武器，还会顶掉原来的
         /// </summary>
-        public void AddEffect(Persistent effect)
+        public Persistent? AddEffect(Persistent effect)
         {
             if (Alive)
             {
@@ -155,23 +155,36 @@
                         if (effect.CardBase.Tags.Contains(CardTag.Artifact.ToString()))
                         {
                             Effects.DestroyFirst(p => p.CardBase.Tags.Contains(CardTag.Artifact.ToString()));
-                            Effects.Add(effect);
+                            if (Effects.Add(effect))
+                            {
+                                return effect;
+                            }
                         }
                         else if (effect.CardBase.Tags.Contains(CardTag.Weapon.ToString()))
                         {
                             Effects.DestroyFirst(p => p.CardBase.Tags.Contains(CardTag.Weapon.ToString()));
-                            Effects.Add(effect);
+                            if (Effects.Add(effect))
+                            {
+                                return effect;
+                            }
                         }
                         else
                         {
-                            Effects.Add(effect);
+                            if (Effects.Add(effect))
+                            {
+                                return effect;
+                            }
                         }
                         break;
                     case CardType.Effect:
-                        Effects.Add(effect);
+                        if (Effects.Add(effect))
+                        {
+                            return effect;
+                        }
                         break;
                 }
             }
+            return null;
         }
     }
 }

@@ -10,7 +10,7 @@
             }
             else
             {
-                Characters[int.Clamp(target, 0, Characters.Length - 1)].AddEffect(per);
+                Characters[int.Clamp(target, 0, Characters.Count - 1)].AddEffect(per);
             }
             Game.BroadCastRegion();
         }
@@ -99,7 +99,7 @@
             if (CurrCharacter == -1)
             {
                 hs.AddRange(Effects.GetPersistentHandlers(sender));
-                for (int i = 0; i < Characters.Length; i++)
+                for (int i = 0; i < Characters.Count; i++)
                 {
                     hs.AddRange(Characters[i].GetPersistentHandlers(sender));
                 }
@@ -108,9 +108,9 @@
             {
                 hs.AddRange(Characters[CurrCharacter].GetPersistentHandlers(sender));
                 hs.AddRange(Effects.GetPersistentHandlers(sender));
-                for (int i = 1; i < Characters.Length; i++)
+                for (int i = 1; i < Characters.Count; i++)
                 {
-                    hs.AddRange(Characters[(i + CurrCharacter) % Characters.Length].GetPersistentHandlers(sender));
+                    hs.AddRange(Characters[(i + CurrCharacter) % Characters.Count].GetPersistentHandlers(sender));
                 }
             }
             hs.AddRange(Summons.GetPersistentHandlers(sender));
