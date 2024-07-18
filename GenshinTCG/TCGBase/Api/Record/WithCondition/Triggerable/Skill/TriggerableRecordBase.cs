@@ -60,7 +60,7 @@ namespace TCGBase
                 }
             };
         }
-        protected virtual void Get(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        protected virtual void Get(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             foreach (var ac in Action)
             {

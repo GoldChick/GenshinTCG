@@ -5,7 +5,6 @@
     /// </summary>
     public class AfterSwitchSender : AbstractAfterActionSender
     {
-        public override string SenderName => SenderTag.AfterSwitch.ToString();
         /// <summary>
         /// 原先的index
         /// </summary>

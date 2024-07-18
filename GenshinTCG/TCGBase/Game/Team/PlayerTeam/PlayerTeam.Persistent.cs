@@ -93,37 +93,37 @@
                 }
             }
         }
-        internal List<EventPersistentSetHandler> GetEffectHandlers(AbstractSender sender)
+        internal List<EventPersistentSetHandler> GetEffectHandlers(string sendertag, SimpleSender sender)
         {
             List<EventPersistentSetHandler> hs = new();
             if (CurrCharacter == -1)
             {
-                hs.AddRange(Effects.GetPersistentHandlers(sender));
+                hs.AddRange(Effects.GetPersistentHandlers(sendertag, sender));
                 for (int i = 0; i < Characters.Count; i++)
                 {
-                    hs.AddRange(Characters[i].GetPersistentHandlers(sender));
+                    hs.AddRange(Characters[i].GetPersistentHandlers(sendertag, sender));
                 }
             }
             else
             {
-                hs.AddRange(Characters[CurrCharacter].GetPersistentHandlers(sender));
-                hs.AddRange(Effects.GetPersistentHandlers(sender));
+                hs.AddRange(Characters[CurrCharacter].GetPersistentHandlers(sendertag, sender));
+                hs.AddRange(Effects.GetPersistentHandlers(sendertag, sender));
                 for (int i = 1; i < Characters.Count; i++)
                 {
-                    hs.AddRange(Characters[(i + CurrCharacter) % Characters.Count].GetPersistentHandlers(sender));
+                    hs.AddRange(Characters[(i + CurrCharacter) % Characters.Count].GetPersistentHandlers(sendertag, sender));
                 }
             }
-            hs.AddRange(Summons.GetPersistentHandlers(sender));
-            hs.AddRange(Supports.GetPersistentHandlers(sender));
-            hs.AddRange(CardsInHand.GetHandlers(sender));
+            hs.AddRange(Summons.GetPersistentHandlers(sendertag, sender));
+            hs.AddRange(Supports.GetPersistentHandlers(sendertag, sender));
+            hs.AddRange(CardsInHand.GetHandlers(sendertag, sender));
             return hs;
         }
         /// <summary>
         /// 立即触发，不会储存在Queue里
         /// </summary>
-        internal void InstantTrigger(AbstractSender sender, AbstractVariable? variable = null)
+        internal void InstantTrigger(string sendertag, SimpleSender sender, AbstractVariable? variable = null)
         {
-            foreach (var handler in GetEffectHandlers(sender))
+            foreach (var handler in GetEffectHandlers(sendertag, sender))
             {
                 handler.Invoke(sender, variable);
             }

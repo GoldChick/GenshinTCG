@@ -1,7 +1,7 @@
 ﻿namespace TCGBase
 {
     /// <summary>
-    /// update see the last of <see cref="Game.EventProcess(NetEvent, int, out AbstractSender, out FastActionVariable?)"/>
+    /// update see the last of <see cref="Game.EventProcess(NetEvent, int, out SimpleSender, out FastActionVariable?)"/>
     /// </summary>
     public class TeamSpecialState
     {

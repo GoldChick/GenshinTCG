@@ -9,11 +9,11 @@ namespace TCGBase
         /// </summary>
         public void DoDamage(DamageRecord? damage, Persistent persistent, AbstractTriggerable triggerable, Action? specialAction = null)
         {
-            Game.InnerHurt(damage, new(SenderTag.AfterHurt, TeamID, persistent, triggerable), specialAction);
+            Game.InnerHurt(damage, new(TeamID, persistent, triggerable), specialAction);
         }
         public void AttachElement(Persistent persistent, AbstractTriggerable triggerable, DamageElement element, List<int> targetIndexs, bool targetRelative = true)
         {
-            HurtSourceSender sourceSender = new(SenderTag.AfterElement, TeamID, persistent, triggerable);
+            HurtSourceSender sourceSender = new(TeamID, persistent, triggerable);
             var absoluteIndexs = (targetRelative ? targetIndexs.Select(i => ((i + CurrCharacter) % Characters.Count + Characters.Count) % Characters.Count) : targetIndexs.Where(i => i >= 0 && i < Characters.Count));
             var evs = absoluteIndexs.Where(i => Characters[i].Alive).Select(i => new ElementVariable(TeamID, element, DamageSource.Direct, i)).ToList();
             Action? action = null;
@@ -23,7 +23,7 @@ namespace TCGBase
                 evs.AddRange(Game.GetDamageReaction(ev));
                 action += Game.ReactionActionGenerate(ev);
 
-                Game.EffectTrigger(sourceSender, ev);
+                Game.EffectTrigger(SenderTag.AfterElement, sourceSender, ev);
             }
             //TODO: reaction modifier 
             action?.Invoke();

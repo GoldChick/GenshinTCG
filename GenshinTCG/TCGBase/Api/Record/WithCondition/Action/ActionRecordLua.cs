@@ -11,7 +11,7 @@
             Lua = lua ?? new();
             LuaID = luaID;
         }
-        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             (this as ILuaable).DoLua(me, p, s, v, triggerable);
         }

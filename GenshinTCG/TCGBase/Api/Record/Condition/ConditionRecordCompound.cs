@@ -7,7 +7,7 @@
         {
             Value = value ?? new();
         }
-        protected override bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        protected override bool GetPredicate(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             return Value.All(condition => condition.Valid(me, p, s, v));
         }

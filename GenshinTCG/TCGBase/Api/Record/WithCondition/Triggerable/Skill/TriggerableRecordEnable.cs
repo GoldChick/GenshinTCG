@@ -12,7 +12,7 @@
         {
             NeedEnable = needEnable;
         }
-        protected override void Get(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        protected override void Get(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             if (NeedEnable && p.Data.Count == 0)
             {

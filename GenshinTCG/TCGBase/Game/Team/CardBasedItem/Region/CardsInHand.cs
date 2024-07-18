@@ -31,7 +31,7 @@ namespace TCGBase
             }
             return null;
         }
-        internal List<EventPersistentSetHandler> GetHandlers(AbstractSender sender)
+        internal List<EventPersistentSetHandler> GetHandlers(string sendertag, SimpleSender sender)
         {
             List<EventPersistentSetHandler> sethandlers = new();
             if (sender.TeamID == _me.TeamID && sender is ActionUseCardSender cs && cs.Card >= 0 && cs.Card <= _data.Count)
@@ -57,11 +57,11 @@ namespace TCGBase
                         default:
                             throw new ArgumentException($"CardsInHand:你把什么东西扔到手里了？{card.CardBase.CardType}?");
                     }
-                    foreach (var it in card.CardBase.TriggerableList[cs.SenderName])
+                    foreach (var it in card.CardBase.TriggerableList[sendertag])
                     {
                         it.Trigger(_me, card, s, v);
                     }
-                    _me.Game.EffectTrigger(new AfterUseCardSender(_me.TeamID, card, cs.Persistents));
+                    _me.Game.EffectTrigger(SenderTagInner.UseCard.ToString(), new AfterUseCardSender(_me.TeamID, card, cs.Persistents));
                 });
             }
             return sethandlers;

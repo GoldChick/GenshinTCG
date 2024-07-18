@@ -9,7 +9,7 @@
             Lua = lua ?? new();
             LuaID = luaID;
         }
-        protected override bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        protected override bool GetPredicate(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             return (this as ILuaable).Valid(me,p,s,v);
         }

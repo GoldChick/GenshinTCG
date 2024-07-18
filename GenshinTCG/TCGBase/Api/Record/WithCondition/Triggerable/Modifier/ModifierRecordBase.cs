@@ -61,7 +61,7 @@ namespace TCGBase
                 }
             };
         }
-        protected virtual bool DefaultConditionCheck(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, AbstractTriggerable modTriggerable)
+        protected virtual bool DefaultConditionCheck(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v, AbstractTriggerable modTriggerable)
         {
             return Type switch
             {
@@ -88,7 +88,7 @@ namespace TCGBase
         /// <item>1</item>
         /// </list>
         /// </summary>
-        protected virtual void Modify(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        protected virtual void Modify(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             switch (Type)
             {

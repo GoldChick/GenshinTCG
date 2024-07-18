@@ -92,7 +92,7 @@
                     dices.Clear();
                     dices.AddRange(dicecash);
                     DiceRollingVariable dvr = new(cnt - dicecash.Count);
-                    EffectTrigger(new SimpleSender(teamid, SenderTag.BeforeRerollDice), dvr);
+                    EffectTrigger(SenderTag.BeforeRerollDice, new SimpleSender(teamid), dvr);
                     team.ReRollDice(dvr);
                     break;
                 case OperationType.ReRollCard:
@@ -116,7 +116,7 @@
                     team.SwitchTo(evt.Operation.Index);
                     break;
                 case OperationType.UseSKill:
-                    EffectTrigger(new ActionUseSkillSender(team.TeamID, team.CurrCharacter, evt.Operation.Index));
+                    EffectTrigger(SenderTagInner.UseSkill.ToString(), new ActionUseSkillSender(team.TeamID, team.CurrCharacter, evt.Operation.Index));
                     break;
                 case OperationType.UseCard:
                     afterEventFastActionVariable.Fast = team.CardsInHand[evt.Operation.Index].Card.FastAction;
@@ -132,7 +132,7 @@
                             }
                         }
                     }
-                    EffectTrigger(new ActionUseCardSender(team.TeamID, evt.Operation.Index, ps));
+                    EffectTrigger(SenderTagInner.UseCard.ToString(), new ActionUseCardSender(team.TeamID, evt.Operation.Index, ps));
                     break;
                 case OperationType.Blend://调和
                     team.CardsInHand.TryDestroyAt(evt.Operation.Index);
@@ -149,7 +149,7 @@
             if (demand == OperationType.Trivial)
             {
                 //TODO:预期风自将额外占用一轮速切结算
-                EffectTrigger(new AfterOperationSender(teamid, evt.Operation.Type), afterEventFastActionVariable);
+                EffectTrigger(SenderTag.AfterOperation, new AfterOperationSender(teamid, evt.Operation.Type), afterEventFastActionVariable);
                 //必须是当前行动的队伍才有意义做出[战斗行动]并且发生[队伍交替]
                 if (CurrTeam == teamid)
                 {

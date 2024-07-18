@@ -13,7 +13,7 @@ namespace TCGBase
         /// 为false时就是直接的代码，直接运行，名叫result的变量替代作为返回值
         /// </summary>
         public bool LuaID { get; }
-        public void DoLua(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, object? @this = null)
+        public void DoLua(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v, object? @this = null)
         {
             using var lua = LuaManager.CreateLuaEnv(me, p, s, v, @this);
             if (LuaID)
@@ -32,7 +32,7 @@ namespace TCGBase
                 }
             }
         }
-        public List<T> DoLua<T>(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, object? @this = null)
+        public List<T> DoLua<T>(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v, object? @this = null)
         {
             using var lua = LuaManager.CreateLuaEnv(me, p, s, v, @this);
             List<T> results = new();
@@ -80,7 +80,7 @@ namespace TCGBase
         /// <summary>
         /// (所有的)lua脚本都返回true
         /// </summary>
-        public bool Valid(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, object? @this = null)
+        public bool Valid(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v, object? @this = null)
         {
             var bools = DoLua<bool>(me, p, s, v, @this);
             return bools.Any() && bools.All(p => p);

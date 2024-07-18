@@ -4,9 +4,8 @@
     /// 触发[出战角色]技能效果的sender<br/>
     /// 需指定角色、技能的index<br/>
     /// </summary>
-    public class ActionUseSkillSender : AbstractSender, ITriggerableIndexSupplier
+    public class ActionUseSkillSender : SimpleSender, ITriggerableIndexSupplier
     {
-        public override string SenderName => SenderTagInner.UseSkill.ToString();
         public int Character { get; set; }
         public int Skill { get; set; }
         int ITriggerableIndexSupplier.TriggerableIndex => Skill;

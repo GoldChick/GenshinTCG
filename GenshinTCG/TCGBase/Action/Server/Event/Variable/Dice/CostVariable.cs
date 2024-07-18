@@ -38,15 +38,11 @@ namespace TCGBase
             {
                 if (singleCostVariable.Type == ElementCategory.Void)
                 {
-                    sender.DiceModType = DiceModifierType.Void;
-                    me.InstantTrigger(sender, singleCostVariable);
+                    me.InstantTrigger(DiceModifierType.Void.ToString(), sender, singleCostVariable);
                 }
-                sender.DiceModType = DiceModifierType.Color;
-                me.InstantTrigger(sender, singleCostVariable);
-                sender.DiceModType = DiceModifierType.Any;
-                me.InstantTrigger(sender, singleCostVariable);
-                sender.DiceModType = DiceModifierType.Late;
-                me.InstantTrigger(sender, singleCostVariable);
+                me.InstantTrigger(DiceModifierType.Color.ToString(), sender, singleCostVariable);
+                me.InstantTrigger(DiceModifierType.Any.ToString(), sender, singleCostVariable);
+                me.InstantTrigger(DiceModifierType.Late.ToString(), sender, singleCostVariable);
 
                 DiceCost[(int)singleCostVariable.Type] = singleCostVariable.Count;
             }

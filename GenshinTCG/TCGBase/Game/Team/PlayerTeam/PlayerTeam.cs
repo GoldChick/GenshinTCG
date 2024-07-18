@@ -3,6 +3,7 @@
     public partial class PlayerTeam
     {
         public Game Game { get; }
+        internal SimpleSender DefaultSender { get; }
         public PlayerTeam Enemy => Game.Teams[1 - TeamID];
         /// <summary>
         /// 用于pvp模式仅限3个角色(然而设计模式似乎允许使用最多10个角色 Warning:未经测试)
@@ -43,6 +44,7 @@
         {
             TeamID = teamindex;
             Game = game;
+            DefaultSender = new(TeamID);
 
             Random = new();//TODO:SEED
             SpecialState = new();
@@ -67,7 +69,7 @@
         internal void RoundStart()
         {
             DiceRollingVariable drv = new();
-            InstantTrigger(new SimpleSender(TeamID, SenderTag.RollingStart), drv);
+            InstantTrigger(SenderTag.RollingStart.ToString(), new SimpleSender(TeamID), drv);
             RollDice(drv);
             for (int i = 0; i < drv.RollingTimes; i++)
             {

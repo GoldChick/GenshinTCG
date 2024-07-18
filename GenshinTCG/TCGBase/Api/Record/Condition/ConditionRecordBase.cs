@@ -52,8 +52,8 @@ namespace TCGBase
             Not = not;
             Or = or;
         }
-        public bool Valid(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v) => (Not ^ GetPredicate(me, p, s, v)) | (Or?.Valid(me, p, s, v) ?? false);
-        protected virtual bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        public bool Valid(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v) => (Not ^ GetPredicate(me, p, s, v)) | (Or?.Valid(me, p, s, v) ?? false);
+        protected virtual bool GetPredicate(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             return Type switch
             {

@@ -93,7 +93,7 @@
         internal void Revive()
         {
             Alive = true;
-            _t.Game.EffectTrigger(new OnCharacterOnSender(_t.TeamID, this));
+            _t.Game.EffectTrigger(SenderTag.OnCharacterOn, new OnCharacterOnSender(_t.TeamID, this));
         }
         /// <summary>
         /// 死亡时只触发第一个 TODO:Check It
@@ -103,7 +103,7 @@
             while (Effects.Any())
             {
                 var p = Effects.First();
-                if (p.CardBase.TriggerableList.TryGetValue(hss.SenderName, out var h))
+                if (p.CardBase.TriggerableList.TryGetValue(SenderTag.AfterHurt.ToString(), out var h))
                 {
                     h?.Trigger(_t, this, hss, dv);
                 }
@@ -113,29 +113,29 @@
         /// <summary>
         /// not alive => null
         /// </summary>
-        internal List<EventPersistentSetHandler> GetPersistentHandlers(AbstractSender sender)
+        internal List<EventPersistentSetHandler> GetPersistentHandlers(string sendertag, SimpleSender sender)
         {
             List<EventPersistentSetHandler> hss = new();
             if (Alive)
             {
                 if (sender is ITriggerableIndexSupplier indexSp && sender is not ActionUseCardSender)
                 {
-                    if (sender.TeamID == _t.TeamID && PersistentRegion == indexSp.SourceIndex && Card.TriggerableList.TryGetValue(sender.SenderName, out var skill, indexSp.TriggerableIndex))
+                    if (sender.TeamID == _t.TeamID && PersistentRegion == indexSp.SourceIndex && Card.TriggerableList.TryGetValue(sendertag, out var skill, indexSp.TriggerableIndex))
                     {
                         hss.Add((s, v) => skill.Trigger(_t, this, sender, v));
                     }
                 }
-                else if (sender.SenderName == SenderTag.RoundStep.ToString())
+                else if (sendertag == SenderTag.RoundStep.ToString())
                 {
                     hss.Add((s, v) => ResetCounter());
                 }
                 else
                 {
-                    foreach (var it in CardBase.TriggerableList[sender.SenderName])
+                    foreach (var it in CardBase.TriggerableList[sendertag])
                     {
                         hss.Add((s, v) => it.Trigger(_t, this, sender, v));
                     }
-                    hss.AddRange(Effects.GetPersistentHandlers(sender));
+                    hss.AddRange(Effects.GetPersistentHandlers(sendertag, sender));
                 }
             }
             return hss;

@@ -25,7 +25,7 @@ namespace TCGBase
         {
             Mode = mode;
         }
-        protected override bool DefaultConditionCheck(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, AbstractTriggerable modTriggerable)
+        protected override bool DefaultConditionCheck(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v, AbstractTriggerable modTriggerable)
         {
             if (_whensourceme.Valid(me, p, s, v) && s is AfterOperationSender aos && v is FastActionVariable fav)
             {

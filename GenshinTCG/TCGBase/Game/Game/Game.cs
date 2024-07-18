@@ -10,6 +10,7 @@
     }
     public partial class Game
     {
+        internal SimpleSender DefaultSender { get; }
         public PlayerTeam[] Teams { get; init; }
         /// <summary>
         /// 存储非立即结算状态<br/>
@@ -39,6 +40,7 @@
         }
         internal Game(AbstractServer server)
         {
+            DefaultSender = new();
             Teams = new PlayerTeam[2];
             Server = server;
             NetEventRecords = new();
@@ -65,29 +67,29 @@
         protected virtual void Gaming()
         {
             _currteam = 0;
-            
+
             NetEventRecords.Add(new());
 
             Teams[0].RollCard(5);
             Teams[1].RollCard(5);
 
             Task.WaitAll(Task.Run(() => RequestEvent(0, 30000, OperationType.ReRollCard)), Task.Run(() => RequestEvent(1, 30000, OperationType.ReRollCard)));
-            
+
             var t0 = new Task<NetEvent>(() => RequestEvent(CurrTeam, 30000, OperationType.Switch));
-            var t1 = new Task<NetEvent>(() => RequestEvent(1- CurrTeam, 30000, OperationType.Switch));
+            var t1 = new Task<NetEvent>(() => RequestEvent(1 - CurrTeam, 30000, OperationType.Switch));
             t0.Start();
             t1.Start();
             Task.WaitAll(t0, t1);
 
             HandleNetEvent(t0.Result, CurrTeam, OperationType.Switch);
-            HandleNetEvent(t1.Result, 1- CurrTeam, OperationType.Switch);
+            HandleNetEvent(t1.Result, 1 - CurrTeam, OperationType.Switch);
 
             DelayedTriggerQueue.Active = true;
             foreach (var team in Teams)
             {
                 foreach (var c in team.Characters)
                 {
-                    EffectTrigger(new OnCharacterOnSender(team.TeamID, c, true));
+                    EffectTrigger(SenderTag.OnCharacterOn, new OnCharacterOnSender(team.TeamID, c, true));
                 }
             }
 
@@ -98,10 +100,10 @@
 
                 DelayedTriggerQueue.TryEmpty();
                 Stage = GameStage.Rolling;
-                Task.WaitAll(Task.Run(() => Teams[CurrTeam].RoundStart()), Task.Run(() => Teams[1- CurrTeam].RoundStart()));
+                Task.WaitAll(Task.Run(() => Teams[CurrTeam].RoundStart()), Task.Run(() => Teams[1 - CurrTeam].RoundStart()));
 
                 Stage = GameStage.Gaming;
-                EffectTrigger(new SimpleSender(SenderTag.RoundStart));
+                EffectTrigger(SenderTag.RoundStart, DefaultSender);
 
                 Array.ForEach(Teams, t => t.Pass = false);
 
@@ -109,8 +111,8 @@
                 {
                     //wait until both pass
                     var oldteam = CurrTeam;
-                    EffectTrigger(new SimpleSender(CurrTeam, SenderTag.RoundMeStart));
-                    EffectTrigger(new SimpleSender(CurrTeam, SenderTag.RoundDuring));
+                    EffectTrigger(SenderTag.RoundMeStart, new SimpleSender(CurrTeam));
+                    EffectTrigger(SenderTag.RoundDuring, new SimpleSender(CurrTeam));
                     if (oldteam == CurrTeam)
                     {
                         RequestAndHandleEvent(CurrTeam, 30000, OperationType.Trivial);
@@ -118,24 +120,27 @@
                 }
 
                 Stage = GameStage.Ending;
-                EffectTrigger(new SimpleSender(SenderTag.RoundOver));
+                EffectTrigger(SenderTag.RoundOver, DefaultSender);
                 Teams[CurrTeam].RoundEnd();
                 Teams[1 - CurrTeam].RoundEnd();
-                EffectTrigger(new SimpleSender(SenderTag.RoundStep));
+                EffectTrigger(SenderTag.RoundStep, DefaultSender);
             }
         }
-        public void EffectTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true)
-                => DelayedTriggerQueue.TryTrigger(() => InstantTrigger(sender, variable, broadcast, false));
+        internal void EffectTrigger(SenderTag sendertag, SimpleSender sender, AbstractVariable? variable = null, bool broadcast = true)
+            => EffectTrigger(sendertag.ToString(), sender, variable, broadcast);
+
+        internal void EffectTrigger(string sendertag, SimpleSender sender, AbstractVariable? variable = null, bool broadcast = true)
+                => DelayedTriggerQueue.TryTrigger(() => InstantTrigger(sendertag, sender, variable, broadcast, false));
         /// <summary>
         /// 按照 当前队伍-另一队伍；出战角色-出战-其他角色-召唤-支援 顺序，依次<b>立即</b>触发双方所有状态<br/>
         /// 这里的状态都不会改变CurrTeam
         /// </summary>
-        internal void InstantTrigger(AbstractSender sender, AbstractVariable? variable = null, bool broadcast = true, bool instant = true)
+        internal void InstantTrigger(string sendertag, SimpleSender sender, AbstractVariable? variable = null, bool broadcast = true, bool instant = true)
         {
             List<EventPersistentSetHandler> handlers = new();
 
-            handlers.AddRange(Teams[CurrTeam].GetEffectHandlers(sender));
-            handlers.AddRange(Teams[1 - CurrTeam].GetEffectHandlers(sender));
+            handlers.AddRange(Teams[CurrTeam].GetEffectHandlers(sendertag, sender));
+            handlers.AddRange(Teams[1 - CurrTeam].GetEffectHandlers(sendertag, sender));
 
             if (instant)
             {

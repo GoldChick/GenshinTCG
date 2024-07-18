@@ -17,6 +17,6 @@
         public EventPersistentHandler? Action { get; internal set; }
         public override string NameID { get; protected set; }
         public override string Tag { get; }
-        public override void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable) => Action?.Invoke(me, persitent, sender, variable);
+        public override void Trigger(PlayerTeam me, Persistent persitent, SimpleSender sender, AbstractVariable? variable) => Action?.Invoke(me, persitent, sender, variable);
     }
 }

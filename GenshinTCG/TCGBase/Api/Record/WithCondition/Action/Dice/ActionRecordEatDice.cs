@@ -20,7 +20,7 @@
             Same = same;
             Count = count;
         }
-        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             var team = Team == TargetTeam.Enemy ? me.Enemy : me;
             if (Eat)

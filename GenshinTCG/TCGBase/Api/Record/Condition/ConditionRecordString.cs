@@ -7,7 +7,7 @@
         {
             Value = value ?? "test";
         }
-        protected override bool GetPredicate(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        protected override bool GetPredicate(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             return Type switch
             {

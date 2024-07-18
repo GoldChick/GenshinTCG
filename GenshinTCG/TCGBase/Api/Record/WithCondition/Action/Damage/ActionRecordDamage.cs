@@ -20,7 +20,7 @@
         {
             return curr == null ? null : new(curr.Element, curr.Amount, targetindexoffset, curr.TargetArea, team, GetDamageRecordWithTarget(targetindexoffset, team, curr.SubDamage));
         }
-        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v)
+        protected override void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v)
         {
             EventPersistentHandler? subhandler = null;
             foreach (ActionRecordBase action in With)

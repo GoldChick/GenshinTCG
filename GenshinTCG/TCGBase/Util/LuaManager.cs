@@ -4,7 +4,7 @@ namespace TCGBase
 {
     internal static class LuaManager
     {
-        public static Lua CreateLuaEnv(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, object? @this = null)
+        public static Lua CreateLuaEnv(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v, object? @this = null)
         {
             Lua lua = new();
             lua.LoadCLRPackage();

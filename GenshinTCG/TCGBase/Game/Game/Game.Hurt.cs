@@ -39,18 +39,15 @@
                 DamageVariable dv = list[i];
                 if (dv.Element is not DamageElement.Pierce)
                 {
-                    sourceSender.ModifierName = SenderTag.ElementEnchant;
-                    InstantTrigger(sourceSender, dv, instant: true);
+                    InstantTrigger(SenderTag.ElementEnchant.ToString(), sourceSender, dv, instant: true);
                     //element reaction subdamage here ↓
                     list.AddRange(GetDamageReaction(dv));
 
-                    sourceSender.ModifierName = SenderTag.DamageIncrease;
-                    InstantTrigger(sourceSender, dv, instant: true);
+                    InstantTrigger(SenderTag.DamageIncrease.ToString(), sourceSender, dv, instant: true);
 
                     dv.Amount = (int)(dv.Amount * dv.Mul);
 
-                    sourceSender.ModifierName = SenderTag.HurtDecrease;
-                    Teams[dv.TargetTeam].InstantTrigger(sourceSender, dv);
+                    Teams[dv.TargetTeam].InstantTrigger(SenderTag.HurtDecrease.ToString(), sourceSender, dv);
                     //TODO: element modifier
                     var ac = ReactionActionGenerate(dv);
                     //InstantTrigger(xxx)
@@ -97,7 +94,7 @@
                                     {
                                         if (it.Tag == SenderTag.AntiDie.ToString())
                                         {
-                                            it.Trigger(currteam, p, new SimpleSender(SenderTag.AntiDie), null);
+                                            it.Trigger(currteam, p, new SimpleSender(), null);
                                         }
                                     }
                                 };
@@ -122,17 +119,16 @@
 
             DelayedTriggerQueue.TryTrigger(() =>
             {
-                sourceSender.ModifierName = SenderTag.AfterHurt;
                 foreach (var dv in alive_dvs)
                 {
-                    EffectTrigger(sourceSender, dv);
+                    EffectTrigger(SenderTag.AfterHurt.ToString(), sourceSender, dv);
                 }
                 foreach (var dv in died_dvs)
                 {
                     dv.Deadly = true;
                     Teams[dv.TargetTeam].Characters[dv.TargetIndex].DieTrigger(sourceSender, dv);
                     NetEventRecords.Last().Add(new DieRecord(dv.TargetTeam, Teams[dv.TargetTeam].Characters[dv.TargetIndex]));
-                    EffectTrigger(sourceSender, dv);
+                    EffectTrigger(SenderTag.AfterHurt.ToString(), sourceSender, dv);
                 }
                 var dieTeams = Teams.Where(t => !t.Characters[t.CurrCharacter].Alive);
                 if (dieTeams.Count() == 2)

@@ -12,9 +12,8 @@ namespace TCGBase
         Any,
         Late
     }
-    public class DiceModifierSender : AbstractSender, IMaySkillSupplier, IPeristentSupplier, IMulPersistentSupplier, IModifier
+    public class DiceModifierSender : SimpleSender, IMaySkillSupplier, IPeristentSupplier, IMulPersistentSupplier, IModifier
     {
-        public override string SenderName => DiceModType.ToString();
         internal DiceModifierType DiceModType { get; set; }
         public bool RealAction { get; }
         /// <summary>

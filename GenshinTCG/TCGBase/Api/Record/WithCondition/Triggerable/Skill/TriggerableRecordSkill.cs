@@ -47,7 +47,7 @@ namespace TCGBase
             public EventPersistentHandler? Action { get; internal set; }
             public override string NameID { get; protected set; }
             public override string Tag => SenderTagInner.UseSkill.ToString();
-            public override void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable)
+            public override void Trigger(PlayerTeam me, Persistent persitent, SimpleSender sender, AbstractVariable? variable)
             {
                 if (me.TeamID == sender.TeamID && persitent.PersistentRegion == me.CurrCharacter)
                 {
@@ -57,7 +57,7 @@ namespace TCGBase
                         {
                             Action?.Invoke(me, persitent, sender, variable);
                             c.SkillCounter[skill.NameID]++;
-                            me.Game.EffectTrigger(new AfterUseSkillSender(me.TeamID, c, skill));
+                            me.Game.EffectTrigger(SenderTag.AfterUseSkill, new AfterUseSkillSender(me.TeamID, c, skill));
                             me.SpecialState.DownStrike = false;
                         }
                     }

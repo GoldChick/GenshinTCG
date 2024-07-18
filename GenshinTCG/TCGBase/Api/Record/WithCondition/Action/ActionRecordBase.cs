@@ -32,7 +32,7 @@ namespace TCGBase
                 }
             };
         }
-        protected virtual void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v) => throw new NotImplementedException($"No Action In Type: {Type}");
+        protected virtual void DoAction(AbstractTriggerable triggerable, PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v) => throw new NotImplementedException($"No Action In Type: {Type}");
     }
     public record class ActionRecordBaseWithTeam : ActionRecordBase
     {

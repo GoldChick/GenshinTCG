@@ -36,7 +36,7 @@ namespace TCGBase
         {
             return (Late ? DiceModifierType.Late : _demand).ToString();
         }
-        protected override bool DefaultConditionCheck(PlayerTeam me, Persistent p, AbstractSender s, AbstractVariable? v, AbstractTriggerable modTriggerable)
+        protected override bool DefaultConditionCheck(PlayerTeam me, Persistent p, SimpleSender s, AbstractVariable? v, AbstractTriggerable modTriggerable)
         {
             if (_whensourceme.Valid(me, p, s, v) && v is SingleCostVariable scv)
             {

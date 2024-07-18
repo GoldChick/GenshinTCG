@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace TCGBase
 {
-    public delegate void EventPersistentSetHandler(AbstractSender s, AbstractVariable? v);
+    public delegate void EventPersistentSetHandler(SimpleSender s, AbstractVariable? v);
     public class PersistentSet : AbstractPersistentSet, IEnumerable<Persistent>
     {
         private readonly List<Persistent> _data;
@@ -86,14 +86,14 @@ namespace TCGBase
             p = _data.Find(e => e.CardBase.Namespace == nameSpace && e.CardBase.NameID == nameID);
             return p != null;
         }
-        internal List<EventPersistentSetHandler> GetPersistentHandlers(AbstractSender sender)
+        internal List<EventPersistentSetHandler> GetPersistentHandlers(string sendertag, SimpleSender sender)
         {
             List<EventPersistentSetHandler> acs = new();
             if (sender is not (ActionUseSkillSender))
             {
                 foreach (var h in _handlers)
                 {
-                    if (h.Key == sender.SenderName && h.Value != null)
+                    if (h.Key == sendertag && h.Value != null)
                     {
                         acs.Add(h.Value);
                     }
@@ -190,7 +190,7 @@ namespace TCGBase
             if (p != null)
             {
                 Unregister(index, p);
-                _me.Game.EffectTrigger(new PersistentDesperatedSender(_me.TeamID, PersistentRegion, p.CardBase));
+                _me.Game.EffectTrigger(SenderTag.AfterEffectDesperated, new PersistentDesperatedSender(_me.TeamID, PersistentRegion, p.CardBase));
             }
         }
         public void DestroyFirst(Predicate<Persistent> condition) => Destroy(_data.FindIndex(condition));

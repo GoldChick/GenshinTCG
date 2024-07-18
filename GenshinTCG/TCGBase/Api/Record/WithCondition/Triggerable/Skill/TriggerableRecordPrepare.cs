@@ -34,7 +34,7 @@ namespace TCGBase
             public EventPersistentHandler? Action { get; }
             public SkillCategory SkillCategory { get; }
 
-            public override void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable)
+            public override void Trigger(PlayerTeam me, Persistent persitent, SimpleSender sender, AbstractVariable? variable)
             {
                 if (me.TeamID == sender.TeamID && persitent.PersistentRegion == me.CurrCharacter)
                 {

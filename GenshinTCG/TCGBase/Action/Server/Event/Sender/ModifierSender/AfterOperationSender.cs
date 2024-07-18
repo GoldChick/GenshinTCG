@@ -1,8 +1,7 @@
 ﻿namespace TCGBase
 {
-    public class AfterOperationSender : AbstractSender, IModifier
+    public class AfterOperationSender : SimpleSender, IModifier
     {
-        public override string SenderName => SenderTag.AfterOperation.ToString();
         public OperationType ActionType { get; }
         public bool RealAction => true;
 

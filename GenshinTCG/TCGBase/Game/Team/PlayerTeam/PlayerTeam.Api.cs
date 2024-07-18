@@ -68,20 +68,20 @@ namespace TCGBase
                 cha.HP += hv.Amount;
                 Game.BroadCast(ClientUpdateCreate.CharacterUpdate.HealUpdate(hv.TargetTeam, hv.TargetIndex, hv.Amount));
 
-                Game.EffectTrigger(new HurtSourceSender(SenderTag.AfterHeal, TeamID, persistent, triggerable), hv);
+                Game.EffectTrigger(SenderTag.AfterHeal, new HurtSourceSender(TeamID, persistent, triggerable), hv);
             }
         }
         public void UseSkill(Character c, int skill_index)
         {
-            Game.EffectTrigger(new ActionUseSkillSender(TeamID, c.PersistentRegion, skill_index));
+            Game.EffectTrigger(SenderTag.AfterSwitch, new ActionUseSkillSender(TeamID, c.PersistentRegion, skill_index));
         }
         public void PrepareSkill(Character c, int prepareskill_index)
         {
-            Game.EffectTrigger(new ActionUseSkillSender(TeamID, c.PersistentRegion, prepareskill_index));
+            Game.EffectTrigger(SenderTagInner.UseSkill.ToString(), new ActionUseSkillSender(TeamID, c.PersistentRegion, prepareskill_index));
         }
         public void Trigger(Persistent source, string senderID)
         {
-            Game.EffectTrigger(new SimpleSourceSender(TeamID, senderID, source));
+            Game.EffectTrigger(senderID, new SimpleSourceSender(TeamID, source));
         }
         public void SwitchTo(int targetIndex, bool targetRelative = false)
         {
@@ -107,7 +107,7 @@ namespace TCGBase
             {
                 var initial = CurrCharacter;
                 CurrCharacter = curr;
-                Game.EffectTrigger(new AfterSwitchSender(TeamID, initial, CurrCharacter));
+                Game.EffectTrigger(SenderTag.AfterSwitch, new AfterSwitchSender(TeamID, initial, CurrCharacter));
                 SpecialState.DownStrike = true;
             }
         }

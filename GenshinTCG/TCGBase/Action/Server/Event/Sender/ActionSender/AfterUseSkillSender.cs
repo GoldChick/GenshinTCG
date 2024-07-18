@@ -6,7 +6,6 @@
     /// </summary>
     public class AfterUseSkillSender : AbstractAfterActionSender, IPeristentSupplier, IMaySkillSupplier
     {
-        public override string SenderName => SenderTag.AfterUseSkill.ToString();
         public Character Character { get; set; }
         public AbstractTriggerable Skill { get; set; }
 

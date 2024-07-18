@@ -20,7 +20,7 @@ namespace Minecraft
         /// <summary>
         /// 不考虑CurrCharacter为-1
         /// </summary>
-        public override void Trigger(PlayerTeam me, Persistent persitent, AbstractSender sender, AbstractVariable? variable)
+        public override void Trigger(PlayerTeam me, Persistent persitent, SimpleSender sender, AbstractVariable? variable)
         {
             var damage = Damage;
 
