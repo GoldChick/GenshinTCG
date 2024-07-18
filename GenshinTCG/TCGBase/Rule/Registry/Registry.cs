@@ -17,6 +17,7 @@ namespace TCGBase
         internal RegistryCardCollection<CardCharacter> CharacterCards { get; }
         internal RegistryCardCollection<AbstractCardAction> ActionCards { get; }
         internal RegistryCardCollection<CardEffect> EffectCards { get; }
+        internal RegistryCardCollection<CardListener> ListenerCards { get; }
         internal Dictionary<string, string> LuaScripts { get; }
         internal RegistryCardCollection<AbstractTriggerable> CustomTriggerable { get; }
         private Registry()

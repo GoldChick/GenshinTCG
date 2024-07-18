@@ -4,6 +4,15 @@ using System.Diagnostics.CodeAnalysis;
 namespace TCGBase
 {
     public delegate void EventPersistentSetHandler(SimpleSender s, AbstractVariable? v);
+    public abstract class AbstractPersistentSet
+    {
+        public int PersistentRegion { get; init; }
+        protected readonly PlayerTeam _me;
+        protected private AbstractPersistentSet(PlayerTeam me)
+        {
+            _me = me;
+        }
+    }
     public class PersistentSet : AbstractPersistentSet, IEnumerable<Persistent>
     {
         private readonly List<Persistent> _data;

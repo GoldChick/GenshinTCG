@@ -21,7 +21,7 @@ namespace TCGBase
         public void Accept(T t)
         {
             if (!_values.TryAdd($"{ t.Namespace}:{t.NameID}", t))
-            {
+            { 
                 throw new Exception($"Registry:Mod {t.Namespace}注册名为{t.NameID}的{typeof(T)}时出现了问题:nameID被占用!");
             }
         }

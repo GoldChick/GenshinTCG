@@ -8,7 +8,6 @@ namespace TCGBase
         /// 使用lua脚本描述条件，自带me,p,s,v作为参数，由于并非即时运行，所以可能含有隐含错误。建议编写时进行模拟测试。<br/> 
         /// 返回值：需要在脚本中为名叫result的变量赋值true或false，否则默认为false<br/>
         /// 注意：lua中的索引从1开始，而C#中的索引从0开始！<br/>
-        /// TODO:加入日志系统
         /// </summary>
         Lua,
         /// <summary>

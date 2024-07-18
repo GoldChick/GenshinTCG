@@ -18,6 +18,7 @@
         /// </summary>
         public CounterRandom Random { get; init; }
         public TeamSpecialState SpecialState { get; init; }
+        public ListenerManager ListenerManager { get; init; }
         public PersistentSet Supports { get; init; }
         public PersistentSet Summons { get; init; }
         public PersistentSet Effects { get; init; }
@@ -48,6 +49,7 @@
 
             Random = new();//TODO:SEED
             SpecialState = new();
+            ListenerManager = new(this);
 
             Summons = new(11, this, 4, false);
             Supports = new(12, this, 4, true);

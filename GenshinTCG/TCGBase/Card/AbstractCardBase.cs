@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace TCGBase
 {
@@ -36,7 +33,11 @@ namespace TCGBase
         Equipment,
         Support,
         Event,
-        Effect
+        Effect,
+        /// <summary>
+        /// 不能说算是卡牌吧，但确实道理类似
+        /// </summary>
+        Listener
     }
     public abstract partial class AbstractCardBase : INameable, ICard, INameSetable
     {

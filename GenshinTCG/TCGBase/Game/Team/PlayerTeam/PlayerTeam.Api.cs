@@ -79,9 +79,9 @@ namespace TCGBase
         {
             Game.EffectTrigger(SenderTagInner.UseSkill.ToString(), new ActionUseSkillSender(TeamID, c.PersistentRegion, prepareskill_index));
         }
-        public void Trigger(Persistent source, string senderID)
+        public void Trigger(Persistent source, string sendertag)
         {
-            Game.EffectTrigger(senderID, new SimpleSourceSender(TeamID, source));
+            Game.EffectTrigger(sendertag, new SimpleSourceSender(TeamID, source));
         }
         public void SwitchTo(int targetIndex, bool targetRelative = false)
         {

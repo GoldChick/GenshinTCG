@@ -22,7 +22,7 @@ namespace TCGBase
         /// 格式如"minecraft:modifier_enchant.Cryo"<br/>
         /// 可以加字符串参数如"minecraft:action_persistent.AddSummon+minecraft:summon_fischl" (实际没有这个方法)
         /// </summary>
-        public static object[] DoLuaFunction(Lua lua, string nameid_params, params object[] args)
+        public static object[] DoLuaFunction(Lua lua, string nameid_params, params object?[] args)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace TCGBase
                     {
                         lua.DoString(script);
 
-                        object[] final_args = args.Concat(array_origin[1..]).ToArray();
+                        object?[] final_args = args.Concat(array_origin[1..]).ToArray();
 
                         return (lua[array_nameid.ElementAtOrDefault(1) ?? "Main"] as LuaFunction)?.Call(final_args) ?? Array.Empty<object[]>();
                     }

@@ -16,6 +16,7 @@ namespace TCGBase
             LoadITriggerable(path, modid, "character", Registry.Instance.CharacterCards.Accept, CreateCharacterCard);
             LoadITriggerable(path, modid, "actioncard", Registry.Instance.ActionCards.Accept, CreateActionCard);
             LoadITriggerable(path, modid, "effect", Registry.Instance.EffectCards.Accept, CreateEffectCard);
+            LoadITriggerable(path, modid, "listener", Registry.Instance.ListenerCards.Accept, CreateListenerCard);
             LoadLuaScripts(path, modid);
         }
         private static void LoadITriggerable<T>(string path, string modid, string suffix, Action<T> registry, Func<string, T> create)
@@ -82,6 +83,10 @@ namespace TCGBase
         public CardEffect CreateEffectCard(string json)
         {
             return JsonSerializer.Deserialize<CardRecordEffect>(json, JsonOptionGlobal)?.GetCard() ?? throw new Exception("sb?AbstractCardEffect");
+        }
+        public CardListener  CreateListenerCard(string json)
+        {
+            return JsonSerializer.Deserialize<CardRecordListener>(json, JsonOptionGlobal)?.GetCard() ?? throw new Exception("sb?AbstractCardListener");
         }
     }
 }
