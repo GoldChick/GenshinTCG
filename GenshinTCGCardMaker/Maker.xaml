@@ -1,0 +1,77 @@
+﻿<Window x:Class="GenshinTCGCardMaker.Maker"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GenshinTCGCardMaker"
+        mc:Ignorable="d"
+        Title="Maker" Height="450" Width="800" ResizeMode="NoResize">
+
+    <Grid>
+        <TextBlock Name="txtFolderContent"  VerticalAlignment="Center" Margin="200,10,100,370" TextWrapping="Wrap" Text="Mod Name: {TODO} | Made by {TODO} | Version: {TODO}"/>
+        <Grid x:Name="buttonContent" Margin="300,40,10,340">
+            <Button Margin="0,0,440,0" IsEnabled="False">←</Button>
+            <TextBlock Name="currentSelect"  VerticalAlignment="Center" Margin="40,0,180,0" TextWrapping="Wrap" Text="当前选择："/>
+            <Button Margin="300,0,140,0" IsEnabled="False">×</Button>
+            <Button Margin="360,0,80,0" IsEnabled="False">Edit</Button>
+            <Button Margin="400,0,40,0" IsEnabled="False">-</Button>
+            <Button Margin="440,0,0,0">+</Button>
+        </Grid>
+        <ListBox Name="listBoxFolderContent" Margin="300,80,10,10" ScrollViewer.CanContentScroll="False">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <!-- 每一个ListBox项都呈现为卡片样式 -->
+                    <Border BorderBrush="#a0a0a0" BorderThickness="1" CornerRadius="10" Background="#2b3b45" Padding="10" Margin="5" Width="430">
+                        <!-- 添加阴影效果 -->
+                        <Border.Effect>
+                            <DropShadowEffect Color="Black" ShadowDepth="5" Opacity="0.5" BlurRadius="10" />
+                        </Border.Effect>
+                        
+                        <StackPanel>
+                            <!-- 标题（文件/文件夹名称） -->
+                            <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="#d0d7dc" />
+                            <!-- 动态标签列表，使用ItemsControl来展示多个标签 -->
+                            <StackPanel Orientation="Vertical" Margin="0,5,0,0">
+                                <ItemsControl ItemsSource="{Binding TagsA}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <!-- 单个标签显示 -->
+                                            <Border Background="DarkCyan" CornerRadius="3" Margin="2">
+                                                <TextBlock Text="{Binding}" Padding="3,0" Foreground="White" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding TagsB}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <!-- 单个标签显示 -->
+                                            <Border Background="DarkGoldenrod" CornerRadius="3" Margin="2">
+                                                <TextBlock Text="{Binding}" Padding="3,0" Foreground="White" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <!-- 文件/文件夹路径（内容） -->
+                            <TextBlock Text="{Binding Description}" FontSize="12" Foreground="White" TextWrapping="Wrap">
+
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>

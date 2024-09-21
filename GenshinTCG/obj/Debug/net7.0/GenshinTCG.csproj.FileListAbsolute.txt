@@ -10,3 +10,4 @@ C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.dll
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\refint\GenshinTCG.dll
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.pdb
 C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\ref\GenshinTCG.dll
+C:\Users\11847\Documents\GenshinTCG\GenshinTCG\obj\Debug\net7.0\GenshinTCG.sourcelink.json

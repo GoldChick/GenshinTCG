@@ -1,0 +1,21 @@
+﻿<Window x:Class="GenshinTCGCardMaker.Entry"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GenshinTCGCardMaker"
+        mc:Ignorable="d"
+        Title="Entry" Height="300" Width="600" ResizeMode="NoResize">
+    <Grid>
+        <StackPanel Margin="400 80 20 80">
+            <Button Name="btnCreateMod" Content="制作新mod" Click="btnCreateMod_Click" Width="100" Height="30" Margin="10"/>
+            <Button Name="btnReadOldMod" Content="修改已有mod" Click="btnReadOldMod_Click" Width="100" Height="30" Margin="10"/>
+        </StackPanel>
+        <StackPanel Margin="80 30 240 50" VerticalAlignment="Center">
+            <TextBlock Text="新Mod名:（内容将保存在output/{modName}下）" />
+            <TextBox Name="txtModName" Width="250" Margin="0,5,0,5"/>
+            <TextBlock Text="作者名:" />
+            <TextBox Name="txtAuthorName" Width="250" Margin="0,5,0,5"/>
+        </StackPanel>
+    </Grid>
+</Window>

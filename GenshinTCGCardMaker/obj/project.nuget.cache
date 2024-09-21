@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "XNKzGDERNRqhkWmPuZZFQwAmCA+AL2nAss0hfCwT06z/MH4J9JTKw+Dt/z7UGkVQ8lQj9rFLU5EBdsh66Y9+bA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\11847\\Documents\\GenshinTCG\\GenshinTCGCardMaker\\GenshinTCGCardMaker.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\11847\\.nuget\\packages\\keralua\\1.4.1\\keralua.1.4.1.nupkg.sha512",
+    "C:\\Users\\11847\\.nuget\\packages\\nlua\\1.7.2\\nlua.1.7.2.nupkg.sha512"
+  ],
+  "logs": []
+}
